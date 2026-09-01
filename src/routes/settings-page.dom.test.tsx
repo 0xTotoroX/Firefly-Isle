@@ -16,6 +16,12 @@ import { BackgroundAudioProvider } from '@/lib/background-audio'
 
 import { SettingsPage } from './settings-page'
 
+const downloadExport = vi.fn()
+
+vi.mock('@/lib/account-data-export', () => ({
+  downloadAccountDataExport: (...args: unknown[]) => downloadExport(...args),
+}))
+
 const localStorageState = new Map<string, string>()
 
 const localStorageMock = {
@@ -68,6 +74,7 @@ vi.mock('@/lib/theme', async () => {
 
 const getUserProfile = vi.fn()
 const saveUserProfile = vi.fn()
+const deleteOwnAccount = vi.fn()
 
 vi.mock('@/lib/profile-settings', () => ({
   ProfileSettingsError: class ProfileSettingsError extends Error {
@@ -75,6 +82,7 @@ vi.mock('@/lib/profile-settings', () => ({
   },
   getUserProfile: (...args: unknown[]) => getUserProfile(...args),
   saveUserProfile: (...args: unknown[]) => saveUserProfile(...args),
+  deleteOwnAccount: (...args: unknown[]) => deleteOwnAccount(...args),
 }))
 
 function renderSettings() {
@@ -129,5 +137,37 @@ describe('SettingsPage', () => {
     renderSettings()
 
     expect(await screen.findByRole('status')).toHaveTextContent('偏好将只保存在本机')
+  })
+
+  it('downloads the account data export on demand', async () => {
+    getUserProfile.mockResolvedValue(null)
+    downloadExport.mockResolvedValue('firefly-isle-export-2026-09-02.json')
+    renderSettings()
+
+    await userEvent.click(await screen.findByTestId('settings-export-button'))
+
+    await waitFor(() => {
+      expect(downloadExport).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('requires the typed confirmation word before account deletion', async () => {
+    getUserProfile.mockResolvedValue(null)
+    deleteOwnAccount.mockResolvedValue(undefined)
+    renderSettings()
+
+    const deleteButton = await screen.findByTestId('settings-delete-button')
+
+    expect(deleteButton).toBeDisabled()
+
+    await userEvent.type(screen.getByTestId('settings-delete-confirm-input'), '删除')
+
+    expect(deleteButton).toBeEnabled()
+
+    await userEvent.click(deleteButton)
+
+    await waitFor(() => {
+      expect(deleteOwnAccount).toHaveBeenCalledTimes(1)
+    })
   })
 })

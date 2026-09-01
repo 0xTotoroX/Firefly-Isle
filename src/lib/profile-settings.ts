@@ -127,3 +127,12 @@ export async function saveUserProfile(input: { displayName?: string | null; loca
 
   return mapProfileRow(data)
 }
+
+export async function deleteOwnAccount(): Promise<void> {
+  const { supabase } = await requireAuthenticatedUser()
+  const { error } = await supabase.rpc('delete_own_account')
+
+  if (error) {
+    throw new ProfileSettingsError(error.message || 'Could not delete account.')
+  }
+}

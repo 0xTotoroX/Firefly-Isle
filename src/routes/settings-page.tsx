@@ -15,7 +15,8 @@ import { useLocale, type Locale } from '@/lib/locale'
 import { getOnlineRequiredMessage } from '@/lib/network-status'
 import { useTheme, type Theme } from '@/lib/theme'
 import { shellWideContentClass, sidebarOffsetClass, topBarOffsetClass } from '@/lib/theme/tokens'
-import { getUserProfile, ProfileSettingsError, saveUserProfile } from '@/lib/profile-settings'
+import { getUserProfile, ProfileSettingsError, saveUserProfile, deleteOwnAccount } from '@/lib/profile-settings'
+import { downloadAccountDataExport } from '@/lib/account-data-export'
 
 const SETTINGS_OPTION_CLASS =
   't-control-press min-h-[38px] rounded-[var(--ff-radius-md)] border px-4 text-sm font-semibold transition-colors aria-pressed:border-[var(--ff-accent-primary)] aria-pressed:text-[var(--ff-accent-primary)]'
@@ -46,6 +47,11 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [exporting, setExporting] = useState(false)
+  const [exportError, setExportError] = useState<string | null>(null)
+  const [deleteConfirmText, setDeleteConfirmText] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
 
   useEffect(() => {
     if (resource.data) {
@@ -89,6 +95,43 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
 
     if (resource.data) {
       void saveUserProfile({ theme: nextTheme }).catch(() => undefined)
+    }
+  }
+
+  async function handleExport() {
+    setExporting(true)
+    setExportError(null)
+
+    try {
+      await downloadAccountDataExport()
+    } catch (error: unknown) {
+      setExportError(
+        error instanceof ProfileSettingsError && error.requiresOnline
+          ? getOnlineRequiredMessage(locale)
+          : getCopy(copy.settings.exportFailedFeedback, locale),
+      )
+    } finally {
+      setExporting(false)
+    }
+  }
+
+  async function handleDeleteAccount() {
+    if (deleteConfirmText !== getCopy(copy.settings.deleteConfirmWord, locale)) {
+      setDeleteError(getCopy(copy.settings.deleteConfirmMismatch, locale))
+      return
+    }
+
+    setDeleting(true)
+    setDeleteError(null)
+
+    try {
+      await deleteOwnAccount()
+      onSignOut?.()
+    } catch (error: unknown) {
+      setDeleteError(getCopy(copy.settings.deleteFailedFeedback, locale))
+      void error
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -219,6 +262,57 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
               </form>
             </section>
           </div>
+
+          <section className="mt-6 rounded-[var(--ff-radius-lg)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] p-6">
+            <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-primary)]">
+              {getCopy(copy.settings.privacySection, locale)}
+            </div>
+            <div className="mt-4 grid gap-6 lg:grid-cols-2">
+              <div>
+                <p className="text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.settings.exportDescription, locale)}</p>
+                {exportError ? (
+                  <p className="mt-3 text-sm text-[var(--ff-accent-primary)]" role="alert">
+                    {exportError}
+                  </p>
+                ) : null}
+                <button
+                  className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] border border-[var(--ff-border-default)] px-5 text-sm font-bold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-60"
+                  data-testid="settings-export-button"
+                  disabled={exporting}
+                  onClick={() => void handleExport()}
+                  type="button"
+                >
+                  {exporting ? getCopy(copy.settings.exportingButton, locale) : getCopy(copy.settings.exportButton, locale)}
+                </button>
+              </div>
+              <div>
+                <p className="text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.settings.deleteDescription, locale)}</p>
+                <input
+                  aria-label={getCopy(copy.settings.deleteConfirmLabel, locale)}
+                  className="mt-3 w-full rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] px-3 py-2 text-sm font-semibold outline-none focus-visible:border-[var(--ff-accent-primary)]"
+                  data-testid="settings-delete-confirm-input"
+                  onChange={(event) => setDeleteConfirmText(event.target.value)}
+                  placeholder={getCopy(copy.settings.deleteConfirmLabel, locale)}
+                  type="text"
+                  value={deleteConfirmText}
+                />
+                {deleteError ? (
+                  <p className="mt-3 text-sm text-[var(--ff-accent-primary)]" role="alert">
+                    {deleteError}
+                  </p>
+                ) : null}
+                <button
+                  className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] border border-[var(--ff-accent-primary)] px-5 text-sm font-bold text-[var(--ff-accent-primary)] transition-colors hover:bg-[var(--ff-accent-primary)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  data-testid="settings-delete-button"
+                  disabled={deleting || deleteConfirmText !== getCopy(copy.settings.deleteConfirmWord, locale)}
+                  onClick={() => void handleDeleteAccount()}
+                  type="button"
+                >
+                  {deleting ? getCopy(copy.settings.deletingButton, locale) : getCopy(copy.settings.deleteButton, locale)}
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
       </MainShell>
     </div>
