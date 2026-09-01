@@ -5,6 +5,7 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { renderToStaticMarkup } from 'react-dom/server'
+import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
 import { ExtractionComposer } from '@/components/workspace/extraction-composer'
@@ -26,7 +27,8 @@ describe('WorkspacePage metrics and record mode contracts', () => {
 
     const markup = renderToStaticMarkup(
       <LocaleProvider>
-        <ExtractionComposer
+        <MemoryRouter>
+          <ExtractionComposer
           composerMode={getWorkspaceComposerMode({ treatmentLines: [] })}
           error={null}
           extractionInput="把身高改成 168，体重改成 62"
@@ -40,6 +42,7 @@ describe('WorkspacePage metrics and record mode contracts', () => {
           retryMode={null}
           theme="light"
         />
+        </MemoryRouter>
       </LocaleProvider>,
     )
 

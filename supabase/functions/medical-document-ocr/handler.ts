@@ -18,6 +18,7 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
 }
 
+const DEFAULT_DEEPSEEK_OCR_MODEL = 'deepseek-v4-image'
 const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash'
 const DEFAULT_REQUEST_TIMEOUT_MS = 45_000
 const MAX_BASE64_LENGTH = Math.ceil((8 * 1024 * 1024 * 4) / 3)
@@ -49,9 +50,15 @@ type ErrorCode =
   | 'OCRTimeoutError'
   | 'OCRUpstreamError'
 
+type OcrProvider = 'deepseek' | 'gemini'
+
 type RuntimeConfig = {
+  deepseekApiKey: string
+  deepseekBaseUrl: string
+  deepseekOcrModel: string
   geminiApiKey: string
   geminiModel: string
+  ocrProvider: OcrProvider
   ocrRateLimitPerWindow: number
   supabaseAnonKey: string
   supabaseUrl: string
@@ -80,8 +87,12 @@ function readConfig(env: RuntimeEnv): RuntimeConfig {
   const get = (name: string) => env.get(name)?.trim() ?? ''
 
   return {
+    deepseekApiKey: get('DEEPSEEK_API_KEY'),
+    deepseekBaseUrl: get('DEEPSEEK_BASE_URL') || 'https://api.deepseek.com',
+    deepseekOcrModel: get('DEEPSEEK_OCR_MODEL') || DEFAULT_DEEPSEEK_OCR_MODEL,
     geminiApiKey: get('GEMINI_API_KEY'),
     geminiModel: get('GEMINI_OCR_MODEL') || get('DEFAULT_GEMINI_MODEL') || DEFAULT_GEMINI_MODEL,
+    ocrProvider: (get('OCR_PROVIDER') || 'deepseek') === 'gemini' ? 'gemini' as const : 'deepseek' as const,
     ocrRateLimitPerWindow: parsePositiveInteger(get('OCR_RATE_LIMIT_PER_WINDOW'), DEFAULT_OCR_RATE_LIMIT_PER_WINDOW),
     supabaseAnonKey: get('SUPABASE_ANON_KEY'),
     supabaseUrl: get('SUPABASE_URL'),
@@ -200,6 +211,91 @@ function isTimeoutError(error: unknown) {
   }
 
   return error instanceof Error && error.name === 'AbortError'
+}
+
+type DeepSeekResponse = {
+  choices?: Array<{
+    message?: {
+      content?: string | null
+    }
+  }>
+}
+
+function toDeepSeekRequest(body: RequestBody, model: string) {
+  return {
+    messages: [
+      {
+        content: [
+          {
+            image_url: {
+              url: `data:${body.mimeType};base64,${body.dataBase64}`,
+            },
+            type: 'image_url',
+          },
+          {
+            text: 'extract all readable medical record text from this document. Return plain text only.',
+            type: 'text',
+          },
+        ],
+        role: 'user',
+      },
+    ],
+    model,
+  }
+}
+
+function extractDeepSeekText(payload: unknown) {
+  const text = (payload as DeepSeekResponse)?.choices?.[0]?.message?.content?.trim()
+
+  return text ? text : null
+}
+
+async function callDeepSeek(body: RequestBody, config: RuntimeConfig, runtimeFetch: RuntimeFetch, timeoutMs: number) {
+  if (!config.deepseekApiKey) {
+    return errorResponse(500, 'ConfigurationError', 'DEEPSEEK_API_KEY is not configured.')
+  }
+
+  const abortController = new AbortController()
+  const timeoutId = setTimeout(() => abortController.abort('timeout'), timeoutMs)
+
+  try {
+    const response = await runtimeFetch(`${config.deepseekBaseUrl.replace(/\/$/, '')}/chat/completions`, {
+      body: JSON.stringify(toDeepSeekRequest(body, config.deepseekOcrModel)),
+      headers: {
+        Authorization: `Bearer ${config.deepseekApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      signal: abortController.signal,
+    })
+
+    if (!response.ok) {
+      logger.error('ocr_upstream_rejected', { provider: 'deepseek', upstream_status: response.status })
+      return errorResponse(response.status === 400 || response.status === 422 ? 400 : 502, response.status === 400 || response.status === 422 ? 'OCRInvalidRequestError' : 'OCRUpstreamError', 'DeepSeek OCR request failed.')
+    }
+
+    const text = extractDeepSeekText(await response.json())
+
+    if (!text) {
+      logger.error('ocr_upstream_invalid_payload', { provider: 'deepseek' })
+      return errorResponse(502, 'OCRInvalidResponseError', 'DeepSeek OCR returned an invalid response payload.')
+    }
+
+    return jsonResponse(200, {
+      model: config.deepseekOcrModel,
+      text,
+    })
+  } catch (error) {
+    if (isTimeoutError(error)) {
+      logger.warn('ocr_upstream_timeout', { provider: 'deepseek' })
+      return errorResponse(504, 'OCRTimeoutError', 'DeepSeek OCR request timed out.')
+    }
+
+    logger.error('ocr_upstream_error', { provider: 'deepseek' })
+    return errorResponse(502, 'OCRUpstreamError', 'DeepSeek OCR request failed.')
+  } finally {
+    clearTimeout(timeoutId)
+  }
 }
 
 async function callGemini(body: RequestBody, config: RuntimeConfig, runtimeFetch: RuntimeFetch, timeoutMs: number) {
@@ -353,6 +449,15 @@ export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
       return errorResponse(400, 'OCRInvalidRequestError', validationError)
     }
 
-    return callGemini(body, config, runtimeFetch, timeoutMs)
+    if (config.ocrProvider === 'gemini') {
+      return callGemini(body, config, runtimeFetch, timeoutMs)
+    }
+
+    if (body.mimeType === 'application/pdf') {
+      logger.warn('ocr_provider_unsupported_input', { provider: 'deepseek' })
+      return errorResponse(400, 'OCRInvalidRequestError', 'The DeepSeek image model does not accept PDF input. Convert the page to an image, or set OCR_PROVIDER=gemini.')
+    }
+
+    return callDeepSeek(body, config, runtimeFetch, timeoutMs)
   }
 }

@@ -19,6 +19,7 @@ function createEnv(overrides: Record<string, string | undefined> = {}): RuntimeE
     DEFAULT_GEMINI_MODEL: undefined,
     GEMINI_API_KEY: 'gemini-secret',
     GEMINI_OCR_MODEL: undefined,
+    OCR_PROVIDER: 'gemini',
     SUPABASE_ANON_KEY: 'anon-key',
     SUPABASE_URL: 'https://project.supabase.co',
     ...overrides,
@@ -137,5 +138,67 @@ describe('medical-document-ocr handler', () => {
 
     expect(response.status).toBe(status)
     expect(payload.error?.name).toBe(name)
+  })
+})
+
+describe('medical-document-ocr deepseek provider', () => {
+  const deepSeekResponse = {
+    choices: [{ message: { content: '病历 OCR 文本' } }],
+  }
+
+  function createDeepSeekEnv(overrides: Record<string, string | undefined> = {}) {
+    return createEnv({
+      DEEPSEEK_API_KEY: 'deepseek-ocr-secret',
+      DEEPSEEK_BASE_URL: undefined,
+      DEEPSEEK_OCR_MODEL: undefined,
+      OCR_PROVIDER: undefined,
+      ...overrides,
+    })
+  }
+
+  it('routes image input to the DeepSeek image model by default', async () => {
+    const { calls, fetchMock } = createFetchMock(new Response(JSON.stringify(deepSeekResponse), { status: 200 }))
+    const handler = createMedicalDocumentOcrHandler({ env: createDeepSeekEnv(), fetch: fetchMock })
+
+    const response = await handler(createRequest({ dataBase64: 'ZmlsZQ==', fileName: 'record.png', mimeType: 'image/png' }))
+    const payload = await response.json() as { model: string; text: string }
+
+    expect(response.status).toBe(200)
+    expect(payload).toEqual({ model: 'deepseek-v4-image', text: '病历 OCR 文本' })
+
+    const call = calls.find((item) => item.url.includes('/chat/completions'))
+    const requestBody = call?.body as unknown as { messages: Array<{ content: Array<{ image_url?: { url: string }; type: string }> }>; model: string }
+
+    expect(call?.url).toBe('https://api.deepseek.com/chat/completions')
+    expect(call?.body).not.toContain('deepseek-ocr-secret')
+    expect(requestBody.model).toBe('deepseek-v4-image')
+    expect(requestBody.messages[0].content[0]).toEqual({
+      image_url: { url: 'data:image/png;base64,ZmlsZQ==' },
+      type: 'image_url',
+    })
+  })
+
+  it('rejects PDF input for the DeepSeek image model with an actionable error', async () => {
+    const { calls, fetchMock } = createFetchMock(new Response(JSON.stringify(deepSeekResponse), { status: 200 }))
+    const handler = createMedicalDocumentOcrHandler({ env: createDeepSeekEnv(), fetch: fetchMock })
+
+    const response = await handler(createRequest({ dataBase64: 'ZmlsZQ==', fileName: 'record.pdf', mimeType: 'application/pdf' }))
+    const payload = await response.json() as { error: { message: string } }
+
+    expect(response.status).toBe(400)
+    expect(payload.error.message).toContain('OCR_PROVIDER=gemini')
+    expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
+  })
+
+  it('fails closed without a DeepSeek key and never leaks it', async () => {
+    const { fetchMock } = createFetchMock(new Response(JSON.stringify(deepSeekResponse), { status: 200 }))
+    const handler = createMedicalDocumentOcrHandler({ env: createDeepSeekEnv({ DEEPSEEK_API_KEY: '' }), fetch: fetchMock })
+
+    const response = await handler(createRequest({ dataBase64: 'ZmlsZQ==', fileName: 'record.png', mimeType: 'image/png' }))
+    const body = await response.text()
+
+    expect(response.status).toBe(500)
+    expect(body).toContain('DEEPSEEK_API_KEY')
+    expect(body).not.toContain('deepseek-ocr-secret')
   })
 })

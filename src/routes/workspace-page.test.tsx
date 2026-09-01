@@ -165,37 +165,32 @@ describe('WorkspacePage report shell', () => {
     expect(markup).toContain('title="语音输入暂未开放"')
   })
 
-  it('renders compact expandable LLM provider settings with updated provider labels', () => {
+  it('links the composer to the standalone model settings page carrying the provider panel', () => {
     const markup = renderWorkspace('light')
-    const source = readLlmProviderSettingsPanelSource()
-    const toggleMarkup = markup.match(/<button[^>]*data-llm-provider-settings-toggle="true"[\s\S]*?<\/button>/)?.[0] ?? ''
+    const panelSource = readLlmProviderSettingsPanelSource()
+    const linkMarkup = markup.match(/<a[^>]*data-testid="composer-model-settings-link"[^>]*>[\s\S]*?<\/a>/)?.[0] ?? ''
 
-    expect(markup).toContain('data-llm-provider-settings="true"')
-    expect(markup).toContain('data-llm-provider-settings-toggle="true"')
-    expect(markup).toContain('aria-expanded="false"')
-    expect(markup).toContain('aria-controls="llm-provider-settings-body"')
-    expect(toggleMarkup).toContain('model_training')
-    expect(toggleMarkup).toContain('模型设置')
-    expect(toggleMarkup).toContain('系统内置（deepseek-v4-flash）')
-    expect(toggleMarkup).toContain('keyboard_arrow_down')
-    expect(toggleMarkup).not.toContain('inline-flex h-9 w-9')
-    expect(markup).toContain('系统内置（deepseek-v4-flash）')
-    expect(markup).toContain('API 自提供')
-    expect(markup).toContain('自定义')
-    expect(markup).not.toContain('系统 DeepSeek')
-    expect(markup).not.toContain('自带 Provider')
-    expect(markup).not.toContain('自定义 OpenAI 风格接口')
-    expect(markup).toContain('医疗记录内容会发送到你选择的第三方模型服务商')
-    expect(source).toContain('setExpanded')
-    expect(markup).not.toContain('name="llm-provider-api-key"')
-    expect(markup).not.toContain('name="llm-provider-base-url"')
-    expect(markup).not.toContain('name="llm-provider-model"')
+    expect(markup).toContain('data-testid="composer-model-settings-link"')
+    expect(linkMarkup).toContain('模型设置')
+    expect(linkMarkup).toContain('tune')
+    expect(linkMarkup).toContain('href="/models"')
+
+    expect(panelSource).toContain('setExpanded')
+    expect(panelSource).toContain('data-llm-provider-settings="true"')
+    expect(panelSource).toContain('系统内置（deepseek-v4-flash）')
+    expect(panelSource).toContain('API 自提供')
+    expect(panelSource).toContain('自定义')
+    expect(panelSource).not.toContain('系统 DeepSeek')
+    expect(panelSource).not.toContain('自带 Provider')
+    expect(panelSource).not.toContain('自定义 OpenAI 风格接口')
+    expect(panelSource).toContain('医疗记录内容会发送到你选择的第三方模型服务商')
   })
 
   it('shows recognized OCR text for confirmation before extraction', () => {
     const markup = renderToStaticMarkup(
       <LocaleProvider>
-        <ExtractionComposer
+        <MemoryRouter>
+          <ExtractionComposer
           error={null}
           extractionInput=""
           isExtracting={false}
@@ -211,6 +206,7 @@ describe('WorkspacePage report shell', () => {
           retryMode={null}
           theme="light"
         />
+        </MemoryRouter>
       </LocaleProvider>,
     )
 
@@ -223,7 +219,8 @@ describe('WorkspacePage report shell', () => {
   it('uses Transitions.dev motion for extraction status changes', () => {
     const markup = renderToStaticMarkup(
       <LocaleProvider>
-        <ExtractionComposer
+        <MemoryRouter>
+          <ExtractionComposer
           error={null}
           extractionInput="患者 2024 年开始治疗"
           isExtracting
@@ -235,6 +232,7 @@ describe('WorkspacePage report shell', () => {
           retryMode={null}
           theme="light"
         />
+        </MemoryRouter>
       </LocaleProvider>,
     )
 
@@ -260,7 +258,8 @@ describe('WorkspacePage report shell', () => {
   it('uses the shared control and alert motion contracts inside the composer and preview', () => {
     const markup = renderToStaticMarkup(
       <LocaleProvider>
-        <ExtractionComposer
+        <MemoryRouter>
+          <ExtractionComposer
           error="测试错误"
           extractionInput=""
           feedback="已保存"
@@ -276,12 +275,15 @@ describe('WorkspacePage report shell', () => {
           retryMode="initial"
           theme="dark"
         />
+        </MemoryRouter>
       </LocaleProvider>,
     )
 
     expect(markup).toContain('t-control-press')
-    expect(markup).toContain('t-accordion')
     expect(markup).toContain('t-popover')
+
+    // t-accordion 随 provider 设置面板迁往 /models；动效合同随组件走。
+    expect(readLlmProviderSettingsPanelSource()).toContain('t-accordion')
   })
 
   it('keeps topbar overlays mutually exclusive and bridges contact hover to the popover', () => {

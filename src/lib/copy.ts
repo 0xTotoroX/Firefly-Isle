@@ -23,6 +23,24 @@ export const copy = {
       authenticated: text('认证会话', 'Authenticated Session'),
     },
   },
+  models: {
+    title: text('模型配置', 'Model Settings'),
+    eyebrow: text('模型', 'Models'),
+    catalogTitle: text('默认模型目录', 'Default model catalog'),
+    catalogDescription: text(
+      '文字与图像链路各自绑定一个默认模型；图像链路负责病历/检验报告 OCR，文字链路负责结构化提取与对话式修改。',
+      'Text and image pipelines each bind one default model. Images power record/lab OCR; text powers structured extraction and conversational editing.',
+    ),
+    modalityText: text('文字', 'Text'),
+    modalityImage: text('图像', 'Image'),
+    modalityBadgeText: text('文本输入', 'text input'),
+    modalityBadgeImage: text('图像输入', 'image input'),
+    providerTitle: text('自带密钥', 'Bring your own key'),
+    providerDescription: text(
+      '保存自己的 provider 密钥后，文字链路将优先使用它；密钥服务端加密存储，永不回读明文。',
+      'Save your own provider key and the text pipeline will prefer it. Keys are encrypted server-side and never returned.',
+    ),
+  },
   authFeedback: {
     missingEnv: text('缺少 Supabase 环境变量，当前无法完成认证。', 'Supabase environment variables are missing; authentication is unavailable.'),
     missingEnvAnonymous: text('缺少 Supabase 环境变量，当前无法进入匿名模式。', 'Supabase environment variables are missing; anonymous sessions are unavailable.'),
