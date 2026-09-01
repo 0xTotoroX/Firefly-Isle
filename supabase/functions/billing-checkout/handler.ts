@@ -1,0 +1,152 @@
+/**
+ * [INPUT]: 依赖 Fetch API、注入的 runtime fetch、Supabase JWT 校验结构与 Stripe REST API。
+ * [OUTPUT]: 对外提供 createBillingCheckoutHandler、RuntimeEnv 与 billing-checkout HTTP 协议。
+ * [POS]: supabase/functions/billing-checkout 的可测试核心，为登录用户创建 Stripe Checkout Session；无 STRIPE_SECRET_KEY / STRIPE_PRICE_ID 时 fail-closed 返回 BILLING_DISABLED。
+ * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ */
+
+const corsHeaders = {
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Origin': '*',
+}
+
+export type RuntimeEnv = {
+  get(name: string): string | undefined
+}
+
+type RuntimeFetch = (input: string | URL, init?: RequestInit) => Promise<Response>
+
+type SupabaseAuthUser = {
+  id?: string
+  email?: string | null
+}
+
+function jsonResponse(status: number, body: unknown) {
+  return new Response(JSON.stringify(body), {
+    headers: {
+      ...corsHeaders,
+      'Content-Type': 'application/json',
+    },
+    status,
+  })
+}
+
+function errorBody(name: ErrorCode, message: string) {
+  return {
+    error: {
+      message,
+      name,
+    },
+  }
+}
+
+export type ErrorCode = 'AuthError' | 'BILLING_DISABLED' | 'ConfigurationError' | 'StripeError'
+
+function extractBearerToken(request: Request) {
+  const authHeader = request.headers.get('Authorization') ?? request.headers.get('authorization')
+
+  return authHeader?.startsWith('Bearer ') ? authHeader.slice('Bearer '.length).trim() : null
+}
+
+async function verifyUser(token: string, config: { supabaseAnonKey: string; supabaseUrl: string }, runtimeFetch: RuntimeFetch): Promise<{ email: string | null; id: string } | null> {
+  try {
+    const response = await runtimeFetch(`${config.supabaseUrl}/auth/v1/user`, {
+      headers: {
+        apikey: config.supabaseAnonKey,
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    const user = (await response.json()) as SupabaseAuthUser
+
+    return typeof user?.id === 'string' && user.id.trim().length > 0 ? { email: user.email ?? null, id: user.id } : null
+  } catch {
+    return null
+  }
+}
+
+export function createBillingCheckoutHandler(options: { env: RuntimeEnv; fetch?: RuntimeFetch }) {
+  const runtimeFetch = options.fetch ?? fetch
+
+  return async function handleBillingCheckoutRequest(request: Request): Promise<Response> {
+    if (request.method === 'OPTIONS') {
+      return new Response('ok', { headers: corsHeaders })
+    }
+
+    if (request.method !== 'POST') {
+      return jsonResponse(405, errorBody('AuthError', 'Only POST is supported.'))
+    }
+
+    const get = (name: string) => options.env.get(name)?.trim() ?? ''
+    const stripeSecretKey = get('STRIPE_SECRET_KEY')
+    const stripePriceId = get('STRIPE_PRICE_ID')
+    const supabaseAnonKey = get('SUPABASE_ANON_KEY')
+    const supabaseUrl = get('SUPABASE_URL')
+    const successUrl = get('STRIPE_CHECKOUT_SUCCESS_URL')
+    const cancelUrl = get('STRIPE_CHECKOUT_CANCEL_URL')
+
+    if (!stripeSecretKey || !stripePriceId || !successUrl || !cancelUrl) {
+      return jsonResponse(503, errorBody('BILLING_DISABLED', 'Billing is not configured for this deployment.'))
+    }
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return jsonResponse(500, errorBody('ConfigurationError', 'Missing Supabase environment variables.'))
+    }
+
+    const token = extractBearerToken(request)
+
+    if (!token) {
+      return jsonResponse(401, errorBody('AuthError', 'Missing Supabase bearer token.'))
+    }
+
+    const user = await verifyUser(token, { supabaseAnonKey, supabaseUrl }, runtimeFetch)
+
+    if (!user) {
+      return jsonResponse(401, errorBody('AuthError', 'Invalid Supabase session.'))
+    }
+
+    const body = new URLSearchParams({
+      'line_items[0][price]': stripePriceId,
+      'line_items[0][quantity]': '1',
+      mode: 'subscription',
+      client_reference_id: user.id,
+      'subscription_data[metadata][user_id]': user.id,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+    })
+
+    if (user.email) {
+      body.set('customer_email', user.email)
+    }
+
+    try {
+      const response = await runtimeFetch('https://api.stripe.com/v1/checkout/sessions', {
+        body: body.toString(),
+        headers: {
+          Authorization: `Bearer ${stripeSecretKey}`,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        return jsonResponse(502, errorBody('StripeError', 'Stripe checkout session could not be created.'))
+      }
+
+      const payload = (await response.json()) as { id?: string; url?: string }
+
+      if (!payload.url) {
+        return jsonResponse(502, errorBody('StripeError', 'Stripe checkout session returned no redirect url.'))
+      }
+
+      return jsonResponse(200, { checkoutUrl: payload.url, sessionId: payload.id ?? null })
+    } catch {
+      return jsonResponse(502, errorBody('StripeError', 'Stripe checkout request failed.'))
+    }
+  }
+}
