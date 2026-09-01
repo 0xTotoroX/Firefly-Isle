@@ -1,29 +1,21 @@
 /**
- * [INPUT]: 依赖 react/useEffect/useRef/useState、react-router-dom 的 useParams、RecordDossier 只读展示、record-sharing 的授权码加载器、locale/theme 与 system surface。
+ * [INPUT]: 依赖 react/useRef、react-router-dom 的 useParams、RecordDossier 只读展示、record-sharing 的授权码加载器、async-resource 的共享加载基元、locale/theme 与 system surface。
  * [OUTPUT]: 对外提供 SharedRecordPage 组件，对应 /share/:code，渲染单份 PatientRecord 只读分享与过期/撤销/不可用反馈。
  * [POS]: routes 的公开只读分享页，只消费授权码换回的单份记录，不挂载编辑、保存、导出或 AI 分析动作。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { ClinicalTopBar } from '@/components/app-shell'
 import { RecordDossier } from '@/components/record/record-dossier'
 import { MainShell } from '@/components/system/surfaces'
+import { useAsyncResource } from '@/lib/async-resource'
 import { useLocale } from '@/lib/locale'
 import { getOnlineRequiredMessage, isOnlineRequiredError } from '@/lib/network-status'
 import { loadSharedPatientRecordByCode, type SharedRecordStatus } from '@/lib/record-sharing'
 import { useTheme } from '@/lib/theme'
 import { shellWideContentClass, topBarOffsetClass } from '@/lib/theme/tokens'
-import type { PatientRecord } from '@/types/patient'
-
-type SharedRecordState = {
-  code: string
-  error: string | null
-  isLoading: boolean
-  record: PatientRecord | null
-  status: SharedRecordStatus | null
-}
 
 function getStatusCopy(locale: 'zh' | 'en', status: SharedRecordStatus | null, error: string | null) {
   if (error) {
@@ -51,6 +43,14 @@ function getStatusCopy(locale: 'zh' | 'en', status: SharedRecordStatus | null, e
   }
 
   return copy.unavailable
+}
+
+function getSharedRecordErrorCopy(error: unknown, locale: 'zh' | 'en') {
+  if (isOnlineRequiredError(error)) {
+    return getOnlineRequiredMessage(locale)
+  }
+
+  return error instanceof Error ? error.message : null
 }
 
 function SharedRecordMessage({
@@ -84,54 +84,11 @@ export function SharedRecordPage() {
   const { locale } = useLocale()
   const { theme } = useTheme()
   const recordRef = useRef<HTMLDivElement>(null)
-  const [state, setState] = useState<SharedRecordState>({
-    code,
-    error: null,
-    isLoading: true,
-    record: null,
-    status: null,
-  })
-
-  useEffect(() => {
-    let active = true
-
-    void loadSharedPatientRecordByCode(code)
-      .then((result) => {
-        if (!active) {
-          return
-        }
-
-        setState({
-          code,
-          error: null,
-          isLoading: false,
-          record: result.record,
-          status: result.status,
-        })
-      })
-      .catch((error: unknown) => {
-        if (!active) {
-          return
-        }
-
-        setState({
-          code,
-          error: isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : error instanceof Error ? error.message : null,
-          isLoading: false,
-          record: null,
-          status: 'unavailable',
-        })
-      })
-
-    return () => {
-      active = false
-    }
-  }, [code, locale])
+  const resource = useAsyncResource(() => loadSharedPatientRecordByCode(code), [code])
 
   const dark = theme === 'dark'
-  const isStale = state.code !== code
-  const visibleRecord = isStale ? null : state.record
-  const visibleStatus = isStale ? null : state.status
+  const visibleRecord = resource.data?.record ?? null
+  const visibleStatus: SharedRecordStatus | null = resource.error ? 'unavailable' : resource.data?.status ?? null
 
   return (
     <div className={dark ? 'min-h-screen bg-[var(--ff-surface-base)] text-[var(--ff-text-primary)]' : 'ff-light-record-bg min-h-screen text-[var(--ff-text-primary)]'}>
@@ -155,7 +112,12 @@ export function SharedRecordPage() {
               recordRef={recordRef}
             />
           ) : (
-            <SharedRecordMessage error={isStale ? null : state.error} isLoading={isStale || state.isLoading} locale={locale} status={visibleStatus} />
+            <SharedRecordMessage
+              error={resource.error ? getSharedRecordErrorCopy(resource.error, locale) : null}
+              isLoading={resource.isLoading}
+              locale={locale}
+              status={visibleStatus}
+            />
           )}
         </div>
       </MainShell>
