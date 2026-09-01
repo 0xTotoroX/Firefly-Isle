@@ -24,12 +24,15 @@ import {
   type ProviderRequest,
   type ResponseFormat,
 } from './provider-adapters.ts'
+import { createFunctionLogger } from '../_shared/logger.ts'
 import {
   checkUserRateLimit,
   enforceDurableRateLimit,
   isModelAllowed,
   parseModelAllowlist,
 } from './rate-limits.ts'
+
+const logger = createFunctionLogger('llm-proxy')
 
 const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -602,6 +605,7 @@ async function fetchUpstream(
 
     if (!upstreamResponse.ok) {
       const mappedError = mapProviderError(upstreamResponse.status)
+      logger.error('upstream_request_failed', { provider, status: mappedError.status, upstream_status: upstreamResponse.status })
       return errorResponse(mappedError.status, mappedError.name, `${provider} API request failed.`)
     }
 
@@ -615,9 +619,11 @@ async function fetchUpstream(
     return jsonResponse(200, { model: providerRequest.model, text })
   } catch (error) {
     if (isTimeoutError(error)) {
+      logger.warn('upstream_request_timeout', { provider })
       return errorResponse(504, 'LLMTimeoutError', `${provider} API request timed out.`)
     }
 
+    logger.error('upstream_request_error', { provider })
     return errorResponse(502, 'LLMUpstreamError', `${provider} API request failed.`)
   } finally {
     clearTimeout(timeoutId)
@@ -657,6 +663,7 @@ export function createLlmProxyHandler(options: HandlerOptions) {
       const memoryLimit = user.is_anonymous === true ? config.anonymousRateLimitPerWindow : config.authenticatedRateLimitPerWindow
 
       if (!checkUserRateLimit(user, request, memoryLimit, config.rateLimitWindowMs)) {
+        logger.warn('rate_limit_exceeded', { layer: 'memory' })
         return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
       }
     } catch {
@@ -743,6 +750,7 @@ export function createLlmProxyHandler(options: HandlerOptions) {
     }
 
     if (!(await enforceDurableRateLimit(config, token, user, 'llm_chat', runtimeFetch))) {
+      logger.warn('rate_limit_exceeded', { layer: 'ledger' })
       return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
     }
 

@@ -4,7 +4,10 @@
  * [POS]: supabase/functions/medical-document-ocr 的可测试核心，把鉴权、文件校验、Gemini OCR 请求与错误映射收敛在一处。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { createFunctionLogger } from '../_shared/logger.ts'
 import { countUsageInWindow, recordUsageEvent } from '../_shared/usage-limits.ts'
+
+const logger = createFunctionLogger('medical-document-ocr')
 
 const DEFAULT_OCR_RATE_LIMIT_PER_WINDOW = 20
 const DEFAULT_OCR_RATE_LIMIT_WINDOW_MS = 60_000
@@ -219,12 +222,14 @@ async function callGemini(body: RequestBody, config: RuntimeConfig, runtimeFetch
     })
 
     if (!response.ok) {
+      logger.error('ocr_upstream_rejected', { upstream_status: response.status })
       return errorResponse(response.status === 400 || response.status === 422 ? 400 : 502, response.status === 400 || response.status === 422 ? 'OCRInvalidRequestError' : 'OCRUpstreamError', 'Gemini OCR request failed.')
     }
 
     const text = extractGeminiText(await response.json())
 
     if (!text) {
+      logger.error('ocr_upstream_invalid_payload', {})
       return errorResponse(502, 'OCRInvalidResponseError', 'Gemini OCR returned an invalid response payload.')
     }
 
@@ -234,9 +239,11 @@ async function callGemini(body: RequestBody, config: RuntimeConfig, runtimeFetch
     })
   } catch (error) {
     if (isTimeoutError(error)) {
+      logger.warn('ocr_upstream_timeout', {})
       return errorResponse(504, 'OCRTimeoutError', 'Gemini OCR request timed out.')
     }
 
+    logger.error('ocr_upstream_error', {})
     return errorResponse(502, 'OCRUpstreamError', 'Gemini OCR request failed.')
   } finally {
     clearTimeout(timeoutId)
@@ -325,6 +332,7 @@ export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
       }
 
       if (!(await enforceOcrRateLimit(config, token, user, request, runtimeFetch))) {
+        logger.warn('rate_limit_exceeded', {})
         return errorResponse(429, 'OCRRateLimitError', 'OCR request rate limit exceeded.')
       }
     } catch {

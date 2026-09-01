@@ -4,9 +4,10 @@
  * [POS]: components 的全局渲染崩溃护栏，捕获子树渲染错误并给出可恢复降级 UI；禁止消费 Theme/Locale 上下文，保证崩溃发生在 Provider 层时护栏自身仍可渲染。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-import { Component, type ReactNode } from 'react'
+import { Component, type ErrorInfo, type ReactNode } from 'react'
 
 import { copy, getCopy } from '@/lib/copy'
+import { reportError } from '@/lib/error-reporting'
 import type { Locale } from '@/lib/locale'
 
 type ErrorBoundaryProps = {
@@ -26,6 +27,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
   static getDerivedStateFromError(error: unknown): ErrorBoundaryState {
     return { error: error instanceof Error ? error : new Error(String(error)) }
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    reportError(error, undefined, info.componentStack ?? undefined)
   }
 
   private handleReload = () => {
