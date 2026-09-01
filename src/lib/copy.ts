@@ -23,6 +23,16 @@ export const copy = {
       authenticated: text('认证会话', 'Authenticated Session'),
     },
   },
+  errorBoundary: {
+    status: text('页面异常', 'Unexpected Error'),
+    title: text('页面出现了一点问题', 'Something went wrong'),
+    description: text(
+      '渲染过程发生错误，重新加载即可恢复；你的数据安全地保存在服务端。',
+      'A rendering error occurred. Reload to recover; your data stays safe on the server.',
+    ),
+    action: text('重新加载', 'Reload'),
+    detail: text('错误详情', 'Error details'),
+  },
   localeToggle: {
     zh: text('中文', 'Chinese'),
     en: text('英文', 'English'),
