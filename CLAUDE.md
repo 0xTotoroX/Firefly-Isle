@@ -13,7 +13,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - The user-owned LLM provider settings work is archived at `openspec/changes/archive/2026-05-05-add-user-llm-provider-settings/`; current baseline behavior lives in `openspec/specs/llm-provider-settings/spec.md`, `openspec/specs/llm-adapter/spec.md`, and `openspec/specs/supabase-schema/spec.md`.
 - Background music work is archived under `openspec/changes/archive/2026-05-03-add-background-music-toggle/` and `openspec/changes/archive/2026-05-03-add-local-background-playlist/`; current baseline behavior lives in `openspec/specs/background-audio*.md`.
 - Lab analytics, P0 clinical analysis, secure sharing, restored TimelineTable, full-product Demo, PWA foundation, and Capacitor mobile shell work are archived under `openspec/changes/archive/2026-05-16-*`; current behavior lives in `openspec/specs/`.
-- Product context lives in `README.md`, `README.en.md`, `docs/products/prd-implementation-status.md`, `docs/products/product-priority-roadmap.md`, and archived product snapshots / historical Goal drafts under `docs/products/archive/`.
+- Product context lives in `README.md`, `README.en.md`, `docs/products/prd-implementation-status.md`, `docs/products/product-priority-roadmap.md`, `docs/products/saas-refactoring-plan.md` (SaaS refactor phases, status and pending owner decisions), and archived product snapshots / historical Goal drafts under `docs/products/archive/`.
+- The V3 theme is a single-accent system: `--ff-accent` (#E85D2A) is the only accent source (primary/warning/border-strong derive from it), clinical semantic colors `--ff-critical` / `--ff-low` / `--ff-accent-success` stay independent, and `src/lib/theme/tokens.ts` exports `accentBase` as the one re-theme knob
 - Current visual-system entrypoint lives in `DESIGN.md`: V3 under `docs/design/Image-2/V3/DESIGN.md` remains the production source, while V4 under `docs/design/Image-2/V4/DESIGN.md` is an isolated evaluation source until an explicit direction is selected.
 - Community governance now lives at the repository root: `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`, and `CODE_OF_CONDUCT.md`.
 
@@ -28,7 +29,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Current limitation
 
-- Verified commands at the current baseline: `npm run build`, `npm run lint`, `npm run type-check`, `npm run type-check:functions`, `npm run test`, `npm run dev`.
+- Verified commands at the current baseline: `npm run build`, `npm run lint`, `npm run type-check`, `npm run type-check:functions`, `npm run test`, `npm run test:watch`, `npm run test:coverage`, `npm run dev`.
+- Tests run in node by default via `vite.config.ts` (`test.globals` on for testing-library cleanup); DOM interaction tests opt into happy-dom with a `@vitest-environment happy-dom` docblock. Coverage uses `@vitest/coverage-v8` (`coverage/` is gitignored).
 - Lint currently passes with warnings related to fast-refresh export boundaries in generated/shared modules; resolve those warnings as follow-up work instead of guessing around them.
 
 ## High-level architecture
@@ -130,6 +132,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Backend/BaaS:** Supabase Auth + PostgreSQL + RLS + Edge Functions
 - **Mobile shell:** Capacitor 8 iOS/Android wrapper around the same `dist` Web build; no separate native product UI or local patient-record truth source
 - **Edge adapter:** Cloudflare Pages Functions host WeChat OAuth2 adapter prework for future Supabase custom provider compatibility; current login UI keeps WeChat deferred
+- **SaaS substrate (2026-09-02 refactor):** `profiles` (migration 007, auto-provision trigger) backs `/settings`; `usage_events` (009, owner read-only + `record_usage` RPC) backs dual-layer rate limits in `llm-proxy` / `medical-document-ocr` via `supabase/functions/_shared/usage-limits.ts`; `plans` + `subscriptions` (010) plus `billing-checkout` / `stripe-webhook` functions form the Stripe-ready billing base, all env-gated and fail-closed when unconfigured
+- **Account & privacy:** `/settings` shows identity, display name, locale/theme preferences (degrades to local-only without profiles), JSON data export (`src/lib/account-data-export.ts`, excludes key ciphertext and share-code hashes) and type-to-confirm account deletion (`delete_own_account` RPC, migration 008; every user table cascades from `auth.users`)
+- **Dashboard:** `/dashboard` is the authenticated landing route with exact counts (records, lab readings, active shares, 30d AI calls from `usage_events`), the latest record, deduped recent abnormal readings (`--ff-critical` / `--ff-low` semantic tokens) and an actionable empty state; `/` redirects there for authenticated users
+- **Observability:** `src/lib/error-reporting.ts` forwards sanitized window errors to `VITE_ERROR_REPORT_URL` (no-op when unset); `supabase/functions/_shared/logger.ts` emits single-line JSON logs on upstream failure, timeout and rate-limit paths
 - **AI boundary:** frontend calls a Supabase Edge Function proxy; system provider keys stay server-side, and user-owned provider keys are saved only through encrypted `llm_provider_settings` rows
 - **Core workflow:** natural-language intake → structured extraction → up to 3 clarification rounds → timeline table render → inline editing → formal record page → AI auxiliary analysis / read-only sharing / PDF/PNG export
 - **Demo workflow:** login page links to public `/demo` routes; Demo pages reuse the real record and analytics surfaces with a visible Demo reminder, optional Supabase public share-code record, unified sample patient/lab fallback data, static non-diagnostic AI analysis preview, disabled share preview and client-side export, without creating Supabase records from Demo

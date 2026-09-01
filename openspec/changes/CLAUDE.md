@@ -17,6 +17,8 @@ archive/2026-05-16-add-secure-record-sharing/: 已归档 P0 合同，定义单�
 archive/2026-05-16-make-demo-mode-cover-full-product/: 已归档 Demo 合同，定义公开 /demo 全产品演示、统一 Demo 病历/指标、静态 AI/分享预览、真实工作区空白态与 Demo 导航 fallback，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 archive/2026-05-16-restore-minimal-timeline-table-view/: 已归档 P0 合同，定义 /record/:id 极简 TimelineTable 视图回归、三视图切换、复用 PatientRecord 与导出不劫持边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
+add-account-profiles/: 活动中的账户档案合同，定义 profiles schema（007 迁移 + 自动建档触发器）、profile-settings 客户端读写、/settings 账户设置页与缺表降级边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
 remove-private-origin-story-content/: 活动中的隐私清理合同，定义创作初衷只保留公开正文与末尾纯文本来源、使用 V3 临床档案阅读弹层、清除旧 WebGL 羊皮纸路径、历史净化与原生壳静态资源刷新，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
 法则: active change 是执行前合同；archive 是历史证据；baseline 真相仍在 /openspec/specs。

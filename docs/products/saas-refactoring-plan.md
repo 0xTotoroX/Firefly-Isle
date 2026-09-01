@@ -7,6 +7,8 @@
 
 # SaaS 专业化重构计划（refactor/saas-professionalization）
 
+> 执行状态（2026-09-02）：Phase 0-13 全部完成，共 16 个 commit；Phase 12 为 Stripe-ready 基座（未接真实密钥），llm-proxy 的 plan 权益门控延后；决策点 D1-D6 见文末，待产品负责人确认。
+
 ## 目标
 
 把「一页萤屿」从功能完备的 MVP 提升为完善、可用、专业的 SaaS 产品，三条主线：
