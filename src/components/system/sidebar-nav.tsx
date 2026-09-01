@@ -89,7 +89,7 @@ export type ArchiveSideNavProps = {
 type SidebarNavItem = {
   href?: string
   icon: string
-  labelKey: 'extract' | 'record' | 'analytics' | 'settings'
+  labelKey: 'dashboard' | 'extract' | 'record' | 'analytics' | 'settings'
 }
 
 function isActive(pathname: string, href: string) {
@@ -120,6 +120,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
   const sidebarStyle = useMemo(() => ({ width: `${width}px` }), [width])
   const navItems = useMemo<SidebarNavItem[]>(
     () => [
+      { icon: 'space_dashboard', href: '/dashboard', labelKey: 'dashboard' },
       { icon: 'my_location', href: '/app', labelKey: 'extract' },
       { icon: 'clinical_notes', href: recordHref, labelKey: 'record' },
       { icon: 'bar_chart', href: analyticsHref, labelKey: 'analytics' },

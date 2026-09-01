@@ -3,6 +3,7 @@
 /auth/callback / 200
 /privacy / 200
 /app / 200
+/dashboard / 200
 /record/* / 200
 /analytics/* / 200
 /demo/* / 200

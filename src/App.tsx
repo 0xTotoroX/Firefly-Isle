@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react 的 lazy/Suspense/useMemo，依赖 react-router-dom 的 BrowserRouter、Routes、Route、Navigate、useLocation，依赖 ThemeProvider、BackgroundAudioProvider、AuthProvider、PrivacyGate、NetworkStatusBanner、PRIVACY_PAGE_HREF 与按路由动态加载的页面组件。
  * [OUTPUT]: 对外提供 App 组件。
- * [POS]: src 的路由装配入口，连接主题系统、隐私门控、双层渲染崩溃护栏、PWA 离线状态提示、Supabase session 持久化、匿名/非匿名身份标记、隔离设计预览、公开 Demo、记录页用户归属保存 id、OAuth 错误归一与 /login、/auth/callback、/privacy、/design-preview、/app、/demo、/record/:id、/share/:code、/analytics/:id 页面。
+ * [POS]: src 的路由装配入口，连接主题系统、隐私门控、双层渲染崩溃护栏、PWA 离线状态提示、Supabase session 持久化、匿名/非匿名身份标记、隔离设计预览、公开 Demo、记录页用户归属保存 id、OAuth 错误归一与 /login、/auth/callback、/privacy、/design-preview、/app、/demo、/record/:id、/share/:code、/analytics/:id、/dashboard 页面。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { lazy, Suspense, type ReactNode, useMemo } from 'react'
@@ -18,6 +18,7 @@ import { PRIVACY_PAGE_HREF } from '@/lib/privacy'
 import { ThemeProvider, useTheme } from '@/lib/theme'
 import { getOAuthCallbackErrorMessage } from '@/routes/auth-callback-page.logic'
 
+const DashboardPage = lazy(() => import('@/routes/dashboard-page').then((module) => ({ default: module.DashboardPage })))
 const AuthCallbackPage = lazy(() => import('@/routes/auth-callback-page').then((module) => ({ default: module.AuthCallbackPage })))
 const BrandLockupPreviewPage = lazy(() => import('@/routes/brand-lockup-preview-page').then((module) => ({ default: module.BrandLockupPreviewPage })))
 const DesignPreviewPage = lazy(() => import('@/routes/design-preview-page').then((module) => ({ default: module.DesignPreviewPage })))
@@ -121,7 +122,7 @@ function AppRoutes() {
           path="/"
           element={
             isAuthenticated ? (
-              <Navigate replace to="/app" />
+              <Navigate replace to="/dashboard" />
             ) : oauthRedirectError ? (
               <LoginPage authError={oauthRedirectError} />
             ) : (
@@ -144,6 +145,16 @@ function AppRoutes() {
         <Route path="/demo" element={<Navigate replace to="/demo/record" />} />
         <Route path="/demo/record" element={<RecordPage userIsAnonymous userLabel="DEMO_MODE" />} />
         <Route path="/demo/analytics" element={<LabAnalyticsPage userIsAnonymous userLabel="DEMO_MODE" />} />
+        <Route
+          path="/dashboard"
+          element={
+            isAuthenticated ? (
+              <DashboardPage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
         <Route
           path="/app"
           element={
@@ -188,7 +199,7 @@ function AppRoutes() {
             )
           }
         />
-        <Route path="*" element={<Navigate replace to={isAuthenticated ? '/app' : '/login'} />} />
+        <Route path="*" element={<Navigate replace to={isAuthenticated ? '/dashboard' : '/login'} />} />
       </Routes>
     </Suspense>
   )
