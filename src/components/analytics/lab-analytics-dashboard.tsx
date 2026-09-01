@@ -718,7 +718,7 @@ export function LabAnalyticsDashboard({
                           className={cn(
                             'border-b border-[var(--ff-border-default)]',
                             monitorRowClass,
-                            highlightedRiseWindow?.itemCode === alert.itemCode ? 'bg-[color-mix(in_srgb,#f04438_10%,transparent)]' : null,
+                            highlightedRiseWindow?.itemCode === alert.itemCode ? 'bg-[color-mix(in_srgb,var(--ff-critical)_10%,transparent)]' : null,
                           )}
                           key={alert.itemCode}
                           data-rise-alert-code={alert.itemCode}

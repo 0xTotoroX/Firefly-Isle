@@ -11,6 +11,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
 import {
+  accentBase,
   sidebarDefaultWidth,
   sidebarLabelHideWidth,
   sidebarMaxWidth,
@@ -132,5 +133,23 @@ describe('V3 theme token contract', () => {
     }
 
     expect(extractionComposerSource).toContain('bg-[var(--ff-accent-primary)] px-6 font-[var(--ff-font-ui)] text-sm font-bold')
+  })
+})
+
+describe('single accent color system', () => {
+  it('derives primary and warning from the single accent base in both themes', () => {
+    for (const theme of ['dark', 'light'] as const) {
+      expect(themeTokens[theme].accent.primary).toBe(accentBase)
+      expect(themeTokens[theme].accent.warning).toBe(accentBase)
+      expect(themeTokens[theme].border.strong).toBe(accentBase)
+    }
+  })
+
+  it('keeps clinical semantic colors independent of the accent family', () => {
+    for (const theme of ['dark', 'light'] as const) {
+      expect(themeTokens[theme].accent.critical).toBe('#F04438')
+      expect(themeTokens[theme].accent.low).toBe('#2F80ED')
+      expect(themeTokens[theme].accent.success).toBe('#43A56B')
+    }
   })
 })

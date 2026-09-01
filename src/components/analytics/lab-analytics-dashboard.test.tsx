@@ -104,8 +104,8 @@ describe('LabAnalyticsDashboard', () => {
     expect(markup).toContain('参考范围')
     expect(markup).toContain('↑')
     expect(markup).toContain('↓')
-    expect(markup).toContain('text-[#f04438]')
-    expect(markup).toContain('text-[#2f80ed]')
+    expect(markup).toContain('text-[var(--ff-critical)]')
+    expect(markup).toContain('text-[var(--ff-low)]')
   })
 
   it('makes monitor rows selectable so they can drive the trend chart', () => {

@@ -24,10 +24,10 @@ export const statusArrow: Record<LabTrendStatus, string> = {
 }
 
 const statusToneClass: Record<LabTrendStatus, string> = {
-  high: 'text-[#f04438]',
-  low: 'text-[#2f80ed]',
+  high: 'text-[var(--ff-critical)]',
+  low: 'text-[var(--ff-low)]',
   normal: 'text-[var(--ff-accent-success)]',
-  'persistent-high': 'text-[#f04438]',
+  'persistent-high': 'text-[var(--ff-critical)]',
   'reference-missing': 'text-[var(--ff-text-muted)]',
 }
 
@@ -89,7 +89,7 @@ export function StatusLabel({ compact = false, status }: { compact?: boolean; st
 
 export function RiseRatioLabel({ children }: { children: string }) {
   return (
-    <span className="inline-flex items-center gap-1 font-semibold text-[#f04438]">
+    <span className="inline-flex items-center gap-1 font-semibold text-[var(--ff-critical)]">
       <span aria-hidden="true" className="font-[var(--ff-font-mono)]">↑</span>
       {children}
     </span>

@@ -2,6 +2,10 @@
 version: alpha
 name: 一页萤屿 V3 Clinical Archive Console
 description: Firefly-Isle 双主题设计系统；工作区与病历页共享临床档案骨架，登录入口采用品牌场景 CTA + 居中认证 modal。
+# 单强调色体系
+
+V3 采用单强调色（single accent）主题系统：`--ff-accent`（#E85D2A）是唯一强调色源，`--ff-accent-primary` / `--ff-accent-warning` / `--ff-border-strong` 均由它派生；`--ff-accent-strong`（#FF4A1C）是同族 emphasis 停档，`--ff-accent-soft` 是同族 tint 停档。临床语义色独立于强调色体系：`--ff-critical`（#F04438）表达危急/偏高，`--ff-low`（#2F80ED）表达偏低，`--ff-accent-success` 表达正常/成功。品牌 SVG 插画（萤火虫 mark）是艺术资产，豁免于主题体系。新增颜色 SHALL 优先引用 token，禁止在组件层新增强调色或语义色字面值。
+
 colors:
   accent: "#E85D2A"
   accent-strong: "#FF4A1C"

@@ -165,16 +165,16 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
         <polyline fill="none" points={chartPoints} stroke="var(--ff-accent-primary)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
         {highlightedCoordinates.length >= 2 ? (
           <g aria-label="连续上涨检查结果区间" data-rise-highlight="true" pointerEvents="none">
-            <polyline fill="none" points={highlightedPoints} stroke="#f04438" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.22" strokeWidth="12" />
-            <polyline fill="none" points={highlightedPoints} stroke="#f04438" strokeDasharray="8 6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
-            <rect fill="color-mix(in srgb, #f04438 16%, var(--ff-surface-inset))" height="22" rx="11" stroke="color-mix(in srgb, #f04438 62%, transparent)" width="86" x={highlightedLabelX - 43} y={highlightedLabelY - 16} />
-            <text fill="#f04438" fontSize="11" fontWeight="800" textAnchor="middle" x={highlightedLabelX} y={highlightedLabelY - 1}>
+            <polyline fill="none" points={highlightedPoints} stroke="var(--ff-critical)" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.22" strokeWidth="12" />
+            <polyline fill="none" points={highlightedPoints} stroke="var(--ff-critical)" strokeDasharray="8 6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
+            <rect fill="color-mix(in srgb, var(--ff-critical) 16%, var(--ff-surface-inset))" height="22" rx="11" stroke="color-mix(in srgb, var(--ff-critical) 62%, transparent)" width="86" x={highlightedLabelX - 43} y={highlightedLabelY - 16} />
+            <text fill="var(--ff-critical)" fontSize="11" fontWeight="800" textAnchor="middle" x={highlightedLabelX} y={highlightedLabelY - 1}>
               连续上涨段
             </text>
             {highlightedCoordinates.map(({ point, x, y }) => (
               <g data-rise-highlight-date={point.date} key={`rise-${point.date}`}>
-                <circle cx={x} cy={y} fill="var(--ff-surface-inset)" r="9" stroke="#f04438" strokeWidth="2.5" />
-                <circle cx={x} cy={y} fill="#f04438" r="3.5" />
+                <circle cx={x} cy={y} fill="var(--ff-surface-inset)" r="9" stroke="var(--ff-critical)" strokeWidth="2.5" />
+                <circle cx={x} cy={y} fill="var(--ff-critical)" r="3.5" />
               </g>
             ))}
           </g>
