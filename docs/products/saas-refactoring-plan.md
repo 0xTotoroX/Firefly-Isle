@@ -122,15 +122,15 @@
 - 验证：现有合同测试 + copy 完整性测试（新增 zh/en key 成对断言）。
 - Commit: `fix(i18n): localize auth feedback and gate copy`
 
-### Phase 11 · 设计语言与登录界面打磨（V3 范围）
+### Phase 11 · 设计语言与登录界面打磨（V3 范围，含单强调色主题系统）
 
+- **单强调色主题系统**（2026-09-02 新增需求）：把当前散落的 accent 色值（`#E85D2A` / `#FF4A1C` / success 绿 / 表面色）收敛为单一强调色 token 体系——`--ff-accent-primary` 为唯一强调色，dark/light 双主题从同一强调色派生；清理组件层的硬编码色值与冗余 `theme === 'dark'` 分支，V3 DESIGN.md 同步 token 变更。
 - three.js/liquid 背景独立 chunk（消除 >500kB 主包警告），登录页懒加载策略核对。
-- 登录八章故事：文案/间距/焦点环/`prefers-reduced-motion` 合同复核，更新 V3 真源中受影响的 token 说明。
-- 主题切换 29 处 `theme === 'dark'` 分支收敛为 token 层工具。
+- 登录八章故事：文案/间距/焦点环/`prefers-reduced-motion` 合同复核。
 - 登录/认证路径 a11y：错误提示 `role="alert"`、焦点管理、键盘路径。
 - V4 仍保持评估态，不做迁移（决策点 D4）。
 - 验证：build 警告消除；登录页 DOM 测试；V3 DESIGN.md 同步。
-- Commit: `perf(login): split webgl background chunk`、`refactor(theme): consolidate dark-mode branching`、`polish(login): tighten story typography and focus states`
+- Commit: `refactor(theme): unify single accent color system`、`perf(login): split webgl background chunk`、`polish(login): tighten story typography and focus states`
 
 ### Phase 12 · 计费基座（按「接入 Script = Stripe」假设执行）
 
@@ -142,7 +142,16 @@
 - 验证：handler 测试（webhook 签名失败拒绝、事件幂等、free 降级）。
 - Commit: `feat(billing): add plans and subscriptions schema`、`feat(billing): add stripe webhook and checkout functions`
 
-### Phase 13 · 文档同步与收尾
+### Phase 13 · Dashboard 页面（2026-09-02 新增需求）
+
+- **参考优秀项目**：先调研 Linear / Vercel / Stripe / Cron 等 SaaS Dashboard 的信息架构（概览指标、快速动作、近期活动、空态设计），取其信息密度与层次原则，不抄视觉。
+- **准确、精确**：Dashboard 全部卡片消费真实 Supabase 数据（病历数、最近病历、`lab_results` 最新读数与异常汇总、分享状态、AI 分析次数），禁止装饰性假数据；空态给可执行动作而不是插画废话。
+- **设计感**：消费 Phase 11 的单强调色 token 体系与 V3 档案视觉语言；路由 `/dashboard` 作为登录后默认落点（`/` 重定向调整），保留 `/app` 工作台。
+- 侧栏 Dashboard 入口；OpenSpec change `add-product-dashboard` 记录行为合同。
+- 验证：DOM 测试（数据渲染、空态、加载/错误态）；build 全绿。
+- Commit: `feat(dashboard): add product dashboard with live record and lab overview`
+
+### Phase 14 · 文档同步与收尾
 
 - `CLAUDE.md`、`README.md`、`docs/products/product-priority-roadmap.md`、`docs/products/prd-implementation-status.md` 同步新能力。
 - Runbook 补充「Supabase 迁移手工执行」边界。

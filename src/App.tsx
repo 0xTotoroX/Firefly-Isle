@@ -25,6 +25,7 @@ const LoginPage = lazy(() => import('@/routes/login-page').then((module) => ({ d
 const LabAnalyticsPage = lazy(() => import('@/routes/lab-analytics-page').then((module) => ({ default: module.LabAnalyticsPage })))
 const PrivacyPage = lazy(() => import('@/routes/privacy-page').then((module) => ({ default: module.PrivacyPage })))
 const RecordPage = lazy(() => import('@/routes/record-page').then((module) => ({ default: module.RecordPage })))
+const SettingsPage = lazy(() => import('@/routes/settings-page').then((module) => ({ default: module.SettingsPage })))
 const SharedRecordPage = lazy(() => import('@/routes/shared-record-page').then((module) => ({ default: module.SharedRecordPage })))
 const WorkspacePage = lazy(() => import('@/routes/workspace-page').then((module) => ({ default: module.WorkspacePage })))
 
@@ -172,6 +173,16 @@ function AppRoutes() {
           element={
             isAuthenticated ? (
               <RecordPage isSigningOut={isSigningOut} onSignOut={signOut} userId={user?.id} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            isAuthenticated ? (
+              <SettingsPage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
             ) : (
               <Navigate replace to="/login" />
             )

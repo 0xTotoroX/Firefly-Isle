@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react 的状态、ref 与 pointer/keyboard 事件，依赖 react-router-dom 的 Link/useLocation，依赖 FireflyMark、FireflyBrandWordmark 与 SidebarShell，依赖 @/lib/theme、locale、可选真实病历/统计 href 与紧凑可拖拽侧栏 token。
  * [OUTPUT]: 对外提供 ArchiveSideNav 组件、ArchiveSideNavProps 类型与 AVATAR_PLACEHOLDER 常量。
- * [POS]: src/components/system 的共享侧栏导航组件，统一 dark/light 的紧凑桌面默认展开、移动端默认收起、真实病历/统计入口、显式公开 Demo 入口、无自有病历时禁用病历/统计并显示“先提取”提示、独立品牌 mark/中英文 display token 侧栏字标、中文“萤”与英文 Firefly 主题光晕、边线胶囊折叠、44px 恢复热区、左缘渐进拉出、拖拽缩放到隐藏、阈值 icon-only、active 细左标与低强度行面、Google Translate 与临床笔记图标、匿名/非匿名身份图标、无下拉误导的偏好控制与会话出口。
+ * [POS]: src/components/system 的共享侧栏导航组件，统一 dark/light 的紧凑桌面默认展开、移动端默认收起、真实病历/统计入口、显式公开 Demo 入口、固定账户设置入口、无自有病历时禁用病历/统计并显示“先提取”提示、独立品牌 mark/中英文 display token 侧栏字标、中文“萤”与英文 Firefly 主题光晕、边线胶囊折叠、44px 恢复热区、左缘渐进拉出、拖拽缩放到隐藏、阈值 icon-only、active 细左标与低强度行面、Google Translate 与临床笔记图标、匿名/非匿名身份图标、无下拉误导的偏好控制与会话出口。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent } from 'react'
@@ -89,7 +89,7 @@ export type ArchiveSideNavProps = {
 type SidebarNavItem = {
   href?: string
   icon: string
-  labelKey: 'extract' | 'record' | 'analytics'
+  labelKey: 'extract' | 'record' | 'analytics' | 'settings'
 }
 
 function isActive(pathname: string, href: string) {
@@ -123,6 +123,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
       { icon: 'my_location', href: '/app', labelKey: 'extract' },
       { icon: 'clinical_notes', href: recordHref, labelKey: 'record' },
       { icon: 'bar_chart', href: analyticsHref, labelKey: 'analytics' },
+      { icon: 'settings', href: '/settings', labelKey: 'settings' },
     ],
     [analyticsHref, recordHref],
   )
