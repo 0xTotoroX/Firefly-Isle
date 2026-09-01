@@ -59,6 +59,15 @@ jobs:
             exit 1
           fi
 
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run type check
+        run: npm run type-check
+
+      - name: Run tests
+        run: npm run test
+
       - name: Build app
         run: npm run build
 
