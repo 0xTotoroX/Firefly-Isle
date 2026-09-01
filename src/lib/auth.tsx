@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的 Context、hooks，依赖 @supabase/supabase-js 的 Session/User，依赖 @/lib/supabase 的客户端入口。
+ * [INPUT]: 依赖 react 的 Context、hooks，依赖 @supabase/supabase-js 的 Session/User，依赖 @/lib/supabase 的客户端入口、@/lib/locale 的界面语言与 copy 字典的认证反馈文案。
  * [OUTPUT]: 对外提供 AuthProvider 与 useAuth，并在路由就绪前完成 Supabase URL callback/session 初始化。
  * [POS]: lib 的认证状态中心，统一管理 session 恢复、认证状态广播与登出动作。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -15,6 +15,8 @@ import {
 } from 'react'
 import type { Session, User } from '@supabase/supabase-js'
 
+import { copy, getCopy } from '@/lib/copy'
+import { useLocale } from '@/lib/locale'
 import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'
 
 type AuthContextValue = {
@@ -30,6 +32,7 @@ type AuthContextValue = {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: PropsWithChildren) {
+  const { locale } = useLocale()
   const [session, setSession] = useState<Session | null>(null)
   const [authError, setAuthError] = useState<string | null>(null)
   const [isAuthReady, setIsAuthReady] = useState(false)
@@ -37,7 +40,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (!hasSupabaseEnv) {
-      setAuthError('缺少 Supabase 认证环境变量，请检查 .env.local。')
+      setAuthError(getCopy(copy.authFeedback.missingEnv, locale))
       setIsAuthReady(true)
       return
     }
@@ -55,11 +58,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
         }
 
         if (error) {
-          setAuthError('无法恢复登录状态，请刷新后重试。')
+          setAuthError(getCopy(copy.authFeedback.restoreFailed, locale))
           setSession(null)
         } else {
           setSession(data.session ?? null)
-          setAuthError(initializeError ? '登录回调已失效，请重新登录。' : null)
+          setAuthError(initializeError ? getCopy(copy.authFeedback.callbackInvalid, locale) : null)
         }
 
         setIsAuthReady(true)
@@ -69,7 +72,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           return
         }
 
-        setAuthError('无法恢复登录状态，请刷新后重试。')
+        setAuthError(getCopy(copy.authFeedback.restoreFailed, locale))
         setSession(null)
         setIsAuthReady(true)
       })
@@ -90,11 +93,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
       active = false
       subscription.unsubscribe()
     }
+    // locale 只参与错误文案构造，不应触发 session 重新恢复。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const signOut = useCallback(async () => {
     if (!hasSupabaseEnv) {
-      setAuthError('缺少 Supabase 认证环境变量，请检查 .env.local。')
+      setAuthError(getCopy(copy.authFeedback.missingEnv, locale))
       return false
     }
 
@@ -104,7 +109,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       const { error } = await getSupabaseClient().auth.signOut()
 
       if (error) {
-        setAuthError('退出失败，请稍后再试。')
+        setAuthError(getCopy(copy.authFeedback.signOutFailed, locale))
         return false
       }
 
@@ -114,6 +119,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
     } finally {
       setIsSigningOut(false)
     }
+    // locale 只参与错误文案构造，不应重建 signOut 回调。
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const value = useMemo<AuthContextValue>(

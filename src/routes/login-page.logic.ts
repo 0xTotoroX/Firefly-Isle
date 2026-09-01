@@ -5,7 +5,9 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import type { AuthFeedback, AuthMode } from '@/components/login-page-view'
+import { copy, getCopy } from '@/lib/copy'
 import { getOnlineRequiredMessage, isBrowserOffline } from '@/lib/network-status'
+import type { Locale } from '@/lib/locale'
 
 export type LoginAuthClient = {
   resetPasswordForEmail: (email: string, options?: { redirectTo?: string }) => Promise<{ error: unknown | null }>
@@ -27,6 +29,7 @@ export type AuthActionResult = {
 type SubmitEmailAuthInput = {
   auth: LoginAuthClient
   email: string
+  locale?: Locale
   mode: AuthMode
   password: string
   passwordResetRedirectTo?: string
@@ -54,13 +57,14 @@ function withGoogleAccountSelection(redirectTo?: string) {
 export async function submitEmailAuth({
   auth,
   email,
+  locale = 'zh',
   mode,
   password,
   passwordResetRedirectTo,
 }: SubmitEmailAuthInput): Promise<AuthActionResult> {
   if (isBrowserOffline()) {
     return {
-      feedback: { message: getOnlineRequiredMessage('zh'), tone: 'error' },
+      feedback: { message: getOnlineRequiredMessage(locale), tone: 'error' },
     }
   }
 
@@ -69,12 +73,12 @@ export async function submitEmailAuth({
 
     if (error) {
       return {
-        feedback: { message: '暂时无法发送重置邮件，请稍后再试。', tone: 'error' },
+        feedback: { message: getCopy(copy.authFeedback.resetFailed, locale), tone: 'error' },
       }
     }
 
     return {
-      feedback: { message: '如果该邮箱已注册，我们会发送重置邮件。', tone: 'success' },
+      feedback: { message: getCopy(copy.authFeedback.resetSent, locale), tone: 'success' },
       nextMode: 'login',
     }
   }
@@ -84,12 +88,12 @@ export async function submitEmailAuth({
 
     if (error) {
       return {
-        feedback: { message: '邮箱或密码错误，请重新确认后再试。', tone: 'error' },
+        feedback: { message: getCopy(copy.authFeedback.invalidCredentials, locale), tone: 'error' },
       }
     }
 
     return {
-      feedback: { message: '认证成功，正在进入工作区。', tone: 'neutral' },
+      feedback: { message: getCopy(copy.authFeedback.signingIn, locale), tone: 'neutral' },
     }
   }
 
@@ -97,26 +101,26 @@ export async function submitEmailAuth({
 
   if (error) {
     return {
-      feedback: { message: '暂时无法完成注册，请稍后再试。', tone: 'error' },
+      feedback: { message: getCopy(copy.authFeedback.signUpFailed, locale), tone: 'error' },
     }
   }
 
   if (data?.session) {
     return {
       clearPassword: true,
-      feedback: { message: '注册成功，正在进入工作区。', tone: 'neutral' },
+      feedback: { message: getCopy(copy.authFeedback.signUpSuccess, locale), tone: 'neutral' },
     }
   }
 
   return {
-    feedback: { message: '注册未返回有效会话，请先在 Supabase 关闭邮箱确认后再试。', tone: 'error' },
+    feedback: { message: getCopy(copy.authFeedback.signUpNoSession, locale), tone: 'error' },
   }
 }
 
-export async function startAnonymousAuth(auth: LoginAuthClient): Promise<AuthActionResult> {
+export async function startAnonymousAuth(auth: LoginAuthClient, locale: Locale = 'zh'): Promise<AuthActionResult> {
   if (isBrowserOffline()) {
     return {
-      feedback: { message: getOnlineRequiredMessage('zh'), tone: 'error' },
+      feedback: { message: getOnlineRequiredMessage(locale), tone: 'error' },
     }
   }
 
@@ -124,19 +128,19 @@ export async function startAnonymousAuth(auth: LoginAuthClient): Promise<AuthAct
 
   if (error) {
     return {
-      feedback: { message: '匿名入口暂时不可用，请稍后再试。', tone: 'error' },
+      feedback: { message: getCopy(copy.authFeedback.anonymousFailed, locale), tone: 'error' },
     }
   }
 
   return {
-    feedback: { message: '匿名会话已建立，正在进入工作区。', tone: 'neutral' },
+    feedback: { message: getCopy(copy.authFeedback.anonymousReady, locale), tone: 'neutral' },
   }
 }
 
-export async function startGoogleAuth(auth: LoginAuthClient, redirectTo?: string): Promise<AuthActionResult> {
+export async function startGoogleAuth(auth: LoginAuthClient, redirectTo?: string, locale: Locale = 'zh'): Promise<AuthActionResult> {
   if (isBrowserOffline()) {
     return {
-      feedback: { message: getOnlineRequiredMessage('zh'), tone: 'error' },
+      feedback: { message: getOnlineRequiredMessage(locale), tone: 'error' },
     }
   }
 
@@ -147,11 +151,11 @@ export async function startGoogleAuth(auth: LoginAuthClient, redirectTo?: string
 
   if (error) {
     return {
-      feedback: { message: 'Google 登录暂时不可用，请稍后再试。', tone: 'error' },
+      feedback: { message: getCopy(copy.authFeedback.googleFailed, locale), tone: 'error' },
     }
   }
 
   return {
-    feedback: { message: '正在前往 Google 登录。', tone: 'neutral' },
+    feedback: { message: getCopy(copy.authFeedback.googlePending, locale), tone: 'neutral' },
   }
 }

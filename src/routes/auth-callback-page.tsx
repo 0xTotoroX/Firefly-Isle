@@ -8,12 +8,16 @@ import { Navigate } from 'react-router-dom'
 
 import { useAsyncResource } from '@/lib/async-resource'
 import { useAuth } from '@/lib/auth'
+import { copy, getCopy } from '@/lib/copy'
+import { useLocale } from '@/lib/locale'
 import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'
 
 import { restoreAuthCallbackSession, type AuthCallbackResult } from './auth-callback-page.logic'
 import { LoginPage } from './login-page'
 
 function AuthCallbackStatus() {
+  const { locale } = useLocale()
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--ff-surface-base)] px-6 text-[var(--ff-text-primary)]">
       <div className="border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-8 py-6 text-center">
@@ -21,7 +25,7 @@ function AuthCallbackStatus() {
           Auth callback
         </div>
         <div className="mt-3 font-[var(--ff-font-display)] text-2xl font-black tracking-tight">
-          正在恢复登录状态
+          {getCopy(copy.authFeedback.callbackRestoring, locale)}
         </div>
       </div>
     </div>
@@ -30,6 +34,7 @@ function AuthCallbackStatus() {
 
 export function AuthCallbackPage() {
   const { isAuthenticated } = useAuth()
+  const { locale } = useLocale()
   const resource = useAsyncResource(
     () =>
       isAuthenticated || !hasSupabaseEnv
@@ -43,11 +48,11 @@ export function AuthCallbackPage() {
   }
 
   if (!hasSupabaseEnv) {
-    return <LoginPage authError="缺少 Supabase 环境变量，当前无法完成 Google 登录。" />
+    return <LoginPage authError={getCopy(copy.authFeedback.callbackMissingEnv, locale)} />
   }
 
   if (resource.error) {
-    return <LoginPage authError="Google 登录回调暂时不可用，请稍后再试。" />
+    return <LoginPage authError={getCopy(copy.authFeedback.callbackUnavailable, locale)} />
   }
 
   if (resource.data?.status === 'anonymous') {

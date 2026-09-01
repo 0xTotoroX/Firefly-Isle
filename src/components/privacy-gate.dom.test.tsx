@@ -12,6 +12,8 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { copy, getCopy } from '@/lib/copy'
+import { LocaleProvider } from '@/lib/locale'
 import { PRIVACY_ACCEPTED_STORAGE_KEY } from '@/lib/privacy'
 
 import { PrivacyGate } from './privacy-gate'
@@ -48,18 +50,20 @@ vi.mock('@/lib/theme', async () => {
 
 function renderGate(initialPath = '/app') {
   return render(
-    <MemoryRouter initialEntries={[initialPath]}>
-      <Routes>
-        <Route
-          path="*"
-          element={
-            <PrivacyGate>
-              <p data-testid="app-content">workspace</p>
-            </PrivacyGate>
-          }
-        />
-      </Routes>
-    </MemoryRouter>,
+    <LocaleProvider>
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route
+            path="*"
+            element={
+              <PrivacyGate>
+                <p data-testid="app-content">workspace</p>
+              </PrivacyGate>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    </LocaleProvider>,
   )
 }
 
@@ -72,7 +76,7 @@ describe('PrivacyGate', () => {
     renderGate()
 
     expect(screen.getByTestId('app-content')).toBeVisible()
-    expect(screen.getByText('我已了解并继续')).toBeVisible()
+    expect(screen.getByRole('button', { name: getCopy(copy.privacyGate.darkAccept, 'zh') })).toBeVisible()
   })
 
   it('persists consent to localStorage and removes the overlay on accept', async () => {
@@ -81,21 +85,21 @@ describe('PrivacyGate', () => {
     await userEvent.click(screen.getByRole('button', { name: '我已了解并继续' }))
 
     expect(localStorage.getItem(PRIVACY_ACCEPTED_STORAGE_KEY)).toBe('true')
-    expect(screen.queryByText('我已了解并继续')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: getCopy(copy.privacyGate.darkAccept, 'zh') })).not.toBeInTheDocument()
   })
 
   it('bypasses the gate on the standalone privacy page', () => {
     renderGate('/privacy')
 
-    expect(screen.queryByText('我已了解并继续')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: getCopy(copy.privacyGate.darkAccept, 'zh') })).not.toBeInTheDocument()
   })
 
   it('keeps the visitor blocked when they choose to stay', async () => {
     renderGate()
 
-    await userEvent.click(screen.getByRole('button', { name: '暂不继续' }))
+    await userEvent.click(screen.getByRole('button', { name: getCopy(copy.privacyGate.darkDecline, 'zh') }))
 
     expect(localStorage.getItem(PRIVACY_ACCEPTED_STORAGE_KEY)).toBeNull()
-    expect(screen.getByText('我已了解并继续')).toBeVisible()
+    expect(screen.getByRole('button', { name: getCopy(copy.privacyGate.darkAccept, 'zh') })).toBeVisible()
   })
 })

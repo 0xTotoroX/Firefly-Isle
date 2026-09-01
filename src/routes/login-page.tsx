@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的表单状态 hooks，依赖 @/components/login-page-view 的展示层，依赖 ./login-page.logic 的认证动作，依赖 @/lib/theme 与 @/lib/supabase 的认证边界。
+ * [INPUT]: 依赖 react 的表单状态 hooks，依赖 @/components/login-page-view 的展示层，依赖 ./login-page.logic 的认证动作，依赖 @/lib/theme、@/lib/locale、copy 字典与 @/lib/supabase 的认证边界。
  * [OUTPUT]: 对外提供 LoginPage 组件，对应 /login。
  * [POS]: routes 的登录页容器，管理邮箱登录、注册、重置密码、手机/微信占位、Google OAuth、匿名进入与主题切换，不承载大段设计复刻 markup。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -12,6 +12,8 @@ import {
   type AuthMode,
   LoginPageView,
 } from '@/components/login-page-view'
+import { copy, getCopy } from '@/lib/copy'
+import { useLocale } from '@/lib/locale'
 import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'
 import { useTheme } from '@/lib/theme'
 
@@ -24,24 +26,25 @@ import {
   type AuthActionResult,
 } from './login-page.logic'
 
-function missingEnvFeedback(mode: AuthMode): AuthFeedback {
+function missingEnvFeedback(mode: AuthMode, locale: 'zh' | 'en'): AuthFeedback {
   if (mode === 'password-reset') {
-    return { tone: 'error', message: '缺少 Supabase 环境变量，当前无法发送重置邮件。' }
+    return { tone: 'error', message: getCopy(copy.authFeedback.missingEnv, locale) }
   }
 
-  return { tone: 'error', message: '缺少 Supabase 环境变量，当前无法完成认证。' }
+  return { tone: 'error', message: getCopy(copy.authFeedback.missingEnv, locale) }
 }
 
-function unexpectedFeedback(mode: AuthMode): AuthFeedback {
+function unexpectedFeedback(mode: AuthMode, locale: 'zh' | 'en'): AuthFeedback {
   if (mode === 'password-reset') {
-    return { tone: 'error', message: '暂时无法发送重置邮件，请稍后再试。' }
+    return { tone: 'error', message: getCopy(copy.authFeedback.resetFailed, locale) }
   }
 
-  return { tone: 'error', message: '认证服务暂时不可用，请稍后再试。' }
+  return { tone: 'error', message: getCopy(copy.authFeedback.serviceUnavailable, locale) }
 }
 
 export function LoginPage({ authError = null }: { authError?: string | null }) {
   const { theme, toggleTheme } = useTheme()
+  const { locale } = useLocale()
   const [authMethod, setAuthMethod] = useState<AuthMethod>('email')
   const [mode, setMode] = useState<AuthMode>('login')
   const [email, setEmail] = useState('')
@@ -76,7 +79,7 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
     event.preventDefault()
 
     if (!hasSupabaseEnv) {
-      setFeedback(missingEnvFeedback(mode))
+      setFeedback(missingEnvFeedback(mode, locale))
       return
     }
 
@@ -88,13 +91,14 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
         await submitEmailAuth({
           auth: getAuthClient(),
           email,
+          locale,
           mode,
           password,
           passwordResetRedirectTo: getAuthRedirectTo('/login'),
         }),
       )
     } catch {
-      setFeedback(unexpectedFeedback(mode))
+      setFeedback(unexpectedFeedback(mode, locale))
     } finally {
       setIsSubmitting(false)
     }
@@ -102,7 +106,7 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
 
   const handleAnonymousLogin = async () => {
     if (!hasSupabaseEnv) {
-      setFeedback({ tone: 'error', message: '缺少 Supabase 环境变量，当前无法进入匿名模式。' })
+      setFeedback({ tone: 'error', message: getCopy(copy.authFeedback.missingEnvAnonymous, locale) })
       return
     }
 
@@ -110,9 +114,9 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
     setFeedback(null)
 
     try {
-      applyAuthResult(await startAnonymousAuth(getAuthClient()))
+      applyAuthResult(await startAnonymousAuth(getAuthClient(), locale))
     } catch {
-      setFeedback({ tone: 'error', message: '匿名入口暂时不可用，请稍后再试。' })
+      setFeedback({ tone: 'error', message: getCopy(copy.authFeedback.anonymousFailed, locale) })
     } finally {
       setIsSubmitting(false)
     }
@@ -120,7 +124,7 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
 
   const handleGoogleLogin = async () => {
     if (!hasSupabaseEnv) {
-      setFeedback({ tone: 'error', message: '缺少 Supabase 环境变量，当前无法使用 Google 登录。' })
+      setFeedback({ tone: 'error', message: getCopy(copy.authFeedback.missingEnvGoogle, locale) })
       return
     }
 
@@ -128,9 +132,9 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
     setFeedback(null)
 
     try {
-      applyAuthResult(await startGoogleAuth(getAuthClient(), getAuthRedirectTo('/auth/callback')))
+      applyAuthResult(await startGoogleAuth(getAuthClient(), getAuthRedirectTo('/auth/callback'), locale))
     } catch {
-      setFeedback({ tone: 'error', message: 'Google 登录暂时不可用，请稍后再试。' })
+      setFeedback({ tone: 'error', message: getCopy(copy.authFeedback.googleFailed, locale) })
     } finally {
       setIsSubmitting(false)
     }
