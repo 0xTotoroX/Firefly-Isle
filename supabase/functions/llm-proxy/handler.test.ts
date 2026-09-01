@@ -53,6 +53,7 @@ function createRequest(body: unknown) {
 function createFetchMock(
   upstreamResponse: Response | Error = deepSeekResponse('deepseek-v4-flash', 'ok'),
   authUser: Record<string, unknown> = { id: 'auth-user' },
+  ledgerBehavior: 'default' | 'exhausted' | 'error' = 'default',
 ) {
   const calls: FetchCall[] = []
   const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -70,6 +71,16 @@ function createFetchMock(
         headers: { 'Content-Type': 'application/json' },
         status: 200,
       })
+    }
+
+    if (url.includes('/rest/v1/usage_events') || url.includes('/rest/v1/rpc/record_usage')) {
+      if (ledgerBehavior === 'exhausted') {
+        return new Response('[]', { headers: { 'content-range': '0-0/99' }, status: 206 })
+      }
+
+      if (ledgerBehavior === 'error') {
+        throw new Error('ledger unavailable')
+      }
     }
 
     if (upstreamResponse instanceof Error) {
@@ -165,7 +176,7 @@ async function json(response: Response) {
 }
 
 function findUpstreamCall(calls: FetchCall[]) {
-  return calls.find((call) => !call.url.includes('/auth/v1/user') && !call.url.includes('/rest/v1/llm_provider_settings'))
+  return calls.find((call) => !call.url.includes('/auth/v1/user') && !call.url.includes('/rest/v1/llm_provider_settings') && !call.url.includes('/rest/v1/usage_events') && !call.url.includes('/rest/v1/rpc/record_usage'))
 }
 
 describe('llm-proxy provider handler', () => {
@@ -293,6 +304,42 @@ describe('llm-proxy provider handler', () => {
     expect(second.status).toBe(429)
     expect(secondPayload.error?.name).toBe('LLMRateLimitError')
     expect(calls.filter((call) => call.url.includes('/chat/completions'))).toHaveLength(1)
+  })
+
+  it('rejects models outside the provider allowlist before calling the upstream model', async () => {
+    const { calls, fetchMock } = createFetchMock()
+    const handler = createLlmProxyHandler({
+      env: createEnv({ LLM_MODEL_ALLOWLIST_DEEPSEEK: 'deepseek-official-' }),
+      fetch: fetchMock,
+    })
+
+    const response = await handler(createRequest({ messages, model: 'deepseek-v4-flash', provider: 'deepseek' }))
+    const payload = await json(response)
+
+    expect(response.status).toBe(400)
+    expect(payload.error?.name).toBe('LLMInvalidRequestError')
+    expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
+  })
+
+  it('enforces the durable usage ledger limit before calling the upstream model', async () => {
+    const { calls, fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'unused'), { id: 'auth-user' }, 'exhausted')
+
+    const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
+    const response = await handler(createRequest({ messages, provider: 'deepseek' }))
+    const payload = await json(response)
+
+    expect(response.status).toBe(429)
+    expect(payload.error?.name).toBe('LLMRateLimitError')
+    expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
+  })
+
+  it('fails open to the in-memory limiter when the usage ledger is unavailable', async () => {
+    const { fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'deepseek text'), { id: 'auth-user' }, 'error')
+
+    const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
+    const response = await handler(createRequest({ messages, provider: 'deepseek' }))
+
+    expect(response.status).toBe(200)
   })
 
   it('saves a preset user key and model encrypted, reads them for routing, and never returns plaintext', async () => {

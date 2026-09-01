@@ -86,13 +86,13 @@ describe('medical-document-ocr handler', () => {
     const handler = createMedicalDocumentOcrHandler({ env: createEnv(), fetch: fetchMock })
     const response = await handler(createRequest({ dataBase64: 'ZmlsZQ==', fileName, mimeType }))
     const payload = await json(response)
-    const geminiBody = calls[1].body as { contents: Array<{ parts: Array<Record<string, unknown>> }> }
+    const geminiCall = calls.find((call) => call.url.includes('generativelanguage.googleapis.com'))!
+    const geminiBody = geminiCall.body as { contents: Array<{ parts: Array<Record<string, unknown>> }> }
 
     expect(response.status).toBe(200)
     expect(payload).toEqual({ model: 'gemini-2.5-flash', text: '病历 OCR 文本' })
-    expect(calls[1].url).toContain('generativelanguage.googleapis.com')
-    expect(calls[1].url).not.toContain('gemini-secret')
-    expect(calls[1].headers?.get('x-goog-api-key')).toBe('gemini-secret')
+    expect(geminiCall.url).not.toContain('gemini-secret')
+    expect(geminiCall.headers?.get('x-goog-api-key')).toBe('gemini-secret')
     expect(geminiBody.contents[0].parts[0]).toMatchObject({
       inline_data: {
         data: 'ZmlsZQ==',
@@ -112,7 +112,7 @@ describe('medical-document-ocr handler', () => {
 
     expect(response.status).toBe(400)
     expect(payload.error?.name).toBe('OCRInvalidRequestError')
-    expect(calls).toHaveLength(1)
+    expect(calls.some((call) => call.url.includes('generativelanguage.googleapis.com'))).toBe(false)
   })
 
   it('fails closed when GEMINI_API_KEY is missing without leaking secrets', async () => {

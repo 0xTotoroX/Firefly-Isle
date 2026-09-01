@@ -4,6 +4,11 @@
  * [POS]: supabase/functions/medical-document-ocr 的可测试核心，把鉴权、文件校验、Gemini OCR 请求与错误映射收敛在一处。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { countUsageInWindow, recordUsageEvent } from '../_shared/usage-limits.ts'
+
+const DEFAULT_OCR_RATE_LIMIT_PER_WINDOW = 20
+const DEFAULT_OCR_RATE_LIMIT_WINDOW_MS = 60_000
+
 const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
@@ -36,6 +41,7 @@ type ErrorCode =
   | 'AuthError'
   | 'ConfigurationError'
   | 'OCRInvalidRequestError'
+  | 'OCRRateLimitError'
   | 'OCRInvalidResponseError'
   | 'OCRTimeoutError'
   | 'OCRUpstreamError'
@@ -43,6 +49,7 @@ type ErrorCode =
 type RuntimeConfig = {
   geminiApiKey: string
   geminiModel: string
+  ocrRateLimitPerWindow: number
   supabaseAnonKey: string
   supabaseUrl: string
 }
@@ -61,12 +68,18 @@ type SupabaseAuthUser = {
   id?: string
 }
 
+function parsePositiveInteger(value: string, fallback: number) {
+  const parsed = Number.parseInt(value, 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
+}
+
 function readConfig(env: RuntimeEnv): RuntimeConfig {
   const get = (name: string) => env.get(name)?.trim() ?? ''
 
   return {
     geminiApiKey: get('GEMINI_API_KEY'),
     geminiModel: get('GEMINI_OCR_MODEL') || get('DEFAULT_GEMINI_MODEL') || DEFAULT_GEMINI_MODEL,
+    ocrRateLimitPerWindow: parsePositiveInteger(get('OCR_RATE_LIMIT_PER_WINDOW'), DEFAULT_OCR_RATE_LIMIT_PER_WINDOW),
     supabaseAnonKey: get('SUPABASE_ANON_KEY'),
     supabaseUrl: get('SUPABASE_URL'),
   }
@@ -230,6 +243,59 @@ async function callGemini(body: RequestBody, config: RuntimeConfig, runtimeFetch
   }
 }
 
+const ocrRateBuckets = new Map<string, { count: number; windowStartedAt: number }>()
+
+function checkMemoryRateLimit(bucketKey: string, limit: number, windowMs: number, now = Date.now()) {
+  const current = ocrRateBuckets.get(bucketKey)
+
+  if (!current || now - current.windowStartedAt >= windowMs) {
+    ocrRateBuckets.set(bucketKey, { count: 1, windowStartedAt: now })
+    return true
+  }
+
+  if (current.count >= limit) {
+    return false
+  }
+
+  current.count += 1
+  return true
+}
+
+async function enforceOcrRateLimit(
+  config: RuntimeConfig,
+  token: string,
+  user: SupabaseAuthUser,
+  request: Request,
+  runtimeFetch: RuntimeFetch,
+) {
+  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+  const ip = request.headers.get('cf-connecting-ip')?.trim() || forwardedFor || 'unknown'
+  const memoryOk = checkMemoryRateLimit(`${user.id}:${ip}`, config.ocrRateLimitPerWindow, DEFAULT_OCR_RATE_LIMIT_WINDOW_MS)
+
+  if (!memoryOk) {
+    return false
+  }
+
+  if (!config.supabaseUrl || !config.supabaseAnonKey || !user.id) {
+    return true
+  }
+
+  const ledgerConfig = {
+    supabaseAnonKey: config.supabaseAnonKey,
+    supabaseUrl: config.supabaseUrl,
+    userToken: token,
+  }
+  const used = await countUsageInWindow(ledgerConfig, 'ocr_document', user.id, DEFAULT_OCR_RATE_LIMIT_WINDOW_MS, runtimeFetch)
+
+  if (used !== null && used >= config.ocrRateLimitPerWindow) {
+    return false
+  }
+
+  await recordUsageEvent(ledgerConfig, 'ocr_document', runtimeFetch)
+
+  return true
+}
+
 export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
   const runtimeFetch = options.fetch ?? fetch
   const timeoutMs = options.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS
@@ -256,6 +322,10 @@ export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
 
       if (!isSupabaseAuthUser(user)) {
         return errorResponse(401, 'AuthError', 'Invalid Supabase session.')
+      }
+
+      if (!(await enforceOcrRateLimit(config, token, user, request, runtimeFetch))) {
+        return errorResponse(429, 'OCRRateLimitError', 'OCR request rate limit exceeded.')
       }
     } catch {
       return errorResponse(500, 'ConfigurationError', 'Supabase auth verification failed.')

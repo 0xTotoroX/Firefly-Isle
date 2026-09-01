@@ -24,6 +24,12 @@ import {
   type ProviderRequest,
   type ResponseFormat,
 } from './provider-adapters.ts'
+import {
+  checkUserRateLimit,
+  enforceDurableRateLimit,
+  isModelAllowed,
+  parseModelAllowlist,
+} from './rate-limits.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -83,6 +89,7 @@ type RuntimeConfig = {
   glmBaseUrl: string
   kimiApiKey: string
   kimiBaseUrl: string
+  modelAllowlist: Record<ChatProvider, string[]>
   openaiApiKey: string
   openaiBaseUrl: string
   providerSettingsEncryptionKey: string
@@ -126,13 +133,6 @@ type ValidProviderSettingBody = {
   provider: ChatProvider
 }
 
-type RateLimitBucket = {
-  count: number
-  windowStartedAt: number
-}
-
-const rateLimitBuckets = new Map<string, RateLimitBucket>()
-
 function parsePositiveInteger(value: string, fallback: number) {
   const parsed = Number.parseInt(value, 10)
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
@@ -161,6 +161,15 @@ function readConfig(env: RuntimeEnv): RuntimeConfig {
     glmBaseUrl: get('GLM_BASE_URL') || GLM_BASE_URL,
     kimiApiKey: get('KIMI_API_KEY'),
     kimiBaseUrl: get('KIMI_BASE_URL') || KIMI_BASE_URL,
+    modelAllowlist: {
+      claude: parseModelAllowlist('claude', get('LLM_MODEL_ALLOWLIST_CLAUDE')),
+      custom_openai: parseModelAllowlist('custom_openai', get('LLM_MODEL_ALLOWLIST_CUSTOM_OPENAI')),
+      deepseek: parseModelAllowlist('deepseek', get('LLM_MODEL_ALLOWLIST_DEEPSEEK')),
+      gemini: parseModelAllowlist('gemini', get('LLM_MODEL_ALLOWLIST_GEMINI')),
+      glm: parseModelAllowlist('glm', get('LLM_MODEL_ALLOWLIST_GLM')),
+      kimi: parseModelAllowlist('kimi', get('LLM_MODEL_ALLOWLIST_KIMI')),
+      openai: parseModelAllowlist('openai', get('LLM_MODEL_ALLOWLIST_OPENAI')),
+    },
     openaiApiKey: get('OPENAI_API_KEY'),
     openaiBaseUrl: get('OPENAI_BASE_URL') || OPENAI_BASE_URL,
     providerSettingsEncryptionKey: get('LLM_PROVIDER_SETTINGS_ENCRYPTION_KEY'),
@@ -225,38 +234,6 @@ async function verifyJwt(token: string, config: RuntimeConfig, runtimeFetch: Run
 function isSupabaseAuthUser(value: unknown): value is SupabaseAuthUser {
   const id = (value as SupabaseAuthUser | null | undefined)?.id
   return typeof id === 'string' && id.trim().length > 0
-}
-
-function getRequestIp(request: Request) {
-  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-  return request.headers.get('cf-connecting-ip')?.trim() || forwardedFor || 'unknown'
-}
-
-function checkRateLimit(bucketKey: string, limit: number, windowMs: number, now = Date.now()) {
-  const current = rateLimitBuckets.get(bucketKey)
-
-  if (!current || now - current.windowStartedAt >= windowMs) {
-    rateLimitBuckets.set(bucketKey, {
-      count: 1,
-      windowStartedAt: now,
-    })
-    return true
-  }
-
-  if (current.count >= limit) {
-    return false
-  }
-
-  current.count += 1
-  return true
-}
-
-function checkUserRateLimit(user: SupabaseAuthUser, request: Request, config: RuntimeConfig) {
-  const isAnonymous = user.is_anonymous === true
-  const limit = isAnonymous ? config.anonymousRateLimitPerWindow : config.authenticatedRateLimitPerWindow
-  const bucketKey = `${isAnonymous ? 'anonymous' : 'authenticated'}:${user.id}:${getRequestIp(request)}`
-
-  return checkRateLimit(bucketKey, limit, config.rateLimitWindowMs)
 }
 
 function validateMessages(messages: Message[] | undefined): messages is Message[] {
@@ -677,7 +654,9 @@ export function createLlmProxyHandler(options: HandlerOptions) {
 
       user = verifiedUser
 
-      if (!checkUserRateLimit(user, request, config)) {
+      const memoryLimit = user.is_anonymous === true ? config.anonymousRateLimitPerWindow : config.authenticatedRateLimitPerWindow
+
+      if (!checkUserRateLimit(user, request, memoryLimit, config.rateLimitWindowMs)) {
         return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
       }
     } catch {
@@ -757,6 +736,14 @@ export function createLlmProxyHandler(options: HandlerOptions) {
 
     if (isErrorResponse(providerOptions)) {
       return jsonResponse(providerOptions.error.name === 'ConfigurationError' ? 500 : 400, providerOptions)
+    }
+
+    if (!isModelAllowed(provider, providerOptions.model, config.modelAllowlist)) {
+      return errorResponse(400, 'LLMInvalidRequestError', `Model '${providerOptions.model}' is not allowed for provider '${provider}'.`)
+    }
+
+    if (!(await enforceDurableRateLimit(config, token, user, 'llm_chat', runtimeFetch))) {
+      return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
     }
 
     const providerRequest = buildProviderRequest(provider, body.messages, {
