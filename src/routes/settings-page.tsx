@@ -13,6 +13,7 @@ import { useAuth } from '@/lib/auth'
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale, type Locale } from '@/lib/locale'
 import { getOnlineRequiredMessage } from '@/lib/network-status'
+import { accentPresets } from '@/lib/accent'
 import { useTheme, type Theme } from '@/lib/theme'
 import { shellWideContentClass, sidebarOffsetClass, topBarOffsetClass } from '@/lib/theme/tokens'
 import { getUserProfile, ProfileSettingsError, saveUserProfile, deleteOwnAccount } from '@/lib/profile-settings'
@@ -40,7 +41,7 @@ type SettingsPageProps = {
 export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: SettingsPageProps) {
   const { user } = useAuth()
   const { locale, setLocale } = useLocale()
-  const { theme, setTheme } = useTheme()
+  const { accent, setAccent, theme, setTheme } = useTheme()
   const dark = theme === 'dark'
   const resource = useAsyncResource(() => getUserProfile(), [])
   const [displayName, setDisplayName] = useState('')
@@ -237,6 +238,23 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
                     >
                       {getCopy(copy.themeToggle.light, locale)}
                     </button>
+                  </div>
+                </SettingsField>
+                <SettingsField label={getCopy(copy.settings.accentLabel, locale)}>
+                  <div className="flex flex-wrap gap-2">
+                    {accentPresets.map((preset) => (
+                      <button
+                        aria-pressed={accent.toUpperCase() === preset.hex}
+                        className={`${SETTINGS_OPTION_CLASS} gap-2`}
+                        data-testid={`settings-accent-${preset.id}`}
+                        key={preset.id}
+                        onClick={() => setAccent(preset.hex)}
+                        type="button"
+                      >
+                        <span className="inline-block h-3 w-3 rounded-full border border-[var(--ff-border-default)]" style={{ background: preset.hex }} />
+                        {preset.label[locale]}
+                      </button>
+                    ))}
                   </div>
                 </SettingsField>
 

@@ -42,6 +42,8 @@ vi.mock('@/lib/theme', async () => {
   return {
     ...actual,
     useTheme: () => ({
+      accent: '#E85D2A',
+      setAccent: vi.fn(),
       theme: 'dark',
       toggleTheme: vi.fn(),
     }),

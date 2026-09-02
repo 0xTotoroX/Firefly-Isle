@@ -22,8 +22,15 @@
     <script>
       try {
         const theme = window.localStorage.getItem('firefly-theme') === 'light' ? 'light' : 'dark'
+        const accent = window.localStorage.getItem('firefly-accent') || '#E85D2A'
         document.documentElement.classList.toggle('dark', theme === 'dark')
         document.documentElement.dataset.theme = theme
+        if (/^#[0-9A-Fa-f]{6}$/.test(accent)) {
+          document.documentElement.style.setProperty('--ff-accent', accent)
+          document.documentElement.style.setProperty('--ff-accent-primary', accent)
+          document.documentElement.style.setProperty('--ff-accent-warning', accent)
+          document.documentElement.dataset.accent = accent
+        }
       } catch {
         document.documentElement.classList.add('dark')
         document.documentElement.dataset.theme = 'dark'

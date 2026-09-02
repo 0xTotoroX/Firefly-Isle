@@ -46,7 +46,7 @@ afterEach(() => {
 
 
 vi.mock('@/lib/theme', () => ({
-  useTheme: () => ({ theme: currentTheme }),
+  useTheme: () => ({ accent: '#E85D2A', setAccent: () => undefined, theme: currentTheme, setTheme: () => undefined, toggleTheme: () => undefined }),
 }))
 
 vi.mock('@/lib/auth', async () => {

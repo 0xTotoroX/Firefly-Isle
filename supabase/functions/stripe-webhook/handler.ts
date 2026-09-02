@@ -24,10 +24,16 @@ export type ErrorCode = 'BILLING_DISABLED' | 'InvalidRequestError' | 'Configurat
 export type StripeWebhookEvent = {
   data?: {
     object?: {
+      amount_total?: number | null
+      client_reference_id?: string | null
+      currency?: string | null
       current_period_end?: number | null
       customer?: string | null
       id?: string
-      metadata?: { user_id?: string } | null
+      metadata?: { amount_cents?: string; user_id?: string } | null
+      mode?: string | null
+      payment_intent?: string | null
+      payment_status?: string | null
       status?: string
     }
   }
@@ -94,33 +100,29 @@ export async function verifyStripeSignature(rawBody: string, signatureHeader: st
   return signatures.some((signature) => timingSafeEqual(signature, expected))
 }
 
-const SUPPORTED_STATUSES = new Set(['active', 'trialing', 'past_due', 'canceled', 'incomplete'])
-
-function mapSubscriptionRow(event: StripeWebhookEvent): Record<string, unknown> | null {
+function mapDonationRow(event: StripeWebhookEvent): Record<string, unknown> | null {
   const object = event.data?.object
-  const userId = object?.metadata?.user_id
-  const subscriptionId = object?.id
-  const status = object?.status
+  const sessionId = object?.id
+  const userId = object?.client_reference_id || object?.metadata?.user_id
+  const amountCents = object?.amount_total ?? Number(object?.metadata?.amount_cents)
 
-  if (!userId || !subscriptionId || !status || !SUPPORTED_STATUSES.has(status)) {
+  if (!sessionId || !Number.isInteger(amountCents) || amountCents <= 0) {
     return null
   }
 
-  const periodEnd = object?.current_period_end
-
   return {
-    current_period_end: typeof periodEnd === 'number' ? new Date(periodEnd * 1000).toISOString() : null,
-    plan_id: 'pro',
-    status,
-    stripe_customer_id: object?.customer ?? null,
-    stripe_subscription_id: subscriptionId,
-    user_id: userId,
+    amount_cents: amountCents,
+    currency: object?.currency ?? 'usd',
+    status: object?.payment_status === 'paid' || object?.status === 'complete' ? 'paid' : 'pending',
+    stripe_checkout_session_id: sessionId,
+    stripe_payment_intent_id: object?.payment_intent ?? null,
+    user_id: userId ?? null,
   }
 }
 
-async function upsertSubscription(row: Record<string, unknown>, config: { serviceKey: string; supabaseUrl: string }, runtimeFetch: RuntimeFetch): Promise<boolean> {
+async function upsertDonation(row: Record<string, unknown>, config: { serviceKey: string; supabaseUrl: string }, runtimeFetch: RuntimeFetch): Promise<boolean> {
   try {
-    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/subscriptions?on_conflict=user_id`, {
+    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/donations?on_conflict=stripe_checkout_session_id`, {
       body: JSON.stringify(row),
       headers: {
         Authorization: `Bearer ${config.serviceKey}`,
@@ -173,17 +175,17 @@ export function createStripeWebhookHandler(options: { env: RuntimeEnv; fetch?: R
       return jsonResponse(400, errorBody('InvalidRequestError', 'Request body must be valid JSON.'))
     }
 
-    if (event.type !== 'customer.subscription.created' && event.type !== 'customer.subscription.updated' && event.type !== 'customer.subscription.deleted') {
+    if (event.type !== 'checkout.session.completed' && event.type !== 'checkout.session.async_payment_succeeded') {
       return jsonResponse(200, { received: true, ignored: event.type ?? null })
     }
 
-    const row = mapSubscriptionRow(event)
+    const row = mapDonationRow(event)
 
     if (!row) {
-      return jsonResponse(400, errorBody('UnhandledEventError', 'Subscription event is missing a user id, subscription id or supported status.'))
+      return jsonResponse(400, errorBody('UnhandledEventError', 'Checkout session is missing an amount or session id.'))
     }
 
-    const persisted = await upsertSubscription(row, { serviceKey, supabaseUrl }, runtimeFetch)
+    const persisted = await upsertDonation(row, { serviceKey, supabaseUrl }, runtimeFetch)
 
     if (!persisted) {
       return jsonResponse(502, errorBody('ConfigurationError', 'Could not persist the subscription change.'))

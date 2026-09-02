@@ -14,13 +14,17 @@ import {
   useState,
 } from 'react'
 
+import { ACCENT_STORAGE_KEY, applyAccent, defaultAccentHex, normalizeAccentHex } from '@/lib/accent'
+
 export type Theme = 'dark' | 'light'
 
 export const THEME_STORAGE_KEY = 'firefly-theme'
 
 type ThemeContextValue = {
-  theme: Theme
+  accent: string
+  setAccent: (accent: string) => void
   setTheme: (theme: Theme) => void
+  theme: Theme
   toggleTheme: () => void
 }
 
@@ -41,16 +45,31 @@ function applyTheme(theme: Theme) {
   root.style.colorScheme = theme
 }
 
+function readStoredAccent() {
+  if (typeof window === 'undefined') {
+    return defaultAccentHex
+  }
+
+  return normalizeAccentHex(window.localStorage.getItem(ACCENT_STORAGE_KEY))
+}
+
 export function ThemeProvider({ children }: PropsWithChildren) {
   const [theme, setThemeState] = useState<Theme>(readStoredTheme)
+  const [accent, setAccentState] = useState(readStoredAccent)
 
   useEffect(() => {
     applyTheme(theme)
+    applyAccent(accent, theme)
     window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-  }, [theme])
+    window.localStorage.setItem(ACCENT_STORAGE_KEY, accent)
+  }, [accent, theme])
 
   const setTheme = useCallback((nextTheme: Theme) => {
     setThemeState(nextTheme)
+  }, [])
+
+  const setAccent = useCallback((nextAccent: string) => {
+    setAccentState(normalizeAccentHex(nextAccent))
   }, [])
 
   const toggleTheme = useCallback(() => {
@@ -58,8 +77,8 @@ export function ThemeProvider({ children }: PropsWithChildren) {
   }, [])
 
   const value = useMemo(
-    () => ({ theme, setTheme, toggleTheme }),
-    [setTheme, theme, toggleTheme],
+    () => ({ accent, setAccent, setTheme, theme, toggleTheme }),
+    [accent, setAccent, setTheme, theme, toggleTheme],
   )
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>

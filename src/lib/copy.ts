@@ -121,6 +121,7 @@ export const copy = {
     displayNamePlaceholder: text('输入显示名称', 'Enter a display name'),
     localeLabel: text('界面语言', 'Interface language'),
     themeLabel: text('外观主题', 'Appearance'),
+    accentLabel: text('强调色', 'Accent'),
     saveButton: text('保存资料', 'Save Profile'),
     savingButton: text('保存中…', 'Saving…'),
     savedFeedback: text('设置已保存', 'Settings saved'),

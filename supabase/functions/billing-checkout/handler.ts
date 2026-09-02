@@ -84,13 +84,12 @@ export function createBillingCheckoutHandler(options: { env: RuntimeEnv; fetch?:
 
     const get = (name: string) => options.env.get(name)?.trim() ?? ''
     const stripeSecretKey = get('STRIPE_SECRET_KEY')
-    const stripePriceId = get('STRIPE_PRICE_ID')
     const supabaseAnonKey = get('SUPABASE_ANON_KEY')
     const supabaseUrl = get('SUPABASE_URL')
     const successUrl = get('STRIPE_CHECKOUT_SUCCESS_URL')
     const cancelUrl = get('STRIPE_CHECKOUT_CANCEL_URL')
 
-    if (!stripeSecretKey || !stripePriceId || !successUrl || !cancelUrl) {
+    if (!stripeSecretKey || !successUrl || !cancelUrl) {
       return jsonResponse(503, errorBody('BILLING_DISABLED', 'Billing is not configured for this deployment.'))
     }
 
@@ -110,12 +109,29 @@ export function createBillingCheckoutHandler(options: { env: RuntimeEnv; fetch?:
       return jsonResponse(401, errorBody('AuthError', 'Invalid Supabase session.'))
     }
 
+    let amountCents = 1500
+
+    try {
+      const payload = (await request.json()) as { amountCents?: number }
+      const requested = Number(payload.amountCents)
+
+      if (Number.isInteger(requested) && requested >= 100 && requested <= 100_000) {
+        amountCents = requested
+      }
+    } catch {
+      amountCents = 1500
+    }
+
     const body = new URLSearchParams({
-      'line_items[0][price]': stripePriceId,
+      'line_items[0][price_data][currency]': 'usd',
+      'line_items[0][price_data][product_data][name]': 'Firefly Isle donation',
+      'line_items[0][price_data][unit_amount]': String(amountCents),
       'line_items[0][quantity]': '1',
-      mode: 'subscription',
+      mode: 'payment',
+      submit_type: 'donate',
       client_reference_id: user.id,
-      'subscription_data[metadata][user_id]': user.id,
+      'metadata[user_id]': user.id,
+      'metadata[amount_cents]': String(amountCents),
       success_url: successUrl,
       cancel_url: cancelUrl,
     })

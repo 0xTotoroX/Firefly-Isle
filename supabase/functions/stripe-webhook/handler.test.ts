@@ -47,18 +47,22 @@ function signedRequest(rawBody: string, secret = WEBHOOK_SECRET, timestampOffset
   })
 }
 
-const subscriptionEvent = {
+const checkoutEvent = {
   data: {
     object: {
-      current_period_end: 1790000000,
-      customer: 'cus_123',
-      id: 'sub_123',
-      metadata: { user_id: 'auth-user' },
-      status: 'active',
+      amount_total: 1500,
+      client_reference_id: 'auth-user',
+      currency: 'usd',
+      id: 'cs_123',
+      metadata: { amount_cents: '1500', user_id: 'auth-user' },
+      mode: 'payment',
+      payment_intent: 'pi_123',
+      payment_status: 'paid',
+      status: 'complete',
     },
   },
   id: 'evt_1',
-  type: 'customer.subscription.updated',
+  type: 'checkout.session.completed',
 }
 
 describe('stripe-webhook handler', () => {
@@ -66,7 +70,7 @@ describe('stripe-webhook handler', () => {
     const { fetchMock } = createFetchMock()
     const handler = createStripeWebhookHandler({ env: createEnv({ STRIPE_WEBHOOK_SECRET: undefined }), fetch: fetchMock })
 
-    const response = await handler(signedRequest(JSON.stringify(subscriptionEvent)))
+    const response = await handler(signedRequest(JSON.stringify(checkoutEvent)))
 
     expect(response.status).toBe(503)
   })
@@ -75,30 +79,30 @@ describe('stripe-webhook handler', () => {
     const { fetchMock } = createFetchMock()
     const handler = createStripeWebhookHandler({ env: createEnv(), fetch: fetchMock })
 
-    const badSignature = await handler(signedRequest(JSON.stringify(subscriptionEvent), 'whsec_wrong'))
-    const stale = await handler(signedRequest(JSON.stringify(subscriptionEvent), WEBHOOK_SECRET, -3600))
+    const badSignature = await handler(signedRequest(JSON.stringify(checkoutEvent), 'whsec_wrong'))
+    const stale = await handler(signedRequest(JSON.stringify(checkoutEvent), WEBHOOK_SECRET, -3600))
 
     expect(badSignature.status).toBe(400)
     expect(stale.status).toBe(400)
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('persists a supported subscription event as an idempotent upsert', async () => {
+  it('persists a completed checkout as an idempotent donation upsert', async () => {
     const { calls, fetchMock } = createFetchMock()
     const handler = createStripeWebhookHandler({ env: createEnv(), fetch: fetchMock })
 
-    const response = await handler(signedRequest(JSON.stringify(subscriptionEvent)))
+    const response = await handler(signedRequest(JSON.stringify(checkoutEvent)))
     const payload = await response.json() as { received: boolean }
 
     expect(response.status).toBe(200)
     expect(payload.received).toBe(true)
 
-    const upsert = calls.find((call) => call.url.includes('/rest/v1/subscriptions'))
+    const upsert = calls.find((call) => call.url.includes('/rest/v1/donations'))
 
-    expect(upsert?.url).toContain('on_conflict=user_id')
+    expect(upsert?.url).toContain('on_conflict=stripe_checkout_session_id')
     expect(upsert?.body).toContain('"user_id":"auth-user"')
-    expect(upsert?.body).toContain('"stripe_subscription_id":"sub_123"')
-    expect(upsert?.body).toContain('"status":"active"')
+    expect(upsert?.body).toContain('"amount_cents":1500')
+    expect(upsert?.body).toContain('"status":"paid"')
     expect(upsert?.body).not.toContain('service-key')
   })
 
@@ -111,6 +115,6 @@ describe('stripe-webhook handler', () => {
 
     expect(response.status).toBe(200)
     expect(payload.ignored).toBe('invoice.paid')
-    expect(calls.some((call) => call.url.includes('/rest/v1/subscriptions'))).toBe(false)
+    expect(calls.some((call) => call.url.includes('/rest/v1/donations'))).toBe(false)
   })
 })

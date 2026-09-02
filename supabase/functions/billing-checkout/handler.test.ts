@@ -12,7 +12,6 @@ function createEnv(overrides: Record<string, string | undefined> = {}): RuntimeE
   const values: Record<string, string | undefined> = {
     STRIPE_CHECKOUT_CANCEL_URL: 'https://firefly.test/cancel',
     STRIPE_CHECKOUT_SUCCESS_URL: 'https://firefly.test/success',
-    STRIPE_PRICE_ID: 'price_123',
     STRIPE_SECRET_KEY: 'sk_test_key',
     SUPABASE_ANON_KEY: 'anon-key',
     SUPABASE_URL: 'https://project.supabase.co',
@@ -77,7 +76,7 @@ describe('billing-checkout handler', () => {
     expect(response.status).toBe(401)
   })
 
-  it('creates a checkout session bound to the user id and subscription metadata', async () => {
+  it('creates a one-time donation checkout session bound to the user id', async () => {
     const { calls, fetchMock } = createFetchMock(new Response(JSON.stringify({ id: 'cs_1', url: 'https://checkout.stripe.test/session' }), { status: 200 }))
     const handler = createBillingCheckoutHandler({ env: createEnv(), fetch: fetchMock })
 
@@ -90,8 +89,11 @@ describe('billing-checkout handler', () => {
     const stripeCall = calls.find((call) => call.url.includes('api.stripe.com'))
     const params = new URLSearchParams(stripeCall?.body ?? '')
 
+    expect(params.get('mode')).toBe('payment')
+    expect(params.get('submit_type')).toBe('donate')
     expect(params.get('client_reference_id')).toBe('auth-user')
-    expect(params.get('subscription_data[metadata][user_id]')).toBe('auth-user')
+    expect(params.get('metadata[user_id]')).toBe('auth-user')
+    expect(params.get('line_items[0][price_data][unit_amount]')).toBe('1500')
     expect(params.get('customer_email')).toBe('rider@firefly.test')
     expect(stripeCall?.body).not.toContain('sk_test_key')
   })
