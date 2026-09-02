@@ -29,6 +29,9 @@ export type DurableLimitRuntimeConfig = {
 
 const rateLimitBuckets = new Map<string, RateLimitBucket>()
 
+// plan 月度配额用 30 天滚动窗口近似（usage_events 按时间过滤）。
+export const PLAN_QUOTA_WINDOW_MS = 30 * 24 * 60 * 60 * 1000
+
 // 各 preset provider 默认只放行其模型名前缀；custom_openai 由用户自带端点，不做限制。
 // 运维可用 LLM_MODEL_ALLOWLIST_<PROVIDER>（逗号分隔前缀）覆盖，`*` 表示该 provider 不限制。
 const DEFAULT_MODEL_ALLOWLIST: Record<ChatProvider, string[]> = {
@@ -89,15 +92,67 @@ export function checkUserRateLimit(user: RateLimitUser, request: Request, limit:
   return checkMemoryRateLimit(bucketKey, limit, windowMs)
 }
 
+export type PlanQuota = {
+  aiChatQuota: number | null
+  planId: 'free' | 'pro'
+}
+
+// 读取用户订阅的 plan 配额；subscriptions 未迁移或无订阅行时按 free 档处理，
+// 台账读取失败时返回 null（fail-open 到窗口限流，不阻塞推理）。
+export async function resolvePlanQuota(
+  config: DurableLimitRuntimeConfig,
+  token: string,
+  user: RateLimitUser,
+  runtimeFetch: UsageRuntimeFetch,
+): Promise<PlanQuota | null> {
+  if (!config.supabaseUrl || !config.supabaseAnonKey || !user.id) {
+    return null
+  }
+
+  try {
+    const query = [
+      'select=plan_id,plans(ai_chat_quota)',
+      `user_id=eq.${encodeURIComponent(user.id)}`,
+      'limit=1',
+    ].join('&')
+    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/subscriptions?${query}`, {
+      headers: {
+        apikey: config.supabaseAnonKey,
+        Authorization: `Bearer ${token}`,
+      },
+    })
+
+    if (!response.ok) {
+      return null
+    }
+
+    const rows = (await response.json()) as Array<{ plan_id: string; plans?: { ai_chat_quota: number } | Array<{ ai_chat_quota: number }> | null }>
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+      return { aiChatQuota: null, planId: 'free' }
+    }
+
+    const row = rows[0]
+    const planRow = Array.isArray(row.plans) ? row.plans[0] : row.plans
+    const quota = typeof planRow?.ai_chat_quota === 'number' ? planRow.ai_chat_quota : null
+
+    return { aiChatQuota: quota, planId: row.plan_id === 'pro' ? 'pro' : 'free' }
+  } catch {
+    return null
+  }
+}
+
 // 台账层跨 isolate 持久计数；台账查询失败时 fail-open，仅退回进程内限流。
+// quota 为 plan 月度配额（30 天滚动窗口近似）；null 表示未配置，仅执行窗口限流。
 export async function enforceDurableRateLimit(
   config: DurableLimitRuntimeConfig,
   token: string,
   user: RateLimitUser,
   kind: UsageEventKind,
   runtimeFetch: UsageRuntimeFetch,
+  options: { planQuota?: PlanQuota | null } = {},
 ) {
-  const limit = user.is_anonymous === true ? config.anonymousRateLimitPerWindow : config.authenticatedRateLimitPerWindow
+  const windowLimit = user.is_anonymous === true ? config.anonymousRateLimitPerWindow : config.authenticatedRateLimitPerWindow
 
   if (!config.supabaseUrl || !config.supabaseAnonKey || !user.id) {
     return true
@@ -109,10 +164,17 @@ export async function enforceDurableRateLimit(
     userToken: token,
   }
 
-  const used = await countUsageInWindow(ledgerConfig, kind, user.id, config.rateLimitWindowMs, runtimeFetch)
+  const quota = options.planQuota?.aiChatQuota ?? null
+  const used = await countUsageInWindow(ledgerConfig, kind, user.id, quota !== null ? PLAN_QUOTA_WINDOW_MS : config.rateLimitWindowMs, runtimeFetch)
 
-  if (used !== null && used >= limit) {
-    return false
+  if (used !== null) {
+    if (quota !== null && used >= quota) {
+      return false
+    }
+
+    if (quota === null && used >= windowLimit) {
+      return false
+    }
   }
 
   await recordUsageEvent(ledgerConfig, kind, runtimeFetch)

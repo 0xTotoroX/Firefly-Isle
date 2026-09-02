@@ -33,7 +33,10 @@ function AuthFeedbackBlock({ feedback, theme }: { feedback: AuthFeedback | null;
   }
 
   return (
-    <div className={`t-popover rounded-[var(--ff-radius-md)] border px-4 py-3 text-sm ${authCardSkins[theme].feedbackSurface} ${feedbackClass(feedback, theme)}`}>
+    <div
+      className={`t-popover rounded-[var(--ff-radius-md)] border px-4 py-3 text-sm ${authCardSkins[theme].feedbackSurface} ${feedbackClass(feedback, theme)}`}
+      role={feedback.tone === 'error' ? 'alert' : 'status'}
+    >
       {feedback.message}
     </div>
   )

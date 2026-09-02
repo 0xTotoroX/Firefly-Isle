@@ -30,6 +30,7 @@ import {
   enforceDurableRateLimit,
   isModelAllowed,
   parseModelAllowlist,
+  resolvePlanQuota,
 } from './rate-limits.ts'
 
 const logger = createFunctionLogger('llm-proxy')
@@ -749,8 +750,10 @@ export function createLlmProxyHandler(options: HandlerOptions) {
       return errorResponse(400, 'LLMInvalidRequestError', `Model '${providerOptions.model}' is not allowed for provider '${provider}'.`)
     }
 
-    if (!(await enforceDurableRateLimit(config, token, user, 'llm_chat', runtimeFetch))) {
-      logger.warn('rate_limit_exceeded', { layer: 'ledger' })
+    const planQuota = await resolvePlanQuota(config, token, user, runtimeFetch)
+
+    if (!(await enforceDurableRateLimit(config, token, user, 'llm_chat', runtimeFetch, { planQuota }))) {
+      logger.warn('rate_limit_exceeded', { layer: planQuota?.aiChatQuota !== null && planQuota !== null ? 'plan_quota' : 'ledger' })
       return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
     }
 

@@ -192,6 +192,7 @@ export const copy = {
       record: text('病历', 'Record'),
       analytics: text('统计', 'Analytics'),
       dashboard: text('总览', 'Overview'),
+      models: text('模型', 'Models'),
       settings: text('设置', 'Settings'),
       extractFirst: text('先提取', 'Extract first'),
       comingSoon: text('敬请期待', 'Coming Soon'),

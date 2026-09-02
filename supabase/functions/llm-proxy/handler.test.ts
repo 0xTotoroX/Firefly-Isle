@@ -73,6 +73,11 @@ function createFetchMock(
       })
     }
 
+    if (url.includes('/rest/v1/subscriptions')) {
+      // 默认无订阅行 → free 档（quota 由环境窗口限流兜底）；测试可按需覆写。
+      return new Response('[]', { headers: { 'Content-Type': 'application/json' }, status: 200 })
+    }
+
     if (url.includes('/rest/v1/usage_events') || url.includes('/rest/v1/rpc/record_usage')) {
       if (ledgerBehavior === 'exhausted') {
         return new Response('[]', { headers: { 'content-range': '0-0/99' }, status: 206 })
@@ -130,6 +135,14 @@ function createSettingsFetchMock(
       })
     }
 
+    if (url.includes('/rest/v1/subscriptions')) {
+      return new Response('[]', { headers: { 'Content-Type': 'application/json' }, status: 200 })
+    }
+
+    if (url.includes('/rest/v1/usage_events') || url.includes('/rest/v1/rpc/record_usage')) {
+      return new Response('[]', { headers: { 'Content-Type': 'application/json' }, status: 200 })
+    }
+
     if (upstreamResponse instanceof Error) {
       throw upstreamResponse
     }
@@ -176,7 +189,7 @@ async function json(response: Response) {
 }
 
 function findUpstreamCall(calls: FetchCall[]) {
-  return calls.find((call) => !call.url.includes('/auth/v1/user') && !call.url.includes('/rest/v1/llm_provider_settings') && !call.url.includes('/rest/v1/usage_events') && !call.url.includes('/rest/v1/rpc/record_usage'))
+  return calls.find((call) => !call.url.includes('supabase.co'))
 }
 
 describe('llm-proxy provider handler', () => {
@@ -331,6 +344,54 @@ describe('llm-proxy provider handler', () => {
     expect(response.status).toBe(429)
     expect(payload.error?.name).toBe('LLMRateLimitError')
     expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
+  })
+
+  it('enforces the pro plan monthly quota over the window limit', async () => {
+    const { calls, fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'unused'))
+    const baseFetch = fetchMock.getMockImplementation()!
+    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = input.toString()
+
+      if (url.includes('/rest/v1/subscriptions')) {
+        return new Response(JSON.stringify([{ plan_id: 'pro', plans: { ai_chat_quota: 1000 } }]), {
+          headers: { 'Content-Type': 'application/json' },
+          status: 200,
+        })
+      }
+
+      if (url.includes('/rest/v1/usage_events')) {
+        return new Response('[]', { headers: { 'content-range': '0-0/1000' }, status: 206 })
+      }
+
+      return baseFetch(input, init)
+    })
+
+    const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
+    const response = await handler(createRequest({ messages, provider: 'deepseek' }))
+    const payload = await json(response)
+
+    expect(response.status).toBe(429)
+    expect(payload.error?.name).toBe('LLMRateLimitError')
+    expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
+  })
+
+  it('fails open to window rate limiting when the plan lookup errors', async () => {
+    const { fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'deepseek text'))
+    const baseFetch = fetchMock.getMockImplementation()!
+    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = input.toString()
+
+      if (url.includes('/rest/v1/subscriptions')) {
+        throw new Error('subscriptions unavailable')
+      }
+
+      return baseFetch(input, init)
+    })
+
+    const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
+    const response = await handler(createRequest({ messages, provider: 'deepseek' }))
+
+    expect(response.status).toBe(200)
   })
 
   it('fails open to the in-memory limiter when the usage ledger is unavailable', async () => {
