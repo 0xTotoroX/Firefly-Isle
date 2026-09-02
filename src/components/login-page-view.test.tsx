@@ -421,13 +421,13 @@ describe('LoginPageView theme shell', () => {
     expect(markup).not.toContain('临床 AI 工作台')
   })
 
-  it('uses shared tab and accordion motion inside the auth modal', () => {
+  it('uses shared accordion and control motion inside the auth modal', () => {
     const markup = renderLogin('dark', { defaultAuthOpen: true })
 
-    expect(markup).toContain('t-tab-switch')
     expect(markup).toContain('t-accordion')
     expect(markup).toContain('t-popover')
     expect(markup).toContain('t-control-press')
+    expect(markup).not.toContain('t-tab-switch')
   })
 
   it('renders the auth overlay title and submit action from the active mode', () => {
@@ -460,65 +460,62 @@ describe('LoginPageView theme shell', () => {
     expect(markup).not.toContain('data-testid="login-password-input"')
   })
 
-  it('does not render fake remember-me or clickable WeChat controls in the auth card', () => {
+  it('does not render fake remember-me, phone, or WeChat controls in the auth card', () => {
     const markup = renderLogin('dark', { defaultAuthOpen: true, mode: 'login' })
 
     expect(markup).not.toContain('记住我')
-    expect(markup).toContain('data-testid="login-wechat-coming-soon"')
+    expect(markup).not.toContain('data-testid="login-wechat-coming-soon"')
+    expect(markup).not.toContain('data-testid="login-auth-method-tabs"')
+    expect(markup).not.toContain('data-testid="login-phone-coming-soon"')
     expect(markup).not.toContain('aria-label="微信"')
-    expect(markup).not.toContain('disabled=""')
+    expect(markup).not.toContain('aria-label="微信敬请期待"')
     expect(markup).toContain('aria-label="Google"')
     expect(markup).not.toContain('使用 Google 继续')
     expect(markup).not.toContain('自动登录或注册')
     expect(markup).toContain('忘记密码？')
   })
 
-  it('renders phone auth as a coming-soon placeholder instead of a half-wired OTP flow', () => {
+  it('does not render phone auth UI while the phone adapter stays unused', () => {
     const markup = renderLogin('dark', {
       authMethod: 'phone',
       defaultAuthOpen: true,
     })
 
-    expect(markup).toContain('data-testid="login-auth-method-tabs"')
-    expect(markup).toContain('data-testid="login-phone-coming-soon"')
-    expect(markup).toContain('敬请期待')
+    expect(markup).not.toContain('data-testid="login-auth-method-tabs"')
+    expect(markup).not.toContain('data-testid="login-phone-coming-soon"')
     expect(markup).not.toContain('data-testid="login-phone-input"')
     expect(markup).not.toContain('data-testid="login-phone-otp-input"')
     expect(markup).not.toContain('data-testid="login-phone-code-button"')
-    expect(markup).not.toContain('进入工作区')
-    expect(markup).not.toContain('验证码已发送')
-    expect(markup).not.toContain('data-testid="login-password-input"')
-    expect(markup).not.toContain('访问密钥（区分大小写）')
-    expect(markup).not.toContain('忘记密码？')
+    expect(markup).toContain('data-testid="login-password-input"')
+    expect(markup).toContain('忘记密码？')
   })
 
-  it('keeps phone OTP cooldown and send states out while phone login is deferred', () => {
+  it('keeps phone OTP cooldown and send states out of the login card', () => {
     const markup = renderLogin('light', {
       authMethod: 'phone',
       defaultAuthOpen: true,
     })
 
-    expect(markup).toContain('data-testid="login-phone-coming-soon"')
+    expect(markup).not.toContain('data-testid="login-phone-coming-soon"')
     expect(markup).not.toContain('42 秒后重发')
     expect(markup).not.toContain('验证码已发送')
     expect(markup).not.toContain('data-testid="login-phone-code-button"')
   })
 
-  it('renders WeChat as a coming-soon placeholder instead of a configured OAuth control', () => {
+  it('renders Google without a WeChat control on the login card', () => {
     const markup = renderLogin('dark', { defaultAuthOpen: true })
 
     expect(markup).toContain('aria-label="Google"')
-    expect(markup).toContain('data-testid="login-wechat-coming-soon"')
-    expect(markup).toContain('敬请期待')
+    expect(markup).not.toContain('data-testid="login-wechat-coming-soon"')
     expect(markup).not.toContain('aria-label="微信"')
+    expect(markup).not.toContain('aria-label="微信敬请期待"')
   })
 
-  it('keeps WeChat deferred even when the provider env is present', () => {
+  it('keeps WeChat off the login card even when the provider env is present', () => {
     const markup = renderLogin('dark', { defaultAuthOpen: true })
 
     expect(markup).toContain('aria-label="Google"')
-    expect(markup).toContain('data-testid="login-wechat-coming-soon"')
-    expect(markup).toContain('敬请期待')
+    expect(markup).not.toContain('data-testid="login-wechat-coming-soon"')
     expect(markup).not.toContain('aria-label="微信"')
     expect(markup).not.toContain('使用 Google 继续')
     expect(markup).not.toContain('自动登录或注册')

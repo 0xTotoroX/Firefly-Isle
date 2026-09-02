@@ -40,15 +40,6 @@ export const modelCatalog: ModelCatalogEntry[] = [
     slug: 'deepseek-v4-image',
     visibility: 'list',
   },
-  {
-    description: 'Gemini 2.5 Flash · OCR 备用 provider，保留 PDF 输入能力',
-    displayName: 'Gemini 2.5 Flash',
-    modality: 'image',
-    inputModalities: ['image', 'text'],
-    priority: 1008,
-    slug: 'gemini-2.5-flash',
-    visibility: 'list',
-  },
 ]
 
 export const defaultTextModel = modelCatalog.find((entry) => entry.slug === 'deepseek-v4-flash')!

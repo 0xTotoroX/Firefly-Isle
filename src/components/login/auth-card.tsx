@@ -98,7 +98,7 @@ function SocialButton({
   )
 }
 
-function WeChatComingSoonPanel({ locale, theme }: { locale: 'zh' | 'en'; theme: Theme }) {
+export function WeChatComingSoonPanel({ locale, theme }: { locale: 'zh' | 'en'; theme: Theme }) {
   const skin = authCardSkins[theme]
   const shellClass =
     theme === 'dark'
@@ -164,7 +164,7 @@ function WeChatGlyph() {
   )
 }
 
-function AuthMethodTabs({
+export function AuthMethodTabs({
   authMethod,
   locale,
   onAuthMethodChange,
@@ -231,7 +231,7 @@ function CredentialField({
   )
 }
 
-function PhoneComingSoonPanel({ locale, theme }: { locale: 'zh' | 'en'; theme: Theme }) {
+export function PhoneComingSoonPanel({ locale, theme }: { locale: 'zh' | 'en'; theme: Theme }) {
   const skin = authCardSkins[theme]
 
   return (
@@ -293,7 +293,6 @@ export type AuthCardProps = Pick<
 }
 
 export function AuthCard({
-  authMethod,
   currentFeedback,
   email,
   id,
@@ -301,7 +300,6 @@ export function AuthCard({
   locale,
   mode,
   onAnonymousLogin,
-  onAuthMethodChange,
   onEmailChange,
   onGoogleLogin,
   onModeChange,
@@ -315,13 +313,10 @@ export function AuthCard({
   const emailFieldId = `${fieldIdPrefix}-email`
   const passwordFieldId = `${fieldIdPrefix}-password`
   const skin = authCardSkins[theme]
-  const activeAuthMethod = mode === 'password-reset' ? 'email' : authMethod
-  const isPhoneAuth = activeAuthMethod === 'phone'
+  const activeAuthMethod = 'email'
   const modeCopy = getAuthModeCopy(mode, locale, activeAuthMethod)
-  const showPasswordField = !isPhoneAuth && mode !== 'password-reset'
-  const showEmailField = !isPhoneAuth
+  const showPasswordField = mode !== 'password-reset'
   const showSessionAlternatives = mode !== 'password-reset'
-  const showModeSwitch = !isPhoneAuth
   const submitLabel = isSubmitting ? getCopy(copy.workspace.composer.processing, locale) : modeCopy.submitLabel
 
   return (
@@ -335,12 +330,7 @@ export function AuthCard({
         <form className="space-y-3" onSubmit={onSubmit}>
           <AuthFeedbackBlock feedback={currentFeedback} theme={theme} />
 
-          {mode !== 'password-reset' ? (
-            <AuthMethodTabs authMethod={activeAuthMethod} locale={locale} onAuthMethodChange={onAuthMethodChange} theme={theme} />
-          ) : null}
-
-          {showEmailField ? (
-            <CredentialField fieldId={emailFieldId} icon="mail" label={locale === 'zh' ? '邮箱' : 'Email'} theme={theme}>
+          <CredentialField fieldId={emailFieldId} icon="mail" label={locale === 'zh' ? '邮箱' : 'Email'} theme={theme}>
               <span className="sr-only">{getCopy(copy.login.auth.emailLabelLight, locale)}</span>
               <input
                 autoComplete="email"
@@ -353,11 +343,6 @@ export function AuthCard({
                 value={email}
               />
             </CredentialField>
-          ) : null}
-
-          {isPhoneAuth ? (
-            <PhoneComingSoonPanel locale={locale} theme={theme} />
-          ) : null}
 
           {showPasswordField ? (
             <CredentialField
@@ -382,7 +367,7 @@ export function AuthCard({
             </CredentialField>
           ) : null}
 
-          {mode === 'login' && !isPhoneAuth ? (
+          {mode === 'login' ? (
             <div className="t-accordion flex justify-end text-sm font-semibold">
               <button
                 className={`t-control-press shrink-0 ${skin.forgotLink}`}
@@ -394,9 +379,7 @@ export function AuthCard({
             </div>
           ) : null}
 
-          {!isPhoneAuth ? (
-            <LoginSubmitButton isSubmitting={isSubmitting} label={submitLabel} />
-          ) : null}
+          <LoginSubmitButton isSubmitting={isSubmitting} label={submitLabel} />
 
           {showSessionAlternatives ? (
             <>
@@ -406,16 +389,13 @@ export function AuthCard({
                 <span className={`h-px flex-1 ${skin.divider}`} />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <SocialButton
-                  disabled={isSubmitting}
-                  icon={<GoogleBrandGlyph />}
-                  label={getCopy(copy.login.auth.google, locale)}
-                  onClick={onGoogleLogin}
-                  theme={theme}
-                />
-                <WeChatComingSoonPanel locale={locale} theme={theme} />
-              </div>
+              <SocialButton
+                disabled={isSubmitting}
+                icon={<GoogleBrandGlyph />}
+                label={getCopy(copy.login.auth.google, locale)}
+                onClick={onGoogleLogin}
+                theme={theme}
+              />
 
               <button
                 className={`t-control-press flex min-h-[52px] w-full items-center justify-center gap-3 rounded-[14px] border px-4 text-sm font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${skin.anonymousButton}`}
@@ -443,7 +423,6 @@ export function AuthCard({
             {getCopy(copy.login.footer.fullPrivacy, locale)}
           </Link>
         </p>
-        {showModeSwitch ? (
         <p className={`t-accordion mt-3 text-center text-xs font-semibold ${skin.modeHint}`}>
           {modeCopy.footerPrompt}
           {' '}
@@ -455,7 +434,6 @@ export function AuthCard({
             {modeCopy.footerAction}
           </button>
         </p>
-        ) : null}
       </div>
     </div>
   )

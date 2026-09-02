@@ -55,4 +55,9 @@ describe('model catalog protocol', () => {
     expect(source).toContain('deepseek-v4-flash')
     expect(source).not.toContain("slug: 'deepseek")
   })
+
+  it('does not list Gemini 2.5 Flash in the visible catalog', () => {
+    expect(listVisibleModels().some((entry) => entry.slug.includes('gemini'))).toBe(false)
+    expect(modelCatalog.some((entry) => entry.slug === 'gemini-2.5-flash')).toBe(false)
+  })
 })

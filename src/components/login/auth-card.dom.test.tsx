@@ -78,15 +78,16 @@ describe('AuthCard', () => {
     expect(screen.getByText('登录失败，请重试')).toBeVisible()
   })
 
-  it('offers the password-reset mode switch and phone method switch', async () => {
+  it('keeps email and Google visible and hides phone and WeChat from the card', async () => {
     const onModeChange = vi.fn()
-    const onAuthMethodChange = vi.fn()
-    renderAuthCard({ onAuthMethodChange, onModeChange })
+    renderAuthCard({ onModeChange })
 
-    await userEvent.click(screen.getByRole('button', { name: '手机' }))
+    expect(screen.queryByRole('button', { name: '手机' })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('微信敬请期待')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Google' })).toBeVisible()
+
     await userEvent.click(screen.getByRole('button', { name: '忘记密码？' }))
 
-    expect(onAuthMethodChange).toHaveBeenCalledWith('phone')
     expect(onModeChange).toHaveBeenCalledWith('password-reset')
   })
 })
