@@ -138,6 +138,8 @@ export const copy = {
     localeLabel: text('界面语言', 'Interface language'),
     themeLabel: text('外观主题', 'Appearance'),
     accentLabel: text('强调色', 'Accent'),
+    donateSection: text('支持萤屿', 'Support'),
+    donateLink: text('打开捐赠页', 'Open donation page'),
     saveButton: text('保存资料', 'Save Profile'),
     savingButton: text('保存中…', 'Saving…'),
     savedFeedback: text('设置已保存', 'Settings saved'),

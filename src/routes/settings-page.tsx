@@ -5,6 +5,7 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { useEffect, useState, type ReactNode } from 'react'
+import { Link } from 'react-router-dom'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
 import { MainShell } from '@/components/system/surfaces'
@@ -281,7 +282,20 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
             </section>
           </div>
 
-          <section className="mt-6 rounded-[var(--ff-radius-lg)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] p-6">
+          <section className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-6">
+            <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">
+              {getCopy(copy.settings.donateSection, locale)}
+            </div>
+            <p className="mt-3 text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.donate.description, locale)}</p>
+            <Link
+              className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-sm font-bold text-white"
+              to="/donate"
+            >
+              {getCopy(copy.settings.donateLink, locale)}
+            </Link>
+          </section>
+
+          <section className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-6">
             <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-primary)]">
               {getCopy(copy.settings.privacySection, locale)}
             </div>

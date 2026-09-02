@@ -18,7 +18,7 @@ type ThemedProps = PropsWithChildren<{
   theme: Theme
 }>
 
-function sidebarSurface(theme: Theme) {
+function sidebarSurface(_theme: Theme) {
   return cn(
     'bg-[var(--ff-surface-sidebar)] text-[var(--ff-text-primary)]',
   )

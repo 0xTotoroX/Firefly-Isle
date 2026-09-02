@@ -12,7 +12,6 @@ import { FireflyMark } from '@/components/system/firefly-mark'
 import { SidebarShell } from '@/components/system/surfaces'
 import { getCopy, copy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
-import { useTheme } from '@/lib/theme'
 import {
   sidebarDefaultWidth,
   sidebarLabelHideWidth,
@@ -106,8 +105,7 @@ function isActive(pathname: string, href: string) {
 
 export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSignOut, recordHref, userIsAnonymous = false, userLabel }: ArchiveSideNavProps) {
   const location = useLocation()
-  const { locale, toggleLocale } = useLocale()
-  const { toggleTheme } = useTheme()
+  const { locale } = useLocale()
   const [expandedWidth, setExpandedWidth] = useState(readStoredExpandedWidth)
   const [hidden, setHidden] = useState(shouldStartHidden)
   const [width, setWidth] = useState(readStoredExpandedWidth)
@@ -501,50 +499,6 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
           </div>
 
           <div className={cn('flex w-full flex-col pt-3', compact ? 'items-center gap-1.5' : 'items-stretch gap-1.5')}>
-            <Link
-              aria-label={getCopy(copy.shell.nav.donate, locale)}
-              className={cn(
-                'group relative flex h-[44px] min-w-0 items-center rounded-[var(--ff-radius-sm)] text-[var(--ff-text-secondary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)]',
-                compact ? 'w-11 justify-center' : 'w-full gap-3 px-4',
-                isActive(location.pathname, '/donate') ? 'text-[var(--ff-accent-primary)]' : '',
-              )}
-              title={getCopy(copy.shell.nav.donate, locale)}
-              to="/donate"
-            >
-              <span className="material-symbols-outlined shrink-0 text-[23px]">volunteer_activism</span>
-              {renderLabel(getCopy(copy.shell.nav.donate, locale), 'text-[15px] font-medium')}
-              {iconOnlyTooltip(getCopy(copy.shell.nav.donate, locale))}
-            </Link>
-            <button
-              aria-label={getCopy(copy.shell.nav.themeToggle, locale)}
-              className={cn(
-                'group relative flex h-[44px] min-w-0 items-center rounded-[var(--ff-radius-sm)] text-[var(--ff-text-secondary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)]',
-                compact ? 'w-11 justify-center' : 'w-full gap-3 px-4',
-              )}
-              onClick={toggleTheme}
-              title={getCopy(copy.shell.nav.themeToggle, locale)}
-              type="button"
-            >
-              <span className="material-symbols-outlined shrink-0 text-[23px]">{dark ? 'light_mode' : 'dark_mode'}</span>
-              {renderLabel(getCopy(copy.shell.nav.themeToggle, locale), 'text-[15px] font-medium')}
-              {iconOnlyTooltip(getCopy(copy.shell.nav.themeToggle, locale))}
-            </button>
-
-            <button
-              aria-label={getCopy(copy.shell.nav.languageToggle, locale)}
-              className={cn(
-                'group relative flex h-[44px] min-w-0 items-center rounded-[var(--ff-radius-sm)] text-[var(--ff-text-secondary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)]',
-                compact ? 'w-11 justify-center' : 'w-full gap-3 px-4',
-              )}
-              onClick={toggleLocale}
-              title={getCopy(copy.shell.nav.languageToggle, locale)}
-              type="button"
-            >
-              <span className="material-symbols-outlined shrink-0 text-[23px]">g_translate</span>
-              {renderLabel(getCopy(copy.shell.nav.languageToggle, locale), 'text-[15px] font-medium')}
-              {iconOnlyTooltip(getCopy(copy.shell.nav.languageToggle, locale))}
-            </button>
-
             <div
               aria-label={resolvedUserLabel}
               className={cn(

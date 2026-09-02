@@ -578,13 +578,13 @@ describe('WorkspacePage report shell', () => {
     expect(sidebarSource).toContain("renderLabel(label, cn('text-[16px] font-semibold leading-none'")
     expect(sidebarSource).toContain("'text-[15px] font-medium'")
     expect(markup).toMatch(/<span class="[^"]*font-\[var\(--ff-font-display\)\][^"]*">提取<\/span>/)
-    expect(markup).toMatch(/<span class="[^"]*font-\[var\(--ff-font-display\)\][^"]*">主题<\/span>/)
+    expect(markup).toMatch(/<span class="[^"]*font-\[var\(--ff-font-display\)\][^"]*">设置<\/span>/)
   })
 
   it('uses semantically specific Material icons for sidebar record and language actions', () => {
     const markup = renderWorkspace('light')
 
-    expect(markup).toContain('>g_translate</span>')
+    expect(markup).not.toContain('>g_translate</span>')
     expect(markup).toContain('>clinical_notes</span>')
     expect(markup).not.toContain('>folder</span>')
     expect(markup).not.toContain('>translate</span>')
@@ -607,14 +607,15 @@ describe('WorkspacePage report shell', () => {
     expect(markup).not.toContain('href="/record/demo"')
   })
 
-  it('keeps the sidebar theme control above the language control with short labels', () => {
+  it('keeps theme, language, and donate off the sidebar because settings owns those controls', () => {
     const markup = renderWorkspace('light')
 
-    expect(markup).toContain('>主题</span>')
-    expect(markup).toContain('>语言</span>')
-    expect(markup).not.toContain('>中文</span>')
-    expect(markup).not.toContain('>切换主题</span>')
-    expect(markup.indexOf('>dark_mode</span>')).toBeLessThan(markup.indexOf('>g_translate</span>'))
+    expect(markup).not.toContain('>主题</span>')
+    expect(markup).not.toContain('>语言</span>')
+    expect(markup).not.toContain('>捐赠</span>')
+    expect(markup).not.toContain('>g_translate</span>')
+    expect(markup).not.toContain('>dark_mode</span>')
+    expect(markup).toContain('>设置</span>')
   })
 
   it('uses the person icon for non-anonymous authenticated identities', () => {
