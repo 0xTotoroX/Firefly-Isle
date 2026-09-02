@@ -41,8 +41,8 @@ const brandLockupPreviewSource = readFileSync(new URL('../../routes/brand-lockup
 
 describe('V3 theme token contract', () => {
   it('uses orange as the only primary action color across dark and light themes', () => {
-    expect(themeTokens.dark.accent.primary).toBe('#E85D2A')
-    expect(themeTokens.light.accent.primary).toBe('#E85D2A')
+    expect(themeTokens.dark.accent.primary).toBe('#C48A4A')
+    expect(themeTokens.light.accent.primary).toBe('#C48A4A')
     expect(themeTokens.dark.accent.success).toBe('#43A56B')
     expect(themeTokens.light.accent.success).toBe('#43A56B')
   })

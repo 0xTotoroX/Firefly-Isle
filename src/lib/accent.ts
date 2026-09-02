@@ -8,16 +8,19 @@
 export const ACCENT_STORAGE_KEY = 'firefly-accent'
 
 export const accentPresets = [
-  { id: 'ember', hex: '#E85D2A', label: { zh: '萤火', en: 'Ember' } },
-  { id: 'ink', hex: '#1E40D8', label: { zh: '墨蓝', en: 'Ink' } },
-  { id: 'moss', hex: '#0F7B4A', label: { zh: '苔绿', en: 'Moss' } },
-  { id: 'plum', hex: '#7C3AED', label: { zh: '紫藤', en: 'Plum' } },
-  { id: 'dusk', hex: '#C2410C', label: { zh: '暮橙', en: 'Dusk' } },
+  { id: 'red', hex: '#B85C54', label: { zh: '红', en: 'Red' } },
+  { id: 'orange', hex: '#C48A4A', label: { zh: '橙', en: 'Orange' } },
+  { id: 'yellow', hex: '#B9A85A', label: { zh: '黄', en: 'Yellow' } },
+  { id: 'green', hex: '#5E8C6A', label: { zh: '绿', en: 'Green' } },
+  { id: 'teal', hex: '#4F8A86', label: { zh: '青', en: 'Teal' } },
+  { id: 'blue', hex: '#4A7C9B', label: { zh: '蓝', en: 'Blue' } },
+  { id: 'indigo', hex: '#6A6AA8', label: { zh: '靛', en: 'Indigo' } },
+  { id: 'purple', hex: '#8A6A96', label: { zh: '紫', en: 'Purple' } },
 ] as const
 
 export type AccentPresetId = (typeof accentPresets)[number]['id']
 
-export const defaultAccentHex = accentPresets[0].hex
+export const defaultAccentHex = accentPresets[1].hex
 
 const HEX_PATTERN = /^#([0-9a-fA-F]{6})$/
 
@@ -62,7 +65,7 @@ export function deriveAccentStops(accent: string, theme: 'dark' | 'light') {
   return {
     accent: normalized,
     primary: normalized,
-    strong: mix(normalized, '#FFFFFF', 0.18),
+    strong: mix(normalized, '#FFFFFF', 0.12),
     soft: theme === 'dark' ? mix(normalized, '#000000', 0.82) : mix(normalized, '#FFFFFF', 0.88),
     warning: normalized,
   }

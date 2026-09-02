@@ -242,18 +242,22 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
                   </div>
                 </SettingsField>
                 <SettingsField label={getCopy(copy.settings.accentLabel, locale)}>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-3">
                     {accentPresets.map((preset) => (
                       <button
+                        aria-label={preset.label[locale]}
                         aria-pressed={accent.toUpperCase() === preset.hex}
-                        className={`${SETTINGS_OPTION_CLASS} gap-2`}
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-accent-primary)]"
                         data-testid={`settings-accent-${preset.id}`}
                         key={preset.id}
                         onClick={() => setAccent(preset.hex)}
+                        title={preset.label[locale]}
                         type="button"
                       >
-                        <span className="inline-block h-3 w-3 rounded-full border border-[var(--ff-border-default)]" style={{ background: preset.hex }} />
-                        {preset.label[locale]}
+                        <span
+                          className={`block h-5 w-5 rounded-full ${accent.toUpperCase() === preset.hex ? 'ring-2 ring-[var(--ff-text-primary)] ring-offset-2 ring-offset-[var(--ff-surface-panel)]' : ''}`}
+                          style={{ background: preset.hex }}
+                        />
                       </button>
                     ))}
                   </div>

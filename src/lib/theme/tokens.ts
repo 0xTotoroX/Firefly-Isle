@@ -22,7 +22,7 @@ export const topBarOffsetClass = 'pt-[var(--ff-topbar-height)]'
 export const themeTransitionClass = 'transition-[background-color,color,border-color,box-shadow] duration-200 ease-out'
 
 // 单强调色体系唯一色源：primary / warning / border.strong 均由此派生，换色只改这一个常量。
-export const accentBase = '#E85D2A'
+export const accentBase = '#C48A4A'
 export const accentCritical = '#F04438'
 export const accentLow = '#2F80ED'
 
@@ -33,14 +33,14 @@ export const themeTokens = {
       low: accentLow,
       primary: accentBase,
       soft: '#2A1712',
-      strong: '#FF4A1C',
+      strong: '#D0A36A',
       success: '#43A56B',
       warning: accentBase,
     },
     border: {
       default: '#30363A',
       muted: 'rgba(244,240,232,0.14)',
-      strong: '#E85D2A',
+      strong: '#C48A4A',
     },
     surface: {
       accent: '#1F1512',
@@ -69,14 +69,14 @@ export const themeTokens = {
       low: accentLow,
       primary: accentBase,
       soft: '#FCE9E1',
-      strong: '#FF4A1C',
+      strong: '#D0A36A',
       success: '#43A56B',
       warning: accentBase,
     },
     border: {
       default: '#D8D5CE',
       muted: 'rgba(22,22,22,0.12)',
-      strong: '#E85D2A',
+      strong: '#C48A4A',
     },
     surface: {
       accent: '#FCE9E1',

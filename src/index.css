@@ -20,9 +20,9 @@ body,
 /* 单强调色体系唯一色源：改这一个变量即换全站强调色。
    emphasis/soft 是同族停档，critical 是临床危急值语义色，不属于强调色。 */
 :root {
-  --ff-accent: #e85d2a;
+  --ff-accent: #c48a4a;
   --ff-accent-primary: var(--ff-accent);
-  --ff-accent-strong: #ff4a1c;
+  --ff-accent-strong: #d0a36a;
   --ff-accent-soft: #fce9e1;
   --ff-accent-success: #43a56b;
   --ff-accent-warning: var(--ff-accent);
@@ -30,7 +30,7 @@ body,
   --ff-low: #2f80ed;
   --ff-border-default: #d8d5ce;
   --ff-border-muted: rgba(22, 22, 22, 0.12);
-  --ff-border-strong: #e85d2a;
+  --ff-border-strong: #c48a4a;
   --ff-surface-base: #ffffff;
   --ff-surface-shell: #ffffff;
   --ff-surface-sidebar: #ffffff;
@@ -99,9 +99,9 @@ html {
 }
 
 html.dark {
-  --ff-accent: #e85d2a;
+  --ff-accent: #c48a4a;
   --ff-accent-primary: var(--ff-accent);
-  --ff-accent-strong: #ff4a1c;
+  --ff-accent-strong: #d0a36a;
   --ff-accent-soft: #2a1712;
   --ff-accent-success: #43a56b;
   --ff-accent-warning: var(--ff-accent);
@@ -109,7 +109,7 @@ html.dark {
   --ff-low: #2f80ed;
   --ff-border-default: #30363a;
   --ff-border-muted: rgba(244, 240, 232, 0.14);
-  --ff-border-strong: #e85d2a;
+  --ff-border-strong: #c48a4a;
   --ff-surface-base: #000000;
   --ff-surface-shell: #000000;
   --ff-surface-sidebar: #000000;
