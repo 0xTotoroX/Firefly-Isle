@@ -133,7 +133,7 @@ function AppRoutes() {
         />
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate replace to="/app" /> : <LoginPage authError={loginError} />}
+          element={isAuthenticated ? <Navigate replace to="/dashboard" /> : <LoginPage authError={loginError} />}
         />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
         <Route

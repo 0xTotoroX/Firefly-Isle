@@ -62,11 +62,11 @@ describe('patient archetype detection', () => {
 })
 
 describe('auth route guard contract', () => {
-  it('keeps /login public but redirects authenticated users to /app', () => {
+  it('keeps /login public but redirects authenticated users to /dashboard', () => {
     const source = readAppSource()
 
     expect(source).toContain('path="/login"')
-    expect(source).toContain('isAuthenticated ? <Navigate replace to="/app" /> : <LoginPage authError={loginError} />')
+    expect(source).toContain('isAuthenticated ? <Navigate replace to="/dashboard" /> : <LoginPage authError={loginError} />')
   })
 
   it('keeps /app protected and sends anonymous users back to /login', () => {
