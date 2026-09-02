@@ -18,6 +18,7 @@ import { PRIVACY_PAGE_HREF } from '@/lib/privacy'
 import { ThemeProvider, useTheme } from '@/lib/theme'
 import { getOAuthCallbackErrorMessage } from '@/routes/auth-callback-page.logic'
 
+const DonatePage = lazy(() => import('@/routes/donate-page').then((module) => ({ default: module.DonatePage })))
 const DashboardPage = lazy(() => import('@/routes/dashboard-page').then((module) => ({ default: module.DashboardPage })))
 const AuthCallbackPage = lazy(() => import('@/routes/auth-callback-page').then((module) => ({ default: module.AuthCallbackPage })))
 const BrandLockupPreviewPage = lazy(() => import('@/routes/brand-lockup-preview-page').then((module) => ({ default: module.BrandLockupPreviewPage })))
@@ -195,6 +196,16 @@ function AppRoutes() {
           element={
             isAuthenticated ? (
               <RecordPage isSigningOut={isSigningOut} onSignOut={signOut} userId={user?.id} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/donate"
+          element={
+            isAuthenticated ? (
+              <DonatePage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
             ) : (
               <Navigate replace to="/login" />
             )

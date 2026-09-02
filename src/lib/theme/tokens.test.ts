@@ -49,7 +49,7 @@ describe('V3 theme token contract', () => {
 
   it('keeps the light sidebar joined to the workspace shell color', () => {
     expect(themeTokens.light.surface.sidebar).toBe(themeTokens.light.surface.base)
-    expect(indexCss).toContain('--ff-surface-sidebar: #f8f7f4')
+    expect(indexCss).toContain('--ff-surface-sidebar: #ffffff')
   })
 
   it('uses a resizable V3 sidebar geometry with an icon-only threshold', () => {

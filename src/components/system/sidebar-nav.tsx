@@ -89,7 +89,7 @@ export type ArchiveSideNavProps = {
 type SidebarNavItem = {
   href?: string
   icon: string
-  labelKey: 'dashboard' | 'extract' | 'record' | 'analytics' | 'models' | 'settings'
+  labelKey: 'dashboard' | 'extract' | 'record' | 'analytics' | 'models' | 'donate' | 'settings'
 }
 
 function isActive(pathname: string, href: string) {
@@ -125,6 +125,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
       { icon: 'clinical_notes', href: recordHref, labelKey: 'record' },
       { icon: 'bar_chart', href: analyticsHref, labelKey: 'analytics' },
       { icon: 'tune', href: '/models', labelKey: 'models' },
+      { icon: 'volunteer_activism', href: '/donate', labelKey: 'donate' },
       { icon: 'settings', href: '/settings', labelKey: 'settings' },
     ],
     [analyticsHref, recordHref],

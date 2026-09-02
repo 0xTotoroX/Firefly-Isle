@@ -63,7 +63,7 @@ export function deriveAccentStops(accent: string, theme: 'dark' | 'light') {
     accent: normalized,
     primary: normalized,
     strong: mix(normalized, '#FFFFFF', 0.18),
-    soft: theme === 'dark' ? mix(normalized, '#080A0B', 0.82) : mix(normalized, '#FFFFFF', 0.88),
+    soft: theme === 'dark' ? mix(normalized, '#000000', 0.82) : mix(normalized, '#FFFFFF', 0.88),
     warning: normalized,
   }
 }
