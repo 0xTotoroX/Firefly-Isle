@@ -125,7 +125,6 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
       { icon: 'clinical_notes', href: recordHref, labelKey: 'record' },
       { icon: 'bar_chart', href: analyticsHref, labelKey: 'analytics' },
       { icon: 'tune', href: '/models', labelKey: 'models' },
-      { icon: 'volunteer_activism', href: '/donate', labelKey: 'donate' },
       { icon: 'settings', href: '/settings', labelKey: 'settings' },
     ],
     [analyticsHref, recordHref],
@@ -502,7 +501,21 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
             </nav>
           </div>
 
-          <div className={cn('flex w-full flex-col border-t border-[var(--ff-border-default)] pt-3', compact ? 'items-center gap-1.5' : 'items-stretch gap-1.5')}>
+          <div className={cn('flex w-full flex-col pt-3', compact ? 'items-center gap-1.5' : 'items-stretch gap-1.5')}>
+            <Link
+              aria-label={getCopy(copy.shell.nav.donate, locale)}
+              className={cn(
+                'group relative flex h-[44px] min-w-0 items-center rounded-[var(--ff-radius-sm)] text-[var(--ff-text-secondary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)]',
+                compact ? 'w-11 justify-center' : 'w-full gap-3 px-4',
+                isActive(location.pathname, '/donate') ? 'text-[var(--ff-accent-primary)]' : '',
+              )}
+              title={getCopy(copy.shell.nav.donate, locale)}
+              to="/donate"
+            >
+              <span className="material-symbols-outlined shrink-0 text-[23px]">volunteer_activism</span>
+              {renderLabel(getCopy(copy.shell.nav.donate, locale), 'text-[15px] font-medium')}
+              {iconOnlyTooltip(getCopy(copy.shell.nav.donate, locale))}
+            </Link>
             <button
               aria-label={getCopy(copy.shell.nav.themeToggle, locale)}
               className={cn(
