@@ -449,18 +449,17 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
                 const navigationLabel = unavailableHint ? `${label}：${unavailableHint}` : label
                 const demoTarget = item.href?.startsWith('/demo/') ?? false
                 const itemClassName = cn(
-                  'group relative flex h-[50px] min-w-0 items-center overflow-visible rounded-[var(--ff-radius-sm)] border text-[var(--ff-text-secondary)]',
+                  'group relative flex h-[50px] min-w-0 items-center overflow-visible rounded-[var(--ff-radius-sm)] text-[var(--ff-text-secondary)]',
                   themeTransitionClass,
                   compact ? 'w-12 justify-center' : 'w-full justify-start gap-3 px-4',
                   unavailableHint
-                    ? 'cursor-not-allowed border-transparent text-[var(--ff-text-muted)] opacity-65'
+                    ? 'cursor-not-allowed text-[var(--ff-text-muted)] opacity-65'
                     : active
-                      ? 'border-[color-mix(in_srgb,var(--ff-accent-primary)_24%,transparent)] bg-[color-mix(in_srgb,var(--ff-accent-primary)_8%,transparent)] text-[var(--ff-accent-primary)]'
-                      : 'border-transparent hover:border-[var(--ff-border-default)] hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-text-primary)]',
+                      ? 'bg-[color-mix(in_srgb,var(--ff-accent-primary)_8%,transparent)] text-[var(--ff-accent-primary)]'
+                      : 'hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-text-primary)]',
                 )
                 const itemContent = (
                   <>
-                    {active ? <span aria-hidden="true" className="absolute left-0 top-1/2 h-6 w-[3px] -translate-y-1/2 rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-primary)]" data-sidebar-active-marker="true" /> : null}
                     <span className={cn('material-symbols-outlined shrink-0 text-[25px]', active ? 'text-[var(--ff-accent-primary)]' : '')}>
                       {item.icon}
                     </span>

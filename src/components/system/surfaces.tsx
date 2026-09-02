@@ -20,8 +20,7 @@ type ThemedProps = PropsWithChildren<{
 
 function sidebarSurface(theme: Theme) {
   return cn(
-    'border-r border-[var(--ff-border-default)] bg-[var(--ff-surface-sidebar)] text-[var(--ff-text-primary)]',
-    theme === 'dark' ? 'shadow-[inset_-1px_0_0_rgba(255,255,255,0.02)]' : 'shadow-[inset_-1px_0_0_rgba(22,22,22,0.04)]',
+    'bg-[var(--ff-surface-sidebar)] text-[var(--ff-text-primary)]',
   )
 }
 
@@ -36,7 +35,7 @@ function panelSurface(_theme: Theme, tone: SurfaceTone) {
   }
 
   return cn(
-    'rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] text-[var(--ff-text-primary)]',
+    'rounded-[var(--ff-radius-md)] text-[var(--ff-text-primary)]',
     surfaceByTone[tone],
   )
 }
@@ -54,7 +53,7 @@ export function TopBarShell({ children, className }: ThemedProps) {
     <header
       className={cn(
         themeTransitionClass,
-        'border-b border-[var(--ff-border-default)] bg-[var(--ff-surface-shell)] text-[var(--ff-text-primary)]',
+        'bg-[var(--ff-surface-shell)] text-[var(--ff-text-primary)]',
         className,
       )}
     >
