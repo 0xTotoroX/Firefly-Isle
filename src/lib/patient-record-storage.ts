@@ -11,6 +11,7 @@ import type { LabReportBatch, LabResult, PatientRecord, TreatmentLine } from '@/
 type PatientRow = {
   basic_info: PatientRecord['basicInfo'] | null
   clinical_notes?: string | null
+  follow_up_status: PatientRecord['followUpStatus'] | null
   id: string
   initial_onset: PatientRecord['initialOnset'] | null
 }
@@ -69,7 +70,8 @@ export type LabReportBatchRow = {
   updated_at?: string | null
 }
 
-const PATIENT_COLUMNS_WITH_NOTES = 'id, basic_info, clinical_notes, initial_onset'
+const PATIENT_COLUMNS_WITH_NOTES = 'id, basic_info, clinical_notes, follow_up_status, initial_onset'
+const PATIENT_COLUMNS_WITH_NOTES_ONLY = 'id, basic_info, clinical_notes, initial_onset'
 const PATIENT_COLUMNS_WITHOUT_NOTES = 'id, basic_info, initial_onset'
 const LAB_RESULT_COLUMNS_WITH_METADATA =
   'id, patient_id, batch_id, test_date, category, item_code, item_name, value, unit, reference_low, reference_high, source, is_derived, derivation_method'
@@ -208,6 +210,10 @@ function isMissingClinicalNotesColumnError(error: SupabaseQueryError) {
   return error.code === '42703' && /clinical_notes/i.test(error.message ?? '')
 }
 
+function isMissingFollowUpStatusColumnError(error: SupabaseQueryError) {
+  return error.code === '42703' && /follow_up_status/i.test(error.message ?? '')
+}
+
 function isMissingLabResultMetadataColumnError(error: SupabaseQueryError) {
   return error.code === '42703' && /(batch_id|is_derived|derivation_method)/i.test(error.message ?? '')
 }
@@ -219,7 +225,17 @@ async function loadPatientRowWithFallback(query: (columns: string) => PromiseLik
     return result.data
   }
 
-  if (!isMissingClinicalNotesColumnError(result.error)) {
+  if (isMissingFollowUpStatusColumnError(result.error)) {
+    const withoutStatus = await query(PATIENT_COLUMNS_WITH_NOTES_ONLY)
+
+    if (!withoutStatus.error) {
+      return withoutStatus.data
+    }
+
+    if (!isMissingClinicalNotesColumnError(withoutStatus.error)) {
+      throw withoutStatus.error
+    }
+  } else if (!isMissingClinicalNotesColumnError(result.error)) {
     throw result.error
   }
 
@@ -238,6 +254,7 @@ function mapPatientRow(patient: PatientRow, lines: TreatmentLineRow[], labRows: 
   return {
     basicInfo: patient.basic_info ?? undefined,
     clinicalNotes: patient.clinical_notes ?? undefined,
+    followUpStatus: patient.follow_up_status ?? undefined,
     id: patient.id,
     initialOnset: patient.initial_onset ?? undefined,
     labResults: labResults.length > 0 ? labResults : undefined,

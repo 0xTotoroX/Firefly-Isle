@@ -82,6 +82,10 @@ describe('loadDashboardData', () => {
       ],
       error: null,
     })
+    stub('follow_up_visits:scan', {
+      data: [{ next_visit_on: '2026-09-20', patient_id: 'p1' }],
+      error: null,
+    })
     stub('patients:latest', {
       data: { basic_info: { tumorType: '乳腺癌' }, id: 'p1', updated_at: '2026-08-02T10:00:00Z' },
       error: null,
@@ -116,12 +120,14 @@ describe('loadDashboardData', () => {
     stub('usage_events:scan', { count: null, error: { code: 'PGRST205', message: 'Could not find the table public.usage_events' } })
     stub('lab_results:scan', { data: [], error: null })
     stub('side_effects:scan', { data: [], error: { code: 'PGRST205', message: 'Could not find the table public.side_effects' } })
+    stub('follow_up_visits:scan', { data: [], error: { code: 'PGRST205', message: 'Could not find the table public.follow_up_visits' } })
 
     const data = await loadDashboardData()
 
     expect(data.aiCallCount30d).toBe(0)
     expect(data.patientCount).toBe(1)
     expect(data.recentSideEffects).toEqual([])
+    expect(data.nextVisit).toBeNull()
   })
 
   it('rejects unauthenticated dashboard loads', async () => {

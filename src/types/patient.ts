@@ -70,10 +70,13 @@ export interface LabResult {
   source?: LabResultSource
 }
 
+export type FollowUpStatus = 'treating' | 'paused' | 'completed' | 'lost'
+
 export interface PatientRecord {
   id?: string
   basicInfo?: BasicInfo
   clinicalNotes?: string
+  followUpStatus?: FollowUpStatus
   initialOnset?: InitialOnset
   labResults?: LabResult[]
   treatmentLines: TreatmentLine[]

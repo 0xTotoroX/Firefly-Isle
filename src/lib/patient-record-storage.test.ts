@@ -321,7 +321,7 @@ describe('patient-record-storage patient identity', () => {
       clinicalNotes: undefined,
       id: '54122ae9-269b-4294-9756-141cf40ffd0c',
     })
-    expect(patientBuilder.select).toHaveBeenCalledWith('id, basic_info, clinical_notes, initial_onset')
+    expect(patientBuilder.select).toHaveBeenCalledWith('id, basic_info, clinical_notes, follow_up_status, initial_onset')
     expect(patientBuilder.select).toHaveBeenCalledWith('id, basic_info, initial_onset')
   })
 

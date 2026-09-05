@@ -13,6 +13,7 @@ import { useAsyncResource } from '@/lib/async-resource'
 import { writeClipboardText } from '@/lib/clipboard'
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
+import { loadFollowUpVisits } from '@/lib/follow-up-storage'
 import { loadPatientRecordById } from '@/lib/patient-record-storage'
 import { type SideEffectRecord, type SideEffectSeverity, deleteSideEffect, createSideEffect, loadSideEffects, updateSideEffect } from '@/lib/side-effect-storage'
 import { useTheme } from '@/lib/theme'
@@ -102,6 +103,7 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
   const dark = theme === 'dark'
   const recordResource = useAsyncResource(() => loadPatientRecordById(id), [id])
   const effectsResource = useAsyncResource(() => loadSideEffects(id), [id])
+  const visitsResource = useAsyncResource(() => loadFollowUpVisits(id), [id])
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [symptom, setSymptom] = useState('')
@@ -218,6 +220,7 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
       return
     }
 
+    const lastVisit = visitsResource.data?.find((visit) => visit.visitedOn <= summaryTo)
     const header =
       locale === 'zh'
         ? `复诊摘要（${summaryFrom} ~ ${summaryTo}，共 ${inRange.length} 条）`
@@ -235,7 +238,19 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
       return `- ${parts.filter(Boolean).join(' · ')}`
     })
 
-    setSummaryText([header, ...lines].join('\n'))
+    const visitLines: string[] = []
+
+    if (lastVisit) {
+      const visitParts = [lastVisit.location, lastVisit.doctor, lastVisit.conclusion].filter(Boolean)
+
+      visitLines.push(`- ${locale === 'zh' ? '上次随访' : 'Last visit'}（${lastVisit.visitedOn}）：${visitParts.join(' · ') || '—'}`)
+
+      if (lastVisit.nextVisitOn || lastVisit.nextPlan) {
+        visitLines.push(`- ${locale === 'zh' ? '下次安排' : 'Next steps'}：${lastVisit.nextVisitOn ?? '—'}${lastVisit.nextPlan ? ` · ${lastVisit.nextPlan}` : ''}`)
+      }
+    }
+
+    setSummaryText([[header, ...lines].join('\n'), ...visitLines].join('\n'))
     setSummaryCopied(false)
   }
 

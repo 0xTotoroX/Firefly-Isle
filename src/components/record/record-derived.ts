@@ -153,7 +153,7 @@ export function getRecordSummaryMetrics(record: PatientRecord, locale: Locale): 
         { label: '体重', target: basicInfoTarget('weight'), value: formatWeight(basicInfo?.weight) },
         { label: 'BMI', value: formatBmi(basicInfo?.height, basicInfo?.weight) },
         { label: '肿瘤分期', target: basicInfoTarget('stage'), value: displayValue(basicInfo?.stage) },
-        { label: '随访状态', value: record.treatmentLines.length > 0 ? '治疗中' : '待补充' },
+        { label: '随访状态', value: record.followUpStatus ? ({ treating: '治疗中', paused: '暂停', completed: '结疗', lost: '失访' }[record.followUpStatus] ?? '待补充') : record.treatmentLines.length > 0 ? '治疗中' : '待补充' },
         { label: '诊断日期', target: basicInfoTarget('diagnosisDate'), value: displayValue(basicInfo?.diagnosisDate) },
         { label: '基因检测', value: getRecordEvidenceSummary(record, 'geneticTest') },
         { label: '免疫组化', value: getRecordEvidenceSummary(record, 'immunohistochemistry') },

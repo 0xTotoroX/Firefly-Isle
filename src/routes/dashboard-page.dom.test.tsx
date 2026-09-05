@@ -54,6 +54,7 @@ function renderDashboard() {
 }
 
 const fullData = {
+  nextVisit: { daysUntil: 12, nextVisitOn: '2026-09-17', patientId: 'p1' },
   recentSideEffects: [
     { id: 'se1', ongoing: true, patientId: 'p1', severity: 'moderate' as const, symptom: '恶心' },
   ],
@@ -78,6 +79,8 @@ describe('DashboardPage', () => {
     expect(screen.getByText('1')).toBeVisible()
     expect(screen.getByText('7')).toBeVisible()
     expect(screen.getByText('乳腺癌')).toBeVisible()
+    expect(screen.getByTestId('dashboard-next-visit')).toBeVisible()
+    expect(screen.getAllByText(/12 天后/).length).toBeGreaterThan(0)
     expect(screen.getByText('恶心')).toBeVisible()
     expect(screen.getByRole('link', { name: getCopy(copy.dashboard.viewRecord, 'zh') })).toHaveAttribute('href', '/record/p1')
     expect(screen.getByText('CA15-3')).toBeVisible()
@@ -94,7 +97,7 @@ describe('DashboardPage', () => {
   })
 
   it('offers an actionable empty state for accounts without records', async () => {
-    loadDashboardData.mockResolvedValue({ ...fullData, patientCount: 0, latestRecord: null, abnormalReadings: [], recentSideEffects: [] })
+    loadDashboardData.mockResolvedValue({ ...fullData, patientCount: 0, latestRecord: null, abnormalReadings: [], recentSideEffects: [], nextVisit: null })
     renderDashboard()
 
     expect(await screen.findByRole('link', { name: getCopy(copy.dashboard.emptyAction, 'zh') })).toHaveAttribute('href', '/app')

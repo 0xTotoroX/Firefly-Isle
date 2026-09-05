@@ -28,6 +28,10 @@ vi.mock('@/lib/patient-record-storage', () => ({
   loadPatientRecordById: (...args: unknown[]) => loadPatientRecordById(...args),
 }))
 
+vi.mock('@/lib/follow-up-storage', () => ({
+  loadFollowUpVisits: vi.fn().mockResolvedValue([]),
+}))
+
 vi.mock('@/lib/side-effect-storage', () => ({
   SideEffectStorageError: class SideEffectStorageError extends Error {},
   createSideEffect: (...args: unknown[]) => createSideEffect(...args),

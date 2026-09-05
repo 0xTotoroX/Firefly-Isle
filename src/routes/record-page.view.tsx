@@ -213,14 +213,24 @@ export function RecordPageContent({
       {switchNode}
       <div className="flex items-center gap-3">
         {!demoRoute && ganttRecord.id ? (
-          <Link
-            className="t-control-press inline-flex min-h-[38px] items-center gap-1.5 rounded-[12px] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
-            data-testid="record-side-effects-link"
-            to={`/record/${ganttRecord.id}/side-effects`}
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">healing</span>
-            {getCopy(copy.sideEffects.openFromRecord, locale)}
-          </Link>
+          <>
+            <Link
+              className="t-control-press inline-flex min-h-[38px] items-center gap-1.5 rounded-[12px] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+              data-testid="record-side-effects-link"
+              to={`/record/${ganttRecord.id}/side-effects`}
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">healing</span>
+              {getCopy(copy.sideEffects.openFromRecord, locale)}
+            </Link>
+            <Link
+              className="t-control-press inline-flex min-h-[38px] items-center gap-1.5 rounded-[12px] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+              data-testid="record-follow-up-link"
+              to={`/record/${ganttRecord.id}/follow-up`}
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">event_repeat</span>
+              {getCopy(copy.followUp.openFromRecord, locale)}
+            </Link>
+          </>
         ) : null}
         {toolbarNode}
       </div>

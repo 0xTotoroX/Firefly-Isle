@@ -23,6 +23,7 @@ const DashboardPage = lazy(() => import('@/routes/dashboard-page').then((module)
 const AuthCallbackPage = lazy(() => import('@/routes/auth-callback-page').then((module) => ({ default: module.AuthCallbackPage })))
 const BrandLockupPreviewPage = lazy(() => import('@/routes/brand-lockup-preview-page').then((module) => ({ default: module.BrandLockupPreviewPage })))
 const DesignPreviewPage = lazy(() => import('@/routes/design-preview-page').then((module) => ({ default: module.DesignPreviewPage })))
+const FollowUpPage = lazy(() => import('@/routes/follow-up-page').then((module) => ({ default: module.FollowUpPage })))
 const LoginPage = lazy(() => import('@/routes/login-page').then((module) => ({ default: module.LoginPage })))
 const ModelsPage = lazy(() => import('@/routes/models-page').then((module) => ({ default: module.ModelsPage })))
 const LabAnalyticsPage = lazy(() => import('@/routes/lab-analytics-page').then((module) => ({ default: module.LabAnalyticsPage })))
@@ -207,6 +208,16 @@ function AppRoutes() {
           element={
             isAuthenticated ? (
               <SideEffectsPage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/record/:id/follow-up"
+          element={
+            isAuthenticated ? (
+              <FollowUpPage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
             ) : (
               <Navigate replace to="/login" />
             )

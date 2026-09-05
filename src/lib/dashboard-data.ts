@@ -34,12 +34,19 @@ export type DashboardSideEffect = {
   symptom: string
 }
 
+export type DashboardNextVisit = {
+  daysUntil: number
+  nextVisitOn: string
+  patientId: string
+}
+
 export type DashboardData = {
   abnormalReadings: DashboardAbnormalReading[]
   activeShareCount: number
   aiCallCount30d: number
   labReadingCount: number
   latestRecord: DashboardLatestRecord | null
+  nextVisit: DashboardNextVisit | null
   patientCount: number
   recentSideEffects: DashboardSideEffect[]
 }
@@ -119,10 +126,11 @@ export async function loadDashboardData(): Promise<DashboardData> {
       }
     : null
 
-  const [aiCallCount30d, abnormalReadings, recentSideEffects] = await Promise.all([
+  const [aiCallCount30d, abnormalReadings, recentSideEffects, nextVisit] = await Promise.all([
     countAiCalls30d(supabase),
     loadRecentAbnormalReadings(supabase),
     loadRecentSideEffects(supabase),
+    loadNextFollowUpVisit(supabase),
   ])
 
   return {
@@ -131,8 +139,34 @@ export async function loadDashboardData(): Promise<DashboardData> {
     aiCallCount30d,
     labReadingCount,
     latestRecord,
+    nextVisit,
     patientCount,
     recentSideEffects,
+  }
+}
+
+// follow_up_visits（013）未迁移时降级为 null，不让整页失败。
+async function loadNextFollowUpVisit(supabase: ReturnType<typeof getSupabaseClient>): Promise<DashboardNextVisit | null> {
+  const today = new Date().toISOString().slice(0, 10)
+  const { data, error } = await supabase
+    .from('follow_up_visits')
+    .select('patient_id, next_visit_on')
+    .gte('next_visit_on', today)
+    .order('next_visit_on', { ascending: true })
+    .limit(1)
+
+  if (error || !data || data.length === 0) {
+    return null
+  }
+
+  const row = data[0] as { next_visit_on: string; patient_id: string }
+  const target = new Date(`${row.next_visit_on}T00:00:00`)
+  const todayStart = new Date(`${today}T00:00:00`)
+
+  return {
+    daysUntil: Math.round((target.getTime() - todayStart.getTime()) / (24 * 60 * 60 * 1000)),
+    nextVisitOn: row.next_visit_on,
+    patientId: row.patient_id,
   }
 }
 

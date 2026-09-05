@@ -81,6 +81,22 @@ function DashboardPageContent() {
 
   return (
     <div className="mt-6 space-y-4">
+      {data.nextVisit ? (
+        <Link
+          className="t-control-press flex flex-wrap items-center justify-between gap-3 rounded-[var(--ff-radius-md)] bg-[color-mix(in_srgb,var(--ff-accent-primary)_10%,var(--ff-surface-panel))] px-5 py-4 transition-colors hover:bg-[color-mix(in_srgb,var(--ff-accent-primary)_16%,var(--ff-surface-panel))]"
+          data-testid="dashboard-next-visit"
+          to={`/record/${data.nextVisit.patientId}/follow-up`}
+        >
+          <div className="flex min-w-0 items-center gap-3">
+            <span aria-hidden="true" className="material-symbols-outlined text-[22px] text-[var(--ff-accent-primary)]">event_repeat</span>
+            <span className="text-sm font-bold text-[var(--ff-text-primary)]">{getCopy(copy.followUp.nextVisitPrefix, locale)}</span>
+            <span className="font-[var(--ff-font-mono)] text-sm text-[var(--ff-text-secondary)]">{data.nextVisit.nextVisitOn}</span>
+          </div>
+          <span className="font-[var(--ff-font-display)] text-2xl font-black text-[var(--ff-accent-primary)]">
+            {data.nextVisit.daysUntil <= 0 ? getCopy(copy.dashboard.visitDue, locale) : `${data.nextVisit.daysUntil} ${getCopy(copy.followUp.daysUntil, locale)}`}
+          </span>
+        </Link>
+      ) : null}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <DashboardStat eyebrow="RECORDS" index={1} label={getCopy(copy.dashboard.statRecords, locale)} value={String(data.patientCount)} />
         <DashboardStat eyebrow="LAB RESULTS" index={2} label={getCopy(copy.dashboard.statReadings, locale)} value={String(data.labReadingCount)} />
