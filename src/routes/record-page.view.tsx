@@ -5,7 +5,9 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import type { RefObject } from 'react'
+import { Link } from 'react-router-dom'
 
+import { copy, getCopy } from '@/lib/copy'
 import type { ClinicalAnalysisPanelState } from '@/components/record/ClinicalAnalysisPanel'
 import { demoTreatmentGanttSupplementNotes } from '@/components/record/demo-record'
 import { labels } from '@/components/record/record-copy'
@@ -209,7 +211,19 @@ export function RecordPageContent({
   const controlsNode = ganttRecord ? (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       {switchNode}
-      {toolbarNode}
+      <div className="flex items-center gap-3">
+        {!demoRoute && ganttRecord.id ? (
+          <Link
+            className="t-control-press inline-flex min-h-[38px] items-center gap-1.5 rounded-[12px] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+            data-testid="record-side-effects-link"
+            to={`/record/${ganttRecord.id}/side-effects`}
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">healing</span>
+            {getCopy(copy.sideEffects.openFromRecord, locale)}
+          </Link>
+        ) : null}
+        {toolbarNode}
+      </div>
     </div>
   ) : null
 

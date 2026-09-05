@@ -56,6 +56,7 @@
 ## 复核记录
 
 - 2026-09-05：Management API 只读复核——项目 `ACTIVE_HEALTHY`；`auth.users` 175（匿名 166 / 邮箱 9）；`profiles` 175；`patients` 13；`treatment_lines` 76；`plans` 3；其余业务表 0 行。
+- 2026-09-05 增补：应用 `012_side_effects.sql`（患者副作用日志表），新增公开表 `side_effects`（0 行）。原因：产品需求新增「患者副作用记录页」（`/record/:id/side-effects`），schema 由迁移 012 提供。
 
 ## 待办
 

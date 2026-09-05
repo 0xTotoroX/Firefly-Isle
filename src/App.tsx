@@ -29,6 +29,7 @@ const LabAnalyticsPage = lazy(() => import('@/routes/lab-analytics-page').then((
 const PrivacyPage = lazy(() => import('@/routes/privacy-page').then((module) => ({ default: module.PrivacyPage })))
 const RecordPage = lazy(() => import('@/routes/record-page').then((module) => ({ default: module.RecordPage })))
 const SettingsPage = lazy(() => import('@/routes/settings-page').then((module) => ({ default: module.SettingsPage })))
+const SideEffectsPage = lazy(() => import('@/routes/side-effects-page').then((module) => ({ default: module.SideEffectsPage })))
 const SharedRecordPage = lazy(() => import('@/routes/shared-record-page').then((module) => ({ default: module.SharedRecordPage })))
 const WorkspacePage = lazy(() => import('@/routes/workspace-page').then((module) => ({ default: module.WorkspacePage })))
 
@@ -196,6 +197,16 @@ function AppRoutes() {
           element={
             isAuthenticated ? (
               <RecordPage isSigningOut={isSigningOut} onSignOut={signOut} userId={user?.id} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/record/:id/side-effects"
+          element={
+            isAuthenticated ? (
+              <SideEffectsPage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
             ) : (
               <Navigate replace to="/login" />
             )

@@ -19,6 +19,7 @@ type TreatmentLineRow = {
   biopsy: string | null
   end_date: string | null
   genetic_test: string | null
+  id: string | null
   immunohistochemistry: string | null
   line_number: number
   regimen: string | null
@@ -156,6 +157,7 @@ function mapTreatmentLineRow(row: TreatmentLineRow): TreatmentLine {
     biopsy: row.biopsy ?? undefined,
     endDate: row.end_date ?? undefined,
     geneticTest: row.genetic_test ?? undefined,
+    id: row.id ?? undefined,
     immunohistochemistry: row.immunohistochemistry ?? undefined,
     lineNumber: row.line_number,
     regimen: row.regimen ?? undefined,
@@ -247,7 +249,7 @@ async function loadPatientChildren(patient: PatientRow) {
   const supabase = getSupabaseClient()
   const { data: lines, error: linesError } = await supabase
     .from('treatment_lines')
-    .select('line_number, start_date, end_date, regimen, biopsy, immunohistochemistry, genetic_test')
+    .select('id, line_number, start_date, end_date, regimen, biopsy, immunohistochemistry, genetic_test')
     .eq('patient_id', patient.id)
     .order('line_number', { ascending: true })
     .returns<TreatmentLineRow[]>()

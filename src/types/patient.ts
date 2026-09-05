@@ -23,6 +23,7 @@ export interface InitialOnset {
 }
 
 export interface TreatmentLine {
+  id?: string
   lineNumber: number
   startDate?: string
   endDate?: string

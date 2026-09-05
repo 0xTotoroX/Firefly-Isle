@@ -727,7 +727,8 @@ describe('RecordPage responsive dossier shell', () => {
     expect(markup.match(/诊断日期/g)).toHaveLength(1)
     expect(markup).not.toContain('病理类型')
     expect(markup).not.toContain('记录 ID')
-    expect(markup).not.toContain('patient-42')
+    // record id 只允许出现在跳转链接 href 里，不允许作为正文重复
+    expect(markup.replace(/href="\/record\/[^"]*\/side-effects"/g, '')).not.toContain('patient-42')
     expect(markup).not.toContain('初发时间：2024.01')
     expect(markup).not.toContain('治疗方案：初发治疗方案')
   })

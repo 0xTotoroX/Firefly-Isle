@@ -18,7 +18,7 @@ type ThemedProps = PropsWithChildren<{
   theme: Theme
 }>
 
-function sidebarSurface(_theme: Theme) {
+function sidebarSurface() {
   return cn(
     'bg-[var(--ff-surface-sidebar)] text-[var(--ff-text-primary)]',
   )
@@ -40,9 +40,9 @@ function panelSurface(_theme: Theme, tone: SurfaceTone) {
   )
 }
 
-export function SidebarShell({ children, className, style, theme }: ThemedProps) {
+export function SidebarShell({ children, className, style }: ThemedProps) {
   return (
-    <aside className={cn('shrink-0', themeTransitionClass, sidebarSurface(theme), className)} style={style}>
+    <aside className={cn('shrink-0', themeTransitionClass, sidebarSurface(), className)} style={style}>
       {children}
     </aside>
   )
