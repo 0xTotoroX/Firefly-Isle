@@ -76,6 +76,12 @@ describe('loadDashboardData', () => {
     stub('lab_results:count', { count: 12 })
     stub('record_shares:scan', { count: 1 })
     stub('usage_events:scan', { count: 7 })
+    stub('side_effects:scan', {
+      data: [
+        { id: 'se1', occurred_on: '2026-09-01', patient_id: 'p1', resolved_on: null, severity: 'moderate', symptom: '恶心' },
+      ],
+      error: null,
+    })
     stub('patients:latest', {
       data: { basic_info: { tumorType: '乳腺癌' }, id: 'p1', updated_at: '2026-08-02T10:00:00Z' },
       error: null,
@@ -99,6 +105,8 @@ describe('loadDashboardData', () => {
     expect(data.abnormalReadings).toHaveLength(2)
     expect(data.abnormalReadings[0]).toMatchObject({ itemName: 'CA15-3', status: 'high', value: 40 })
     expect(data.abnormalReadings[1]).toMatchObject({ itemName: '白细胞', status: 'low' })
+    expect(data.recentSideEffects).toHaveLength(1)
+    expect(data.recentSideEffects[0]).toMatchObject({ symptom: '恶心', severity: 'moderate', ongoing: true })
   })
 
   it('returns zero AI calls when the usage ledger is not migrated yet', async () => {
@@ -107,11 +115,13 @@ describe('loadDashboardData', () => {
     stub('record_shares:scan', { count: 0 })
     stub('usage_events:scan', { count: null, error: { code: 'PGRST205', message: 'Could not find the table public.usage_events' } })
     stub('lab_results:scan', { data: [], error: null })
+    stub('side_effects:scan', { data: [], error: { code: 'PGRST205', message: 'Could not find the table public.side_effects' } })
 
     const data = await loadDashboardData()
 
     expect(data.aiCallCount30d).toBe(0)
     expect(data.patientCount).toBe(1)
+    expect(data.recentSideEffects).toEqual([])
   })
 
   it('rejects unauthenticated dashboard loads', async () => {

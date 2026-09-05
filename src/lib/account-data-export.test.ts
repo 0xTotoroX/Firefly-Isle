@@ -71,6 +71,7 @@ describe('buildAccountDataExport', () => {
     expect(data.format).toBe('firefly-isle.account-export')
     expect(data.account.userId).toBe('user-1')
     expect(data.patients).toHaveLength(1)
+    expect(selectCalls.some((call) => call.startsWith('side_effects:'))).toBe(true)
 
     const settingsSelect = selectCalls.find((call) => call.startsWith('llm_provider_settings:')) ?? ''
     const sharesSelect = selectCalls.find((call) => call.startsWith('record_shares:')) ?? ''

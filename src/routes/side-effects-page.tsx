@@ -19,8 +19,6 @@ import { shellWideContentClass, sidebarOffsetClass, topBarOffsetClass } from '@/
 
 const SEVERITIES: SideEffectSeverity[] = ['mild', 'moderate', 'severe']
 
-const SYMPTOM_PRESETS = ['恶心', '呕吐', '乏力', '脱发', '口腔溃疡', '腹泻', '便秘', '皮疹', '手脚麻木', '发热', '食欲下降', '失眠', '情绪低落', '白细胞降低']
-
 const FIELD_CLASS =
   'w-full rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] px-3 py-2 text-sm font-semibold outline-none focus-visible:border-[var(--ff-accent-primary)]'
 
@@ -187,16 +185,27 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
                   placeholder={getCopy(copy.sideEffects.symptomPlaceholder, locale)}
                   value={symptom}
                 />
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {SYMPTOM_PRESETS.map((preset) => (
-                    <button
-                      className="t-control-press rounded-[var(--ff-radius-full)] border border-[var(--ff-border-default)] px-2.5 py-1 text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
-                      key={preset}
-                      onClick={() => setSymptom(preset)}
-                      type="button"
-                    >
-                      {preset}
-                    </button>
+                <div className="mt-2 space-y-2">
+                  {copy.sideEffects.symptomGroups.map((group) => (
+                    <div className="flex flex-wrap items-center gap-1.5" key={group.label.zh}>
+                      <span className="mr-1 font-[var(--ff-font-mono)] text-[9px] uppercase tracking-[0.2em] text-[var(--ff-text-muted)]">
+                        {getCopy(group.label, locale)}
+                      </span>
+                      {group.items.map((item) => {
+                        const label = getCopy(item, locale)
+
+                        return (
+                          <button
+                            className="t-control-press rounded-[var(--ff-radius-full)] border border-[var(--ff-border-default)] px-2.5 py-1 text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+                            key={label}
+                            onClick={() => setSymptom(label)}
+                            type="button"
+                          >
+                            {label}
+                          </button>
+                        )
+                      })}
+                    </div>
                   ))}
                 </div>
               </div>

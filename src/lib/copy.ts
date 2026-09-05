@@ -100,6 +100,9 @@ export const copy = {
     emptyAction: text('前往工作台', 'Go to workspace'),
     loadFailed: text('总览数据读取失败，请检查网络后重试。', 'Could not load dashboard data. Check your network and retry.'),
     updatedLabel: text('更新于', 'Updated'),
+    recentSideEffectsTitle: text('最近副作用', 'Recent side effects'),
+    recentSideEffectsEmpty: text('还没有症状记录。', 'No symptom entries yet.'),
+    viewSideEffects: text('全部记录', 'View all'),
   },
   errorBoundary: {
     status: text('页面异常', 'Unexpected Error'),
@@ -145,6 +148,72 @@ export const copy = {
     openFromRecord: text('副作用记录', 'Side-effect log'),
     backToRecord: text('返回病历', 'Back to record'),
     ongoing: text('未缓解', 'Ongoing'),
+    symptomGroups: [
+      {
+        label: text('消化', 'Digestive'),
+        items: [
+          text('恶心', 'Nausea'),
+          text('呕吐', 'Vomiting'),
+          text('腹泻', 'Diarrhea'),
+          text('便秘', 'Constipation'),
+          text('口腔溃疡', 'Mouth sores'),
+          text('食欲下降', 'Appetite loss'),
+          text('味觉改变', 'Taste changes'),
+        ],
+      },
+      {
+        label: text('全身', 'Whole body'),
+        items: [
+          text('乏力', 'Fatigue'),
+          text('发热', 'Fever'),
+          text('盗汗', 'Night sweats'),
+          text('体重下降', 'Weight loss'),
+        ],
+      },
+      {
+        label: text('血液', 'Blood'),
+        items: [
+          text('白细胞降低', 'Low white cells'),
+          text('贫血', 'Anemia'),
+          text('血小板降低', 'Low platelets'),
+        ],
+      },
+      {
+        label: text('皮肤毛发', 'Skin & hair'),
+        items: [
+          text('脱发', 'Hair loss'),
+          text('皮疹', 'Rash'),
+          text('瘙痒', 'Itching'),
+          text('手足综合征', 'Hand-foot syndrome'),
+        ],
+      },
+      {
+        label: text('神经', 'Neuro'),
+        items: [
+          text('手脚麻木', 'Numb hands/feet'),
+          text('头痛', 'Headache'),
+          text('头晕', 'Dizziness'),
+          text('失眠', 'Insomnia'),
+          text('记忆力下降', 'Memory lapses'),
+        ],
+      },
+      {
+        label: text('情绪', 'Mood'),
+        items: [
+          text('情绪低落', 'Low mood'),
+          text('焦虑', 'Anxiety'),
+        ],
+      },
+      {
+        label: text('其他', 'Other'),
+        items: [
+          text('咳嗽', 'Cough'),
+          text('气短', 'Short of breath'),
+          text('水肿', 'Swelling'),
+          text('肌肉关节痛', 'Muscle/joint pain'),
+        ],
+      },
+    ],
   },
   donate: {
     title: text('支持萤屿', 'Support Firefly Isle'),

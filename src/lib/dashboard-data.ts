@@ -25,6 +25,14 @@ export type DashboardLatestRecord = {
   updatedAt: string | null
 }
 
+export type DashboardSideEffect = {
+  id: string
+  ongoing: boolean
+  patientId: string
+  severity: 'mild' | 'moderate' | 'severe'
+  symptom: string
+}
+
 export type DashboardData = {
   abnormalReadings: DashboardAbnormalReading[]
   activeShareCount: number
@@ -32,6 +40,7 @@ export type DashboardData = {
   labReadingCount: number
   latestRecord: DashboardLatestRecord | null
   patientCount: number
+  recentSideEffects: DashboardSideEffect[]
 }
 
 type CountResult = { count: number | null; error: { code?: string; message: string } | null }
@@ -109,8 +118,11 @@ export async function loadDashboardData(): Promise<DashboardData> {
       }
     : null
 
-  const aiCallCount30d = await countAiCalls30d(supabase)
-  const abnormalReadings = await loadRecentAbnormalReadings(supabase)
+  const [aiCallCount30d, abnormalReadings, recentSideEffects] = await Promise.all([
+    countAiCalls30d(supabase),
+    loadRecentAbnormalReadings(supabase),
+    loadRecentSideEffects(supabase),
+  ])
 
   return {
     abnormalReadings,
@@ -119,6 +131,7 @@ export async function loadDashboardData(): Promise<DashboardData> {
     labReadingCount,
     latestRecord,
     patientCount,
+    recentSideEffects,
   }
 }
 
@@ -182,4 +195,37 @@ async function loadRecentAbnormalReadings(supabase: ReturnType<typeof getSupabas
   }
 
   return [...latestPerItem.values()].slice(0, MAX_ABNORMAL_CARDS)
+}
+
+const MAX_SIDE_EFFECT_CARDS = 4
+
+type SideEffectRow = {
+  id: string
+  occurred_on: string | null
+  patient_id: string
+  resolved_on: string | null
+  severity: 'mild' | 'moderate' | 'severe'
+  symptom: string
+}
+
+// side_effects（012）未迁移时降级为空列表，不让整页失败。
+async function loadRecentSideEffects(supabase: ReturnType<typeof getSupabaseClient>): Promise<DashboardSideEffect[]> {
+  const { data, error } = await supabase
+    .from('side_effects')
+    .select('id, patient_id, symptom, severity, occurred_on, resolved_on')
+    .order('occurred_on', { ascending: false })
+    .order('created_at', { ascending: false })
+    .limit(MAX_SIDE_EFFECT_CARDS)
+
+  if (error || !data) {
+    return []
+  }
+
+  return (data as SideEffectRow[]).map((row) => ({
+    id: row.id,
+    ongoing: row.resolved_on === null,
+    patientId: row.patient_id,
+    severity: row.severity,
+    symptom: row.symptom,
+  }))
 }

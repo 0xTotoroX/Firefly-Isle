@@ -54,6 +54,9 @@ function renderDashboard() {
 }
 
 const fullData = {
+  recentSideEffects: [
+    { id: 'se1', ongoing: true, patientId: 'p1', severity: 'moderate' as const, symptom: '恶心' },
+  ],
   abnormalReadings: [
     { itemId: 'r2', itemName: 'CA15-3', patientId: 'p1', reference: '0 - 25', status: 'high' as const, testDate: '2026-08-02', unit: 'U/mL', value: 40 },
     { itemId: 'r3', itemName: '白细胞', patientId: 'p1', reference: '3.5 - 9.5', status: 'low' as const, testDate: '2026-08-02', unit: '10^9/L', value: 2.8 },
@@ -75,6 +78,7 @@ describe('DashboardPage', () => {
     expect(screen.getByText('1')).toBeVisible()
     expect(screen.getByText('7')).toBeVisible()
     expect(screen.getByText('乳腺癌')).toBeVisible()
+    expect(screen.getByText('恶心')).toBeVisible()
     expect(screen.getByRole('link', { name: getCopy(copy.dashboard.viewRecord, 'zh') })).toHaveAttribute('href', '/record/p1')
     expect(screen.getByText('CA15-3')).toBeVisible()
     expect(screen.getByText(getCopy(copy.dashboard.highLabel, 'zh'))).toBeVisible()
@@ -90,7 +94,7 @@ describe('DashboardPage', () => {
   })
 
   it('offers an actionable empty state for accounts without records', async () => {
-    loadDashboardData.mockResolvedValue({ ...fullData, patientCount: 0, latestRecord: null, abnormalReadings: [] })
+    loadDashboardData.mockResolvedValue({ ...fullData, patientCount: 0, latestRecord: null, abnormalReadings: [], recentSideEffects: [] })
     renderDashboard()
 
     expect(await screen.findByRole('link', { name: getCopy(copy.dashboard.emptyAction, 'zh') })).toHaveAttribute('href', '/app')

@@ -88,7 +88,7 @@ function DashboardPageContent() {
         <DashboardStat eyebrow="AI · 30D" index={4} label={getCopy(copy.dashboard.statAiCalls, locale)} value={String(data.aiCallCount30d)} />
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <section className="rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] p-5">
           <h2 className="font-[var(--ff-font-display)] text-xl font-black tracking-normal">{getCopy(copy.dashboard.latestRecordTitle, locale)}</h2>
           {data.latestRecord ? (
@@ -148,6 +148,55 @@ function DashboardPageContent() {
                       {getCopy(copy.dashboard.viewAnalytics, locale)}
                     </Link>
                   </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="rounded-[var(--ff-radius-md)] bg-[var(--ff-surface-panel)] p-5">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="font-[var(--ff-font-display)] text-xl font-black tracking-normal">{getCopy(copy.dashboard.recentSideEffectsTitle, locale)}</h2>
+            {data.recentSideEffects.length > 0 && data.latestRecord ? (
+              <Link
+                className="t-control-press text-sm font-semibold text-[var(--ff-accent-primary)] hover:underline"
+                to={`/record/${data.recentSideEffects[0].patientId}/side-effects`}
+              >
+                {getCopy(copy.dashboard.viewSideEffects, locale)}
+              </Link>
+            ) : null}
+          </div>
+          {data.recentSideEffects.length === 0 ? (
+            <p className="mt-4 text-sm text-[var(--ff-text-muted)]">{getCopy(copy.dashboard.recentSideEffectsEmpty, locale)}</p>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {data.recentSideEffects.map((entry) => (
+                <li className="flex flex-wrap items-center justify-between gap-2" key={entry.id}>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span
+                      className={`inline-flex items-center rounded-[var(--ff-radius-sm)] border px-1.5 py-0.5 font-[var(--ff-font-mono)] text-[10px] font-bold uppercase ${
+                        entry.severity === 'severe'
+                          ? 'border-[color-mix(in_srgb,var(--ff-critical)_46%,transparent)] text-[var(--ff-critical)]'
+                          : entry.severity === 'moderate'
+                            ? 'border-[color-mix(in_srgb,var(--ff-accent-warning)_46%,transparent)] text-[var(--ff-accent-warning)]'
+                            : 'border-[color-mix(in_srgb,var(--ff-low)_46%,transparent)] text-[var(--ff-low)]'
+                      }`}
+                    >
+                      {entry.severity === 'severe'
+                        ? getCopy(copy.sideEffects.severitySevere, locale)
+                        : entry.severity === 'moderate'
+                          ? getCopy(copy.sideEffects.severityModerate, locale)
+                          : getCopy(copy.sideEffects.severityMild, locale)}
+                    </span>
+                    <span className="truncate text-sm font-bold text-[var(--ff-text-primary)]">{entry.symptom}</span>
+                    {entry.ongoing ? <span className="font-[var(--ff-font-mono)] text-[10px] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.ongoing, locale)}</span> : null}
+                  </div>
+                  <Link
+                    className="font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-muted)] hover:text-[var(--ff-accent-primary)]"
+                    to={`/record/${entry.patientId}/side-effects`}
+                  >
+                    {getCopy(copy.sideEffects.openFromRecord, locale)}
+                  </Link>
                 </li>
               ))}
             </ul>

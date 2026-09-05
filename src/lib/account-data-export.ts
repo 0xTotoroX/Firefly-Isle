@@ -24,6 +24,7 @@ export type AccountDataExport = {
   patients: AccountExportRow[]
   profile: UserProfileView | null
   recordShares: AccountExportRow[]
+  sideEffects: AccountExportRow[]
   treatmentLines: AccountExportRow[]
   version: 1
 }
@@ -80,6 +81,7 @@ export async function buildAccountDataExport(): Promise<AccountDataExport> {
     queryOwnRows(() => supabase.from('llm_provider_settings').select('provider, base_url, model, created_at, updated_at'), patientIds),
     queryOwnRows(() => supabase.from('record_shares').select('id, patient_id, expires_at, revoked_at, created_at'), patientIds),
   ])
+  const sideEffects = await queryOwnRows(() => supabase.from('side_effects').select('*'), patientIds)
 
   return {
     account: {
@@ -94,6 +96,7 @@ export async function buildAccountDataExport(): Promise<AccountDataExport> {
     patients,
     profile,
     recordShares,
+    sideEffects,
     treatmentLines,
     version: 1,
   }
