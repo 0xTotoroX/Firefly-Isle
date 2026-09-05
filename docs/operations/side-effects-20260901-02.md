@@ -58,6 +58,8 @@
 - 2026-09-05：Management API 只读复核——项目 `ACTIVE_HEALTHY`；`auth.users` 175（匿名 166 / 邮箱 9）；`profiles` 175；`patients` 13；`treatment_lines` 76；`plans` 3；其余业务表 0 行。
 - 2026-09-05 增补：应用 `012_side_effects.sql`（患者副作用日志表），新增公开表 `side_effects`（0 行）。原因：产品需求新增「患者副作用记录页」（`/record/:id/side-effects`），schema 由迁移 012 提供。
 
+- 2026-09-05 增补：应用 `013_follow_up.sql`（随访模块），新增公开表 `follow_up_visits`（0 行）与 `patients.follow_up_status` 列。原因：产品新增随访页（F1 倒计时 / F2 就诊记录 / F3 显式状态 / F4 摘要整合）。
+
 ## 待办
 
 - [ ] 更新 runbook `ops/firefly-isle-supabase-inactive-restore.md` 的「最后验证」：本次已端到端执行恢复（09-02，2.5 分钟到 ACTIVE_HEALTHY），并补充两个新事实——Management API `database/query` 必须带浏览器 `User-Agent`（否则 Cloudflare 1010）；该项目 `supabase db push` 不可用（直连被掐、pooler 无密码 SASL 失败），SQL 走 Management API。**暂缓原因：ABox 外置卷未挂载，runbook 文件不可达。**
