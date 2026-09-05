@@ -136,6 +136,43 @@ describe('SideEffectsPage', () => {
     })
   })
 
+  it('generates a visit summary for the picked range and marks overdue entries', async () => {
+    const overdueEntry = { ...sampleEntry, id: 'se-old', occurredOn: '2026-08-01', resolvedOn: null }
+    loadSideEffects.mockResolvedValue([overdueEntry])
+    renderPage()
+
+    expect(await screen.findByText(/超过 7 天未缓解/)).toBeVisible()
+
+    await userEvent.type(screen.getByTestId('side-effect-summary-from'), '2026-08-01')
+    await userEvent.click(screen.getByTestId('side-effect-summary-generate'))
+
+    const output = screen.getByTestId('side-effect-summary-output') as HTMLTextAreaElement
+
+    expect(output.value).toContain('复诊摘要')
+    expect(output.value).toContain('恶心')
+
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: vi.fn().mockResolvedValue(undefined) } })
+    await userEvent.click(screen.getByTestId('side-effect-summary-copy'))
+
+    expect(screen.getByText('摘要已复制')).toBeVisible()
+  })
+
+  it('remembers custom symptoms locally after saving', async () => {
+    createSideEffect.mockResolvedValue({ ...sampleEntry, id: 'se-3' })
+    renderPage()
+
+    await userEvent.type(await screen.findByTestId('side-effect-symptom-input'), '晨起手僵')
+    await userEvent.click(screen.getByTestId('side-effect-save-button'))
+
+    await waitFor(() => {
+      expect(createSideEffect).toHaveBeenCalled()
+    })
+
+    const stored = JSON.parse(localStorage.getItem('firefly-custom-symptoms') ?? '[]') as string[]
+
+    expect(stored).toContain('晨起手僵')
+  })
+
   it('backfills the form when editing an entry', async () => {
     loadSideEffects.mockResolvedValue([sampleEntry])
     renderPage()

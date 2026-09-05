@@ -148,6 +148,20 @@ export const copy = {
     openFromRecord: text('副作用记录', 'Side-effect log'),
     backToRecord: text('返回病历', 'Back to record'),
     ongoing: text('未缓解', 'Ongoing'),
+    overdueBadge: text('超过 7 天未缓解', 'Ongoing for 7+ days'),
+    customGroup: text('我的常用', 'My common'),
+    summaryTitle: text('复诊摘要', 'Visit summary'),
+    summaryDescription: text(
+      '选择日期范围，生成一段可以直接给医生看的文字。',
+      'Pick a date range and generate text you can hand straight to your doctor.',
+    ),
+    summaryFrom: text('开始日期', 'From'),
+    summaryTo: text('结束日期', 'To'),
+    summaryGenerate: text('生成摘要', 'Generate summary'),
+    summaryCopy: text('复制摘要', 'Copy summary'),
+    summaryCopied: text('摘要已复制', 'Summary copied'),
+    summaryEmpty: text('这个时间范围没有记录。', 'No entries in this range.'),
+    summaryHeader: text('复诊摘要', 'Visit summary'),
     symptomGroups: [
       {
         label: text('消化', 'Digestive'),

@@ -493,8 +493,9 @@ describe('WorkspacePage report shell', () => {
     expect(topbarSource).toContain('小生才疏学浅，有任何问题都可以通过')
     expect(topbarSource).toContain("const CONTACT_EMAIL = 'ghibli1024@gmail.com'")
     expect(topbarSource).toContain('writeClipboardText(CONTACT_EMAIL)')
-    expect(topbarSource).toContain('navigator.clipboard?.writeText')
-    expect(topbarSource).toContain("document.execCommand('copy')")
+    // 剪贴板实现抽到了 @/lib/clipboard，顶栏只保留调用点
+    expect(topbarSource).toContain("from '@/lib/clipboard'")
+    expect(topbarSource).not.toContain("document.execCommand('copy')")
     expect(topbarSource).toContain('data-contact-email={CONTACT_EMAIL}')
     expect(topbarSource).toContain('data-testid="topbar-contact-copy-status"')
     expect(topbarSource).toContain('copy.shell.topbar.contact.copyEmail')

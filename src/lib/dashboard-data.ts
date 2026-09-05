@@ -28,6 +28,7 @@ export type DashboardLatestRecord = {
 export type DashboardSideEffect = {
   id: string
   ongoing: boolean
+  overdue: boolean
   patientId: string
   severity: 'mild' | 'moderate' | 'severe'
   symptom: string
@@ -208,6 +209,8 @@ type SideEffectRow = {
   symptom: string
 }
 
+const OVERDUE_MS = 7 * 24 * 60 * 60 * 1000
+
 // side_effects（012）未迁移时降级为空列表，不让整页失败。
 async function loadRecentSideEffects(supabase: ReturnType<typeof getSupabaseClient>): Promise<DashboardSideEffect[]> {
   const { data, error } = await supabase
@@ -221,11 +224,16 @@ async function loadRecentSideEffects(supabase: ReturnType<typeof getSupabaseClie
     return []
   }
 
-  return (data as SideEffectRow[]).map((row) => ({
-    id: row.id,
-    ongoing: row.resolved_on === null,
-    patientId: row.patient_id,
-    severity: row.severity,
-    symptom: row.symptom,
-  }))
+  return (data as SideEffectRow[]).map((row) => {
+    const occurredMs = row.occurred_on ? new Date(`${row.occurred_on}T00:00:00`).getTime() : Number.NaN
+
+    return {
+      id: row.id,
+      ongoing: row.resolved_on === null,
+      overdue: row.resolved_on === null && Number.isFinite(occurredMs) && Date.now() - occurredMs >= OVERDUE_MS,
+      patientId: row.patient_id,
+      severity: row.severity,
+      symptom: row.symptom,
+    }
+  })
 }

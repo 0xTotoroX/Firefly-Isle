@@ -189,7 +189,11 @@ function DashboardPageContent() {
                           : getCopy(copy.sideEffects.severityMild, locale)}
                     </span>
                     <span className="truncate text-sm font-bold text-[var(--ff-text-primary)]">{entry.symptom}</span>
-                    {entry.ongoing ? <span className="font-[var(--ff-font-mono)] text-[10px] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.ongoing, locale)}</span> : null}
+                    {entry.overdue ? (
+                      <span className="inline-flex items-center rounded-[var(--ff-radius-sm)] border border-[color-mix(in_srgb,var(--ff-critical)_46%,transparent)] px-1.5 py-0.5 font-[var(--ff-font-mono)] text-[10px] font-bold text-[var(--ff-critical)]">
+                        {getCopy(copy.sideEffects.overdueBadge, locale)}
+                      </span>
+                    ) : entry.ongoing ? <span className="font-[var(--ff-font-mono)] text-[10px] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.ongoing, locale)}</span> : null}
                   </div>
                   <Link
                     className="font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-muted)] hover:text-[var(--ff-accent-primary)]"

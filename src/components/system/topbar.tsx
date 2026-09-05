@@ -6,6 +6,7 @@
  */
 import { useEffect, useRef, useState } from 'react'
 
+import { writeClipboardText } from '@/lib/clipboard'
 import { getCopy, copy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
 
@@ -27,41 +28,6 @@ type ContactCopyStatus = 'idle' | 'copied'
 const CONTACT_EMAIL = 'ghibli1024@gmail.com'
 const contactStatusId = 'topbar-contact-copy-status'
 const contactPanelId = 'topbar-contact-card'
-
-async function writeClipboardText(text: string) {
-  const textarea = document.createElement('textarea')
-  textarea.value = text
-  textarea.setAttribute('readonly', '')
-  textarea.style.position = 'fixed'
-  textarea.style.inset = '0 auto auto 0'
-  textarea.style.opacity = '0'
-  textarea.style.pointerEvents = 'none'
-  document.body.appendChild(textarea)
-  textarea.focus({ preventScroll: true })
-  textarea.select()
-  textarea.setSelectionRange(0, text.length)
-
-  try {
-    if (document.execCommand('copy')) {
-      return true
-    }
-  } catch {
-    // 继续走异步剪贴板路径，避免旧 API 被禁用时直接失败。
-  } finally {
-    textarea.remove()
-  }
-
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text)
-      return true
-    } catch {
-      return false
-    }
-  }
-
-  return false
-}
 
 export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBarProps) {
   const { locale } = useLocale()

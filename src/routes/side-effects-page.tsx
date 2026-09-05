@@ -10,6 +10,7 @@ import { Link, useParams } from 'react-router-dom'
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
 import { MainShell } from '@/components/system/surfaces'
 import { useAsyncResource } from '@/lib/async-resource'
+import { writeClipboardText } from '@/lib/clipboard'
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
 import { loadPatientRecordById } from '@/lib/patient-record-storage'
@@ -21,6 +22,47 @@ const SEVERITIES: SideEffectSeverity[] = ['mild', 'moderate', 'severe']
 
 const FIELD_CLASS =
   'w-full rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] px-3 py-2 text-sm font-semibold outline-none focus-visible:border-[var(--ff-accent-primary)]'
+
+const CUSTOM_SYMPTOMS_KEY = 'firefly-custom-symptoms'
+const OVERDUE_DAYS = 7
+const MAX_CUSTOM_SYMPTOMS = 12
+
+function readCustomSymptoms() {
+  if (typeof window === 'undefined') {
+    return []
+  }
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(CUSTOM_SYMPTOMS_KEY) ?? '[]') as unknown
+
+    return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string' && item.trim().length > 0).slice(0, MAX_CUSTOM_SYMPTOMS) : []
+  } catch {
+    return []
+  }
+}
+
+function rememberCustomSymptom(symptom: string, presetLabels: Set<string>) {
+  const trimmed = symptom.trim()
+
+  if (!trimmed || presetLabels.has(trimmed)) {
+    return
+  }
+
+  const current = readCustomSymptoms()
+  const next = [trimmed, ...current.filter((item) => item !== trimmed)].slice(0, MAX_CUSTOM_SYMPTOMS)
+
+  window.localStorage.setItem(CUSTOM_SYMPTOMS_KEY, JSON.stringify(next))
+}
+
+function isOverdue(entry: SideEffectRecord, now = new Date()) {
+  if (entry.resolvedOn) {
+    return false
+  }
+
+  const occurred = new Date(`${entry.occurredOn}T00:00:00`)
+
+  return Number.isFinite(occurred.getTime()) && now.getTime() - occurred.getTime() >= OVERDUE_DAYS * 24 * 60 * 60 * 1000
+}
 
 type SideEffectsPageProps = {
   isSigningOut?: boolean
@@ -72,8 +114,21 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
   const [saving, setSaving] = useState(false)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [customSymptoms, setCustomSymptoms] = useState<string[]>(() => readCustomSymptoms())
+  const [summaryFrom, setSummaryFrom] = useState(() => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
+  const [summaryTo, setSummaryTo] = useState(() => new Date().toISOString().slice(0, 10))
+  const [summaryText, setSummaryText] = useState('')
+  const [summaryCopied, setSummaryCopied] = useState(false)
 
   const lines = recordResource.data?.treatmentLines ?? []
+  const presetLabels = new Set<string>(
+    copy.sideEffects.symptomGroups.flatMap((group) => group.items.map((item) => getCopy(item, locale))),
+  )
+
+  function rememberCurrentSymptom() {
+    rememberCustomSymptom(symptom, presetLabels)
+    setCustomSymptoms(readCustomSymptoms())
+  }
   const lineLabel = (targetId: string) => {
     const line = lines.find((entry) => entry.id === targetId)
 
@@ -131,6 +186,7 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
         await createSideEffect(id, input)
       }
 
+      rememberCurrentSymptom()
       resetForm()
       setFeedback(getCopy(copy.sideEffects.savedFeedback, locale))
       effectsResource.reload()
@@ -153,6 +209,41 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
   }
 
   const entries = effectsResource.data ?? []
+
+  function generateSummary() {
+    const inRange = entries.filter((entry) => entry.occurredOn >= summaryFrom && entry.occurredOn <= summaryTo)
+
+    if (inRange.length === 0) {
+      setSummaryText(getCopy(copy.sideEffects.summaryEmpty, locale))
+      return
+    }
+
+    const header =
+      locale === 'zh'
+        ? `复诊摘要（${summaryFrom} ~ ${summaryTo}，共 ${inRange.length} 条）`
+        : `Visit summary (${summaryFrom} ~ ${summaryTo}, ${inRange.length} entries)`
+    const lines = inRange.map((entry) => {
+      const parts = [
+        entry.occurredOn,
+        `${entry.symptom}（${severityCopy(entry.severity, locale)}）`,
+        entry.lineId ? lineLabel(entry.lineId) : '',
+        entry.resolvedOn || getCopy(copy.sideEffects.ongoing, locale),
+        entry.medication ? `${locale === 'zh' ? '处理' : 'Action'}：${entry.medication}` : '',
+        entry.notes ?? '',
+      ]
+
+      return `- ${parts.filter(Boolean).join(' · ')}`
+    })
+
+    setSummaryText([header, ...lines].join('\n'))
+    setSummaryCopied(false)
+  }
+
+  async function handleCopySummary() {
+    const copied = await writeClipboardText(summaryText)
+
+    setSummaryCopied(copied)
+  }
 
   return (
     <div className={dark ? 'min-h-screen bg-[var(--ff-surface-base)] text-[var(--ff-text-primary)]' : 'min-h-screen bg-[var(--ff-surface-base)] text-[var(--ff-text-primary)]'}>
@@ -186,6 +277,23 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
                   value={symptom}
                 />
                 <div className="mt-2 space-y-2">
+                  {customSymptoms.length > 0 ? (
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="mr-1 font-[var(--ff-font-mono)] text-[9px] uppercase tracking-[0.2em] text-[var(--ff-accent-primary)]">
+                        {getCopy(copy.sideEffects.customGroup, locale)}
+                      </span>
+                      {customSymptoms.map((item) => (
+                        <button
+                          className="t-control-press rounded-[var(--ff-radius-full)] border border-[var(--ff-accent-primary)] px-2.5 py-1 text-xs font-semibold text-[var(--ff-accent-primary)]"
+                          key={item}
+                          onClick={() => setSymptom(item)}
+                          type="button"
+                        >
+                          {item}
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
                   {copy.sideEffects.symptomGroups.map((group) => (
                     <div className="flex flex-wrap items-center gap-1.5" key={group.label.zh}>
                       <span className="mr-1 font-[var(--ff-font-mono)] text-[9px] uppercase tracking-[0.2em] text-[var(--ff-text-muted)]">
@@ -296,6 +404,42 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
             </div>
           </section>
 
+          <section className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-6" data-testid="side-effect-summary-card">
+            <h2 className="font-[var(--ff-font-display)] text-lg font-black">{getCopy(copy.sideEffects.summaryTitle, locale)}</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.sideEffects.summaryDescription, locale)}</p>
+            <div className="mt-4 flex flex-wrap items-end gap-3">
+              <label className="text-xs font-semibold text-[var(--ff-text-secondary)]">
+                {getCopy(copy.sideEffects.summaryFrom, locale)}
+                <input className={`${FIELD_CLASS} mt-1 block`} data-testid="side-effect-summary-from" onChange={(event) => setSummaryFrom(event.target.value)} type="date" value={summaryFrom} />
+              </label>
+              <label className="text-xs font-semibold text-[var(--ff-text-secondary)]">
+                {getCopy(copy.sideEffects.summaryTo, locale)}
+                <input className={`${FIELD_CLASS} mt-1 block`} data-testid="side-effect-summary-to" onChange={(event) => setSummaryTo(event.target.value)} type="date" value={summaryTo} />
+              </label>
+              <button
+                className="t-control-press inline-flex min-h-[38px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)]"
+                data-testid="side-effect-summary-generate"
+                onClick={generateSummary}
+                type="button"
+              >
+                {getCopy(copy.sideEffects.summaryGenerate, locale)}
+              </button>
+            </div>
+            {summaryText ? (
+              <div className="mt-4">
+                <textarea className={`${FIELD_CLASS} min-h-[120px] font-[var(--ff-font-mono)] text-xs leading-5`} data-testid="side-effect-summary-output" readOnly value={summaryText} />
+                <button
+                  className="t-control-press mt-2 inline-flex min-h-[38px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)]"
+                  data-testid="side-effect-summary-copy"
+                  onClick={() => void handleCopySummary()}
+                  type="button"
+                >
+                  {summaryCopied ? getCopy(copy.sideEffects.summaryCopied, locale) : getCopy(copy.sideEffects.summaryCopy, locale)}
+                </button>
+              </div>
+            ) : null}
+          </section>
+
           <section className="mt-6">
             <h2 className="font-[var(--ff-font-display)] text-lg font-black">{getCopy(copy.sideEffects.title, locale)}</h2>
             {effectsResource.isLoading ? (
@@ -336,6 +480,7 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
                     {entry.medication || entry.notes || !entry.resolvedOn ? (
                       <p className="mt-2 text-xs leading-5 text-[var(--ff-text-secondary)]">
                         {entry.resolvedOn ? '' : `${getCopy(copy.sideEffects.ongoing, locale)} · `}
+                        {isOverdue(entry) ? `${getCopy(copy.sideEffects.overdueBadge, locale)} · ` : ''}
                         {entry.medication ? `${entry.medication}` : ''}
                         {entry.medication && entry.notes ? ' · ' : ''}
                         {entry.notes ?? ''}
