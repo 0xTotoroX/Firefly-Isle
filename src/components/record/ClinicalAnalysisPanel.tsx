@@ -116,7 +116,7 @@ export function ClinicalAnalysisPanel({
 
       {state.error ? (
         <div
-          className='mt-4 border-l-2 border-[var(--ff-accent-primary)] bg-[var(--ff-surface-warning)] px-4 py-3 text-sm font-semibold text-[var(--ff-accent-primary)]'
+          className='mt-4 border-l-2 border-[var(--ff-accent-primary)] bg-[var(--ff-surface-warning)] px-4 py-3 text-sm font-semibold text-[var(--ff-accent-text)]'
           role='alert'
         >
           {state.error}

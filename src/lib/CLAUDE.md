@@ -52,4 +52,22 @@ record-editing.test.ts: 自然语言病历编辑回归测试，约束 basicInfo�
 supabase.ts: Supabase 客户端初始化与环境变量边界，Auth 使用 PKCE + detectSessionInUrl，区分 Auth 所需 env、Edge Function env 与非敏感微信 custom provider id，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 utils.ts: 类名合并等无业务状态工具，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
+calendar-date.ts: 本地日历日期、严格有效性、日历天差和偏移计算，不从 UTC 截取业务日期，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+calendar-date.test.ts: 跨时区午夜、夏令时与无效日期回归，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+auxiliary-record-storage.test.ts: 症状/随访存储边界测试，覆盖 owner 写入、更新字段、零行写入与失败传播，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+side-effect-storage.ts: 症状 owner CRUD 与日期校验；显式创建归属、编辑不覆盖身份、写后验证目标行，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+follow-up-storage.ts: 随访和状态 CRUD；编辑保持患者关联、校验日期顺序并反馈不可用记录，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+dashboard-data.ts: RLS 计数与最新指标/随访 RPC 聚合，按分区暴露错误，本地计算逾期日历天数，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+dashboard-data.test.ts: 聚合计数、跨患者同名指标、未授权请求与分区失败的回归，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+accent.ts: 八色预设与主色/按钮前景/可读强调文字的派生，临床语义色按明暗主题独立定义，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+accent.test.ts: 验证八色及两种主题的按钮、悬停、强调文字和状态色对比度及语义独立性，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
 法则: 基础设施集中在这里，页面只消费结果，不重复发明边界。

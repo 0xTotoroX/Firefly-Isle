@@ -59,31 +59,70 @@ function mix(hex: string, target: string, amount: number) {
   return `#${toHex(left.r + (right.r - left.r) * amount)}${toHex(left.g + (right.g - left.g) * amount)}${toHex(left.b + (right.b - left.b) * amount)}`.toUpperCase()
 }
 
+// WCAG relative luminance; choose foregrounds against the surfaces they actually use.
+function luminance(hex: string) {
+  const { r, g, b } = hexToRgb(hex)
+  const linear = [r, g, b].map((channel) => {
+    const value = channel / 255
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+  })
+  return linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722
+}
+
+function contrast(left: string, right: string) {
+  const values = [luminance(left), luminance(right)]
+  return (Math.max(...values) + 0.05) / (Math.min(...values) + 0.05)
+}
+
+function readableText(accent: string, backgrounds: string[], target: string) {
+  for (let step = 0; step <= 100; step += 1) {
+    const candidate = mix(accent, target, step / 100)
+    if (backgrounds.every((background) => contrast(candidate, background) >= 4.5)) return candidate
+  }
+  return target
+}
+
+export const clinicalColors = {
+  light: { critical: '#B42318', low: '#175CD3', success: '#18743F', warning: '#805400' },
+  dark: { critical: '#FF8A80', low: '#83B4FF', success: '#6FCF97', warning: '#E5B76A' },
+} as const
+
 export function deriveAccentStops(accent: string, theme: 'dark' | 'light') {
   const normalized = normalizeAccentHex(accent)
+  const dark = theme === 'dark'
+  const foreground = contrast(normalized, '#000000') >= contrast(normalized, '#FFFFFF') ? '#000000' : '#FFFFFF'
+  const soft = mix(normalized, dark ? '#000000' : '#FFFFFF', dark ? 0.82 : 0.88)
 
   return {
     accent: normalized,
     primary: normalized,
-    strong: mix(normalized, '#FFFFFF', 0.12),
-    soft: theme === 'dark' ? mix(normalized, '#000000', 0.82) : mix(normalized, '#FFFFFF', 0.88),
-    warning: normalized,
+    foreground,
+    strong: mix(normalized, foreground === '#FFFFFF' ? '#000000' : '#FFFFFF', 0.12),
+    soft,
+    text: readableText(normalized, [soft, ...(dark ? ['#000000', '#111111', '#181D20'] : ['#FFFFFF', '#F1F0EC', '#F4F4F2'])], dark ? '#FFFFFF' : '#000000'),
+    ...clinicalColors[theme],
   }
 }
 
 export function applyAccent(accent: string, theme: 'dark' | 'light' = 'dark') {
-  if (typeof document === 'undefined') {
-    return
-  }
+  if (typeof document === 'undefined') return
 
   const stops = deriveAccentStops(accent, theme)
   const root = document.documentElement
-
-  root.style.setProperty('--ff-accent', stops.accent)
-  root.style.setProperty('--ff-accent-primary', stops.primary)
-  root.style.setProperty('--ff-accent-strong', stops.strong)
-  root.style.setProperty('--ff-accent-soft', stops.soft)
-  root.style.setProperty('--ff-accent-warning', stops.warning)
-  root.style.setProperty('--ff-border-strong', stops.accent)
+  const properties = {
+    '--ff-accent': stops.accent,
+    '--ff-accent-primary': stops.primary,
+    '--ff-accent-foreground': stops.foreground,
+    '--ff-accent-text': stops.text,
+    '--ff-accent-strong': stops.strong,
+    '--ff-accent-soft': stops.soft,
+    '--ff-surface-accent': stops.soft,
+    '--ff-accent-warning': stops.warning,
+    '--ff-accent-success': stops.success,
+    '--ff-critical': stops.critical,
+    '--ff-low': stops.low,
+    '--ff-border-strong': stops.accent,
+  }
+  for (const [key, value] of Object.entries(properties)) root.style.setProperty(key, value)
   root.dataset.accent = stops.accent
 }

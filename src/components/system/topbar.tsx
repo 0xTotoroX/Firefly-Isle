@@ -106,14 +106,14 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
 
       <div className="relative flex shrink-0 items-center gap-1 sm:gap-3">
         <BackgroundMusicToggle
-          className="t-control-press h-10 w-10 rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)] sm:h-11 sm:w-11"
+          className="t-control-press h-10 w-10 rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-text)] sm:h-11 sm:w-11"
           layout="compact"
         />
         <button
           aria-controls="origin-story-paper"
           aria-expanded={originStoryOpen}
           aria-label={locale === 'zh' ? '为什么做一页萤屿' : 'Why Firefly Isle'}
-          className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)] sm:h-11 sm:w-11"
+          className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-text)] sm:h-11 sm:w-11"
           data-topbar-action="origin-story"
           onClick={() => setOpenOverlay((current) => (current === 'origin-story' ? null : 'origin-story'))}
           ref={originStoryButtonRef}
@@ -129,7 +129,7 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
             aria-controls={contactPanelId}
             aria-expanded={contactOpen}
             aria-label={contactLabel}
-            className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)] sm:h-11 sm:w-11"
+            className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-text)] sm:h-11 sm:w-11"
             data-topbar-action="contact"
             onClick={openContact}
             onFocus={openContact}
@@ -164,7 +164,7 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
                 <button
                   aria-describedby={contactCopyVisible ? contactStatusId : undefined}
                   aria-label={contactCopyLabel}
-                  className="t-control-press inline-flex rounded-[var(--ff-radius-sm)] px-1 font-black text-[var(--ff-accent-primary)] transition-colors hover:bg-[var(--ff-surface-inset)]"
+                  className="t-control-press inline-flex rounded-[var(--ff-radius-sm)] px-1 font-black text-[var(--ff-accent-text)] transition-colors hover:bg-[var(--ff-surface-inset)]"
                   data-contact-email={CONTACT_EMAIL}
                   onClick={() => void handleContactEmailClick()}
                   title={contactCopyLabel}
@@ -176,7 +176,7 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
                 {contactCopyVisible ? (
                   <span
                     aria-live="polite"
-                    className="ml-2 inline-flex rounded-[var(--ff-radius-sm)] bg-[var(--ff-surface-inset)] px-2 py-0.5 text-xs font-black text-[var(--ff-accent-primary)]"
+                    className="ml-2 inline-flex rounded-[var(--ff-radius-sm)] bg-[var(--ff-surface-inset)] px-2 py-0.5 text-xs font-black text-[var(--ff-accent-text)]"
                     data-testid="topbar-contact-copy-status"
                     id={contactStatusId}
                     role="status"

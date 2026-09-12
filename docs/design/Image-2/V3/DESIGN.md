@@ -4,21 +4,23 @@ name: 一页萤屿 V3 Clinical Archive Console
 description: Firefly-Isle 双主题设计系统；工作区与病历页共享临床档案骨架，登录入口采用品牌场景 CTA + 居中认证 modal。
 # 单强调色体系
 
-V3 采用单强调色（single accent）主题系统：`--ff-accent`（#E85D2A）是唯一强调色源，`--ff-accent-primary` / `--ff-accent-warning` / `--ff-border-strong` 均由它派生；`--ff-accent-strong`（#FF4A1C）是同族 emphasis 停档，`--ff-accent-soft` 是同族 tint 停档。临床语义色独立于强调色体系：`--ff-critical`（#F04438）表达危急/偏高，`--ff-low`（#2F80ED）表达偏低，`--ff-accent-success` 表达正常/成功。品牌 SVG 插画（萤火虫 mark）是艺术资产，豁免于主题体系。新增颜色 SHALL 优先引用 token，禁止在组件层新增强调色或语义色字面值。
+V3 保留单个当前强调色，提供红、橙、黄、绿、青、蓝、靛、紫八个低饱和预设，默认 `#C48A4A`。`src/lib/accent.ts` 是颜色派生真相源：`--ff-accent-primary` 用于实色背景，`--ff-accent-foreground` 自动选择黑/白按钮文字，`--ff-accent-text` 用于当前主题表面的链接、选中态和强调文字；`strong` 的悬停变化保持前景可读，`soft` 用于轻底色。普通字号文字在预设、双主题及悬停状态下验证不低于 4.5:1 对比度。
+
+临床语义色独立于用户强调色：warning 表示提醒，critical 表示偏高/严重，low 表示偏低，success 表示正常/保存成功。每种语义在浅色、深色表面使用不同明度。品牌 SVG 插画保持为艺术资产；新增组件颜色优先使用上述角色，不把所有文本直接染成原始 primary。
 
 colors:
-  accent: "#E85D2A"
-  accent-strong: "#FF4A1C"
-  accent-soft: "#FCE9E1"
-  success: "#43A56B"
-  warning: "#E85D2A"
-  dark-bg: "#080A0B"
-  dark-surface: "#111517"
+  accent: "#C48A4A"
+  accent-strong: "#CB9860"
+  accent-soft: "#F8F1E9"
+  success: "#18743F"
+  warning: "#805400"
+  dark-bg: "#000000"
+  dark-surface: "#111111"
   dark-surface-raised: "#181D20"
   dark-border: "#30363A"
   dark-text: "#F4F0E8"
   dark-muted: "#A9A39A"
-  light-bg: "#F8F7F4"
+  light-bg: "#FFFFFF"
   light-surface: "#FFFFFF"
   light-surface-raised: "#F1F0EC"
   light-border: "#D8D5CE"
@@ -184,11 +186,12 @@ V3 的北极星是 **Clinical Archive Console**：一个把复杂治疗史整理
 
 ## Colors
 
-颜色系统只允许一个真正的行动色：`accent` 橙。绿色只表示健康、完成、通过，不承担 CTA。暗亮主题不能各自发明新语汇，必须复用同一语义角色。
+同一界面使用一个当前行动色，可从八色预设中选择；临床状态同时保留文字标签。主题切换只改变明度，不改变状态含义。
 
-- **Accent `#E85D2A`:** 提取按钮、焦点边框、活动侧栏项、缺失字段、时间轴编号和关键警示。
-- **Success `#43A56B`:** 系统就绪、阶段完成、AI 验证通过、档案完整。
-- **Warning `#E85D2A`:** 当前实现中 warning 是 accent 的语义别名，用于缺失字段、保存失败、导出错误等需要行动的风险状态。
+- **Accent:** 实色按钮使用 primary + foreground，链接和强调文字使用 accent-text；浅色表面不能直接使用低饱和原色作为小字号文字。
+- **Success:** 浅色 `#18743F`、深色 `#6FCF97`；正常参考范围或保存成功。
+- **Warning:** 浅色 `#805400`、深色 `#E5B76A`；独立的提醒色，切换强调色不改变它。
+- **Critical / Low:** 浅色 `#B42318` / `#175CD3`，深色 `#FF8A80` / `#83B4FF`；同时显示偏高/偏低或严重程度文字。删除确认使用独立深红实色背景与白字。
 - **Dark neutrals:** `dark-bg` 到 `dark-surface-raised` 形成黑色控制室的层级，文字使用暖白，弱信息使用灰米色。
 - **Light neutrals:** `light-bg` 到 `light-surface` 形成白色档案纸面，边界使用暖灰，正文使用近黑。
 - **Line `#8B8B86`:** 时间轴、分隔线和低优先级结构线，不能抢过橙色。
@@ -214,7 +217,9 @@ V3 的北极星是 **Clinical Archive Console**：一个把复杂治疗史整理
 - **Shell:** 左侧导航默认展开约 220px，刚好水平容纳 52px mark、水平品牌字标与短导航标签；主导航使用 50px 稳定行盒，active 态只允许细左标和低强度橙色行面，不做厚重卡片；右侧边界线中部的无文字胶囊柄负责三态点击与拖拽调整宽度，最大约 296px；拖宽到 204px 以上显示标签，回到 204px 及以下时标签文字自动隐藏，只保留 mark、图标、状态点和恢复控制；继续向左拖并越过 52px 隐藏浮标宽度后完全隐藏。隐藏后左边缘只保留一个小浮标用于点击恢复，同时支持从左边缘向右渐进拉出菜单。主内容与顶部状态条必须跟随同一个 sidebar offset。
 - **Top bar:** 顶部只承载页面名、系统状态、帮助和设置，不塞入业务表单。
 - **Workspace `/app`:** 病史输入在最上，导出与提取动作紧跟输入区；下方的病历预览采用 Dense Clinical Ledger：基本信息以连续 1px 台账格呈现，缺失字段只使用细橙左条、小感叹号和低强度橙底，治疗时间线保持横向病程轨，不回到厚重卡片堆叠。
-- **Record `/record/:id`:** 详情页必须是可滚动长卷，顶部概要之后进入纵向治疗时间轴，右侧卡片承载免疫组化、基因检测、疗效评估。
+- **Record `/record/:id`:** 详情页必须是可滚动长卷，概要之后先进入纵向治疗时间轴，再显示完整实验室趋势与 AI 辅助分析；分享设置默认折叠，原始导出内容保持完整。
+- **Clinical navigation:** 病历、指标、症状、随访共享当前 patientId；表单使用关联标签、44px 主要控件、本地日历日期、可重试错误和删除确认；完整症状预设按需展开，不挤占核心字段。
+- **Dashboard `/dashboard`:** 窄屏计数用两列紧凑布局，让近期病历动作进入首屏；分区读取失败有独立提示，不用空态或 0 掩盖错误。
 - **Login `/login`:** 八章连续纵向滚动入口，固定顺序为 `hero → problem → intake → timeline → views → labs → boundary → cta`。首屏显示 Firefly mark、品牌名、价值陈述、安全状态和“登录” CTA，末章复用同一 CTA 与同一认证 modal；页面不提供 Demo CTA。暗亮主题共享同一章节、布局和交互，只替换材料明暗与文字语气。
 - **Component strip:** 组件状态必须成组出现，覆盖 active、hover、normal、disabled，避免实现时只做默认态。
 

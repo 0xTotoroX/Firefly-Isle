@@ -148,7 +148,7 @@ function EvidenceCardView({
       className="t-stagger border-t border-[var(--ff-border-muted)] pt-4"
       style={{ '--t-order': order } as CSSProperties}
     >
-      <h4 className="mb-4 font-bold text-[var(--ff-accent-primary)]">{card.title}</h4>
+      <h4 className="mb-4 font-bold text-[var(--ff-accent-text)]">{card.title}</h4>
       <div className="space-y-3">
         {card.items.map((item) => (
           <div className="flex justify-between gap-6 border-b border-[var(--ff-border-muted)] pb-2 text-sm" key={`${item.label}:${item.value}`}>
@@ -201,7 +201,7 @@ function TimelineNode({
     >
       <div>
         <div className="mb-5 flex flex-wrap items-end gap-4">
-          <EditableTextValue ariaLabel={`编辑${entry.index}编号`} className="font-[var(--ff-font-mono)] text-3xl font-semibold text-[var(--ff-accent-primary)]" isEditable={false}>{entry.index}</EditableTextValue>
+          <EditableTextValue ariaLabel={`编辑${entry.index}编号`} className="font-[var(--ff-font-mono)] text-3xl font-semibold text-[var(--ff-accent-text)]" isEditable={false}>{entry.index}</EditableTextValue>
           <div className={detailColumnClass}>
             <div className="flex flex-wrap items-center gap-3">
               {entry.badge ? (
@@ -215,7 +215,7 @@ function TimelineNode({
             </div>
             {entry.railMeta ? (
               <div className="mt-2 md:hidden" data-timeline-mobile-pfs={entry.railMeta}>
-                <span className="inline-flex max-w-full items-center whitespace-nowrap rounded-[var(--ff-radius-full)] border border-[color-mix(in_srgb,var(--ff-accent-primary)_38%,var(--ff-border-default))] bg-[var(--ff-surface-accent)] px-2 py-0.5 font-[var(--ff-font-mono)] text-[11px] font-bold leading-5 text-[var(--ff-accent-primary)]">
+                <span className="inline-flex max-w-full items-center whitespace-nowrap rounded-[var(--ff-radius-full)] border border-[color-mix(in_srgb,var(--ff-accent-primary)_38%,var(--ff-border-default))] bg-[var(--ff-surface-accent)] px-2 py-0.5 font-[var(--ff-font-mono)] text-[11px] font-bold leading-5 text-[var(--ff-accent-text)]">
                   <EditableTextValue ariaLabel={`编辑${entry.index}PFS`} isEditable={false}>{entry.railMeta}</EditableTextValue>
                 </span>
               </div>
@@ -261,7 +261,7 @@ function TimelineNode({
 
         {entry.highlight ? (
           <div className="mt-6 rounded-[var(--ff-radius-md)] border border-[var(--ff-accent-primary)] bg-[var(--ff-surface-warning)] p-5">
-            <h5 className="font-bold text-[var(--ff-accent-primary)]">{entry.highlight.title}</h5>
+            <h5 className="font-bold text-[var(--ff-accent-text)]">{entry.highlight.title}</h5>
             <p className="mt-2 text-sm leading-7 text-[var(--ff-text-secondary)]">
               <EditableTextValue ariaLabel={`编辑${entry.highlight.title}`} isEditable={false}>{entry.highlight.body}</EditableTextValue>
             </p>
@@ -273,7 +273,7 @@ function TimelineNode({
             {entry.footMetrics.map((metric, index) => (
               <div className={index === 0 ? 'border-b border-[var(--ff-border-default)] p-5 sm:border-b-0 sm:border-r' : 'p-5'} key={metric.label}>
                 <div className="text-sm text-[var(--ff-text-muted)]">{metric.label}</div>
-                <div className={`mt-2 text-2xl font-semibold ${index === 1 ? 'text-[var(--ff-accent-primary)]' : ''}`}>
+                <div className={`mt-2 text-2xl font-semibold ${index === 1 ? 'text-[var(--ff-accent-text)]' : ''}`}>
                   <EditableTextValue ariaLabel={`编辑${metric.label}`} isEditable={isEditable} onCommitField={onCommitField} target={metric.target}>{metric.value}</EditableTextValue>
                 </div>
               </div>
@@ -317,7 +317,7 @@ function TimelineRailMarker({
           <EditableTextValue ariaLabel={`编辑${entry.index}轴日期`} isEditable={isEditable} onCommitRange={onCommitRange} rangeTarget={entry.timeframeTarget}>{railDate}</EditableTextValue>
         </time>
         {entry.railMeta ? (
-          <span className="mt-2 inline-flex max-w-full items-center whitespace-nowrap rounded-[var(--ff-radius-full)] border border-[color-mix(in_srgb,var(--ff-accent-primary)_38%,var(--ff-border-default))] bg-[var(--ff-surface-accent)] px-2 py-0.5 font-[var(--ff-font-mono)] text-[11px] font-bold leading-5 text-[var(--ff-accent-primary)]">
+          <span className="mt-2 inline-flex max-w-full items-center whitespace-nowrap rounded-[var(--ff-radius-full)] border border-[color-mix(in_srgb,var(--ff-accent-primary)_38%,var(--ff-border-default))] bg-[var(--ff-surface-accent)] px-2 py-0.5 font-[var(--ff-font-mono)] text-[11px] font-bold leading-5 text-[var(--ff-accent-text)]">
             <EditableTextValue ariaLabel={`编辑${entry.index}轴PFS`} isEditable={false}>{entry.railMeta}</EditableTextValue>
           </span>
         ) : null}
@@ -409,7 +409,7 @@ export function RecordDossier({
               </Link>
             </div>
             {exportError ? (
-              <div className="mt-3 border-l-2 border-[var(--ff-accent-primary)] py-1 pl-3 text-sm font-semibold text-[var(--ff-accent-primary)]">
+              <div className="mt-3 border-l-2 border-[var(--ff-accent-primary)] py-1 pl-3 text-sm font-semibold text-[var(--ff-accent-text)]">
                 {exportError}
               </div>
             ) : null}
@@ -418,19 +418,6 @@ export function RecordDossier({
       </header>
 
       <SummaryGrid isEditable={isEditable} metrics={metrics} onCommitField={onCommitField} />
-
-      {labTrendRecord ? (
-        <div className="t-stagger" style={{ '--t-order': 2 } as CSSProperties}>
-          <LabTrendsTable locale={locale} record={labTrendRecord} />
-        </div>
-      ) : null}
-
-      <ClinicalAnalysisPanel
-        disabled={!record}
-        locale={locale}
-        onAnalyze={record ? onClinicalAnalyze : undefined}
-        state={clinicalAnalysisState}
-      />
 
       <section className="mt-10 border-t border-[var(--ff-border-default)] pt-7">
         <h2 className="mb-6 text-2xl font-semibold">{text.timeline}</h2>
@@ -448,6 +435,19 @@ export function RecordDossier({
           ))}
         </div>
       </section>
+
+      {labTrendRecord ? (
+        <div className="t-stagger" style={{ '--t-order': 2 } as CSSProperties}>
+          <LabTrendsTable locale={locale} record={labTrendRecord} />
+        </div>
+      ) : null}
+
+      <ClinicalAnalysisPanel
+        disabled={!record}
+        locale={locale}
+        onAnalyze={record ? onClinicalAnalyze : undefined}
+        state={clinicalAnalysisState}
+      />
 
       <section className="mt-10 border-t border-[var(--ff-border-default)] pt-7">
         <h3 className="font-semibold">{text.clinicalNotes}</h3>
@@ -520,7 +520,7 @@ export function RecordUnavailableDossier({
               </Link>
             </div>
             {exportError ? (
-              <div className="mt-3 border-l-2 border-[var(--ff-accent-primary)] py-1 pl-3 text-sm font-semibold text-[var(--ff-accent-primary)]">
+              <div className="mt-3 border-l-2 border-[var(--ff-accent-primary)] py-1 pl-3 text-sm font-semibold text-[var(--ff-accent-text)]">
                 {exportError}
               </div>
             ) : null}

@@ -71,7 +71,7 @@ export function ModelsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="truncate font-[var(--ff-font-display)] text-base font-bold">{entry.displayName}</span>
                       {DEFAULT_SLUGS.has(entry.slug) ? (
-                        <span className="inline-flex items-center rounded-[var(--ff-radius-full)] border border-[color-mix(in_srgb,var(--ff-accent-primary)_46%,transparent)] px-2 py-0.5 font-[var(--ff-font-mono)] text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--ff-accent-primary)]">
+                        <span className="inline-flex items-center rounded-[var(--ff-radius-full)] border border-[color-mix(in_srgb,var(--ff-accent-primary)_46%,transparent)] px-2 py-0.5 font-[var(--ff-font-mono)] text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--ff-accent-text)]">
                           default
                         </span>
                       ) : null}
@@ -103,7 +103,7 @@ export function ModelsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel
           </section>
 
           <Link
-            className="t-control-press mt-6 inline-flex min-h-[40px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-bold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+            className="t-control-press mt-6 inline-flex min-h-[40px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-bold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
             to="/settings"
           >
             {getCopy(copy.settings.title, locale)}

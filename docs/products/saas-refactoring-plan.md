@@ -7,7 +7,11 @@
 
 # SaaS 专业化重构计划（refactor/saas-professionalization）
 
-> 执行状态（2026-09-02）：Phase 0-13 全部完成，共 16 个 commit；Phase 12 为 Stripe-ready 基座（未接真实密钥），llm-proxy 的 plan 权益门控延后；决策点 D1-D6 见文末，待产品负责人确认。
+> 历史执行记录（2026-09-02）：Phase 0-13 全部完成，共 16 个 commit；Phase 12 为 Stripe-ready 基座（未接真实密钥），llm-proxy 的 plan 权益门控延后；决策点 D1-D6 见文末，待产品负责人确认。
+
+## 2026-09-12 本地实现增量
+
+`improve-clinical-workflows` 修复症状/随访归属、编辑载荷、零行写入和日期边界，新增最新指标/随访 RPC，完善表单恢复、患者导航、摘要一致性、病历阅读顺序与八色 V3 可读性。变更按一个完成单元提交；检查和迁移顺序见 `docs/operations/clinical-workflow-release.md`。本条只描述本地代码，不代表 GitHub 已同步或生产已部署。V4、真实计费、模型策略和微信上线不在该变更范围。
 
 ## 目标
 

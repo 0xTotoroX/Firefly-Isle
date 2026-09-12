@@ -48,7 +48,7 @@ export function SummaryCard({ Icon, index, label, tone, value }: { Icon: LucideI
             'grid h-9 w-9 shrink-0 place-items-center rounded-[var(--ff-radius-sm)] border sm:h-11 sm:w-11',
             tone === 'safe'
               ? 'border-[color-mix(in_srgb,var(--ff-accent-success)_50%,transparent)] text-[var(--ff-accent-success)]'
-              : 'border-[color-mix(in_srgb,var(--ff-accent-primary)_60%,transparent)] text-[var(--ff-accent-primary)]',
+              : 'border-[color-mix(in_srgb,var(--ff-accent-primary)_60%,transparent)] text-[var(--ff-accent-text)]',
           )}
         >
           <Icon aria-hidden="true" className="h-5 w-5" strokeWidth={2.2} />
@@ -57,7 +57,7 @@ export function SummaryCard({ Icon, index, label, tone, value }: { Icon: LucideI
           <div className="truncate whitespace-nowrap text-sm font-semibold text-[var(--ff-text-secondary)]">{label}</div>
           <div className="mt-0.5 truncate whitespace-nowrap font-[var(--ff-font-mono)] text-[10px] text-[var(--ff-text-muted)]">指标管理</div>
         </div>
-        <div className={cn('col-span-2 min-w-0 justify-self-end whitespace-nowrap font-[var(--ff-font-display)] text-[clamp(2rem,8vw,3.5rem)] font-black leading-none tracking-normal sm:col-span-1 sm:text-[clamp(2rem,4vw,3.25rem)]', tone === 'safe' ? 'text-[var(--ff-accent-success)]' : 'text-[var(--ff-accent-primary)]')}>
+        <div className={cn('col-span-2 min-w-0 justify-self-end whitespace-nowrap font-[var(--ff-font-display)] text-[clamp(2rem,8vw,3.5rem)] font-black leading-none tracking-normal sm:col-span-1 sm:text-[clamp(2rem,4vw,3.25rem)]', tone === 'safe' ? 'text-[var(--ff-accent-success)]' : 'text-[var(--ff-accent-text)]')}>
           {value}
         </div>
       </div>

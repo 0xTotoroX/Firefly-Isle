@@ -31,7 +31,7 @@ export function PrivacyPage() {
             tone="panel"
             style={{ '--t-order': 0 } as CSSProperties}
           >
-            <div className="mb-5 inline-flex rounded-[var(--ff-radius-sm)] border border-[var(--ff-accent-primary)] px-3 py-1 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.18em] text-[var(--ff-accent-primary)]">
+            <div className="mb-5 inline-flex rounded-[var(--ff-radius-sm)] border border-[var(--ff-accent-primary)] px-3 py-1 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.18em] text-[var(--ff-accent-text)]">
               Privacy Notice
             </div>
             <h1 className="max-w-4xl text-5xl font-bold leading-tight tracking-normal md:text-6xl">
@@ -42,13 +42,13 @@ export function PrivacyPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3 border-t border-[var(--ff-border-default)] pt-6">
               <Link
-                className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] bg-[var(--ff-accent-primary)] px-6 text-sm font-bold text-white transition-colors hover:bg-[var(--ff-accent-strong)]"
+                className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] bg-[var(--ff-accent-primary)] px-6 text-sm font-bold text-[var(--ff-accent-foreground)] transition-colors hover:bg-[var(--ff-accent-strong)]"
                 to="/login"
               >
                 返回登录
               </Link>
               <Link
-                className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] px-6 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+                className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] px-6 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
                 to={PRIVACY_PAGE_HREF}
               >
                 当前页面链接
@@ -65,7 +65,7 @@ export function PrivacyPage() {
                 tone="panel"
                 style={{ '--t-order': index + 1 } as CSSProperties}
               >
-                <div className="font-[var(--ff-font-mono)] text-[12px] text-[var(--ff-accent-primary)]">
+                <div className="font-[var(--ff-font-mono)] text-[12px] text-[var(--ff-accent-text)]">
                   {String(index + 1).padStart(2, '0')}
                 </div>
                 <h2 className="mt-4 text-2xl font-bold tracking-normal">{item.title}</h2>

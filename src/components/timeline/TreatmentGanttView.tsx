@@ -182,7 +182,7 @@ function CompactTreatmentRows({
           key={row.id}
           style={{ '--t-order': index } as CSSProperties}
         >
-          <div className="grid h-11 w-11 place-items-center rounded-[var(--ff-radius-full)] border border-[var(--ff-accent-primary)] bg-[var(--ff-surface-accent)] font-[var(--ff-font-mono)] text-sm font-black text-[var(--ff-accent-primary)]">
+          <div className="grid h-11 w-11 place-items-center rounded-[var(--ff-radius-full)] border border-[var(--ff-accent-primary)] bg-[var(--ff-surface-accent)] font-[var(--ff-font-mono)] text-sm font-black text-[var(--ff-accent-text)]">
             <EditableGanttText ariaLabel={`编辑${row.marker}标记`} isEditable={false}>{row.marker}</EditableGanttText>
           </div>
           <div className="min-w-0">
@@ -314,7 +314,7 @@ export function TreatmentGanttView({
                     key={row.id}
                     style={{ '--t-order': index, maxWidth: 'calc(100vw - 4rem)' } as CSSProperties}
                   >
-                    <div className="grid h-11 w-11 place-items-center rounded-[var(--ff-radius-full)] border border-[var(--ff-accent-primary)] bg-[var(--ff-surface-accent)] font-[var(--ff-font-mono)] text-sm font-black text-[var(--ff-accent-primary)]">
+                    <div className="grid h-11 w-11 place-items-center rounded-[var(--ff-radius-full)] border border-[var(--ff-accent-primary)] bg-[var(--ff-surface-accent)] font-[var(--ff-font-mono)] text-sm font-black text-[var(--ff-accent-text)]">
                         <EditableGanttText ariaLabel={`编辑${row.marker}标记`} isEditable={false}>{row.marker}</EditableGanttText>
                     </div>
                     <div className="min-w-0">
@@ -364,7 +364,7 @@ export function TreatmentGanttView({
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[78px] overflow-hidden">
                   {projection.events.map((event) => (
                     <i className="absolute bottom-0 top-0 w-px bg-[color-mix(in_srgb,var(--ff-accent-primary)_26%,transparent)]" key={`${event.label}-${event.leftPercent}`} style={{ left: `${event.leftPercent}%` }}>
-                      <b className="absolute left-[-11px] top-0 grid h-[22px] w-[22px] place-items-center rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-primary)] font-[var(--ff-font-mono)] text-[10px] text-white">
+                      <b className="absolute left-[-11px] top-0 grid h-[22px] w-[22px] place-items-center rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-primary)] font-[var(--ff-font-mono)] text-[10px] text-[var(--ff-accent-foreground)]">
                         <EditableGanttText ariaLabel={`编辑${event.label}事件标记`} isEditable={false}>{event.label}</EditableGanttText>
                       </b>
                     </i>
@@ -384,8 +384,8 @@ export function TreatmentGanttView({
                         {row.bar ? (
                           <i
                             className={[
-                              't-gantt-grow absolute top-[9px] z-[3] grid h-6 min-w-4 place-items-center rounded-[var(--ff-radius-md)] border font-[var(--ff-font-mono)] text-[11px] font-black text-white',
-                              row.isBaseline ? 'border-[var(--ff-border-muted)] bg-[color-mix(in_srgb,var(--ff-text-primary)_32%,transparent)]' : 'border-[var(--ff-accent-strong)] bg-[var(--ff-accent-primary)]',
+                              't-gantt-grow absolute top-[9px] z-[3] grid h-6 min-w-4 place-items-center rounded-[var(--ff-radius-md)] border font-[var(--ff-font-mono)] text-[11px] font-black',
+                              row.isBaseline ? 'border-[var(--ff-border-muted)] bg-[color-mix(in_srgb,var(--ff-text-primary)_32%,transparent)] text-[var(--ff-text-primary)]' : 'border-[var(--ff-accent-strong)] bg-[var(--ff-accent-primary)] text-[var(--ff-accent-foreground)]',
                             ].join(' ')}
                             data-current={row.isCurrent ? 'true' : 'false'}
                             data-testid="treatment-gantt-bar"

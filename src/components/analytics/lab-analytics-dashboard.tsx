@@ -375,8 +375,8 @@ export function LabAnalyticsDashboard({
                 aria-label={`状态文字显示：${option.label}`}
                 aria-pressed={showStatusText === option.value}
                 className={cn(
-                  'h-full border-l border-[var(--ff-border-default)] px-2.5 text-xs font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-primary)]',
-                  showStatusText === option.value ? 'bg-[color-mix(in_srgb,var(--ff-accent-primary)_12%,transparent)] text-[var(--ff-accent-primary)]' : null,
+                  'h-full border-l border-[var(--ff-border-default)] px-2.5 text-xs font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-text)]',
+                  showStatusText === option.value ? 'bg-[color-mix(in_srgb,var(--ff-accent-primary)_12%,transparent)] text-[var(--ff-accent-text)]' : null,
                 )}
                 key={option.label}
                 onClick={() => setShowStatusText(option.value)}
@@ -393,7 +393,7 @@ export function LabAnalyticsDashboard({
           className={cn(
             'inline-flex h-8 items-center gap-1.5 self-start rounded-[var(--ff-radius-sm)] border px-2.5 text-xs font-bold md:self-auto',
             isChartEditing
-              ? 'border-[var(--ff-accent-primary)] bg-[color-mix(in_srgb,var(--ff-accent-primary)_14%,transparent)] text-[var(--ff-accent-primary)]'
+              ? 'border-[var(--ff-accent-primary)] bg-[color-mix(in_srgb,var(--ff-accent-primary)_14%,transparent)] text-[var(--ff-accent-text)]'
               : 'border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] text-[var(--ff-text-secondary)]',
           )}
           onClick={() => setIsChartEditing((current) => !current)}
@@ -432,7 +432,7 @@ export function LabAnalyticsDashboard({
                     className={cn(
                       'h-10 shrink-0 rounded-[var(--ff-radius-sm)] border px-3 text-sm font-bold tracking-normal',
                       activeCategory === category
-                        ? 'border-[var(--ff-accent-primary)] bg-[color-mix(in_srgb,var(--ff-accent-primary)_14%,transparent)] text-[var(--ff-accent-primary)]'
+                        ? 'border-[var(--ff-accent-primary)] bg-[color-mix(in_srgb,var(--ff-accent-primary)_14%,transparent)] text-[var(--ff-accent-text)]'
                         : 'border-[var(--ff-border-default)] text-[var(--ff-text-secondary)]',
                     )}
                     key={category}
@@ -528,8 +528,8 @@ export function LabAnalyticsDashboard({
                             aria-label={`时间点显示：${option.label}`}
                             aria-pressed={timeLabelDisplay === option.value}
                             className={cn(
-                              'h-full border-l border-[var(--ff-border-default)] px-3 font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-primary)]',
-                              timeLabelDisplay === option.value ? 'bg-[color-mix(in_srgb,var(--ff-accent-primary)_12%,transparent)] text-[var(--ff-accent-primary)]' : null,
+                              'h-full border-l border-[var(--ff-border-default)] px-3 font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-text)]',
+                              timeLabelDisplay === option.value ? 'bg-[color-mix(in_srgb,var(--ff-accent-primary)_12%,transparent)] text-[var(--ff-accent-text)]' : null,
                             )}
                             key={option.value}
                             onClick={() => setTimeLabelDisplay(option.value)}
@@ -555,21 +555,21 @@ export function LabAnalyticsDashboard({
                           <span>次数据</span>
                         </label>
                         <button
-                          className="h-full border-l border-[var(--ff-border-default)] px-3 font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-primary)]"
+                          className="h-full border-l border-[var(--ff-border-default)] px-3 font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-text)]"
                           onClick={() => setSelectedPointLimit(currentYearPointLimit)}
                           type="button"
                         >
                           今年
                         </button>
                         <button
-                          className="h-full border-l border-[var(--ff-border-default)] px-3 font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-primary)]"
+                          className="h-full border-l border-[var(--ff-border-default)] px-3 font-bold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-text)]"
                           onClick={() => setSelectedPointLimit(maxPointLimit)}
                           type="button"
                         >
                           全部
                         </button>
                       </div>
-                      <button className="inline-flex h-9 items-center gap-1 rounded-[var(--ff-radius-sm)] border border-[var(--ff-border-default)] px-3 text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]" onClick={handleExportChart} type="button">
+                      <button className="inline-flex h-9 items-center gap-1 rounded-[var(--ff-radius-sm)] border border-[var(--ff-border-default)] px-3 text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]" onClick={handleExportChart} type="button">
                         <Download aria-hidden="true" className="h-4 w-4" strokeWidth={2.2} />
                         导出图表
                       </button>
@@ -699,7 +699,7 @@ export function LabAnalyticsDashboard({
             </SectionSurface>
 
             <SectionSurface className="min-h-[360px] p-4 sm:p-5" theme={theme} tone="panel">
-              <h2 className="font-[var(--ff-font-display)] text-xl font-black tracking-normal text-[var(--ff-accent-primary)]">肿瘤标志物连续上涨提醒</h2>
+              <h2 className="font-[var(--ff-font-display)] text-xl font-black tracking-normal text-[var(--ff-accent-text)]">肿瘤标志物连续上涨提醒</h2>
               <div className={cn('mt-4 overflow-x-auto', scrollAreaClass)}>
                 {riseAlerts.length > 0 ? (
                   <table className="min-w-full border-collapse text-left text-sm">

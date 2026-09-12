@@ -140,7 +140,7 @@ export function BackgroundMusicToggle({
               role="dialog"
             >
               <div className="absolute left-0 top-0 h-16 w-[2px] bg-[var(--ff-accent-primary)]" />
-              <div className="font-[var(--ff-font-mono)] text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--ff-accent-primary)]">
+              <div className="font-[var(--ff-font-mono)] text-[10px] font-bold uppercase tracking-[0.28em] text-[var(--ff-accent-text)]">
                 Audio
               </div>
               <div
@@ -154,7 +154,7 @@ export function BackgroundMusicToggle({
               <div className="mt-4 grid grid-cols-2 gap-2">
                 <button
                   aria-label={previousLabel}
-                  className="t-control-press inline-flex h-12 items-center justify-center border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] text-current transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-35"
+                  className="t-control-press inline-flex h-12 items-center justify-center border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] text-current transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-35"
                   disabled={trackControlsDisabled}
                   onClick={() => void previousTrack()}
                   title={previousLabel}
@@ -164,7 +164,7 @@ export function BackgroundMusicToggle({
                 </button>
                 <button
                   aria-label={nextLabel}
-                  className="t-control-press inline-flex h-12 items-center justify-center border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] text-current transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-35"
+                  className="t-control-press inline-flex h-12 items-center justify-center border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] text-current transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-35"
                   disabled={trackControlsDisabled}
                   onClick={() => void nextTrack()}
                   title={nextLabel}

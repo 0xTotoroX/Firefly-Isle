@@ -402,7 +402,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
         >
           <button
             aria-label={locale === 'zh' ? '显示侧边栏' : 'Show sidebar'}
-            className="group absolute left-0 top-1/2 flex h-20 w-11 -translate-y-1/2 items-center justify-start rounded-r-[var(--ff-radius-md)] text-[var(--ff-accent-primary)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--ff-accent-primary)]"
+            className="group absolute left-0 top-1/2 flex h-20 w-11 -translate-y-1/2 items-center justify-start rounded-r-[var(--ff-radius-md)] text-[var(--ff-accent-text)] outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-[var(--ff-accent-primary)]"
             onClick={restoreSidebar}
             title={locale === 'zh' ? '显示侧边栏，或从左向右滑出' : 'Show sidebar, or swipe right from the left edge'}
             type="button"
@@ -453,15 +453,15 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
                   unavailableHint
                     ? 'cursor-not-allowed text-[var(--ff-text-muted)] opacity-65'
                     : active
-                      ? 'bg-[color-mix(in_srgb,var(--ff-accent-primary)_8%,transparent)] text-[var(--ff-accent-primary)]'
+                      ? 'bg-[color-mix(in_srgb,var(--ff-accent-primary)_8%,transparent)] text-[var(--ff-accent-text)]'
                       : 'hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-text-primary)]',
                 )
                 const itemContent = (
                   <>
-                    <span className={cn('material-symbols-outlined shrink-0 text-[25px]', active ? 'text-[var(--ff-accent-primary)]' : '')}>
+                    <span className={cn('material-symbols-outlined shrink-0 text-[25px]', active ? 'text-[var(--ff-accent-text)]' : '')}>
                       {item.icon}
                     </span>
-                    {renderLabel(label, cn('text-[16px] font-semibold leading-none', active ? 'text-[var(--ff-accent-primary)]' : ''))}
+                    {renderLabel(label, cn('text-[16px] font-semibold leading-none', active ? 'text-[var(--ff-accent-text)]' : ''))}
                     {demoTarget && !compact ? (
                       <span className="ml-auto rounded-[var(--ff-radius-sm)] border border-[var(--ff-border-muted)] px-1.5 py-0.5 font-[var(--ff-font-mono)] text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--ff-text-muted)]">
                         Demo
@@ -516,7 +516,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
               <button
                 aria-label={isSigningOut ? getCopy(copy.shell.nav.signingOut, locale) : getCopy(copy.shell.nav.signOut, locale)}
                 className={cn(
-                  'group relative flex h-[44px] min-w-0 items-center rounded-[var(--ff-radius-sm)] text-[var(--ff-text-secondary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-50',
+                  'group relative flex h-[44px] min-w-0 items-center rounded-[var(--ff-radius-sm)] text-[var(--ff-text-secondary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-50',
                   compact ? 'w-11 justify-center' : 'w-full gap-3 px-4',
                 )}
                 disabled={isSigningOut}

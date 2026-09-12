@@ -20,6 +20,12 @@
 
 本项目源于癌症患者及其家属的真实需求。晚期癌症患者由于频繁复发和疾病进展，往往需要经历多线治疗。在整理病历和治疗信息的过程中，患者及家属常因信息过载而感到无助；而在异地就医或门诊沟通中，由于患者数量众多，医生能够分配给单个患者的沟通时间有限，难以进行充分、系统的交流。因此，本项目旨在帮助患者更好地进行治疗方案与病历信息的管理。
 
+## 当前本地开发基线
+
+当前实现包含 Dashboard、病历/指标/症状/随访导航、可恢复的症状与随访表单和复诊摘要。V3 保持纯白/纯黑背景与八种低饱和强调色，按钮文字和临床状态色分别处理。V4 仍是隔离评估页。
+
+新增数据库迁移必须在发布新版前端前应用；本地完成不代表远端已部署。迁移顺序与验证方法见 [临床工作流发布说明](docs/operations/clinical-workflow-release.md)。
+
 ## 开发启动
 
 ### 1. 安装依赖
@@ -94,6 +100,8 @@ npm run build
 npm run lint
 npm run type-check
 npm run test
+# Requires Docker and a locally cached postgres:18-alpine image
+npm run test:database
 ```
 
 ### 6. GitHub Actions CI + CD -> Cloudflare Pages

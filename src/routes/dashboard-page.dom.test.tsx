@@ -8,6 +8,7 @@
 import '@testing-library/jest-dom/vitest'
 
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -54,6 +55,7 @@ function renderDashboard() {
 }
 
 const fullData = {
+  unavailableSections: [],
   nextVisit: { daysUntil: 12, nextVisitOn: '2026-09-17', patientId: 'p1' },
   recentSideEffects: [
     { id: 'se1', ongoing: true, patientId: 'p1', severity: 'moderate' as const, symptom: '恶心' },
@@ -109,4 +111,21 @@ describe('DashboardPage', () => {
 
     expect(await screen.findByRole('alert')).toHaveTextContent('总览数据读取失败')
   })
+})
+
+it('keeps successful dashboard data while failed sections are retryable', async () => {
+  loadDashboardData.mockResolvedValue({ ...fullData, aiCallCount30d: null, abnormalReadings: [], unavailableSections: ['usage', 'labs'] })
+  renderDashboard()
+  expect(await screen.findByText('—')).toBeVisible()
+  expect(screen.getByText('恶心')).toBeVisible()
+  expect(screen.queryByText(getCopy(copy.dashboard.abnormalEmpty, 'zh'))).not.toBeInTheDocument()
+  loadDashboardData.mockResolvedValue(fullData)
+  await userEvent.click(screen.getAllByRole('button', { name: '重新读取' })[0])
+  expect(await screen.findByText('CA15-3')).toBeVisible()
+})
+
+it.each([[-2, '已逾期 · 2 天'], [0, '今天复查']])('distinguishes the calendar reminder at %s days', async (daysUntil, label) => {
+  loadDashboardData.mockResolvedValue({ ...fullData, nextVisit: { ...fullData.nextVisit, daysUntil } })
+  renderDashboard()
+  expect(await screen.findByTestId('dashboard-next-visit')).toHaveTextContent(label)
 })

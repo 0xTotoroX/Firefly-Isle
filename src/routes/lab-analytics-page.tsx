@@ -10,6 +10,7 @@ import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
 import { demoLabAnalyticsRecord } from '@/components/analytics/demo-lab-analytics'
 import { LabAnalyticsDashboard } from '@/components/analytics/lab-analytics-dashboard'
 import { DemoModeBanner } from '@/components/system/demo-mode-banner'
+import { ClinicalRecordNav } from '@/components/record/clinical-record-nav'
 import { MainShell } from '@/components/system/surfaces'
 import { useAsyncResource } from '@/lib/async-resource'
 import { useLocale } from '@/lib/locale'
@@ -78,7 +79,7 @@ export function LabAnalyticsPage({ isSigningOut, onSignOut, userIsAnonymous, use
       />
       <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen px-4 pb-8 md:px-6 md:pb-10`} theme={theme}>
         <div className={`${shellWideContentClass} t-route-reveal mt-5 md:mt-6`}>
-          {demoRoute ? <DemoModeBanner /> : null}
+          {demoRoute ? <DemoModeBanner /> : <ClinicalRecordNav active="labs" locale={locale} patientId={id} />}
           <LabAnalyticsDashboard
             isDemo={demoRoute}
             isLoading={resource.isLoading}

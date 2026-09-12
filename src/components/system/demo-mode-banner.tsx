@@ -32,7 +32,7 @@ export function DemoModeBanner() {
       data-testid='demo-mode-banner'
     >
       <div className='flex flex-col gap-2 md:flex-row md:items-baseline md:gap-4'>
-        <span className='w-fit shrink-0 text-xs font-bold text-[var(--ff-accent-primary)]'>
+        <span className='w-fit shrink-0 text-xs font-bold text-[var(--ff-accent-text)]'>
           {copy.label}
         </span>
         <div className='min-w-0 flex-1'>
@@ -42,7 +42,7 @@ export function DemoModeBanner() {
           </p>
         </div>
         <Link
-          className='t-control-press w-fit shrink-0 border-b border-[var(--ff-border-default)] pb-0.5 text-sm font-semibold text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]'
+          className='t-control-press w-fit shrink-0 border-b border-[var(--ff-border-default)] pb-0.5 text-sm font-semibold text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]'
           to='/login'
         >
           {copy.action}

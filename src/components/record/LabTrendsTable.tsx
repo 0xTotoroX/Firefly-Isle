@@ -57,12 +57,11 @@ const copy = {
 
 function getStatusClass(status: LabTrendStatus) {
   if (status === 'persistent-high') {
-    return 'border-[var(--ff-accent-primary)] bg-[var(--ff-surface-warning)] text-[var(--ff-accent-primary)]'
+    return 'border-[var(--ff-critical)] bg-[var(--ff-surface-warning)] text-[var(--ff-critical)]'
   }
 
-  if (status === 'high' || status === 'low') {
-    return 'border-[color:color-mix(in_srgb,var(--ff-accent-primary)_45%,var(--ff-border-default))] text-[var(--ff-accent-primary)]'
-  }
+  if (status === 'high') return 'border-[var(--ff-critical)] text-[var(--ff-critical)]'
+  if (status === 'low') return 'border-[var(--ff-low)] text-[var(--ff-low)]'
 
   if (status === 'reference-missing') {
     return 'border-[var(--ff-border-default)] text-[var(--ff-text-muted)]'

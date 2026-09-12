@@ -120,7 +120,7 @@ export function OriginStoryPaper({ anchorRef, onClose, open, theme }: OriginStor
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2 font-[var(--ff-font-mono)] text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--ff-text-muted)]">
             <span>Origin note</span>
             <span aria-hidden="true" className="h-px w-5 bg-[var(--ff-border-default)]" />
-            <span className="text-[var(--ff-accent-primary)]">Public source</span>
+            <span className="text-[var(--ff-accent-text)]">Public source</span>
           </div>
           <p className="mt-3 max-w-2xl font-[var(--ff-font-display)] text-lg font-semibold leading-7 text-[var(--ff-text-primary)] sm:text-xl" id="origin-story-subtitle">
             {originStorySubtitle}

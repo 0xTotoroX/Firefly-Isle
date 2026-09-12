@@ -137,7 +137,7 @@ function MarkShell({ children, mode, variant }: { children: ReactNode; mode: Bra
     <span
       aria-hidden="true"
       className={cn(
-        'relative grid shrink-0 place-items-center overflow-hidden border border-[var(--ff-border-default)] bg-[#0b0e0f] text-[var(--ff-accent-primary)]',
+        'relative grid shrink-0 place-items-center overflow-hidden border border-[var(--ff-border-default)] bg-[#0b0e0f] text-[var(--ff-accent-text)]',
         mode === 'icon' ? 'h-11 w-11' : 'h-12 w-12',
         variant === 'ink-seal' ? 'rounded-[2px]' : variant === 'minimal-spine' ? 'rounded-[var(--ff-radius-sm)]' : 'rounded-[var(--ff-radius-md)]',
       )}

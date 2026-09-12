@@ -1,10 +1,11 @@
 /**
  * [INPUT]: 依赖 @/lib/supabase 的客户端与 hasSupabaseEnv，依赖 network-status 的在线守卫。
  * [OUTPUT]: 对外提供 loadSideEffects、createSideEffect、updateSideEffect、deleteSideEffect 与 SideEffectRecord / SideEffectSeverity / SideEffectInput 类型。
- * [POS]: src/lib 的患者副作用日志客户端，owner RLS 直读写 side_effects 表；表未迁移时读取降级为空列表，写入报可解释错误。
+ * [POS]: 症状 owner CRUD，校验日期/症状并显式提交用户归属，写后确认目标行，读取失败交给页面恢复。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { ensureBrowserOnline } from '@/lib/network-status'
+import { isCalendarDate } from '@/lib/calendar-date'
 import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'
 
 export type SideEffectSeverity = 'mild' | 'moderate' | 'severe'
@@ -52,10 +53,6 @@ type SideEffectRow = {
 
 const SIDE_EFFECT_COLUMNS = 'id, patient_id, line_id, occurred_on, resolved_on, symptom, severity, medication, notes'
 
-function isMissingTableError(error: { code?: string }) {
-  return error.code === 'PGRST205'
-}
-
 function mapRow(row: SideEffectRow): SideEffectRecord {
   return {
     id: row.id,
@@ -78,13 +75,17 @@ function requireClient() {
   return getSupabaseClient()
 }
 
-function toRow(patientId: string, input: SideEffectInput) {
+function toEditableRow(input: SideEffectInput) {
+  if (!input.symptom.trim() || input.symptom.trim().length > 120 || !isCalendarDate(input.occurredOn)
+    || (input.resolvedOn && (!isCalendarDate(input.resolvedOn) || input.resolvedOn < input.occurredOn))) {
+    throw new SideEffectStorageError('Invalid symptom or dates.')
+  }
+
   return {
     line_id: input.lineId ?? null,
     medication: input.medication?.trim() || null,
     notes: input.notes?.trim() || null,
     occurred_on: input.occurredOn,
-    patient_id: patientId,
     resolved_on: input.resolvedOn || null,
     severity: input.severity,
     symptom: input.symptom.trim(),
@@ -106,19 +107,20 @@ export async function loadSideEffects(patientId: string): Promise<SideEffectReco
     return (data ?? []).map(mapRow)
   }
 
-  if (isMissingTableError(error)) {
-    return []
-  }
-
   throw new SideEffectStorageError(error.message || 'Could not load side-effect records.')
 }
 
 export async function createSideEffect(patientId: string, input: SideEffectInput): Promise<SideEffectRecord> {
   ensureBrowserOnline()
   const supabase = requireClient()
+  const row = toEditableRow(input)
+  const { data: authData, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !authData.user) throw new SideEffectStorageError('Authentication required.')
+
   const { data, error } = await supabase
     .from('side_effects')
-    .insert(toRow(patientId, input))
+    .insert({ ...row, patient_id: patientId, user_id: authData.user.id })
     .select(SIDE_EFFECT_COLUMNS)
     .single<SideEffectRow>()
 
@@ -132,30 +134,24 @@ export async function createSideEffect(patientId: string, input: SideEffectInput
 export async function updateSideEffect(id: string, input: SideEffectInput): Promise<void> {
   ensureBrowserOnline()
   const supabase = requireClient()
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('side_effects')
-    .update({
-      line_id: input.lineId ?? null,
-      medication: input.medication?.trim() || null,
-      notes: input.notes?.trim() || null,
-      occurred_on: input.occurredOn,
-      resolved_on: input.resolvedOn || null,
-      severity: input.severity,
-      symptom: input.symptom.trim(),
-    })
+    .update(toEditableRow(input))
     .eq('id', id)
+    .select('id')
+    .maybeSingle()
 
-  if (error) {
-    throw new SideEffectStorageError(error.message || 'Could not update the side-effect record.')
+  if (error || !data) {
+    throw new SideEffectStorageError(error?.message || 'Symptom record no longer available.')
   }
 }
 
 export async function deleteSideEffect(id: string): Promise<void> {
   ensureBrowserOnline()
   const supabase = requireClient()
-  const { error } = await supabase.from('side_effects').delete().eq('id', id)
+  const { data, error } = await supabase.from('side_effects').delete().eq('id', id).select('id').maybeSingle()
 
-  if (error) {
-    throw new SideEffectStorageError(error.message || 'Could not delete the side-effect record.')
+  if (error || !data) {
+    throw new SideEffectStorageError(error?.message || 'Symptom record no longer available.')
   }
 }

@@ -28,4 +28,18 @@ record-page.test.tsx: 病例详情页平面阅读层、响应式版心、背景�
 shared-record-page.tsx: 公开只读分享页，对应 /share/:code，通过授权码状态加载单份 PatientRecord，复用 RecordDossier 但禁用编辑、导出和 AI 分析动作，页面根节点只消费 route reveal，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 shared-record-page.test.tsx: 分享页源码合同测试，约束 /share/:code 公开装配、授权码加载、过期/撤销/错误反馈与只读能力边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
+follow-up-page.tsx: 随访状态与就诊记录的患者隔离页面，包含表单验证、保存重试、删除确认和上下文导航，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+follow-up-page.dom.test.tsx: 随访编辑、日期逆序、读取/写入失败、删除确认与患者切换的 DOM 回归，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+side-effects-page.tsx: 可恢复症状表单与记录列表；复诊摘要按持续时间相交取数，条件变化清空旧摘要，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+side-effects-page.dom.test.tsx: 症状 CRUD、摘要范围与失效、数据不完整、日期验证和患者切换的 DOM 回归，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+dashboard-page.tsx: 紧凑双列移动总览、逾期/今日随访提示、最近病历快捷入口和分区错误恢复，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+dashboard-page.dom.test.tsx: 真实计数、空态引导、分区失败恢复和日历提醒文案的 DOM 回归，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
+record-navigation.dom.test.tsx: 患者导航、默认折叠分享及方向键/Home/End 页签切换与焦点回归，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
 法则: 路由页负责组合页面块；认证动作可局部抽离为同目录逻辑层，但不能绕过 Supabase Auth 或复制全局 session 状态机；分享页只能消费授权码换回的单份只读记录。

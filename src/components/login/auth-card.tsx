@@ -17,7 +17,7 @@ import type { AuthFeedback, AuthMethod, V3LoginProps } from './types'
 
 function feedbackClass(feedback: AuthFeedback, theme: Theme) {
   if (feedback.tone === 'error') {
-    return 'border-[var(--ff-accent-primary)] text-[var(--ff-accent-primary)]'
+    return 'border-[var(--ff-accent-primary)] text-[var(--ff-accent-text)]'
   }
 
   if (feedback.tone === 'success') {
@@ -260,7 +260,7 @@ function LoginSubmitButton({
 }) {
   return (
     <button
-      className="t-control-press flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-base font-bold text-white shadow-[0_16px_34px_rgba(232,93,42,0.22)] transition-colors hover:bg-[var(--ff-accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+      className="t-control-press flex min-h-[54px] w-full items-center justify-center gap-3 rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-base font-bold text-[var(--ff-accent-foreground)] shadow-[0_16px_34px_rgba(232,93,42,0.22)] transition-colors hover:bg-[var(--ff-accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
       data-testid="login-submit-button"
       disabled={isSubmitting}
       type="submit"

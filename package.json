@@ -14,6 +14,7 @@
     "mobile:open:ios": "cap open ios",
     "mobile:open:android": "cap open android",
     "test": "vitest run",
+    "test:database": "bash scripts/check-clinical-workflows.sh",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "preview": "vite preview"

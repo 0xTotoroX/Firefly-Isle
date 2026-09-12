@@ -21,4 +21,6 @@ add-account-profiles/: 活动中的账户档案合同，定义 profiles schema�
 
 remove-private-origin-story-content/: 活动中的隐私清理合同，定义创作初衷只保留公开正文与末尾纯文本来源、使用 V3 临床档案阅读弹层、清除旧 WebGL 羊皮纸路径、历史净化与原生壳静态资源刷新，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
+archive/2026-09-12-improve-clinical-workflows/: 已归档的临床工作流优化，包含 owner CRUD、最新状态 RPC、表单/摘要一致性、V3 可读性与隔离数据库验证；远端迁移另行发布。
+
 法则: active change 是执行前合同；archive 是历史证据；baseline 真相仍在 /openspec/specs。

@@ -35,7 +35,7 @@ export function FollowUpPanel({ currentQuestion, onSubmit, theme }: FollowUpPane
 
   const buttonClassName =
     theme === 'dark'
-      ? "mt-4 border border-[var(--ff-accent-primary)] px-4 py-3 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.2em] text-[var(--ff-accent-primary)]"
+      ? "mt-4 border border-[var(--ff-accent-primary)] px-4 py-3 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.2em] text-[var(--ff-accent-text)]"
       : "mt-4 border-2 border-[var(--ff-border-default)] px-6 py-3 font-[var(--ff-font-ui)] text-xs font-bold uppercase tracking-[0.2em]"
 
   return (
@@ -44,7 +44,7 @@ export function FollowUpPanel({ currentQuestion, onSubmit, theme }: FollowUpPane
         <h3
           className={
             theme === 'dark'
-              ? 'font-[var(--ff-font-display)] text-base font-bold tracking-normal text-[var(--ff-accent-primary)]'
+              ? 'font-[var(--ff-font-display)] text-base font-bold tracking-normal text-[var(--ff-accent-text)]'
               : 'font-[var(--ff-font-display)] text-base font-bold tracking-normal text-[var(--ff-text-primary)]'
           }
         >

@@ -272,7 +272,7 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
               <p className="text-xs font-semibold leading-5 text-[var(--ff-accent-warning)]">{copy.disclosure}</p>
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <button
-                  className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
                   data-llm-provider-test="true"
                   disabled={disabled || saving || testing}
                   onClick={() => void testProviderConnection()}
@@ -281,7 +281,7 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
                   {copy.test}
                 </button>
                 <button
-                  className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
                   disabled={disabled || saving || testing}
                   onClick={() => void saveSetting()}
                   type="button"

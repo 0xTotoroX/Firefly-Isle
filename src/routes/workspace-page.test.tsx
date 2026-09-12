@@ -561,7 +561,7 @@ describe('WorkspacePage report shell', () => {
     const markup = renderWorkspace('light')
     const sidebarSource = readSidebarSource()
 
-    expect(markup).toMatch(/<a[^>]*class="[^"]*text-\[var\(--ff-accent-primary\)\][^"]*"[^>]*href="\/app"/)
+    expect(markup).toMatch(/<a[^>]*class="[^"]*text-\[var\(--ff-accent-text\)\][^"]*"[^>]*href="\/app"/)
     expect(markup).not.toContain('data-sidebar-active-marker="true"')
     expect(sidebarSource).toContain('bg-[color-mix(in_srgb,var(--ff-accent-primary)_8%,transparent)]')
     expect(sidebarSource).not.toContain('border-[color-mix(in_srgb,var(--ff-accent-primary)_24%,transparent)]')

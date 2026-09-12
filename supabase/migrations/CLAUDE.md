@@ -11,4 +11,6 @@ CLAUDE.md: 说明迁移目录职责与命名规则，[PROTOCOL]: 变更时更新
 006_record_shares.sql: 建立 record_shares、授权码 hash 校验 RPC、active share 只读 RLS 与 owner 管理 policy，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 llm-provider-settings.test.ts: 迁移合同测试，约束 llm_provider_settings 不含明文 key 列、preset/custom model 约束与四类 owner RLS policy，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
+20260912051552_clinical_workflow_integrity.sql: 追加症状/随访 owner 默认值、患者/治疗线归属 RLS、写入校验、最新指标索引与 security invoker RPC，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+
 法则: 每个迁移都是一次可审计的数据库事实，不把 schema 变化散落到别处。

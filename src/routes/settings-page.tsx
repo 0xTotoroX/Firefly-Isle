@@ -21,7 +21,7 @@ import { getUserProfile, ProfileSettingsError, saveUserProfile, deleteOwnAccount
 import { downloadAccountDataExport } from '@/lib/account-data-export'
 
 const SETTINGS_OPTION_CLASS =
-  't-control-press min-h-[38px] rounded-[var(--ff-radius-md)] border px-4 text-sm font-semibold transition-colors aria-pressed:border-[var(--ff-accent-primary)] aria-pressed:text-[var(--ff-accent-primary)]'
+  't-control-press min-h-[38px] rounded-[var(--ff-radius-md)] border px-4 text-sm font-semibold transition-colors aria-pressed:border-[var(--ff-accent-primary)] aria-pressed:text-[var(--ff-accent-text)]'
 
 function SettingsField({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -164,7 +164,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
 
           <div className="mt-6 grid gap-6 lg:grid-cols-2">
             <section className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] p-6">
-              <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-primary)]">
+              <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-text)]">
                 {getCopy(copy.settings.accountSection, locale)}
               </div>
               <dl className="mt-4 space-y-4">
@@ -175,7 +175,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
             </section>
 
             <section className="rounded-[var(--ff-radius-lg)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] p-6">
-              <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-primary)]">
+              <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-text)]">
                 {getCopy(copy.settings.profileSection, locale)}
               </div>
               <form
@@ -264,7 +264,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
                 </SettingsField>
 
                 {saveError ? (
-                  <p className="text-sm text-[var(--ff-accent-primary)]" role="alert">
+                  <p className="text-sm text-[var(--ff-accent-text)]" role="alert">
                     {saveError}
                   </p>
                 ) : null}
@@ -275,7 +275,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
                 ) : null}
 
                 <button
-                  className="t-control-press flex min-h-[46px] w-full items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-base font-bold text-white transition-colors hover:bg-[var(--ff-accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="t-control-press flex min-h-[46px] w-full items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-base font-bold text-[var(--ff-accent-foreground)] transition-colors hover:bg-[var(--ff-accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
                   data-testid="settings-save-button"
                   disabled={saving || resource.isLoading}
                   type="submit"
@@ -292,7 +292,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
             </div>
             <p className="mt-3 text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.donate.description, locale)}</p>
             <Link
-              className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-sm font-bold text-white"
+              className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-sm font-bold text-[var(--ff-accent-foreground)]"
               to="/donate"
             >
               {getCopy(copy.settings.donateLink, locale)}
@@ -300,14 +300,14 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
           </section>
 
           <section className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-6">
-            <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-primary)]">
+            <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-text)]">
               {getCopy(copy.settings.privacySection, locale)}
             </div>
             <div className="mt-4 grid gap-6 lg:grid-cols-2">
               <div>
                 <p className="text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.settings.exportDescription, locale)}</p>
                 {exportError ? (
-                  <p className="mt-3 text-sm text-[var(--ff-accent-primary)]" role="alert">
+                  <p className="mt-3 text-sm text-[var(--ff-accent-text)]" role="alert">
                     {exportError}
                   </p>
                 ) : null}
@@ -333,12 +333,12 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
                   value={deleteConfirmText}
                 />
                 {deleteError ? (
-                  <p className="mt-3 text-sm text-[var(--ff-accent-primary)]" role="alert">
+                  <p className="mt-3 text-sm text-[var(--ff-accent-text)]" role="alert">
                     {deleteError}
                   </p>
                 ) : null}
                 <button
-                  className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] border border-[var(--ff-accent-primary)] px-5 text-sm font-bold text-[var(--ff-accent-primary)] transition-colors hover:bg-[var(--ff-accent-primary)] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] border border-[var(--ff-accent-primary)] px-5 text-sm font-bold text-[var(--ff-accent-text)] transition-colors hover:bg-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-foreground)] disabled:cursor-not-allowed disabled:opacity-60"
                   data-testid="settings-delete-button"
                   disabled={deleting || deleteConfirmText !== getCopy(copy.settings.deleteConfirmWord, locale)}
                   onClick={() => void handleDeleteAccount()}

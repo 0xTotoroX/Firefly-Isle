@@ -156,7 +156,7 @@ function ProblemSection({ locale, theme }: { locale: Locale; theme: Theme }) {
               key={fragment.label}
             >
               <div className="flex items-start gap-4">
-                <span className="material-symbols-outlined mt-0.5 text-[28px] text-[var(--ff-accent-primary)]" aria-hidden="true">
+                <span className="material-symbols-outlined mt-0.5 text-[28px] text-[var(--ff-accent-text)]" aria-hidden="true">
                   {fragment.icon}
                 </span>
                 <div>
@@ -225,7 +225,7 @@ function IntakeSection({ locale, theme }: { locale: Locale; theme: Theme }) {
             >
               <div className={`absolute left-0 top-0 h-px w-full ${skin.accentLine}`} />
               <div className="flex items-start justify-between gap-5">
-                <span className="material-symbols-outlined text-[34px] text-[var(--ff-accent-primary)]" aria-hidden="true">
+                <span className="material-symbols-outlined text-[34px] text-[var(--ff-accent-text)]" aria-hidden="true">
                   {step.icon}
                 </span>
                 <span className={`font-[var(--ff-font-mono)] text-sm ${skin.body}`}>0{index + 1}</span>
@@ -296,7 +296,7 @@ function TimelineSection({ locale, theme }: { locale: Locale; theme: Theme }) {
             >
               <div className="flex items-center justify-between gap-4">
                 <span className={`font-[var(--ff-font-mono)] text-[11px] font-bold tracking-[0.12em] ${skin.body}`}>{archetype.code}</span>
-                <span className="font-[var(--ff-font-mono)] text-sm font-bold text-[var(--ff-accent-primary)]">0{index + 1}</span>
+                <span className="font-[var(--ff-font-mono)] text-sm font-bold text-[var(--ff-accent-text)]">0{index + 1}</span>
               </div>
               <h3 className={`mt-8 text-2xl font-black ${skin.heading}`}>{archetype.title}</h3>
               <p className={`mt-3 min-h-[5.25rem] text-sm font-semibold leading-7 ${skin.body}`}>{archetype.description}</p>
@@ -345,7 +345,7 @@ function DossierPreview({ locale, theme }: { locale: Locale; theme: Theme }) {
         <div className="space-y-3">
           {['01', '02', '03'].map((number, index) => (
             <div className={`flex items-center gap-4 rounded-[18px] border p-4 ${skin.card}`} key={number}>
-              <span className="font-[var(--ff-font-mono)] text-lg font-black text-[var(--ff-accent-primary)]">{number}</span>
+              <span className="font-[var(--ff-font-mono)] text-lg font-black text-[var(--ff-accent-text)]">{number}</span>
               <div className="min-w-0 flex-1">
                 <div className={`text-sm font-extrabold ${skin.heading}`}>{text(locale, `第 ${index + 1} 线治疗`, `Treatment line ${index + 1}`)}</div>
                 <div className={`mt-1 truncate text-xs font-semibold ${skin.body}`}>{text(locale, '方案 · 疗效 · 进展依据', 'Regimen · response · progression evidence')}</div>
@@ -409,7 +409,7 @@ function GanttPreview({ locale, theme }: { locale: Locale; theme: Theme }) {
             <div className="relative h-10" key={bar.label}>
               <div className={`absolute inset-x-0 top-1/2 h-px ${skin.line}`} />
               <div
-                className={`absolute inset-y-1 flex items-center rounded-full px-4 text-xs font-extrabold text-white ${index === 1 ? 'bg-[#5f9692]' : 'bg-[var(--ff-accent-primary)]'}`}
+                className={`absolute inset-y-1 flex items-center rounded-full px-4 text-xs font-extrabold ${index === 1 ? 'bg-[#5f9692] text-black' : 'bg-[var(--ff-accent-primary)] text-[var(--ff-accent-foreground)]'}`}
                 style={{ left: bar.left, width: bar.width }}
               >
                 {bar.label}
@@ -597,7 +597,7 @@ function BoundarySection({ locale, theme }: { locale: Locale; theme: Theme }) {
         <div className="mt-16 grid gap-5 lg:grid-cols-3">
           {boundaries.map((boundary) => (
             <article className={`rounded-[28px] border p-6 md:p-7 ${skin.card}`} key={boundary.title}>
-              <span className="material-symbols-outlined text-[34px] text-[var(--ff-accent-primary)]" aria-hidden="true">{boundary.icon}</span>
+              <span className="material-symbols-outlined text-[34px] text-[var(--ff-accent-text)]" aria-hidden="true">{boundary.icon}</span>
               <h3 className={`mt-10 text-xl font-black ${skin.heading}`}>{boundary.title}</h3>
               <p className={`mt-4 text-sm font-semibold leading-7 ${skin.body}`}>{boundary.copy}</p>
             </article>

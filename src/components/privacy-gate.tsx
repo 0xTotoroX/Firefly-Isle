@@ -29,7 +29,7 @@ function DarkPrivacyOverlay({ locale, onAccept, onStayBlocked }: { locale: 'zh' 
   return (
     <div className="fixed inset-0 z-[120] flex min-h-screen items-start justify-center overflow-y-auto bg-[var(--ff-text-ink)]/96 p-4 text-[var(--ff-text-primary)] backdrop-blur-sm md:items-center md:p-6">
       <div className="w-full max-w-3xl border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] p-8 md:p-12">
-        <div className="mb-4 inline-block border border-[var(--ff-border-default)] bg-[var(--ff-surface-accent)] px-3 py-1 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-widest text-[var(--ff-accent-primary)]">
+        <div className="mb-4 inline-block border border-[var(--ff-border-default)] bg-[var(--ff-surface-accent)] px-3 py-1 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-widest text-[var(--ff-accent-text)]">
           {getCopy(copy.privacyGate.darkEyebrow, locale)}
         </div>
         <h2 className="font-[var(--ff-font-display)] text-[clamp(2rem,5vw,4rem)] font-black leading-[0.92] tracking-tighter">
@@ -42,7 +42,7 @@ function DarkPrivacyOverlay({ locale, onAccept, onStayBlocked }: { locale: 'zh' 
         <div className="mt-8 grid gap-px bg-[var(--ff-border-default)] md:grid-cols-3">
           {PRIVACY_POLICY_ITEMS.map((item, index) => (
             <div className="bg-[var(--ff-surface-base)] p-5" key={item.title}>
-              <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-primary)]">
+              <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-accent-text)]">
                 0{index + 1}
               </div>
               <div className="mt-3 font-[var(--ff-font-display)] text-lg font-bold tracking-normal">{item.title}</div>
@@ -60,13 +60,13 @@ function DarkPrivacyOverlay({ locale, onAccept, onStayBlocked }: { locale: 'zh' 
             {getCopy(copy.privacyGate.darkAccept, locale)}
           </button>
           <Link
-            className="flex flex-1 items-center justify-center border border-[var(--ff-border-default)] px-6 py-4 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.25em] text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+            className="flex flex-1 items-center justify-center border border-[var(--ff-border-default)] px-6 py-4 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.25em] text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
             to={PRIVACY_PAGE_HREF}
           >
             {getCopy(copy.privacyGate.fullPolicy, locale)}
           </Link>
           <button
-            className="flex-1 border border-[var(--ff-border-default)] px-6 py-4 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.25em] text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+            className="flex-1 border border-[var(--ff-border-default)] px-6 py-4 font-[var(--ff-font-mono)] text-[11px] uppercase tracking-[0.25em] text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
             onClick={onStayBlocked}
             type="button"
           >

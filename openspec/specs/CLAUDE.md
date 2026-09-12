@@ -30,4 +30,6 @@ supabase-schema/spec.md: Supabase 表结构、llm_provider_settings provider/mod
 theme-system/spec.md: Dark/Light 主题 token、surface、登录视觉合同与主题切换的 baseline spec，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 timeline-table/spec.md: 时间线表格渲染、检测信息归属、空字段与基本信息顺序的 baseline spec，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
+clinical-workflow/spec.md: 症状/随访归属、最新状态、日历日期、可恢复表单、上下文导航和 V3 可读性的 baseline spec。
+
 法则: 主规格必须是 baseline，不再保留 `## ADDED Requirements` / `## MODIFIED Requirements` 这类 delta 头。

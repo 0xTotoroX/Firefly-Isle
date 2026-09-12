@@ -8,12 +8,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const getUser = vi.fn()
 const from = vi.fn()
+const rpc = vi.fn()
 
 vi.mock('@/lib/supabase', () => ({
   hasSupabaseEnv: true,
   getSupabaseClient: () => ({
     auth: { getUser },
     from,
+    rpc,
   }),
 }))
 
@@ -46,6 +48,7 @@ function stub(key: string, result: RouteResult) {
 beforeEach(() => {
   routeResults.clear()
   getUser.mockResolvedValue({ data: { user: { id: 'user-1', email: 'rider@firefly.test' } }, error: null })
+  rpc.mockImplementation((name: string) => Promise.resolve(routeResults.get(name) ?? { data: [], error: null }))
 
   from.mockImplementation((table: string) => {
     let columns = ''
@@ -71,7 +74,7 @@ beforeEach(() => {
 })
 
 describe('loadDashboardData', () => {
-  it('aggregates real counts, the latest record and deduped abnormal readings', async () => {
+  it('aggregates real counts and preserves patient-scoped latest RPC results', async () => {
     stub('patients:count', { count: 3 })
     stub('lab_results:count', { count: 12 })
     stub('record_shares:scan', { count: 1 })
@@ -82,7 +85,7 @@ describe('loadDashboardData', () => {
       ],
       error: null,
     })
-    stub('follow_up_visits:scan', {
+    stub('dashboard_next_follow_up', {
       data: [{ next_visit_on: '2026-09-20', patient_id: 'p1' }],
       error: null,
     })
@@ -90,10 +93,9 @@ describe('loadDashboardData', () => {
       data: { basic_info: { tumorType: '乳腺癌' }, id: 'p1', updated_at: '2026-08-02T10:00:00Z' },
       error: null,
     })
-    stub('lab_results:scan', {
+    stub('dashboard_recent_abnormal_readings', {
       data: [
         { created_at: '2026-08-02', id: 'r2', item_name: 'CA15-3', patient_id: 'p1', reference_high: 25, reference_low: null, test_date: '2026-08-02', unit: 'U/mL', value: 40 },
-        { created_at: '2026-08-01', id: 'r1', item_name: 'CA15-3', patient_id: 'p1', reference_high: 25, reference_low: null, test_date: '2026-08-01', unit: 'U/mL', value: 32 },
         { created_at: '2026-08-02', id: 'r3', item_name: '白细胞', patient_id: 'p1', reference_high: null, reference_low: 3.5, test_date: '2026-08-02', unit: '10^9/L', value: 2.8 },
       ],
       error: null,
@@ -113,21 +115,30 @@ describe('loadDashboardData', () => {
     expect(data.recentSideEffects[0]).toMatchObject({ symptom: '恶心', severity: 'moderate', ongoing: true })
   })
 
-  it('returns zero AI calls when the usage ledger is not migrated yet', async () => {
+  it('marks unavailable sections without pretending failed queries returned zero', async () => {
     stub('patients:count', { count: 1 })
     stub('patients:latest', { data: null, error: null })
     stub('record_shares:scan', { count: 0 })
     stub('usage_events:scan', { count: null, error: { code: 'PGRST205', message: 'Could not find the table public.usage_events' } })
     stub('lab_results:scan', { data: [], error: null })
     stub('side_effects:scan', { data: [], error: { code: 'PGRST205', message: 'Could not find the table public.side_effects' } })
-    stub('follow_up_visits:scan', { data: [], error: { code: 'PGRST205', message: 'Could not find the table public.follow_up_visits' } })
+    stub('dashboard_next_follow_up', { data: [], error: { code: 'PGRST202', message: 'Function unavailable' } })
 
     const data = await loadDashboardData()
 
-    expect(data.aiCallCount30d).toBe(0)
+    expect(data.aiCallCount30d).toBeNull()
     expect(data.patientCount).toBe(1)
     expect(data.recentSideEffects).toEqual([])
     expect(data.nextVisit).toBeNull()
+    expect(data.unavailableSections).toEqual(['usage', 'symptoms', 'followUp'])
+  })
+
+  it('keeps equal indicator names on different patients distinct', async () => {
+    stub('dashboard_recent_abnormal_readings', { data: ['p1', 'p2'].map((patient_id) => ({
+      id: patient_id, patient_id, item_name: 'WBC', value: 2, unit: null, test_date: '2026-09-12', reference_low: 3.5, reference_high: 10,
+    })) })
+    const data = await loadDashboardData()
+    expect(data.abnormalReadings.map((reading) => reading.patientId)).toEqual(['p1', 'p2'])
   })
 
   it('rejects unauthenticated dashboard loads', async () => {

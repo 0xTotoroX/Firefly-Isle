@@ -1,13 +1,17 @@
 /**
  * [INPUT]: 依赖 react-router-dom 的 Link/useParams，依赖 app-shell 的 V3 壳层与 surfaces，依赖 patient-record-storage 的病历读取（取治疗线）、side-effect-storage 的 CRUD、async-resource 加载基元、copy 字典、locale/theme 与 theme tokens。
  * [OUTPUT]: 对外提供 SideEffectsPage，对应 /record/:id/side-effects。
- * [POS]: routes 的患者副作用日志页，作为病历的辅助记录：结构化新增/编辑/删除症状条目并关联治疗线；非诊断工具，页面明确急症就医边界。
+ * [POS]: 患者隔离的症状日志与复诊摘要；范围按症状持续期相交计算，读取失败可重试、删除需确认。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-import { useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
+import { ClinicalRecordNav } from '@/components/record/clinical-record-nav'
+import { DeleteRecordButton } from '@/components/record/delete-record-button'
+import { RecordLoadFeedback } from '@/components/record/record-load-feedback'
+import { calendarDateOffset, calendarDaysBetween, isCalendarDate, localCalendarDate } from '@/lib/calendar-date'
 import { MainShell } from '@/components/system/surfaces'
 import { useAsyncResource } from '@/lib/async-resource'
 import { writeClipboardText } from '@/lib/clipboard'
@@ -22,7 +26,7 @@ import { shellWideContentClass, sidebarOffsetClass, topBarOffsetClass } from '@/
 const SEVERITIES: SideEffectSeverity[] = ['mild', 'moderate', 'severe']
 
 const FIELD_CLASS =
-  'w-full rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] px-3 py-2 text-sm font-semibold outline-none focus-visible:border-[var(--ff-accent-primary)]'
+  'min-h-[44px] w-full rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] px-3 py-2 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--ff-accent-text)] sm:text-sm'
 
 const CUSTOM_SYMPTOMS_KEY = 'firefly-custom-symptoms'
 const OVERDUE_DAYS = 7
@@ -52,7 +56,11 @@ function rememberCustomSymptom(symptom: string, presetLabels: Set<string>) {
   const current = readCustomSymptoms()
   const next = [trimmed, ...current.filter((item) => item !== trimmed)].slice(0, MAX_CUSTOM_SYMPTOMS)
 
-  window.localStorage.setItem(CUSTOM_SYMPTOMS_KEY, JSON.stringify(next))
+  try {
+    window.localStorage.setItem(CUSTOM_SYMPTOMS_KEY, JSON.stringify(next))
+  } catch {
+    // 本地快捷词不可用不应把已经保存的病历报告为失败。
+  }
 }
 
 function isOverdue(entry: SideEffectRecord, now = new Date()) {
@@ -60,9 +68,7 @@ function isOverdue(entry: SideEffectRecord, now = new Date()) {
     return false
   }
 
-  const occurred = new Date(`${entry.occurredOn}T00:00:00`)
-
-  return Number.isFinite(occurred.getTime()) && now.getTime() - occurred.getTime() >= OVERDUE_DAYS * 24 * 60 * 60 * 1000
+  return isCalendarDate(entry.occurredOn) && calendarDaysBetween(entry.occurredOn, localCalendarDate(now)) >= OVERDUE_DAYS
 }
 
 type SideEffectsPageProps = {
@@ -96,8 +102,12 @@ function severityChipClass(severity: SideEffectSeverity) {
   return 'border-[color-mix(in_srgb,var(--ff-low)_46%,transparent)] text-[var(--ff-low)]'
 }
 
-export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: SideEffectsPageProps) {
+export function SideEffectsPage(props: SideEffectsPageProps) {
   const { id = '' } = useParams()
+  return <SideEffectsPatientPage {...props} key={id} patientId={id} />
+}
+
+function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIsAnonymous, userLabel }: SideEffectsPageProps & { patientId: string }) {
   const { locale } = useLocale()
   const { theme } = useTheme()
   const dark = theme === 'dark'
@@ -108,7 +118,7 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
   const [editingId, setEditingId] = useState<string | null>(null)
   const [symptom, setSymptom] = useState('')
   const [severity, setSeverity] = useState<SideEffectSeverity>('mild')
-  const [occurredOn, setOccurredOn] = useState(() => new Date().toISOString().slice(0, 10))
+  const [occurredOn, setOccurredOn] = useState(() => localCalendarDate())
   const [resolvedOn, setResolvedOn] = useState('')
   const [lineId, setLineId] = useState('')
   const [medication, setMedication] = useState('')
@@ -117,10 +127,22 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
   const [feedback, setFeedback] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [customSymptoms, setCustomSymptoms] = useState<string[]>(() => readCustomSymptoms())
-  const [summaryFrom, setSummaryFrom] = useState(() => new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10))
-  const [summaryTo, setSummaryTo] = useState(() => new Date().toISOString().slice(0, 10))
+  const [summaryFrom, setSummaryFrom] = useState(() => calendarDateOffset(-30))
+  const [summaryTo, setSummaryTo] = useState(() => localCalendarDate())
   const [summaryText, setSummaryText] = useState('')
   const [summaryCopied, setSummaryCopied] = useState(false)
+  const [summaryError, setSummaryError] = useState<string | null>(null)
+  const [invalidField, setInvalidField] = useState<'symptom' | 'date' | null>(null)
+  const formHeading = useRef<HTMLHeadingElement>(null)
+  const loading = recordResource.isLoading || effectsResource.isLoading
+  const ready = !loading && !recordResource.error && !effectsResource.error && Boolean(recordResource.data)
+  const summaryReady = ready && !visitsResource.isLoading && !visitsResource.error
+
+  useEffect(() => {
+    setSummaryText('')
+    setSummaryCopied(false)
+    setSummaryError(null)
+  }, [summaryFrom, summaryTo, effectsResource.data, visitsResource.data, recordResource.data, locale])
 
   const lines = recordResource.data?.treatmentLines ?? []
   const presetLabels = new Set<string>(
@@ -141,11 +163,12 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
     setEditingId(null)
     setSymptom('')
     setSeverity('mild')
-    setOccurredOn(new Date().toISOString().slice(0, 10))
+    setOccurredOn(localCalendarDate())
     setResolvedOn('')
     setLineId('')
     setMedication('')
     setNotes('')
+    setInvalidField(null)
   }
 
   function startEdit(entry: SideEffectRecord) {
@@ -159,13 +182,21 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
     setNotes(entry.notes ?? '')
     setFeedback(null)
     setError(null)
+    setInvalidField(null)
+    formHeading.current?.focus()
   }
 
   async function handleSave() {
-    if (!symptom.trim() || !occurredOn) {
-      setError(getCopy(copy.sideEffects.saveFailedFeedback, locale))
+    if (!ready || saving) return
+    if (!symptom.trim()) {
+      setInvalidField('symptom')
       return
     }
+    if (!isCalendarDate(occurredOn) || (resolvedOn && (!isCalendarDate(resolvedOn) || resolvedOn < occurredOn))) {
+      setInvalidField('date')
+      return
+    }
+    setInvalidField(null)
 
     setSaving(true)
     setError(null)
@@ -200,25 +231,29 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
   }
 
   async function handleDelete(entryId: string) {
-    setError(null)
-
+    if (saving) throw new Error('Another operation is pending.')
+    setSaving(true)
     try {
       await deleteSideEffect(entryId)
+      if (editingId === entryId) resetForm()
+      setFeedback(getCopy(copy.clinicalWorkflow.deleted, locale))
       effectsResource.reload()
-    } catch {
-      setError(getCopy(copy.sideEffects.deleteFailedFeedback, locale))
+    } finally {
+      setSaving(false)
     }
   }
 
   const entries = effectsResource.data ?? []
 
   function generateSummary() {
-    const inRange = entries.filter((entry) => entry.occurredOn >= summaryFrom && entry.occurredOn <= summaryTo)
-
-    if (inRange.length === 0) {
-      setSummaryText(getCopy(copy.sideEffects.summaryEmpty, locale))
+    if (!summaryReady) return
+    if (!isCalendarDate(summaryFrom) || !isCalendarDate(summaryTo) || summaryFrom > summaryTo) {
+      setSummaryText('')
+      setSummaryError(getCopy(copy.clinicalWorkflow.invalidDate, locale))
       return
     }
+    setSummaryError(null)
+    const inRange = entries.filter((entry) => entry.occurredOn <= summaryTo && (!entry.resolvedOn || entry.resolvedOn >= summaryFrom))
 
     const lastVisit = visitsResource.data?.find((visit) => visit.visitedOn <= summaryTo)
     const header =
@@ -237,6 +272,8 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
 
       return `- ${parts.filter(Boolean).join(' · ')}`
     })
+
+    if (inRange.length === 0) lines.push(getCopy(copy.sideEffects.summaryEmpty, locale))
 
     const visitLines: string[] = []
 
@@ -258,52 +295,52 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
     const copied = await writeClipboardText(summaryText)
 
     setSummaryCopied(copied)
+    setSummaryError(copied ? null : getCopy(copy.clinicalWorkflow.copyFailed, locale))
   }
 
   return (
     <div className={dark ? 'min-h-screen bg-[var(--ff-surface-base)] text-[var(--ff-text-primary)]' : 'min-h-screen bg-[var(--ff-surface-base)] text-[var(--ff-text-primary)]'}>
       <ClinicalTopBar theme={theme} title={getCopy(copy.sideEffects.title, locale)} withRail />
-      <ArchiveSideNav dark={dark} isSigningOut={isSigningOut} onSignOut={onSignOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
+      <ArchiveSideNav analyticsHref={`/analytics/${id}`} recordHref={`/record/${id}`} dark={dark} isSigningOut={isSigningOut} onSignOut={onSignOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
       <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen px-4 pb-8 md:px-6 md:pb-10`} theme={theme}>
         <div className={`${shellWideContentClass} t-route-reveal mx-auto mt-5 max-w-3xl md:mt-6`}>
           <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.eyebrow, locale)}</div>
           <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
+            <p className="w-full text-sm text-[var(--ff-text-muted)]">{recordResource.data?.basicInfo?.name}</p>
             <h1 className="font-[var(--ff-font-display)] text-3xl font-black tracking-tight">{getCopy(copy.sideEffects.title, locale)}</h1>
-            <Link
-              className="t-control-press inline-flex min-h-[36px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
-              to={`/record/${id}`}
-            >
-              {getCopy(copy.sideEffects.backToRecord, locale)}
-            </Link>
+
           </div>
           <p className="mt-3 text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.sideEffects.description, locale)}</p>
 
-          <section className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-6">
-            <h2 className="font-[var(--ff-font-display)] text-lg font-black">{editingId ? getCopy(copy.sideEffects.formTitle, locale) : getCopy(copy.sideEffects.formTitle, locale)}</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <ClinicalRecordNav locale={locale} active="symptoms" patientId={id} />
+          {!ready ? <RecordLoadFeedback isLoading={loading} message={getCopy(recordResource.error || !recordResource.data ? copy.clinicalWorkflow.recordUnavailable : copy.sideEffects.loadFailedFeedback, locale)} onRetry={() => { recordResource.reload(); effectsResource.reload() }} /> : <>
+          <form className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-4 sm:p-6" noValidate onSubmit={(event) => { event.preventDefault(); void handleSave() }}>
+            <h2 className="font-[var(--ff-font-display)] text-lg font-black outline-none" ref={formHeading} tabIndex={-1}>{getCopy(editingId ? copy.clinicalWorkflow.editSymptom : copy.sideEffects.formTitle, locale)}</h2>
+            <fieldset className="mt-4 grid gap-4 sm:grid-cols-2" disabled={saving}>
               <div className="sm:col-span-2">
-                <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.symptomLabel, locale)}</div>
+                <label className="text-sm font-semibold text-[var(--ff-text-secondary)]" htmlFor="symptom-symptom">{getCopy(copy.sideEffects.symptomLabel, locale)}</label>
                 <input
                   className={`${FIELD_CLASS} mt-2`}
+                  aria-describedby={invalidField === 'symptom' ? 'symptom-validation' : undefined}
+                  aria-invalid={invalidField === 'symptom' || undefined}
                   data-testid="side-effect-symptom-input"
+                  id="symptom-symptom"
+                  required
                   maxLength={120}
                   onChange={(event) => setSymptom(event.target.value)}
                   placeholder={getCopy(copy.sideEffects.symptomPlaceholder, locale)}
                   value={symptom}
                 />
-                <div className="mt-2 space-y-2">
+                <details className="mt-2">
+                  <summary className="min-h-[44px] cursor-pointer py-3 text-sm font-semibold text-[var(--ff-accent-text)]">{getCopy(copy.clinicalWorkflow.symptomPresets, locale)}</summary>
+                  <div className="space-y-2 pb-2">
                   {customSymptoms.length > 0 ? (
                     <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="mr-1 font-[var(--ff-font-mono)] text-[9px] uppercase tracking-[0.2em] text-[var(--ff-accent-primary)]">
+                      <span className="mr-1 font-[var(--ff-font-mono)] text-[9px] uppercase tracking-[0.2em] text-[var(--ff-accent-text)]">
                         {getCopy(copy.sideEffects.customGroup, locale)}
                       </span>
                       {customSymptoms.map((item) => (
-                        <button
-                          className="t-control-press rounded-[var(--ff-radius-full)] border border-[var(--ff-accent-primary)] px-2.5 py-1 text-xs font-semibold text-[var(--ff-accent-primary)]"
-                          key={item}
-                          onClick={() => setSymptom(item)}
-                          type="button"
-                        >
+                        <button className="t-control-press min-h-[32px] rounded-[var(--ff-radius-full)] border border-[var(--ff-accent-primary)] px-2.5 py-1 text-xs font-semibold text-[var(--ff-accent-text)]" key={item} onClick={() => setSymptom(item)} type="button">
                           {item}
                         </button>
                       ))}
@@ -319,7 +356,7 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
 
                         return (
                           <button
-                            className="t-control-press rounded-[var(--ff-radius-full)] border border-[var(--ff-border-default)] px-2.5 py-1 text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+                            className="t-control-press rounded-[var(--ff-radius-full)] border border-[var(--ff-border-default)] px-2.5 py-1 text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
                             key={label}
                             onClick={() => setSymptom(label)}
                             type="button"
@@ -330,16 +367,17 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
                       })}
                     </div>
                   ))}
-                </div>
+                  </div>
+                </details>
               </div>
 
               <div>
                 <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.severityLabel, locale)}</div>
-                <div className="mt-2 flex gap-2">
+                <div aria-label={getCopy(copy.sideEffects.severityLabel, locale)} className="mt-2 flex gap-2" role="group">
                   {SEVERITIES.map((value) => (
                     <button
                       aria-pressed={severity === value}
-                      className="t-control-press min-h-[38px] flex-1 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3 text-sm font-semibold aria-pressed:border-[var(--ff-accent-primary)] aria-pressed:text-[var(--ff-accent-primary)]"
+                      className="t-control-press min-h-[44px] flex-1 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3 text-sm font-semibold aria-pressed:border-[var(--ff-accent-primary)] aria-pressed:text-[var(--ff-accent-text)]"
                       data-testid={`side-effect-severity-${value}`}
                       key={value}
                       onClick={() => setSeverity(value)}
@@ -352,18 +390,18 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
               </div>
 
               <div>
-                <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.dateLabel, locale)}</div>
-                <input className={`${FIELD_CLASS} mt-2`} data-testid="side-effect-date-input" onChange={(event) => setOccurredOn(event.target.value)} type="date" value={occurredOn} />
+                <label className="text-sm font-semibold text-[var(--ff-text-secondary)]" htmlFor="symptom-occurredOn">{getCopy(copy.sideEffects.dateLabel, locale)}</label>
+                <input className={`${FIELD_CLASS} mt-2`} aria-describedby={invalidField === 'date' ? 'symptom-validation' : undefined} aria-invalid={invalidField === 'date' || undefined} data-testid="side-effect-date-input" id="symptom-occurredOn" required onChange={(event) => setOccurredOn(event.target.value)} type="date" value={occurredOn} />
               </div>
 
               <div>
-                <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.resolvedLabel, locale)}</div>
-                <input className={`${FIELD_CLASS} mt-2`} onChange={(event) => setResolvedOn(event.target.value)} type="date" value={resolvedOn} />
+                <label className="text-sm font-semibold text-[var(--ff-text-secondary)]" htmlFor="symptom-resolvedOn">{getCopy(copy.sideEffects.resolvedLabel, locale)}</label>
+                <input className={`${FIELD_CLASS} mt-2`} aria-describedby={invalidField === 'date' ? 'symptom-validation' : undefined} aria-invalid={invalidField === 'date' || undefined} id="symptom-resolvedOn" min={occurredOn} onChange={(event) => setResolvedOn(event.target.value)} type="date" value={resolvedOn} />
               </div>
 
               <div>
-                <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.lineLabel, locale)}</div>
-                <select className={`${FIELD_CLASS} mt-2`} onChange={(event) => setLineId(event.target.value)} value={lineId}>
+                <label className="text-sm font-semibold text-[var(--ff-text-secondary)]" htmlFor="symptom-line">{getCopy(copy.sideEffects.lineLabel, locale)}</label>
+                <select className={`${FIELD_CLASS} mt-2`} id="symptom-line" onChange={(event) => setLineId(event.target.value)} value={lineId}>
                   <option value="">{getCopy(copy.sideEffects.lineNone, locale)}</option>
                   {lines.map((line) => (
                     <option key={line.id} value={line.id}>
@@ -374,22 +412,24 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
               </div>
 
               <div className="sm:col-span-2">
-                <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.medicationLabel, locale)}</div>
+                <label className="text-sm font-semibold text-[var(--ff-text-secondary)]" htmlFor="symptom-medication">{getCopy(copy.sideEffects.medicationLabel, locale)}</label>
                 <input
                   className={`${FIELD_CLASS} mt-2`}
                   maxLength={120}
                   onChange={(event) => setMedication(event.target.value)}
+                  id="symptom-medication"
                   placeholder={getCopy(copy.sideEffects.medicationPlaceholder, locale)}
                   value={medication}
                 />
               </div>
 
               <div className="sm:col-span-2">
-                <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.notesLabel, locale)}</div>
-                <textarea className={`${FIELD_CLASS} mt-2 min-h-[72px]`} maxLength={2000} onChange={(event) => setNotes(event.target.value)} value={notes} />
+                <label className="text-sm font-semibold text-[var(--ff-text-secondary)]" htmlFor="symptom-notes">{getCopy(copy.sideEffects.notesLabel, locale)}</label>
+                <textarea className={`${FIELD_CLASS} mt-2 min-h-[72px]`} id="symptom-notes" maxLength={2000} onChange={(event) => setNotes(event.target.value)} value={notes} />
               </div>
-            </div>
+            </fieldset>
 
+            {invalidField ? <p className="mt-3 text-sm text-[var(--ff-critical)]" id="symptom-validation" role="alert">{getCopy(invalidField === 'symptom' ? copy.clinicalWorkflow.symptomRequired : copy.clinicalWorkflow.invalidDate, locale)}</p> : null}
             {feedback ? (
               <p className="mt-3 text-sm text-[var(--ff-accent-success)]" role="status">
                 {feedback}
@@ -403,25 +443,26 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
 
             <div className="mt-4 flex gap-2">
               <button
-                className="t-control-press inline-flex min-h-[46px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-6 text-base font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                className="t-control-press inline-flex min-h-[46px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-6 text-base font-bold text-[var(--ff-accent-foreground)] disabled:cursor-not-allowed disabled:opacity-60"
                 data-testid="side-effect-save-button"
                 disabled={saving}
-                onClick={() => void handleSave()}
-                type="button"
+                type="submit"
               >
                 {saving ? getCopy(copy.sideEffects.savingButton, locale) : getCopy(copy.sideEffects.saveButton, locale)}
               </button>
               {editingId ? (
-                <button className="t-control-press inline-flex min-h-[46px] items-center rounded-[14px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)]" data-testid="side-effect-cancel-button" onClick={resetForm} type="button">
+                <button className="t-control-press inline-flex min-h-[46px] items-center rounded-[14px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)]" data-testid="side-effect-cancel-button" disabled={saving} onClick={resetForm} type="button">
                   {getCopy(copy.sideEffects.cancelButton, locale)}
                 </button>
               ) : null}
             </div>
-          </section>
+          </form>
 
           <section className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-6" data-testid="side-effect-summary-card">
             <h2 className="font-[var(--ff-font-display)] text-lg font-black">{getCopy(copy.sideEffects.summaryTitle, locale)}</h2>
             <p className="mt-2 text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.sideEffects.summaryDescription, locale)}</p>
+            {!summaryReady ? <RecordLoadFeedback isLoading={visitsResource.isLoading} message={getCopy(copy.clinicalWorkflow.summaryUnavailable, locale)} onRetry={visitsResource.reload} /> : null}
+            {summaryError ? <p className="mt-3 text-sm text-[var(--ff-critical)]" role="alert">{summaryError}</p> : null}
             <div className="mt-4 flex flex-wrap items-end gap-3">
               <label className="text-xs font-semibold text-[var(--ff-text-secondary)]">
                 {getCopy(copy.sideEffects.summaryFrom, locale)}
@@ -429,22 +470,23 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
               </label>
               <label className="text-xs font-semibold text-[var(--ff-text-secondary)]">
                 {getCopy(copy.sideEffects.summaryTo, locale)}
-                <input className={`${FIELD_CLASS} mt-1 block`} data-testid="side-effect-summary-to" onChange={(event) => setSummaryTo(event.target.value)} type="date" value={summaryTo} />
+                <input className={`${FIELD_CLASS} mt-1 block`} data-testid="side-effect-summary-to" min={summaryFrom} onChange={(event) => setSummaryTo(event.target.value)} type="date" value={summaryTo} />
               </label>
               <button
-                className="t-control-press inline-flex min-h-[38px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)]"
+                className="t-control-press inline-flex min-h-[44px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)]"
                 data-testid="side-effect-summary-generate"
+                disabled={!summaryReady || saving}
                 onClick={generateSummary}
                 type="button"
               >
                 {getCopy(copy.sideEffects.summaryGenerate, locale)}
               </button>
             </div>
-            {summaryText ? (
+            {summaryReady && summaryText ? (
               <div className="mt-4">
-                <textarea className={`${FIELD_CLASS} min-h-[120px] font-[var(--ff-font-mono)] text-xs leading-5`} data-testid="side-effect-summary-output" readOnly value={summaryText} />
+                <textarea className={`${FIELD_CLASS} min-h-[120px] font-[var(--ff-font-mono)] text-xs leading-5`} aria-label={getCopy(copy.sideEffects.summaryTitle, locale)} data-testid="side-effect-summary-output" readOnly value={summaryText} />
                 <button
-                  className="t-control-press mt-2 inline-flex min-h-[38px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)]"
+                  className="t-control-press mt-2 inline-flex min-h-[44px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)]"
                   data-testid="side-effect-summary-copy"
                   onClick={() => void handleCopySummary()}
                   type="button"
@@ -479,17 +521,10 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
                         {entry.lineId ? <span className="font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-muted)]">{lineLabel(entry.lineId)}</span> : null}
                       </div>
                       <div className="flex items-center gap-2">
-                        <button className="t-control-press rounded-[var(--ff-radius-sm)] px-2 py-1 text-xs font-semibold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-primary)]" data-testid={`side-effect-edit-${entry.id}`} onClick={() => startEdit(entry)} type="button">
+                        <button className="t-control-press rounded-[var(--ff-radius-sm)] px-2 py-1 text-xs font-semibold text-[var(--ff-text-secondary)] hover:text-[var(--ff-accent-text)]" data-testid={`side-effect-edit-${entry.id}`} disabled={saving} onClick={() => startEdit(entry)} type="button">
                           {getCopy(copy.sideEffects.editButton, locale)}
                         </button>
-                        <button
-                          className="t-control-press rounded-[var(--ff-radius-sm)] px-2 py-1 text-xs font-semibold text-[var(--ff-text-secondary)] hover:text-[var(--ff-critical)]"
-                          data-testid={`side-effect-delete-${entry.id}`}
-                          onClick={() => void handleDelete(entry.id)}
-                          type="button"
-                        >
-                          {getCopy(copy.sideEffects.deleteButton, locale)}
-                        </button>
+                        <DeleteRecordButton disabled={saving} onDelete={() => handleDelete(entry.id)} testId={`side-effect-delete-${entry.id}`} />
                       </div>
                     </div>
                     {entry.medication || entry.notes || !entry.resolvedOn ? (
@@ -506,6 +541,7 @@ export function SideEffectsPage({ isSigningOut, onSignOut, userIsAnonymous, user
               </ul>
             )}
           </section>
+          </>}
         </div>
       </MainShell>
     </div>

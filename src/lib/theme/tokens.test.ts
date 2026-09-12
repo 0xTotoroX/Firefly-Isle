@@ -22,6 +22,7 @@ import {
   shellViewportOffsetClass,
   themeTokens,
 } from './tokens'
+import { clinicalColors } from '../accent'
 
 const mainSource = readFileSync(new URL('../../main.tsx', import.meta.url), 'utf8')
 const indexCss = readFileSync(new URL('../../index.css', import.meta.url), 'utf8')
@@ -43,8 +44,8 @@ describe('V3 theme token contract', () => {
   it('uses orange as the only primary action color across dark and light themes', () => {
     expect(themeTokens.dark.accent.primary).toBe('#C48A4A')
     expect(themeTokens.light.accent.primary).toBe('#C48A4A')
-    expect(themeTokens.dark.accent.success).toBe('#43A56B')
-    expect(themeTokens.light.accent.success).toBe('#43A56B')
+    expect(themeTokens.dark.accent.success).toBe(clinicalColors.dark.success)
+    expect(themeTokens.light.accent.success).toBe(clinicalColors.light.success)
   })
 
   it('keeps the light sidebar joined to the workspace shell color', () => {
@@ -137,19 +138,19 @@ describe('V3 theme token contract', () => {
 })
 
 describe('single accent color system', () => {
-  it('derives primary and warning from the single accent base in both themes', () => {
+  it('derives primary from the selected accent while warnings retain their meaning', () => {
     for (const theme of ['dark', 'light'] as const) {
       expect(themeTokens[theme].accent.primary).toBe(accentBase)
-      expect(themeTokens[theme].accent.warning).toBe(accentBase)
+      expect(themeTokens[theme].accent.warning).toBe(clinicalColors[theme].warning)
       expect(themeTokens[theme].border.strong).toBe(accentBase)
     }
   })
 
   it('keeps clinical semantic colors independent of the accent family', () => {
     for (const theme of ['dark', 'light'] as const) {
-      expect(themeTokens[theme].accent.critical).toBe('#F04438')
-      expect(themeTokens[theme].accent.low).toBe('#2F80ED')
-      expect(themeTokens[theme].accent.success).toBe('#43A56B')
+      expect(themeTokens[theme].accent.critical).toBe(clinicalColors[theme].critical)
+      expect(themeTokens[theme].accent.low).toBe(clinicalColors[theme].low)
+      expect(themeTokens[theme].accent.success).toBe(clinicalColors[theme].success)
     }
   })
 })

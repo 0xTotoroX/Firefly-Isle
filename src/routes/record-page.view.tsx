@@ -5,9 +5,8 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import type { RefObject } from 'react'
-import { Link } from 'react-router-dom'
+import { ClinicalRecordNav } from '@/components/record/clinical-record-nav'
 
-import { copy, getCopy } from '@/lib/copy'
 import type { ClinicalAnalysisPanelState } from '@/components/record/ClinicalAnalysisPanel'
 import { demoTreatmentGanttSupplementNotes } from '@/components/record/demo-record'
 import { labels } from '@/components/record/record-copy'
@@ -106,7 +105,7 @@ function RecordEditToolbar({
   return (
     <div className="flex flex-wrap items-center justify-end gap-2 text-sm font-semibold text-[var(--ff-text-secondary)]">
       {statusText ? (
-        <span className={saveState.status === 'error' ? 'text-[var(--ff-accent-primary)]' : 'text-[var(--ff-text-muted)]'} role={saveState.status === 'error' ? 'alert' : 'status'}>
+        <span className={saveState.status === 'error' ? 'text-[var(--ff-accent-text)]' : 'text-[var(--ff-text-muted)]'} role={saveState.status === 'error' ? 'alert' : 'status'}>
           {statusText}
         </span>
       ) : null}
@@ -116,7 +115,7 @@ function RecordEditToolbar({
         className={[
           't-control-press border-b pb-0.5 text-sm font-semibold',
           isChartEditing
-            ? 'border-[var(--ff-accent-primary)] text-[var(--ff-accent-primary)]'
+            ? 'border-[var(--ff-accent-primary)] text-[var(--ff-accent-text)]'
             : 'border-[var(--ff-border-default)] text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-text-primary)]',
         ].join(' ')}
         onClick={() => onChartEditingChange(!isChartEditing)}
@@ -162,6 +161,14 @@ function RecordViewSwitch({
             ].join(' ')}
             key={mode}
             onClick={() => onViewModeChange(mode)}
+            onKeyDown={(event) => {
+              const index = modes.indexOf(mode)
+              const next = { ArrowRight: (index + 1) % modes.length, ArrowLeft: (index + modes.length - 1) % modes.length, Home: 0, End: modes.length - 1 }[event.key]
+              if (next === undefined) return
+              event.preventDefault()
+              onViewModeChange(modes[next])
+              event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[next]?.focus()
+            }}
             role="tab"
             tabIndex={active ? 0 : -1}
             type="button"
@@ -209,32 +216,16 @@ export function RecordPageContent({
     />
   ) : null
   const controlsNode = ganttRecord ? (
+    <>
+    {!demoRoute && ganttRecord.id ? <ClinicalRecordNav active="record" locale={locale} patientId={ganttRecord.id} /> : null}
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       {switchNode}
       <div className="flex items-center gap-3">
-        {!demoRoute && ganttRecord.id ? (
-          <>
-            <Link
-              className="t-control-press inline-flex min-h-[38px] items-center gap-1.5 rounded-[12px] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
-              data-testid="record-side-effects-link"
-              to={`/record/${ganttRecord.id}/side-effects`}
-            >
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">healing</span>
-              {getCopy(copy.sideEffects.openFromRecord, locale)}
-            </Link>
-            <Link
-              className="t-control-press inline-flex min-h-[38px] items-center gap-1.5 rounded-[12px] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
-              data-testid="record-follow-up-link"
-              to={`/record/${ganttRecord.id}/follow-up`}
-            >
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">event_repeat</span>
-              {getCopy(copy.followUp.openFromRecord, locale)}
-            </Link>
-          </>
-        ) : null}
+
         {toolbarNode}
       </div>
     </div>
+    </>
   ) : null
 
   if (ganttRecord && viewMode === 'gantt') {
@@ -277,7 +268,6 @@ export function RecordPageContent({
         {controlsNode}
         {shareState && onCreateShare && onCopyShareUrl && onRevokeShare ? (
           <RecordSharePanel
-            defaultOpen={!demoRoute}
             locale={locale}
             onCopyCreatedUrl={onCopyShareUrl}
             onCreateShare={onCreateShare}
@@ -313,7 +303,6 @@ export function RecordPageContent({
         {controlsNode}
         {shareState && onCreateShare && onCopyShareUrl && onRevokeShare ? (
           <RecordSharePanel
-            defaultOpen={!demoRoute}
             locale={locale}
             onCopyCreatedUrl={onCopyShareUrl}
             onCreateShare={onCreateShare}

@@ -4,6 +4,8 @@
  * [POS]: src/lib/theme 的 token 定义文件，统一 dark/light 的颜色、surface、文字、边框、状态、紧凑响应式侧栏、边缘钉住顶栏与宽幅内容几何合同。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { clinicalColors, defaultAccentHex, deriveAccentStops } from '@/lib/accent'
+
 export const themeNames = ['dark', 'light'] as const
 
 export type ThemeName = (typeof themeNames)[number]
@@ -21,29 +23,21 @@ export const topBarHeightClass = 'min-h-[var(--ff-topbar-height)] pt-[var(--ff-s
 export const topBarOffsetClass = 'pt-[var(--ff-topbar-height)]'
 export const themeTransitionClass = 'transition-[background-color,color,border-color,box-shadow] duration-200 ease-out'
 
-// 单强调色体系唯一色源：primary / warning / border.strong 均由此派生，换色只改这一个常量。
-export const accentBase = '#C48A4A'
-export const accentCritical = '#F04438'
-export const accentLow = '#2F80ED'
+// 强调色与临床语义色由 accent.ts 统一派生；预设不改变状态含义。
+export const accentBase = defaultAccentHex
+export const accentCritical = clinicalColors.light.critical
+export const accentLow = clinicalColors.light.low
 
 export const themeTokens = {
   dark: {
-    accent: {
-      critical: accentCritical,
-      low: accentLow,
-      primary: accentBase,
-      soft: '#2A1712',
-      strong: '#D0A36A',
-      success: '#43A56B',
-      warning: accentBase,
-    },
+    accent: deriveAccentStops(accentBase, 'dark'),
     border: {
       default: '#30363A',
       muted: 'rgba(244,240,232,0.14)',
       strong: '#C48A4A',
     },
     surface: {
-      accent: '#1F1512',
+      accent: deriveAccentStops(accentBase, 'dark').soft,
       base: '#000000',
       inset: '#0D0D0D',
       panel: '#111111',
@@ -53,7 +47,7 @@ export const themeTokens = {
       sidebar: '#000000',
       soft: '#181D20',
       subtle: '#181D20',
-      warning: '#2A1712',
+      warning: '#2B2111',
     },
     text: {
       ink: '#0A0A0A',
@@ -64,22 +58,14 @@ export const themeTokens = {
     },
   },
   light: {
-    accent: {
-      critical: accentCritical,
-      low: accentLow,
-      primary: accentBase,
-      soft: '#FCE9E1',
-      strong: '#D0A36A',
-      success: '#43A56B',
-      warning: accentBase,
-    },
+    accent: deriveAccentStops(accentBase, 'light'),
     border: {
       default: '#D8D5CE',
       muted: 'rgba(22,22,22,0.12)',
       strong: '#C48A4A',
     },
     surface: {
-      accent: '#FCE9E1',
+      accent: deriveAccentStops(accentBase, 'light').soft,
       base: '#FFFFFF',
       inset: '#F4F4F2',
       panel: '#FFFFFF',
@@ -89,7 +75,7 @@ export const themeTokens = {
       sidebar: '#FFFFFF',
       soft: '#F1F0EC',
       subtle: '#F4F4F2',
-      warning: '#FCE9E1',
+      warning: '#FFF1D6',
     },
     text: {
       ink: '#0A0A0A',

@@ -7,10 +7,14 @@
 
 # PRD 实现状态盘点
 
+## 2026-09-12 本地增量
+
+Dashboard、症状日志和随访已形成患者内导航；本轮修复 owner 归属、编辑保存、日历日期、摘要范围、当前状态查询和错误恢复，并调整 V3 可读性与病历阅读顺序。追加迁移和发布门槛见 `docs/operations/clinical-workflow-release.md`。这是本地实现状态，不能据此认定生产已部署；下面的早期功能盘点保留其历史范围。
+
 ## 盘点基准
 
 - PRD 快照：`docs/products/archive/prd.md`
-- 当前发布基线：`v1.4.0` / `2a1bd34`
+- 历史发布基线（2026-05）：`v1.4.0` / `2a1bd34`；本轮未核验线上版本
 - 当前规格真相源：`openspec/specs/`
 - 当前 P0 / Demo / PWA / Capacitor 归档状态：`add-lab-analytics-page`、`add-clinical-ai-analysis`、`add-secure-record-sharing`、`restore-minimal-timeline-table-view`、`make-demo-mode-cover-full-product`、`add-cross-platform-pwa-foundation`、`add-capacitor-mobile-shell` 已归档到 `openspec/changes/archive/2026-05-16-*`，行为并入 `openspec/specs/`
 - 实现核对范围：`src/`、`supabase/`、`functions/`、`public/`、`capacitor.config.ts`、`ios/`、`android/`
@@ -26,7 +30,7 @@
 - 实验室指标持久化：已实现 `lab_results` 读写、索引、RLS 用户隔离与缺表降级。
 - `/record/:id` 基础实验室趋势表：已有 `LabTrendsTable`，当真实记录含 `labResults` 时展示最新值、参考范围、最近日期、读数与持续增高提示。
 - `/analytics/:id` 统计页面：已实现侧栏真实入口、血常规 / 血生化 / 肿瘤标志物分组、指标列表、网页端折线图、等价数据表、最近异常汇总和非诊断提示。
-- 公开 Demo 模式：已实现登录页 `查看 Demo`、`/demo`、`/demo/record`、`/demo/analytics` 入口，复用真实病历和统计页面组件，每个 Demo 页面显示模式提醒，展示统一 demo patient + `labResults`、静态 AI 分析预览、分享预览、TimelineTable、Gantt 与 PDF/PNG 导出；可通过 `VITE_DEMO_RECORD_SHARE_CODE` 优先读取 Supabase 公开只读演示病历，缺失 / 失效 / 不完整时回退本地完整 fixture，且不要求创建 Supabase session。
+- 公开 Demo 模式：已实现可直接访问的 `/demo`、`/demo/record`、`/demo/analytics`；登录页已移除 Demo CTA，复用真实病历和统计页面组件，每个 Demo 页面显示模式提醒，展示统一 demo patient + `labResults`、静态 AI 分析预览、分享预览、TimelineTable、Gantt 与 PDF/PNG 导出；可通过 `VITE_DEMO_RECORD_SHARE_CODE` 优先读取 Supabase 公开只读演示病历，缺失 / 失效 / 不完整时回退本地完整 fixture，且不要求创建 Supabase session。
 - PWA foundation：已实现 Web App Manifest、PWA 图标、移动 metadata、隐私优先 service worker、离线状态提示、safe-area 基础适配、SPA 深链路 fallback 与 PWA 验证矩阵；只缓存 app shell / 静态资产，不缓存患者数据、授权码、Supabase 私有响应、OCR 或 LLM 响应。
 - Capacitor iOS / Android 本地壳：已实现 Capacitor 8 配置、固定 app id `com.ghibli1024.fireflyisle`、应用名 `一页萤屿`、iOS/Android 平台工程、mobile sync/open scripts、签名秘密忽略边界与本地操作文档；它只包装现有 `dist` Web build，不代表 App Store、TestFlight、Google Play 或生产签名发布完成。
 - `/analytics/demo` 演示统计页：已保留为受保护统计 fallback；无真实输入时推荐使用公开 `/demo/analytics` 查看演示统计。

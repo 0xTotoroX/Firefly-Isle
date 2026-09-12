@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react 的 disclosure 状态，依赖 @/lib/record-sharing 的 RecordShare 类型与 @/lib/locale 的 Locale。
  * [OUTPUT]: 对外提供 RecordSharePanel 组件和 RecordSharePanelState，以次级 disclosure 渲染创建、复制、查看、撤销、Demo 预览禁用态与过期/撤销状态。
- * [POS]: components/record 的分享管理展示层，由 record-page.tsx 注入真实分享状态或 Demo 预览状态和动作，不直接读取 Supabase；Demo 默认折叠，真实病历默认展开。
+ * [POS]: components/record 的分享管理展示层，由 record-page.tsx 注入真实分享状态或 Demo 预览状态和动作，不直接读取 Supabase；所有病历默认折叠，按需展开分享动作。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { useState } from 'react'
@@ -42,7 +42,7 @@ function formatDate(value: string, locale: Locale) {
 }
 
 export function RecordSharePanel({
-  defaultOpen = true,
+  defaultOpen = false,
   locale,
   onCopyCreatedUrl,
   onCreateShare,
@@ -67,7 +67,8 @@ export function RecordSharePanel({
           copy: '复制链接',
           create: '创建 7 天只读分享',
           creating: '创建中...',
-          empty: '授权链接只会显示一次，数据库仅保存授权码 hash。',
+          hint: '只读、可撤销',
+          empty: '链接只会显示一次，请及时复制，并仅发给需要查看的人。',
           expired: '已过期',
           expires: '过期时间',
           expand: '展开分享设置',
@@ -84,8 +85,9 @@ export function RecordSharePanel({
           copy: 'Copy link',
           create: 'Create 7-day read-only share',
           creating: 'Creating...',
+          hint: 'Read-only, revocable',
           empty:
-            'The authorization link is shown once; only its code hash is stored.',
+            'The link is shown once. Copy it now and share it only with intended readers.',
           expired: 'Expired',
           expires: 'Expires',
           expand: 'Show sharing settings',
@@ -108,7 +110,7 @@ export function RecordSharePanel({
           <strong className='font-semibold text-[var(--ff-text-primary)]'>
             {copy.title}
           </strong>
-          <span className='ml-3 text-[var(--ff-text-muted)]'>{copy.empty}</span>
+          <span className='ml-3 hidden text-[var(--ff-text-muted)] sm:inline'>{copy.hint}</span>
         </span>
         <span className='shrink-0 text-xs font-semibold text-[var(--ff-text-secondary)]'>
           {open ? copy.collapse : copy.expand}
@@ -132,7 +134,7 @@ export function RecordSharePanel({
 
         {state.error ? (
           <div
-            className='mt-4 border-l-2 border-[var(--ff-accent-primary)] bg-[var(--ff-surface-warning)] px-4 py-3 text-sm font-semibold text-[var(--ff-accent-primary)]'
+            className='mt-4 border-l-2 border-[var(--ff-accent-primary)] bg-[var(--ff-surface-warning)] px-4 py-3 text-sm font-semibold text-[var(--ff-accent-text)]'
             role='alert'
           >
             {state.error}
@@ -147,6 +149,7 @@ export function RecordSharePanel({
             <div className='mt-3 flex flex-col gap-3 md:flex-row md:items-center'>
               <input
                 className='h-10 min-w-0 flex-1 rounded-[var(--ff-radius-sm)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] px-3 font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-primary)]'
+                aria-label={copy.linkReady}
                 readOnly
                 value={state.createdUrl}
               />

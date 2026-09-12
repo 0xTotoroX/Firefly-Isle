@@ -20,6 +20,12 @@
 
 Firefly-Isle comes from a real need shared by cancer patients and their families. Patients with advanced cancer often go through repeated recurrence, disease progression, and multiple treatment lines. When preparing medical records or discussing care across hospitals, information overload can make communication fragmented, while outpatient doctors often have limited time for each patient. This project helps patients and families organize treatment plans and clinical records into a clearer, more portable timeline.
 
+## Current local development baseline
+
+The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up navigation, recoverable clinical forms and visit summaries. V3 retains white/black surfaces with eight muted presets and separate button-foreground and clinical-status colors. V4 remains an isolated evaluation surface.
+
+Apply the new database migration before releasing the updated frontend. Local completion does not imply remote deployment. See the [clinical workflow release notes](docs/operations/clinical-workflow-release.md).
+
 ## Development
 
 ### 1. Install dependencies
@@ -93,6 +99,8 @@ npm run build
 npm run lint
 npm run type-check
 npm run test
+# Requires Docker and a locally cached postgres:18-alpine image
+npm run test:database
 ```
 
 ### 6. GitHub Actions CI + CD -> Cloudflare Pages

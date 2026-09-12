@@ -7,9 +7,9 @@
  */
 import '@testing-library/jest-dom/vitest'
 
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { Link, MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BackgroundAudioProvider } from '@/lib/background-audio'
@@ -18,6 +18,7 @@ import { ThemeProvider } from '@/lib/theme'
 
 import { SideEffectsPage } from './side-effects-page'
 
+const loadFollowUpVisits = vi.fn()
 const loadPatientRecordById = vi.fn()
 const loadSideEffects = vi.fn()
 const createSideEffect = vi.fn()
@@ -29,7 +30,7 @@ vi.mock('@/lib/patient-record-storage', () => ({
 }))
 
 vi.mock('@/lib/follow-up-storage', () => ({
-  loadFollowUpVisits: vi.fn().mockResolvedValue([]),
+  loadFollowUpVisits: (...args: unknown[]) => loadFollowUpVisits(...args),
 }))
 
 vi.mock('@/lib/side-effect-storage', () => ({
@@ -82,15 +83,22 @@ function renderPage() {
 
 function MemoryRoutes() {
   return (
+    <>
+    <Link to="/record/p2/side-effects">Switch patient</Link>
     <Routes>
       <Route element={<SideEffectsPage />} path="/record/:id/side-effects" />
     </Routes>
+    </>
   )
 }
 
 beforeEach(() => {
   vi.clearAllMocks()
   localStorageState.clear()
+  loadFollowUpVisits.mockResolvedValue([])
+  createSideEffect.mockResolvedValue(sampleEntry)
+  updateSideEffect.mockResolvedValue(undefined)
+  deleteSideEffect.mockResolvedValue(undefined)
   loadPatientRecordById.mockResolvedValue({
     basicInfo: { tumorType: '乳腺癌' },
     id: 'p1',
@@ -107,7 +115,7 @@ describe('SideEffectsPage', () => {
     loadSideEffects.mockResolvedValue([sampleEntry])
     renderPage()
 
-    expect(await screen.findByText('恶心')).toBeVisible()
+    expect(within(await screen.findByTestId('side-effect-list')).getByText('恶心')).toBeVisible()
     expect(screen.getAllByText('中度').length).toBeGreaterThan(0)
     expect(screen.getAllByText(/L2/).length).toBeGreaterThan(0)
     expect(screen.getByText(/自行服用止吐药/)).toBeVisible()
@@ -133,6 +141,8 @@ describe('SideEffectsPage', () => {
     renderPage()
 
     await userEvent.click(await screen.findByTestId('side-effect-delete-se-1'))
+    expect(deleteSideEffect).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: '确认删除' }))
 
     await waitFor(() => {
       expect(deleteSideEffect).toHaveBeenCalledWith('se-1')
@@ -147,7 +157,7 @@ describe('SideEffectsPage', () => {
 
     expect(await screen.findByText(/超过 7 天未缓解/)).toBeVisible()
 
-    await userEvent.type(screen.getByTestId('side-effect-summary-from'), '2026-08-01')
+    fireEvent.change(screen.getByTestId('side-effect-summary-from'), { target: { value: '2026-08-01' } })
     await userEvent.click(screen.getByTestId('side-effect-summary-generate'))
 
     const output = screen.getByTestId('side-effect-summary-output') as HTMLTextAreaElement
@@ -186,4 +196,76 @@ describe('SideEffectsPage', () => {
     expect(screen.getByTestId('side-effect-symptom-input')).toHaveValue('恶心')
     expect(screen.getByTestId('side-effect-severity-moderate')).toHaveAttribute('aria-pressed', 'true')
   })
+})
+
+it('preserves inputs on save failure and lets the user retry', async () => {
+  createSideEffect.mockRejectedValueOnce(new Error('offline'))
+  renderPage()
+  await userEvent.type(await screen.findByLabelText('症状'), '测试症状')
+  await userEvent.click(screen.getByTestId('side-effect-save-button'))
+  expect(await screen.findByRole('alert')).toHaveTextContent('保存失败')
+  expect(screen.getByLabelText('症状')).toHaveValue('测试症状')
+  await userEvent.click(screen.getByTestId('side-effect-save-button'))
+  await waitFor(() => expect(createSideEffect).toHaveBeenCalledTimes(2))
+})
+
+it('shows a retryable read failure without an editable form or empty history', async () => {
+  loadSideEffects.mockRejectedValueOnce(new Error('offline'))
+  renderPage()
+  expect(await screen.findByRole('alert')).toHaveTextContent('读取失败')
+  expect(screen.queryByTestId('side-effect-save-button')).not.toBeInTheDocument()
+  await userEvent.click(screen.getByRole('button', { name: '重新读取' }))
+  expect(await screen.findByLabelText('症状')).toBeVisible()
+})
+
+it('rejects reversed symptom dates before calling storage', async () => {
+  renderPage()
+  await userEvent.type(await screen.findByLabelText('症状'), '乏力')
+  fireEvent.change(screen.getByTestId('side-effect-date-input'), { target: { value: '2026-09-12' } })
+  fireEvent.change(document.getElementById('symptom-resolvedOn')!, { target: { value: '2026-09-11' } })
+  await userEvent.click(screen.getByTestId('side-effect-save-button'))
+  expect(screen.getByRole('alert')).toHaveTextContent('不能早于')
+  expect(createSideEffect).not.toHaveBeenCalled()
+})
+
+it('includes overlapping ongoing symptoms, then invalidates the summary when dates change', async () => {
+  loadSideEffects.mockResolvedValue([{ ...sampleEntry, occurredOn: '2026-01-01', resolvedOn: null }, { ...sampleEntry, id: 'old', symptom: '旧症状', occurredOn: '2026-01-01', resolvedOn: '2026-08-01' }])
+  renderPage()
+  await screen.findByTestId('side-effect-summary-from')
+  fireEvent.change(screen.getByTestId('side-effect-summary-from'), { target: { value: '2026-09-01' } })
+  fireEvent.change(screen.getByTestId('side-effect-summary-to'), { target: { value: '2026-09-12' } })
+  await userEvent.click(screen.getByTestId('side-effect-summary-generate'))
+  const output = screen.getByTestId('side-effect-summary-output') as HTMLTextAreaElement
+  expect(output.value).toContain('恶心')
+  expect(output.value).not.toContain('旧症状')
+  fireEvent.change(screen.getByTestId('side-effect-summary-to'), { target: { value: '2026-09-13' } })
+  expect(screen.queryByTestId('side-effect-summary-output')).not.toBeInTheDocument()
+})
+
+it('requires complete visit data for a summary and keeps visit context with no symptoms', async () => {
+  loadFollowUpVisits.mockRejectedValueOnce(new Error('offline'))
+  renderPage()
+  expect(await screen.findByTestId('side-effect-summary-generate')).toBeDisabled()
+  loadFollowUpVisits.mockResolvedValue([{ id: 'v1', patientId: 'p1', visitedOn: '2026-09-01', nextVisitOn: '2026-09-25', conclusion: '继续记录' }])
+  await userEvent.click(screen.getByRole('button', { name: '重新读取' }))
+  await waitFor(() => expect(screen.getByTestId('side-effect-summary-generate')).toBeEnabled())
+  await userEvent.click(screen.getByTestId('side-effect-summary-generate'))
+  expect((screen.getByTestId('side-effect-summary-output') as HTMLTextAreaElement).value).toContain('2026-09-25')
+})
+
+it('clears the patient-specific draft on route change', async () => {
+  renderPage()
+  await userEvent.type(await screen.findByLabelText('症状'), '患者一草稿')
+  await userEvent.click(screen.getByRole('link', { name: 'Switch patient' }))
+  expect(await screen.findByLabelText('症状')).toHaveValue('')
+  expect(loadSideEffects).toHaveBeenLastCalledWith('p2')
+})
+
+it('keeps presets expandable without blocking direct symptom entry', async () => {
+  renderPage()
+  await screen.findByLabelText('症状')
+  expect(screen.getByRole('button', { name: '恶心', hidden: true })).not.toBeVisible()
+  await userEvent.click(screen.getByText('选择常见症状'))
+  await userEvent.click(screen.getByRole('button', { name: '恶心' }))
+  expect(screen.getByLabelText('症状')).toHaveValue('恶心')
 })

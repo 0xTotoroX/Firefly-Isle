@@ -1,10 +1,11 @@
 /**
  * [INPUT]: 依赖 @/lib/supabase 的客户端与 hasSupabaseEnv，依赖 network-status 的在线守卫。
- * [OUTPUT]: 对外提供 loadFollowUpVisits、saveFollowUpVisit、deleteFollowUpVisit、setFollowUpStatus 与 FollowUpVisit / FollowUpVisitInput 类型。
- * [POS]: src/lib 的随访模块客户端：随访就诊记录 owner CRUD + 患者随访状态显式化；表未迁移时读取降级为空列表。
+ * [OUTPUT]: 对外提供 loadFollowUpVisits、createFollowUpVisit、updateFollowUpVisit、deleteFollowUpVisit、setFollowUpStatus 与随访类型。
+ * [POS]: 随访 owner CRUD，新增提交用户归属，编辑保留患者关联，确认写入行数并显式报告读取失败。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { ensureBrowserOnline } from '@/lib/network-status'
+import { isCalendarDate } from '@/lib/calendar-date'
 import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'
 import type { FollowUpStatus } from '@/types/patient'
 
@@ -48,10 +49,6 @@ type FollowUpVisitRow = {
 
 const VISIT_COLUMNS = 'id, patient_id, visited_on, location, doctor, conclusion, next_plan, next_visit_on'
 
-function isMissingTableError(error: { code?: string }) {
-  return error.code === 'PGRST205'
-}
-
 function mapRow(row: FollowUpVisitRow): FollowUpVisit {
   return {
     conclusion: row.conclusion ?? undefined,
@@ -73,14 +70,17 @@ function requireClient() {
   return getSupabaseClient()
 }
 
-function toRow(patientId: string, input: FollowUpVisitInput) {
+function toEditableRow(input: FollowUpVisitInput) {
+  if (!isCalendarDate(input.visitedOn) || (input.nextVisitOn && (!isCalendarDate(input.nextVisitOn) || input.nextVisitOn < input.visitedOn))) {
+    throw new FollowUpStorageError('Invalid visit dates.')
+  }
+
   return {
     conclusion: input.conclusion?.trim() || null,
     doctor: input.doctor?.trim() || null,
     location: input.location?.trim() || null,
     next_plan: input.nextPlan?.trim() || null,
     next_visit_on: input.nextVisitOn || null,
-    patient_id: patientId,
     visited_on: input.visitedOn,
   }
 }
@@ -100,19 +100,20 @@ export async function loadFollowUpVisits(patientId: string): Promise<FollowUpVis
     return (data ?? []).map(mapRow)
   }
 
-  if (isMissingTableError(error)) {
-    return []
-  }
-
   throw new FollowUpStorageError(error.message || 'Could not load follow-up visits.')
 }
 
 export async function createFollowUpVisit(patientId: string, input: FollowUpVisitInput): Promise<FollowUpVisit> {
   ensureBrowserOnline()
   const supabase = requireClient()
+  const row = toEditableRow(input)
+  const { data: authData, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !authData.user) throw new FollowUpStorageError('Authentication required.')
+
   const { data, error } = await supabase
     .from('follow_up_visits')
-    .insert(toRow(patientId, input))
+    .insert({ ...row, patient_id: patientId, user_id: authData.user.id })
     .select(VISIT_COLUMNS)
     .single<FollowUpVisitRow>()
 
@@ -126,32 +127,34 @@ export async function createFollowUpVisit(patientId: string, input: FollowUpVisi
 export async function updateFollowUpVisit(id: string, input: FollowUpVisitInput): Promise<void> {
   ensureBrowserOnline()
   const supabase = requireClient()
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('follow_up_visits')
-    .update(toRow('', input))
+    .update(toEditableRow(input))
     .eq('id', id)
+    .select('id')
+    .maybeSingle()
 
-  if (error) {
-    throw new FollowUpStorageError(error.message || 'Could not update the follow-up visit.')
+  if (error || !data) {
+    throw new FollowUpStorageError(error?.message || 'Follow-up visit no longer available.')
   }
 }
 
 export async function deleteFollowUpVisit(id: string): Promise<void> {
   ensureBrowserOnline()
   const supabase = requireClient()
-  const { error } = await supabase.from('follow_up_visits').delete().eq('id', id)
+  const { data, error } = await supabase.from('follow_up_visits').delete().eq('id', id).select('id').maybeSingle()
 
-  if (error) {
-    throw new FollowUpStorageError(error.message || 'Could not delete the follow-up visit.')
+  if (error || !data) {
+    throw new FollowUpStorageError(error?.message || 'Follow-up visit no longer available.')
   }
 }
 
 export async function setFollowUpStatus(patientId: string, status: FollowUpStatus | null): Promise<void> {
   ensureBrowserOnline()
   const supabase = requireClient()
-  const { error } = await supabase.from('patients').update({ follow_up_status: status }).eq('id', patientId)
+  const { data, error } = await supabase.from('patients').update({ follow_up_status: status }).eq('id', patientId).select('id').maybeSingle()
 
-  if (error) {
-    throw new FollowUpStorageError(error.message || 'Could not update the follow-up status.')
+  if (error || !data) {
+    throw new FollowUpStorageError(error?.message || 'Patient no longer available.')
   }
 }

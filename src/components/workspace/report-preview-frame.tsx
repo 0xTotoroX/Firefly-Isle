@@ -250,7 +250,7 @@ function EditableCell({
         className={[
           'group t-edit-flip t-control-press relative flex min-h-[58px] w-full items-center justify-between overflow-hidden border-b border-r border-[var(--ff-border-default)] bg-transparent px-4 py-2.5 text-left transition-colors',
           critical && isMissing
-            ? 'bg-[color:color-mix(in_srgb,var(--ff-accent-primary)_9%,transparent)] text-[var(--ff-accent-primary)]'
+            ? 'bg-[color:color-mix(in_srgb,var(--ff-accent-primary)_9%,transparent)] text-[var(--ff-accent-text)]'
             : 'text-[var(--ff-text-primary)]',
           target && !disabled ? 'hover:bg-[var(--ff-surface-panel)]' : 'cursor-default',
         ].join(' ')}
@@ -270,7 +270,7 @@ function EditableCell({
           </span>
         </span>
         {critical && isMissing ? (
-          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-primary)] text-[11px] font-bold text-white shadow-[0_0_0_3px_color-mix(in_srgb,var(--ff-accent-primary)_16%,transparent)]">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-primary)] text-[11px] font-bold text-[var(--ff-accent-foreground)] shadow-[0_0_0_3px_color-mix(in_srgb,var(--ff-accent-primary)_16%,transparent)]">
             !
           </span>
         ) : target ? (
@@ -314,7 +314,7 @@ function EditableCell({
           />
         )}
         <button
-          className="t-control-press flex h-9 w-9 items-center justify-center rounded-[var(--ff-radius-sm)] bg-[var(--ff-accent-primary)] text-white"
+          className="t-control-press flex h-9 w-9 items-center justify-center rounded-[var(--ff-radius-sm)] bg-[var(--ff-accent-primary)] text-[var(--ff-accent-foreground)]"
           type="submit"
         >
           <span className="material-symbols-outlined text-lg">check</span>
@@ -500,7 +500,7 @@ export function ReportPreviewFrame({
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
             {shouldShowFollowUpStatus ? (
-              <div className="t-missing-pulse inline-flex min-h-9 items-center gap-2 rounded-[var(--ff-radius-sm)] border border-[var(--ff-accent-primary)] bg-[color:color-mix(in_srgb,var(--ff-accent-primary)_8%,transparent)] px-3 py-1.5 text-sm font-semibold text-[var(--ff-accent-primary)]">
+              <div className="t-missing-pulse inline-flex min-h-9 items-center gap-2 rounded-[var(--ff-radius-sm)] border border-[var(--ff-accent-primary)] bg-[color:color-mix(in_srgb,var(--ff-accent-primary)_8%,transparent)] px-3 py-1.5 text-sm font-semibold text-[var(--ff-accent-text)]">
                 <span className="material-symbols-outlined text-xl">chat_bubble</span>
                 <span>
                   {locale === 'zh' ? (
@@ -517,7 +517,7 @@ export function ReportPreviewFrame({
             ) : null}
             {recordDetailsHref ? (
               <Link
-                className="t-control-press inline-flex min-h-9 items-center justify-center gap-2 rounded-[var(--ff-radius-sm)] bg-[var(--ff-accent-primary)] px-3 py-1.5 text-sm font-bold text-white transition-colors hover:bg-[var(--ff-accent-strong)]"
+                className="t-control-press inline-flex min-h-9 items-center justify-center gap-2 rounded-[var(--ff-radius-sm)] bg-[var(--ff-accent-primary)] px-3 py-1.5 text-sm font-bold text-[var(--ff-accent-foreground)] transition-colors hover:bg-[var(--ff-accent-strong)]"
                 to={recordDetailsHref}
               >
                 <span className="material-symbols-outlined text-xl">open_in_new</span>

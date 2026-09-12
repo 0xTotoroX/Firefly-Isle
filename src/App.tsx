@@ -41,7 +41,7 @@ function AppBootScreen() {
   return theme === 'dark' ? (
     <div className="flex min-h-screen items-center justify-center bg-[var(--ff-surface-base)] px-6 text-[var(--ff-text-primary)]">
       <div className="border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-8 py-6 text-center">
-        <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.4em] text-[var(--ff-accent-primary)]">
+        <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.4em] text-[var(--ff-accent-text)]">
           {getCopy(copy.app.boot.status, locale)}
         </div>
         <div className="mt-3 font-[var(--ff-font-display)] text-2xl font-black tracking-tight">{getCopy(copy.app.boot.title, locale)}</div>

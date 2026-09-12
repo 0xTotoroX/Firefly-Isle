@@ -98,7 +98,7 @@ export function DonatePage({ isSigningOut, onSignOut, userIsAnonymous, userLabel
               {PRESET_AMOUNTS.map((value) => (
                 <button
                   aria-pressed={!custom && amount === value}
-                  className="t-control-press min-h-[38px] rounded-[var(--ff-radius-md)] border px-4 text-sm font-semibold aria-pressed:border-[var(--ff-accent-primary)] aria-pressed:text-[var(--ff-accent-primary)]"
+                  className="t-control-press min-h-[38px] rounded-[var(--ff-radius-md)] border px-4 text-sm font-semibold aria-pressed:border-[var(--ff-accent-primary)] aria-pressed:text-[var(--ff-accent-text)]"
                   key={value}
                   onClick={() => {
                     setAmount(value)
@@ -122,12 +122,12 @@ export function DonatePage({ isSigningOut, onSignOut, userIsAnonymous, userLabel
               />
             </label>
             {error ? (
-              <p className="mt-4 text-sm text-[var(--ff-accent-primary)]" role="alert">
+              <p className="mt-4 text-sm text-[var(--ff-accent-text)]" role="alert">
                 {error}
               </p>
             ) : null}
             <button
-              className="t-control-press mt-5 inline-flex min-h-[46px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-6 text-base font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+              className="t-control-press mt-5 inline-flex min-h-[46px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-6 text-base font-bold text-[var(--ff-accent-foreground)] disabled:cursor-not-allowed disabled:opacity-60"
               disabled={submitting}
               onClick={() => void handleDonate()}
               type="button"

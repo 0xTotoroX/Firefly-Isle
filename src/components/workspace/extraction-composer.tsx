@@ -136,7 +136,7 @@ export function ExtractionComposer({
         <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between gap-3">
           <label
             aria-label={getCopy(copy.workspace.composer.importRecordFile, locale)}
-            className="t-control-press pointer-events-auto inline-flex h-10 items-center justify-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-3 font-[var(--ff-font-ui)] text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="t-control-press pointer-events-auto inline-flex h-10 items-center justify-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-3 font-[var(--ff-font-ui)] text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-50"
             data-input-tool="import-record-file"
             title={uploadTitle}
           >
@@ -162,7 +162,7 @@ export function ExtractionComposer({
           <div className="pointer-events-auto flex items-center gap-3">
             <button
               aria-label={getCopy(copy.workspace.composer.voiceInput, locale)}
-              className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-50"
+              className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-50"
               data-input-tool="voice-input"
               disabled={disabled}
               onClick={() => setToolMessage(voiceUnavailableTitle)}
@@ -191,7 +191,7 @@ export function ExtractionComposer({
       ) : null}
 
       <Link
-        className="t-control-press mt-3 inline-flex min-h-[38px] items-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+        className="t-control-press mt-3 inline-flex min-h-[38px] items-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
         data-testid="composer-model-settings-link"
         to="/models"
       >
@@ -217,7 +217,7 @@ export function ExtractionComposer({
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 <button
-                  className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] bg-[var(--ff-accent-primary)] px-4 font-[var(--ff-font-ui)] text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-60"
+                  className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] bg-[var(--ff-accent-primary)] px-4 font-[var(--ff-font-ui)] text-sm font-bold text-[var(--ff-accent-foreground)] disabled:cursor-not-allowed disabled:opacity-60"
                   disabled={disabled}
                   onClick={onConfirmOcrText}
                   type="button"
@@ -241,7 +241,7 @@ export function ExtractionComposer({
         <div className="flex flex-wrap gap-2">
           {retryMode ? (
             <button
-              className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)]"
+              className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
               onClick={onRetry}
               type="button"
             >
@@ -254,7 +254,7 @@ export function ExtractionComposer({
           ) : null}
           {isEditMode && onExtractAsNew ? (
             <button
-              className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-primary)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
               disabled={disabled || inputTooLong}
               onClick={onExtractAsNew}
               type="button"
@@ -264,7 +264,7 @@ export function ExtractionComposer({
           ) : null}
         </div>
         <button
-          className="t-control-press inline-flex h-12 items-center justify-center gap-3 rounded-[var(--ff-radius-md)] bg-[var(--ff-accent-primary)] px-6 font-[var(--ff-font-ui)] text-sm font-bold text-white transition-colors hover:bg-[var(--ff-accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+          className="t-control-press inline-flex h-12 items-center justify-center gap-3 rounded-[var(--ff-radius-md)] bg-[var(--ff-accent-primary)] px-6 font-[var(--ff-font-ui)] text-sm font-bold text-[var(--ff-accent-foreground)] transition-colors hover:bg-[var(--ff-accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
           disabled={disabled || inputTooLong}
           onClick={onExtract}
           type="button"
@@ -285,7 +285,7 @@ export function ExtractionComposer({
             </ActionSurface>
           ) : null}
           {isSaving ? (
-            <div className="t-popover font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.2em] text-[var(--ff-accent-primary)]">
+            <div className="t-popover font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.2em] text-[var(--ff-accent-text)]">
               {getCopy(copy.workspace.composer.saving, locale)}
             </div>
           ) : null}
