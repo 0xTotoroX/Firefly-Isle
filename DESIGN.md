@@ -1,10 +1,11 @@
 # 设计系统入口
 
-新方向为深灰、石板色和科技蓝的 SaaS 设计系统。评审稿独立于正式产品，用户确认后再修改前端视觉。
+新方向为黑白双主题、八种可切换主题色的 SaaS 设计系统，采用浅侧栏、单一主内容区与按需展开的信息层级。评审稿独立于正式产品，用户确认后再修改前端视觉。
 
 - [交互文档板：DS-00 至 DS-05](docs/design/saas-review/index.html)
 - [设计规则与组件合同](docs/design/saas-review/DESIGN-SYSTEM.md)
 - [设计变量](docs/design/saas-review/tokens.json)
+- [图像模型页面方案](docs/design/saas-review/concepts/index.html)
 - [命名与域名候选](docs/products/product-naming.md)
 
 文档板以浏览器原生组件展示状态、表单验证、失败重试和弹窗焦点；这是可交接的本地评审稿，尚未写入 Figma，也尚未替换生产组件。

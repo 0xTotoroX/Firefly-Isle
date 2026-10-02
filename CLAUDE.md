@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Lab analytics, P0 clinical analysis, secure sharing, restored TimelineTable, full-product Demo, PWA foundation, and Capacitor mobile shell work are archived under `openspec/changes/archive/2026-05-16-*`; current behavior lives in `openspec/specs/`.
 - Product context lives in `README.md`, `README.en.md`, `docs/products/prd-implementation-status.md`, `docs/products/product-priority-roadmap.md`, `docs/products/saas-refactoring-plan.md` (SaaS refactor phases, status and pending owner decisions), and archived product snapshots / historical Goal drafts under `docs/products/archive/`.
 - The V3 theme uses eight muted presets (default `#C48A4A`) from `src/lib/accent.ts`; primary fills, black/white button foregrounds and readable accent text have separate roles. Warning, critical, low and success colors remain independent of the selected preset and adapt to dark/light surfaces.
-- Current design review lives in `docs/design/saas-review/` via `DESIGN.md`; the new slate/blue system awaits user approval before frontend visual migration. V3 describes the unchanged current UI; V4 preview code is retired.
+- Current design review lives in `docs/design/saas-review/` via `DESIGN.md`; the black/white themes and eight accent presets await user approval before frontend visual migration. V3 describes the unchanged current UI; V4 preview code is retired.
 - Community governance now lives at the repository root: `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`, and `CODE_OF_CONDUCT.md`.
 
 ## Common commands
