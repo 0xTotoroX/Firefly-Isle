@@ -2,6 +2,7 @@
 > L2 | 父级: /CLAUDE.md
 
 成员清单
+self-host-supabase/: 自建后端准备已整合；SMTP/OAuth、当前 schema/functions 验收与正式切换仍待完成。
 archive/2026-10-02-harden-record-integrity-and-simplify/: 已完成并归档的病历/报告事务、授权码分享、配额、状态修复、代码精简及独立设计交付；当前行为见 record-integrity baseline，新视觉仍待确认。
 archive/2026-10-02-superseded-refresh-product-visual-system-v4/: 废弃 V4 候选的历史证据；未应用其 delta，预览代码已移除。
 add-scroll-story-landing/: 进行中变更合同，定义 /login 纵向滚动叙事落地页、GSAP ScrollTrigger 进度绑定、非 pin 分层推进、登录页 Demo CTA 移除与 reduced-motion 降级边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

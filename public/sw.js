@@ -33,6 +33,7 @@ const SENSITIVE_SAME_ORIGIN_PREFIXES = [
 ]
 
 const SENSITIVE_REMOTE_HOST_SUFFIXES = [
+  'supabase.ghibli1024.com',
   '.supabase.co',
   '.functions.supabase.co',
 ]

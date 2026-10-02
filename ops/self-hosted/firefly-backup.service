@@ -1,0 +1,11 @@
+[Unit]
+Description=Firefly Supabase database and runtime backup
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+UMask=0077
+ExecStart=/usr/local/sbin/firefly-backup
+Nice=10
+IOSchedulingClass=idle

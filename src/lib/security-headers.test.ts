@@ -42,16 +42,19 @@ describe('deployment security headers contract', () => {
     const source = readHeadersSource()
     const csp = source.match(/Content-Security-Policy: (.*)/)?.[1] ?? ''
     const allowedOrigins = new Set([
+      'https://supabase.ghibli1024.com',
       'https://*.supabase.co',
       'https://*.functions.supabase.co',
+      'wss://*.supabase.co',
       'https://fonts.googleapis.com',
       'https://fonts.gstatic.com',
       'https://*.googleusercontent.com',
     ])
-    const declaredOrigins = csp.match(/https:\/\/[a-z.*.]+/g) ?? []
+    const declaredOrigins = csp.split(/[\s;]+/).filter((token) => token.includes('://'))
 
     expect(declaredOrigins).toContain('https://*.supabase.co')
     expect(declaredOrigins).toContain('https://*.functions.supabase.co')
+    expect(declaredOrigins).toContain('https://supabase.ghibli1024.com')
     expect(csp).toContain('wss://*.supabase.co')
     expect(declaredOrigins.length).toBeGreaterThan(0)
     for (const origin of declaredOrigins) {

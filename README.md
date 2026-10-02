@@ -136,3 +136,7 @@ Cloudflare Pages 继续作为托管目标，保留：
 GitHub Actions 的构建期 `VITE_SUPABASE_*` 值统一从已提交的 `wrangler.jsonc > vars` 读取，不再要求在 GitHub 仓库重复配置一份 secrets / variables。公开 Demo 若要使用 Supabase 演示病历，需要同时在 `wrangler.jsonc > vars.VITE_DEMO_RECORD_SHARE_CODE` 填入可公开的只读分享码；留空时前端使用本地完整 fixture。
 
 Cloudflare Pages 的 Git 分支自动生产 / 自动预览部署应关闭，避免与 GitHub Actions 发布链路形成双真相。
+
+## 自建 Supabase
+
+部署配置、备份脚本和会话迁移准备见 [自建后端手册](docs/operations/supabase-self-hosted.md)。当前生产配置仍连接 Supabase Cloud；代码整合不代表已完成数据切换。自建预览与正式切换都需要先核对当前 SaaS 的数据库迁移和函数版本。

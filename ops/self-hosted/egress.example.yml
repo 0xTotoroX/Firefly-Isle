@@ -1,0 +1,24 @@
+services:
+- name: firefly-egress
+  addr: :8080
+  handler:
+    type: http
+    chain: upstream
+  listener:
+    type: tcp
+chains:
+- name: upstream
+  hops:
+  - name: existing-vps-proxy
+    nodes:
+    - name: upstream
+      addr: YOUR_EXISTING_SOCKS5_HOST:PORT
+      connector:
+        type: socks5
+        auth:
+          username: REPLACE_ME
+          password: REPLACE_ME
+      dialer:
+        type: tcp
+log:
+  level: warn

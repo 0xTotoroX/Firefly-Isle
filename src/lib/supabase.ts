@@ -1,10 +1,16 @@
 /**
  * [INPUT]: 依赖 @supabase/supabase-js 的 createClient，依赖 Vite 注入的 Supabase 环境变量。
- * [OUTPUT]: 对外提供 getSupabaseClient、hasSupabaseEnv、hasSupabaseFunctionEnv、hasWechatAuthProvider、supabaseEnv、supabaseEdgeFunctionUrl 与 wechatAuthProvider，Auth 使用 PKCE URL 回调恢复。
+ * [OUTPUT]: Supabase 客户端、环境边界和自建后端会话迁移状态；Auth 使用 PKCE URL 回调恢复。
  * [POS]: lib 的 BaaS 边界入口，把客户端初始化与环境变量读取锁在一处。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import {
+  completeLegacySupabaseSessionMigration,
+  copyLegacySupabaseSession,
+  isLegacySupabaseSession,
+  isSelfHostedSupabaseUrl,
+} from './supabase-session-migration'
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim() ?? ''
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() ?? ''
@@ -12,6 +18,21 @@ const supabaseEdgeFunctionUrl = import.meta.env.VITE_SUPABASE_EDGE_FUNCTION_URL?
 const wechatAuthProvider = import.meta.env.VITE_SUPABASE_WECHAT_PROVIDER?.trim() ?? ''
 
 let client: SupabaseClient | null = null
+export let hasPendingSupabaseSessionMigration = false
+
+export function needsSupabaseSessionRefresh(accessToken: string) {
+  return isSelfHostedSupabaseUrl(supabaseUrl) && isLegacySupabaseSession(accessToken)
+}
+
+export function completeSupabaseSessionMigration(accessToken: string) {
+  if (!isSelfHostedSupabaseUrl(supabaseUrl) || isLegacySupabaseSession(accessToken)) return
+  try {
+    if (typeof window !== 'undefined') completeLegacySupabaseSessionMigration(window.localStorage)
+  } catch {
+    // Supabase can use in-memory storage when browser persistence is unavailable.
+  }
+  hasPendingSupabaseSessionMigration = false
+}
 
 export const hasSupabaseEnv = supabaseUrl.length > 0 && supabaseAnonKey.length > 0
 export const hasSupabaseFunctionEnv = supabaseEdgeFunctionUrl.length > 0
@@ -33,6 +54,13 @@ export function getSupabaseClient() {
   }
 
   if (!client) {
+    if (typeof window !== 'undefined') {
+      try {
+        hasPendingSupabaseSessionMigration = copyLegacySupabaseSession(supabaseUrl, window.localStorage)
+      } catch {
+        // Let the SDK initialize with its own storage fallback.
+      }
+    }
     client = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: true,

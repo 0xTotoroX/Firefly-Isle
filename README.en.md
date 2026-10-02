@@ -131,3 +131,7 @@ Cloudflare Pages remains the hosting target:
 Build-time `VITE_SUPABASE_*` values are read from committed `wrangler.jsonc > vars`, so the GitHub repository does not need duplicate secrets or variables for those public values.
 
 Disable automatic production / preview deployments from Cloudflare Pages Git integration to avoid two deployment truths.
+
+## Self-hosted Supabase
+
+Deployment configuration, backup scripts and session migration preparation are documented in the [self-hosting runbook](docs/operations/supabase-self-hosted.md). Production configuration still targets Supabase Cloud. Before preview or cutover, reconcile the target database and Edge Functions with the current SaaS version.

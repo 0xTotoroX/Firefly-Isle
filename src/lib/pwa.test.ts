@@ -46,6 +46,9 @@ describe('PWA install metadata', () => {
     expect(headers).toContain('Content-Type: application/manifest+json; charset=utf-8')
     expect(headers).toContain('/sw.js')
     expect(headers).toContain('Cache-Control: public, max-age=0, must-revalidate')
+    const csp = headers.split('\n').find((line) => line.includes('Content-Security-Policy:')) ?? ''
+    const connect = csp.split(';').find((directive) => directive.trim().startsWith('connect-src ')) ?? ''
+    expect(connect.split(/\s+/)).toContain('https://supabase.ghibli1024.com')
   })
 
   it('keeps installed PWA deep links inside the SPA fallback', () => {
@@ -90,6 +93,8 @@ describe('PWA service worker boundary', () => {
   })
 
   it('treats Supabase, Edge Functions and same-origin API paths as sensitive', () => {
+    expect(isSensitivePwaRequestUrl('https://supabase.ghibli1024.com/auth/v1/token')).toBe(true)
+    expect(isSensitivePwaRequestUrl('https://supabase.ghibli1024.com/functions/v1/llm-proxy')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://irkjblpzmclqekxbexll.supabase.co/auth/v1/token')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://irkjblpzmclqekxbexll.functions.supabase.co/llm-proxy')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://firefly.ghibli1024.com/api/auth/wechat/token')).toBe(true)

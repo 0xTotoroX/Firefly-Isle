@@ -2,6 +2,10 @@
 > L2 | 父级: /src/CLAUDE.md
 
 成员清单
+supabase-session-migration.ts: 自建目标的旧会话导入、issuer 判定与迁移完成标记，保留源凭据。
+supabase-session-migration.test.ts: 旧会话复制、重试、完成后退出和目标身份优先的回归。
+supabase-session-client.test.ts: 真实客户端入口的配置隔离、待迁移状态、持久化标记和存储失败降级。
+auth-session-migration.test.tsx: AuthProvider 的延迟刷新、认证事件、失败反馈和退出行为测试。
 extraction-identity.test.ts: 可信身份保留、模型身份清洗与重复读数合并回归。
 record-edit-queue.test.ts: 延迟保存与失败恢复的行为测试。
 record-edit-queue.ts: 将字段补丁按顺序应用到最后成功保存状态，隔离失败请求。

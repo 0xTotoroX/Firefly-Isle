@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 react 的 Context、hooks，依赖 @supabase/supabase-js 的 Session/User，依赖 @/lib/supabase 的客户端入口、@/lib/locale 的界面语言与 copy 字典的认证反馈文案。
- * [OUTPUT]: 对外提供 AuthProvider 与 useAuth，并在路由就绪前完成 Supabase URL callback/session 初始化。
+ * [OUTPUT]: 对外提供 AuthProvider 与 useAuth；在路由就绪前完成 URL callback、会话恢复及自建后端旧 JWT 换取。
  * [POS]: lib 的认证状态中心，统一管理 session 恢复、认证状态广播与登出动作。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
@@ -17,7 +17,13 @@ import type { Session, User } from '@supabase/supabase-js'
 
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
-import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'
+import {
+  completeSupabaseSessionMigration,
+  getSupabaseClient,
+  hasPendingSupabaseSessionMigration,
+  hasSupabaseEnv,
+  needsSupabaseSessionRefresh,
+} from '@/lib/supabase'
 
 type AuthContextValue = {
   authError: string | null
@@ -47,27 +53,39 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
     const supabase = getSupabaseClient()
     let active = true
+    let initializing = true
 
     void supabase.auth
       .initialize()
       .then(async ({ error: initializeError }) => {
-        const { data, error } = await supabase.auth.getSession()
+        let { data, error } = await supabase.auth.getSession()
+        if (data.session && needsSupabaseSessionRefresh(data.session.access_token)) {
+          const refreshed = await supabase.auth.refreshSession()
+          data = refreshed.data
+          error = refreshed.error
+        }
 
         if (!active) {
           return
         }
 
-        if (error) {
+        const migrationFailed = data.session
+          ? needsSupabaseSessionRefresh(data.session.access_token)
+          : hasPendingSupabaseSessionMigration
+        if (error || migrationFailed) {
           setAuthError(getCopy(copy.authFeedback.restoreFailed, locale))
           setSession(null)
         } else {
+          if (data.session) completeSupabaseSessionMigration(data.session.access_token)
           setSession(data.session ?? null)
           setAuthError(initializeError ? getCopy(copy.authFeedback.callbackInvalid, locale) : null)
         }
 
+        initializing = false
         setIsAuthReady(true)
       })
       .catch(() => {
+        initializing = false
         if (!active) {
           return
         }
@@ -80,10 +98,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
-      if (!active) {
+      if (!active || initializing) {
         return
       }
 
+      if (nextSession && needsSupabaseSessionRefresh(nextSession.access_token)) {
+        setSession(null)
+        setAuthError(getCopy(copy.authFeedback.restoreFailed, locale))
+        return
+      }
+      if (nextSession) completeSupabaseSessionMigration(nextSession.access_token)
       setSession(nextSession ?? null)
       setAuthError(null)
       setIsAuthReady(true)

@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository state
 
+- Self-hosted backend preparation lives in `ops/self-hosted/` and `docs/operations/supabase-self-hosted.md`, with the active contract at `openspec/changes/self-host-supabase/`. Production cloud configuration remains unchanged until cutover acceptance.
+
 - The integrity/cleanup change is archived at `openspec/changes/archive/2026-10-02-harden-record-integrity-and-simplify/`; current contracts live in `openspec/specs/record-integrity/spec.md`. Local verification does not imply remote deployment.
 
 - This repository has completed its MVP implementation baseline. The full MVP change was archived at `openspec/changes/archive/2026-04-13-mvp-core/`.

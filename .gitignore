@@ -15,6 +15,18 @@ docs/design/Image-2/V4/.qa-*.png
 .dev.vars
 supabase/.temp/
 
+# Self-hosted runtime credentials and state; examples remain tracked.
+ops/self-hosted/.env
+ops/self-hosted/functions.env
+ops/self-hosted/egress.yml
+ops/self-hosted/volumes/
+ops/self-hosted/backups/
+ops/self-hosted/*.dump
+ops/self-hosted/*.dump.partial
+ops/self-hosted/roles.sql
+ops/self-hosted/runtime.tar.gz
+ops/self-hosted/source-db.env
+
 # Native signing secrets and local build state
 *.cer
 *.jks

@@ -8,7 +8,7 @@
 export const FIREFLY_SERVICE_WORKER_PATH = '/sw.js'
 
 const sensitiveSameOriginPrefixes = ['/api/']
-const sensitiveRemoteHostSuffixes = ['.supabase.co', '.functions.supabase.co']
+const sensitiveRemoteHostSuffixes = ['supabase.ghibli1024.com', '.supabase.co', '.functions.supabase.co']
 
 type ServiceWorkerRegistrationTarget = {
   addEventListener: Window['addEventListener']
