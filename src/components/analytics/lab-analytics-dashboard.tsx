@@ -1,10 +1,10 @@
 /**
  * [INPUT]: 依赖 react 状态/ref/指针键盘事件、lucide-react 图标、@/components/system/surfaces、@/lib/lab-results 趋势工具、@/lib/lab-dictionary 分类字典与 PatientRecord/LabResult。
  * [OUTPUT]: 对外提供 LabAnalyticsDashboard 组件。
- * [POS]: components/analytics 的指标管理统计界面，负责页面级图表编辑、全局状态文字切换、可搜索/可滚动分类指标索引、监测表回选指标、肿瘤连续上涨提醒联动高亮、表格日期与图表点双向定位、可拖动横向滑动趋势图、时间点密度切换、SVG 图表导出、等价表格、demo 展示与非诊断监测面板展示；文件上传入口留在 /app 输入区。
+ * [POS]: components/analytics 的指标管理统计界面，负责只读图表、全局状态文字切换、可搜索/可滚动分类指标索引、监测表回选指标、肿瘤连续上涨提醒联动高亮、表格日期与图表点双向定位、可拖动横向滑动趋势图、时间点密度切换、SVG 图表导出、等价表格、demo 展示与非诊断监测面板展示；文件上传入口留在 /app 输入区。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-import { type KeyboardEvent, type PointerEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { type KeyboardEvent, type PointerEvent, useMemo, useRef, useState } from 'react'
 import { AlertCircle, CheckCircle2, Download, TrendingUp } from 'lucide-react'
 
 import { PanelSurface, SectionSurface } from '@/components/system/surfaces'
@@ -18,15 +18,14 @@ import {
 } from '@/lib/lab-results'
 import type { Theme } from '@/lib/theme'
 import { cn } from '@/lib/utils'
-import type { LabResult, LabResultCategory, PatientRecord } from '@/types/patient'
+import type { LabResult, LabResultCategory } from '@/types/patient'
 
-import { formatRatio, RiseRatioLabel, statusText, StatusLabel } from './lab-analytics-format'
+import { formatRatio, formatValue, RiseRatioLabel, statusText, StatusLabel } from './lab-analytics-format'
 import {
   categories,
   chartDragThreshold,
   defaultChartPointLimit,
   defaultItemByCategory,
-  EditableLabValue,
   formatAlertWindow,
   type HighlightedRiseWindow,
   LabTimelineDragHint,
@@ -37,11 +36,9 @@ import {
 import { LabTrendChart, timeLabelDisplayOptions, type TimeLabelDisplay } from './lab-trend-chart'
 
 type LabAnalyticsDashboardProps = {
-  isDemo?: boolean
   isLoading?: boolean
   labResults: LabResult[]
   loadError?: string | null
-  record: PatientRecord | null
   theme: Theme
 }
 
@@ -52,9 +49,7 @@ export function LabAnalyticsDashboard({
   theme,
 }: LabAnalyticsDashboardProps) {
   const [activeCategory, setActiveCategory] = useState<LabResultCategory>('blood-routine')
-  const [editableLabResults, setEditableLabResults] = useState(labResults)
   const [indicatorSearch, setIndicatorSearch] = useState('')
-  const [isChartEditing, setIsChartEditing] = useState(false)
   const [showStatusText, setShowStatusText] = useState(false)
   const [selectedItemCode, setSelectedItemCode] = useState<string | null>(null)
   const [selectedPointDate, setSelectedPointDate] = useState<string | null>(null)
@@ -66,13 +61,9 @@ export function LabAnalyticsDashboard({
   const chartDragRef = useRef({ hasMoved: false, pointerId: -1, startScroll: 0, startX: 0 })
   const suppressChartPointClickRef = useRef(false)
   const [isChartDragging, setIsChartDragging] = useState(false)
-  useEffect(() => {
-    setEditableLabResults(labResults)
-  }, [labResults])
-
-  const trendRows = useMemo(() => buildLabTrendRows(editableLabResults), [editableLabResults])
-  const abnormalSummaries = useMemo(() => summarizeLatestAbnormalByCategory(editableLabResults), [editableLabResults])
-  const riseAlerts = useMemo(() => detectTumorMarkerContinuousRise(editableLabResults), [editableLabResults])
+  const trendRows = useMemo(() => buildLabTrendRows(labResults), [labResults])
+  const abnormalSummaries = useMemo(() => summarizeLatestAbnormalByCategory(labResults), [labResults])
+  const riseAlerts = useMemo(() => detectTumorMarkerContinuousRise(labResults), [labResults])
   const abnormalReadings = abnormalSummaries.flatMap((summary) => summary.abnormalReadings)
   const normalizedSearch = indicatorSearch.trim().toLowerCase()
   const activeRows = trendRows.filter((row) => row.category === activeCategory)
@@ -84,7 +75,7 @@ export function LabAnalyticsDashboard({
     : activeRows
   const selectedPool = visibleRows.length > 0 ? visibleRows : activeRows
   const selectedRow = selectedPool.find((row) => row.itemCode === selectedItemCode) ?? selectedPool.find((row) => row.itemCode === defaultItemByCategory[activeCategory]) ?? selectedPool[0]
-  const series = buildLabChartSeries(editableLabResults, selectedRow?.itemCode ?? '')
+  const series = buildLabChartSeries(labResults, selectedRow?.itemCode ?? '')
   const maxPointLimit = Math.max(series.points.length, 1)
   const effectivePointLimit = Math.min(selectedPointLimit, maxPointLimit)
   const chartPointLimitOptions = Array.from({ length: maxPointLimit }, (_, index) => index + 1)
@@ -94,22 +85,8 @@ export function LabAnalyticsDashboard({
   const highlightedRiseDates = highlightedRiseWindow && highlightedRiseWindow.itemCode === selectedRow?.itemCode ? highlightedRiseWindow.dates : []
   const abnormalCount = abnormalReadings.length
   const missingReferenceCount = abnormalSummaries.reduce((sum, summary) => sum + summary.missingReferenceCount, 0)
-  const coveredCount = new Set(editableLabResults.map((reading) => `${reading.category}:${reading.itemCode}`)).size
-  const hasData = editableLabResults.length > 0
-
-  function updateLabValue(category: LabResultCategory, itemCode: string, testDate: string | null | undefined, value: number) {
-    if (!testDate) {
-      return
-    }
-
-    setEditableLabResults((current) =>
-      current.map((reading) =>
-        reading.category === category && reading.itemCode === itemCode && reading.testDate === testDate
-          ? { ...reading, value }
-          : reading,
-      ),
-    )
-  }
+  const coveredCount = new Set(labResults.map((reading) => `${reading.category}:${reading.itemCode}`)).size
+  const hasData = labResults.length > 0
 
   function scrollChartToPoint(date: string) {
     if (typeof window === 'undefined') {
@@ -180,7 +157,7 @@ export function LabAnalyticsDashboard({
 
   function selectRiseAlert(alert: TumorMarkerRiseAlert) {
     const dates = alert.points.map((point) => point.date)
-    const seriesPoints = buildLabChartSeries(editableLabResults, alert.itemCode).points
+    const seriesPoints = buildLabChartSeries(labResults, alert.itemCode).points
     const firstHighlightIndex = seriesPoints.findIndex((point) => point.date === dates[0])
     const requiredPointLimit = firstHighlightIndex >= 0 ? seriesPoints.length - firstHighlightIndex : dates.length
 
@@ -387,21 +364,7 @@ export function LabAnalyticsDashboard({
             ))}
           </div>
         </div>
-        <button
-          aria-label={isChartEditing ? '关闭编辑' : '开启编辑'}
-          aria-pressed={isChartEditing}
-          className={cn(
-            'inline-flex h-8 items-center gap-1.5 self-start rounded-[var(--ff-radius-sm)] border px-2.5 text-xs font-bold md:self-auto',
-            isChartEditing
-              ? 'border-[var(--ff-accent-primary)] bg-[color-mix(in_srgb,var(--ff-accent-primary)_14%,transparent)] text-[var(--ff-accent-text)]'
-              : 'border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] text-[var(--ff-text-secondary)]',
-          )}
-          onClick={() => setIsChartEditing((current) => !current)}
-          type="button"
-        >
-          <span aria-hidden="true" className="material-symbols-outlined text-[16px]">{isChartEditing ? 'done' : 'edit'}</span>
-          {isChartEditing ? '完成编辑' : '编辑'}
-        </button>
+
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-3">
@@ -482,13 +445,7 @@ export function LabAnalyticsDashboard({
                         </span>
                       </span>
                       <span className="shrink-0 text-right font-[var(--ff-font-mono)] text-sm text-[var(--ff-text-primary)]">
-                        <EditableLabValue
-                          ariaLabel={`编辑 ${row.itemName} 最新值`}
-                          isEditing={isChartEditing}
-                          onCommit={(value) => updateLabValue(row.category, row.itemCode, row.latestDate, value)}
-                          unit={row.unit}
-                          value={row.latestValue}
-                        />
+                        {formatValue(row.latestValue, row.unit)}
                       </span>
                     </button>
                   ))
@@ -507,13 +464,7 @@ export function LabAnalyticsDashboard({
                       <div className="mt-1 flex flex-wrap items-center gap-1.5 text-sm font-semibold text-[var(--ff-text-secondary)]">
                         <span className="inline-flex items-center gap-1">
                           最新值
-                          <EditableLabValue
-                            ariaLabel={`编辑 ${selectedRow.itemName} 最新值`}
-                            isEditing={isChartEditing}
-                            onCommit={(value) => updateLabValue(selectedRow.category, selectedRow.itemCode, selectedRow.latestDate, value)}
-                            unit={selectedRow.unit}
-                            value={selectedRow.latestValue}
-                          />
+                          {formatValue(selectedRow.latestValue, selectedRow.unit)}
                         </span>
                         <span>·</span>
                         <StatusLabel compact={!showStatusText} status={selectedRow.status} />
@@ -629,13 +580,7 @@ export function LabAnalyticsDashboard({
                           >
                             <td className="py-2 pr-3">{point.date}</td>
                             <td className="py-2 pr-3">
-                              <EditableLabValue
-                                ariaLabel={`编辑 ${selectedRow.itemName} ${point.date} 数值`}
-                                isEditing={isChartEditing}
-                                onCommit={(value) => updateLabValue(selectedRow.category, selectedRow.itemCode, point.date, value)}
-                                unit={point.unit}
-                                value={point.value}
-                              />
+                              {formatValue(point.value, point.unit)}
                             </td>
                             <td className="py-2 pr-3">{point.referenceRangeLabel}</td>
                             <td className="py-2 pr-3"><StatusLabel compact={!showStatusText} status={point.status} /></td>
@@ -678,13 +623,7 @@ export function LabAnalyticsDashboard({
                         >
                           <td className="py-2 pr-3">{LAB_CATEGORY_LABELS[reading.category]} · {reading.itemName}</td>
                           <td className="py-2 pr-3">
-                            <EditableLabValue
-                              ariaLabel={`编辑 ${reading.itemName} ${reading.testDate} 数值`}
-                              isEditing={isChartEditing}
-                              onCommit={(value) => updateLabValue(reading.category, reading.itemCode, reading.testDate, value)}
-                              unit={reading.unit}
-                              value={reading.value}
-                            />
+                            {formatValue(reading.value, reading.unit)}
                           </td>
                           <td className="py-2 pr-3">{reading.referenceRangeLabel}</td>
                           <td className="py-2 pr-3"><StatusLabel compact={!showStatusText} status={reading.status} /></td>

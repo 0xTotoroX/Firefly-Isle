@@ -11,12 +11,6 @@ import { LabAnalyticsDashboard } from './lab-analytics-dashboard'
 import { LabTrendChart } from './lab-trend-chart'
 import type { LabResult, PatientRecord } from '@/types/patient'
 
-const record: PatientRecord = {
-  basicInfo: { name: '张某某', tumorType: '乳腺癌' },
-  id: 'patient-42',
-  treatmentLines: [],
-}
-
 const labResults: LabResult[] = [
   { category: 'blood-routine', itemCode: 'wbc', itemName: '白细胞', referenceHigh: 9.5, referenceLow: 3.5, testDate: '2026-04-10', unit: '10^9/L', value: 3.4 },
   { category: 'blood-routine', itemCode: 'wbc', itemName: '白细胞', referenceHigh: 9.5, referenceLow: 3.5, testDate: '2026-05-10', unit: '10^9/L', value: 2.8 },
@@ -35,9 +29,7 @@ const smallDecimalResults: LabResult[] = [
 function renderDashboard(options: Partial<{ isDemo: boolean; labResults: LabResult[]; record: PatientRecord | null }> = {}) {
   return renderToStaticMarkup(
     <LabAnalyticsDashboard
-      isDemo={options.isDemo}
       labResults={options.labResults ?? labResults}
-      record={options.record ?? record}
       theme="dark"
     />,
   )
@@ -76,8 +68,8 @@ describe('LabAnalyticsDashboard', () => {
     expect(markup).toContain('data-scroll-hint="true"')
     expect(markup).toContain('[touch-action:pan-y]')
     expect(markup).not.toContain('当前病历：张某某')
-    expect(markup).toContain('开启编辑')
-    expect(markup).toContain('编辑')
+    expect(markup).not.toContain('开启编辑')
+    expect(markup).not.toContain('完成编辑')
     expect(markup).toContain('repeat(auto-fit,minmax(min(100%,18rem),1fr))')
     expect(markup).toContain('grid-cols-[auto_minmax(0,1fr)]')
     expect(markup).toContain('whitespace-nowrap')

@@ -1,10 +1,9 @@
 /**
- * [INPUT]: 依赖 Supabase REST（usage_events 查询与 record_usage RPC）与注入的 runtime fetch。
- * [OUTPUT]: 对外提供 countUsageInWindow 与 recordUsageEvent。
- * [POS]: supabase/functions 的共享用量台账边界，跨 isolate 持久限流的读写两侧；任何台账故障都 fail-open 并返回 null/false，不阻塞推理可用性。
+ * [INPUT]: 依赖 Supabase consume_usage 原子 RPC 与注入的 runtime fetch。
+ * [OUTPUT]: 对外提供 consumeUsage；区分获准、额度拒绝与服务不可用。
+ * [POS]: 模型/OCR 共用的配额边界，数据库故障或响应不合法时停止调用上游。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-
 export type UsageRuntimeFetch = (input: string | URL, init?: RequestInit) => Promise<Response>
 
 export type UsageLedgerConfig = {
@@ -13,70 +12,36 @@ export type UsageLedgerConfig = {
   userToken: string
 }
 
-export type UsageEventKind = 'export_account' | 'llm_chat' | 'ocr_document' | 'record_share'
+export type UsageEventKind = 'llm_chat' | 'ocr_document'
+export type UsageDecision = 'allowed' | 'window' | 'quota' | 'unavailable'
 
-export async function countUsageInWindow(
+export async function consumeUsage(
   config: UsageLedgerConfig,
   kind: UsageEventKind,
-  userId: string,
-  windowMs: number,
   runtimeFetch: UsageRuntimeFetch,
-  now = Date.now(),
-): Promise<number | null> {
-  try {
-    const windowStart = new Date(now - windowMs).toISOString()
-    const query = [
-      'select=created_at',
-      `kind=eq.${kind}`,
-      `user_id=eq.${encodeURIComponent(userId)}`,
-      `created_at=gte.${encodeURIComponent(windowStart)}`,
-    ].join('&')
-    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/usage_events?${query}`, {
-      headers: {
-        Prefer: 'count=exact',
-        Range: '0-0',
-        apikey: config.supabaseAnonKey,
-        Authorization: `Bearer ${config.userToken}`,
-      },
-    })
-
-    if (!response.ok && response.status !== 206) {
-      return null
-    }
-
-    const total = response.headers.get('content-range')?.split('/')[1] ?? ''
-
-    if (!total || total === '*') {
-      return null
-    }
-
-    const parsed = Number.parseInt(total, 10)
-
-    return Number.isFinite(parsed) ? parsed : null
-  } catch {
-    return null
+): Promise<UsageDecision> {
+  if (!config.supabaseUrl || !config.supabaseAnonKey || !config.userToken) {
+    return 'unavailable'
   }
-}
 
-export async function recordUsageEvent(
-  config: UsageLedgerConfig,
-  kind: UsageEventKind,
-  runtimeFetch: UsageRuntimeFetch,
-  meta?: Record<string, unknown>,
-): Promise<boolean> {
   try {
-    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/rpc/record_usage`, {
+    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/rpc/consume_usage`, {
       method: 'POST',
       headers: {
         apikey: config.supabaseAnonKey,
         Authorization: `Bearer ${config.userToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(meta ? { event_kind: kind, event_meta: meta } : { event_kind: kind }),
+      body: JSON.stringify({ event_kind: kind }),
     })
 
-    return response.ok
+    if (!response.ok) return 'unavailable'
+    const result: unknown = await response.json()
+    if (!result || typeof result !== 'object' || !('allowed' in result) || !('reason' in result)) return 'unavailable'
+    if (result.allowed === true && result.reason === null) return 'allowed'
+    if (result.allowed === false && (result.reason === 'window' || result.reason === 'quota')) return result.reason
+    return 'unavailable'
   } catch {
-    return false
+    return 'unavailable'
   }
 }

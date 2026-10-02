@@ -10,15 +10,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const supabaseMocks = vi.hoisted(() => ({
   getSupabaseClient: vi.fn(),
-  loadSharedPatientRecordById: vi.fn(),
 }))
 
 vi.mock('@/lib/supabase', () => ({
   getSupabaseClient: supabaseMocks.getSupabaseClient,
-}))
-
-vi.mock('@/lib/patient-record-storage', () => ({
-  loadSharedPatientRecordById: supabaseMocks.loadSharedPatientRecordById,
 }))
 
 import {
@@ -54,7 +49,6 @@ function createShareInsertBuilder(row = { created_at: '2026-05-13T00:00:00Z', ex
 
 beforeEach(() => {
   supabaseMocks.getSupabaseClient.mockReset()
-  supabaseMocks.loadSharedPatientRecordById.mockReset()
 })
 
 describe('record share schema contract', () => {
@@ -66,20 +60,6 @@ describe('record share schema contract', () => {
     expect(migrationSql).toContain('public.patients.user_id = auth.uid()')
   })
 
-  it('keeps shared record reads under explicit active-share RLS policies', () => {
-    expect(migrationSql).toContain('create policy patients_select_shared')
-    expect(migrationSql).toContain('create policy treatment_lines_select_shared')
-    expect(migrationSql).toContain('create policy lab_results_select_shared')
-    expect(migrationSql).toContain('record_shares.revoked_at is null')
-    expect(migrationSql).toContain('record_shares.expires_at > now()')
-  })
-
-  it('returns only share status and patient id from the code verification function', () => {
-    expect(migrationSql).toContain('function public.get_record_share_access(share_code_hash text)')
-    expect(migrationSql).toContain('returns table(status text, patient_id uuid)')
-    expect(migrationSql).toContain('grant execute on function public.get_record_share_access(text) to anon, authenticated')
-    expect(migrationSql).not.toContain('owner_user_id::')
-  })
 })
 
 describe('record share code utilities', () => {
@@ -152,48 +132,23 @@ describe('record share CRUD boundary', () => {
 })
 
 describe('shared record loading', () => {
-  function mockShareAccess(status: string, patientId: string | null) {
-    const rpcBuilder = {
-      single: vi.fn(async () => ({ data: { patient_id: patientId, status }, error: null })),
-    }
-
-    supabaseMocks.getSupabaseClient.mockReturnValue({
-      rpc: vi.fn(() => rpcBuilder),
-    })
-  }
-
-  it('loads exactly the shared patient record for active codes', async () => {
-    mockShareAccess('active', 'patient-1')
-    supabaseMocks.loadSharedPatientRecordById.mockResolvedValue({ id: 'patient-1', treatmentLines: [] })
-
-    await expect(loadSharedPatientRecordByCode('valid_share_code_123456')).resolves.toMatchObject({
-      record: { id: 'patient-1' },
-      status: 'active',
-    })
-    expect(supabaseMocks.loadSharedPatientRecordById).toHaveBeenCalledWith('patient-1')
+  it('uses only the code-scoped RPC result, without querying patient tables', async () => {
+    const record = { id: 'patient-1', treatmentLines: [] }
+    const rpc = vi.fn().mockResolvedValue({ data: { record, status: 'active' }, error: null })
+    const from = vi.fn()
+    supabaseMocks.getSupabaseClient.mockReturnValue({ rpc, from })
+    await expect(loadSharedPatientRecordByCode('valid_share_code_123456')).resolves.toEqual({ record, status: 'active' })
+    expect(rpc).toHaveBeenCalledWith('get_shared_patient_record', { share_code_hash: await hashShareCode('valid_share_code_123456') })
+    expect(from).not.toHaveBeenCalled()
   })
 
-  it.each(['expired', 'revoked', 'unavailable'] as const)('does not load patient data when share status is %s', async (status) => {
-    mockShareAccess(status, null)
-
-    await expect(loadSharedPatientRecordByCode('valid_share_code_123456')).resolves.toEqual({
-      record: null,
-      status,
-    })
-    expect(supabaseMocks.loadSharedPatientRecordById).not.toHaveBeenCalled()
+  it.each(['expired', 'revoked', 'unavailable'] as const)('does not return patient data for %s', async (status) => {
+    supabaseMocks.getSupabaseClient.mockReturnValue({ rpc: vi.fn().mockResolvedValue({ data: { status, record: null }, error: null }) })
+    await expect(loadSharedPatientRecordByCode('valid_share_code_123456')).resolves.toEqual({ record: null, status })
   })
 
-  it('rejects malformed short codes before hitting the RPC boundary', async () => {
-    const supabase = {
-      rpc: vi.fn(),
-    }
-
-    supabaseMocks.getSupabaseClient.mockReturnValue(supabase)
-
-    await expect(loadSharedPatientRecordByCode('bad-code')).resolves.toEqual({
-      record: null,
-      status: 'unavailable',
-    })
-    expect(supabase.rpc).not.toHaveBeenCalled()
+  it('rejects malformed codes without contacting the database', async () => {
+    await expect(loadSharedPatientRecordByCode('bad-code')).resolves.toEqual({ record: null, status: 'unavailable' })
+    expect(supabaseMocks.getSupabaseClient).not.toHaveBeenCalled()
   })
 })

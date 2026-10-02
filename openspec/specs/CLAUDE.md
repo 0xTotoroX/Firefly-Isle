@@ -2,6 +2,7 @@
 > L2 | 父级: /CLAUDE.md
 
 成员清单
+record-integrity/spec.md: 病历/批次事务、可信身份、授权码分享、稳定编辑与双窗口原子配额的当前基线。
 app-shell/spec.md: 页面壳层、路由范围、登录入口与 feature 组件边界的 baseline spec，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 asset-storage/spec.md: Supabase Storage 基础设施、用户隔离与 MVP 上传范围的 baseline spec，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 auth/spec.md: 邮箱登录、密码重置、Google OAuth、匿名模式、隐私条款门控与 session 持久化的 baseline spec，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

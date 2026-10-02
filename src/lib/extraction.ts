@@ -93,8 +93,9 @@ function normalizeDate(value: unknown) {
   return DATE_PATTERN.test(normalized) ? normalized : undefined
 }
 
-function normalizeTreatmentLine(line: Partial<TreatmentLine> | undefined, fallbackLineNumber: number): TreatmentLine {
+function normalizeTreatmentLine(line: Partial<TreatmentLine> | undefined, fallbackLineNumber: number, preserveId: boolean): TreatmentLine {
   return {
+    id: preserveId ? normalizeString(line?.id) : undefined,
     lineNumber: normalizeNumber(line?.lineNumber) ?? fallbackLineNumber,
     startDate: normalizeDate(line?.startDate),
     endDate: normalizeDate(line?.endDate),
@@ -190,7 +191,7 @@ function normalizeLabSource(value: unknown): LabResultSource | undefined {
   return typeof value === 'string' && LAB_SOURCES.has(value as LabResultSource) ? (value as LabResultSource) : undefined
 }
 
-function normalizeLabResult(reading: Partial<LabResult> | undefined): LabResult | null {
+function normalizeLabResult(reading: Partial<LabResult> | undefined, preserveId: boolean): LabResult | null {
   const category = normalizeLabCategory(reading?.category)
   const itemCode = normalizeString(reading?.itemCode)
   const itemName = normalizeString(reading?.itemName)
@@ -201,7 +202,8 @@ function normalizeLabResult(reading: Partial<LabResult> | undefined): LabResult 
   }
 
   return {
-    batchId: normalizeString(reading?.batchId),
+    id: preserveId ? normalizeString(reading?.id) : undefined,
+    batchId: preserveId ? normalizeString(reading?.batchId) : undefined,
     category,
     derivationMethod: normalizeString(reading?.derivationMethod),
     isDerived: reading?.isDerived === true,
@@ -219,14 +221,15 @@ function normalizeLabResult(reading: Partial<LabResult> | undefined): LabResult 
 export function normalizePatientRecord(input: Partial<PatientRecord>, options: NormalizePatientRecordOptions = {}): PatientRecord {
   const preserveId = options.preserveId ?? true
   const treatmentLines = Array.isArray(input.treatmentLines)
-    ? input.treatmentLines.map((line, index) => normalizeTreatmentLine(line, index + 1))
+    ? input.treatmentLines.map((line, index) => normalizeTreatmentLine(line, index + 1, preserveId))
     : []
   const labResults = Array.isArray(input.labResults)
-    ? input.labResults.map(normalizeLabResult).filter((reading): reading is LabResult => reading !== null)
+    ? input.labResults.map((reading) => normalizeLabResult(reading, preserveId)).filter((reading): reading is LabResult => reading !== null)
     : undefined
 
   return {
     id: preserveId && typeof input.id === 'string' && input.id.trim() ? input.id.trim() : undefined,
+    followUpStatus: preserveId ? input.followUpStatus : undefined,
     basicInfo: input.basicInfo
       ? {
           name:
@@ -311,6 +314,7 @@ function mergeTreatmentLines(current: TreatmentLine[], incoming: TreatmentLine[]
     byLineNumber.set(line.lineNumber, {
       ...existing,
       ...line,
+      id: existing?.id,
       lineNumber: line.lineNumber,
       regimen: line.regimen ?? existing?.regimen,
       biopsy: line.biopsy ?? existing?.biopsy,
@@ -325,7 +329,15 @@ function mergeTreatmentLines(current: TreatmentLine[], incoming: TreatmentLine[]
 }
 
 function mergeLabResults(current: LabResult[] | undefined, incoming: LabResult[] | undefined) {
-  return incoming && incoming.length > 0 ? [...(current ?? []), ...incoming] : current
+  if (!incoming?.length) return current
+  const merged = [...(current ?? [])]
+  for (const reading of incoming) {
+    const repeated = reading.testDate && merged.some((existing) =>
+      existing.testDate === reading.testDate && existing.category === reading.category &&
+      existing.itemCode === reading.itemCode && existing.value === reading.value && existing.unit === reading.unit)
+    if (!repeated) merged.push(reading)
+  }
+  return merged
 }
 
 function mergeDefinedFields<T extends object>(current: T | undefined, incoming: T | undefined): T | undefined {

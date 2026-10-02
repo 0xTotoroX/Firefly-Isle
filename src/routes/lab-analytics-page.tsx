@@ -81,11 +81,9 @@ export function LabAnalyticsPage({ isSigningOut, onSignOut, userIsAnonymous, use
         <div className={`${shellWideContentClass} t-route-reveal mt-5 md:mt-6`}>
           {demoRoute ? <DemoModeBanner /> : <ClinicalRecordNav active="labs" locale={locale} patientId={id} />}
           <LabAnalyticsDashboard
-            isDemo={demoRoute}
             isLoading={resource.isLoading}
             labResults={labResults}
             loadError={loadError}
-            record={record}
             theme={theme}
           />
         </div>

@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository state
 
+- The integrity/cleanup change is archived at `openspec/changes/archive/2026-10-02-harden-record-integrity-and-simplify/`; current contracts live in `openspec/specs/record-integrity/spec.md`. Local verification does not imply remote deployment.
+
 - This repository has completed its MVP implementation baseline. The full MVP change was archived at `openspec/changes/archive/2026-04-13-mvp-core/`.
 - The commit-history documentation change was archived at `openspec/changes/archive/2026-04-14-commit-history-log/`.
 - The current baseline specs now live under `openspec/specs/`.
@@ -15,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Lab analytics, P0 clinical analysis, secure sharing, restored TimelineTable, full-product Demo, PWA foundation, and Capacitor mobile shell work are archived under `openspec/changes/archive/2026-05-16-*`; current behavior lives in `openspec/specs/`.
 - Product context lives in `README.md`, `README.en.md`, `docs/products/prd-implementation-status.md`, `docs/products/product-priority-roadmap.md`, `docs/products/saas-refactoring-plan.md` (SaaS refactor phases, status and pending owner decisions), and archived product snapshots / historical Goal drafts under `docs/products/archive/`.
 - The V3 theme uses eight muted presets (default `#C48A4A`) from `src/lib/accent.ts`; primary fills, black/white button foregrounds and readable accent text have separate roles. Warning, critical, low and success colors remain independent of the selected preset and adapt to dark/light surfaces.
-- Current visual-system entrypoint lives in `DESIGN.md`: V3 under `docs/design/Image-2/V3/DESIGN.md` remains the production source, while V4 under `docs/design/Image-2/V4/DESIGN.md` is an isolated evaluation source until an explicit direction is selected.
+- Current design review lives in `docs/design/saas-review/` via `DESIGN.md`; the new slate/blue system awaits user approval before frontend visual migration. V3 describes the unchanged current UI; V4 preview code is retired.
 - Community governance now lives at the repository root: `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`, and `CODE_OF_CONDUCT.md`.
 
 ## Common commands
@@ -54,7 +56,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `tsconfig.*.json`
   - TypeScript boundaries split by runtime: SPA app, Vite node config, Cloudflare Pages Functions, and Supabase Edge Functions
 - `DESIGN.md`
-  - project-level design-system entrypoint separating the V3 production source from the V4 evaluation source and migration boundary
+  - project-level entrypoint for the independent SaaS design review and approval boundary
 - `docs/design/`
   - `Image-2/` — image-model redesign batches, including V3 production rules and the V4 Clinical Calm / Firefly Glass / Living Archive evaluation contract
   - `stitch/` — Stitch-origin design references and runtime screenshot evidence
@@ -135,7 +137,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Backend/BaaS:** Supabase Auth + PostgreSQL + RLS + Edge Functions
 - **Mobile shell:** Capacitor 8 iOS/Android wrapper around the same `dist` Web build; no separate native product UI or local patient-record truth source
 - **Edge adapter:** Cloudflare Pages Functions host WeChat OAuth2 adapter prework for future Supabase custom provider compatibility; current login UI keeps WeChat deferred
-- **SaaS substrate (2026-09-02 refactor):** `profiles` (migration 007, auto-provision trigger) backs `/settings`; `usage_events` (009, owner read-only + `record_usage` RPC) backs dual-layer rate limits in `llm-proxy` / `medical-document-ocr` via `supabase/functions/_shared/usage-limits.ts`; `plans` + `subscriptions` (010) plus `billing-checkout` / `stripe-webhook` functions form the Stripe-ready billing base, all env-gated and fail-closed when unconfigured. `llm-proxy` resolves the caller's plan quota (`resolvePlanQuota`, 30-day rolling window) before the window rate limit and returns 429 when the monthly quota is exhausted; plan lookup errors fail open to window limiting
+- **Usage quota:** `consume_usage(event_kind)` (migration `20261002111617_atomic_usage_quota`) serializes each caller/kind, checks both 1-minute and rolling 30-day quotas, then records one approved upstream attempt. `llm-proxy` and OCR share `_shared/usage-limits.ts`; rejected calls return 429, database errors return 503 before upstream. Missing, expired or inactive subscriptions use the free plan. Attempts remain counted if upstream fails. `plans` is client read-only and the unchecked `record_usage` RPC is no longer client-callable. Quota rules live in SQL rather than Edge Function rate-limit env vars; this ledger does not charge payments.
+- **Account substrate:** `profiles` (007) backs `/settings`; `plans` + `subscriptions` (010), `billing-checkout` and `stripe-webhook` retain their env-gated backend contracts. Payment configuration and deployment remain separate from usage-limit enforcement.
 - **Account & privacy:** `/settings` shows identity, display name, locale/theme preferences (degrades to local-only without profiles), JSON data export (`src/lib/account-data-export.ts`, excludes key ciphertext and share-code hashes) and type-to-confirm account deletion (`delete_own_account` RPC, migration 008; every user table cascades from `auth.users`)
 - **Follow-up and symptoms:** `/record/:id/follow-up` and `/record/:id/side-effects` share patient-scoped navigation, recoverable forms and deletion confirmation. Migration `20260912051552_clinical_workflow_integrity.sql` adds owner defaults, patient/treatment-line ownership checks and invoker Dashboard RPCs; date-only values use `calendar-date.ts`.
 - **Side-effect log:** `/record/:id/side-effects` is the patient symptom log (migration `012_side_effects`, owner CRUD RLS, optional treatment-line attribution via `TreatmentLine.id`); it is an auxiliary record — non-diagnostic, linked from the record page toolbar
@@ -147,7 +150,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Core workflow:** natural-language intake → structured extraction → up to 3 clarification rounds → timeline table render → inline editing → formal record page → AI auxiliary analysis / read-only sharing / PDF/PNG export
 - **Demo workflow:** public `/demo` routes remain directly accessible; the login page no longer exposes a Demo CTA; Demo pages reuse the real record and analytics surfaces with a visible Demo reminder, optional Supabase public share-code record, unified sample patient/lab fallback data, static non-diagnostic AI analysis preview, disabled share preview and client-side export, without creating Supabase records from Demo
 - **Privacy boundary:** first-use privacy gate and `/privacy` page share the same text source in `src/lib/privacy.ts`
-- **Current truth sources:** behavior lives in `openspec/specs/**/*.md`; visual ownership starts at `DESIGN.md`, with V3 as production and V4 as evaluation only; implementation details live in `src/`, `supabase/`, `.github/`, and `public/`; archive change designs are historical rationale, not the primary current-state entrypoint
+- **Current truth sources:** behavior lives in `openspec/specs/**/*.md`; visual ownership starts at `DESIGN.md`, with the new SaaS board awaiting approval and old references retained only for history; implementation details live in `src/`, `supabase/`, `.github/`, and `public/`; archive change designs are historical rationale, not the primary current-state entrypoint
 
 ### Core domain model
 
@@ -202,9 +205,17 @@ If future work uses the archived Stitch artifacts in `docs/products/archive/stit
 
 ## Working conventions already present
 
-- Follow the spec-first workflow already encoded in the repo: adjust specs before implementing when requirements change.
+- Use lightweight OpenSpec for new behavior, data/permission contracts and cross-module changes; local fixes need a reproducing check, not a second planning framework. Keep one task ledger. Superpowers is optional, not a project-wide gate. See `docs/products/core-scope.md` for scope and acceptance rules.
 - PR titles and squash-merge commit messages should follow Conventional Commits: `<type>[optional scope]: <description>`.
 - Commit granularity should follow OpenSpec/change boundaries. The repository default is to commit at completed Step boundaries, but if the active change documents a more specific recommended commit map, follow that map.
 - Tasks are execution checklists, not an instruction to create one commit per checkbox.
 - Only commit after the tests relevant to the commit's scope pass.
 - Once code exists, keep repository documentation aligned with structural changes.
+
+## Current integrity and scope boundaries
+
+- `docs/products/core-scope.md` defines the product core and deferred work; `docs/products/product-naming.md` records unselected brand/domain candidates.
+- Record and batch writes are database transactions. `persist_patient_record` checks `expected_owner_id = auth.uid()` and preserves child identity; it has no unsafe legacy write fallback.
+- Public sharing resolves capability and sanitized data in `get_shared_patient_record`; base tables remain owner-only.
+- Field edits use one queue per record/account; locale and theme do not reset it. Workspace model operations are mutually exclusive and stale account results are discarded.
+- `docs/operations/record-integrity-release.md` records local evidence and coordinated release requirements. New design and production deployment are separate acceptance steps.

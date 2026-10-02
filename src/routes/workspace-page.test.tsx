@@ -751,17 +751,5 @@ describe('WorkspacePage report shell', () => {
     expect(markup).not.toContain('Clinical Notes')
   })
 
-  it('persists new patient rows under the authenticated Supabase user id for every auth provider', () => {
-    const workspaceSource = readFileSync(new URL('./workspace-page.tsx', import.meta.url), 'utf8')
-    const storageSource = readFileSync(new URL('../lib/patient-record-storage.ts', import.meta.url), 'utf8')
-    const source = `${workspaceSource}\n${storageSource}`
 
-    expect(source).toContain('async function ensurePatientRecordExists(record: PatientRecord, userId: string)')
-    expect(source).toContain(".eq('user_id', userId)")
-    expect(source).toContain('user_id: userId')
-    expect(source).toContain('return persistPatientRecord(record, user.id)')
-    expect(source).not.toContain('user_id: user.email')
-    expect(source).not.toContain('user.phone')
-    expect(source).not.toContain('app_metadata.provider')
-  })
 })

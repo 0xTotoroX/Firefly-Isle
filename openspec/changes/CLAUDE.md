@@ -2,10 +2,11 @@
 > L2 | 父级: /CLAUDE.md
 
 成员清单
+archive/2026-10-02-harden-record-integrity-and-simplify/: 已完成并归档的病历/报告事务、授权码分享、配额、状态修复、代码精简及独立设计交付；当前行为见 record-integrity baseline，新视觉仍待确认。
+archive/2026-10-02-superseded-refresh-product-visual-system-v4/: 废弃 V4 候选的历史证据；未应用其 delta，预览代码已移除。
 add-scroll-story-landing/: 进行中变更合同，定义 /login 纵向滚动叙事落地页、GSAP ScrollTrigger 进度绑定、非 pin 分层推进、登录页 Demo CTA 移除与 reduced-motion 降级边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 fix-authenticated-empty-navigation/: 进行中变更合同，定义已登录/匿名空工作区不得把病历或统计入口降级到公开 `/demo/*`、需禁用入口并显示“先提取”说明、公开 Demo 壳层闭环保持不变的边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 calm-record-reading-surface/: 进行中变更合同，定义 `/record/:id` 与 `/demo/record` 的安静临床档案阅读层级、文字页签、次级分享 disclosure、真实能力保留与装饰性 AI/system 认证清理边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-refresh-product-visual-system-v4/: 进行中视觉评估合同，定义 V3 生产真源与 V4 评估真源隔离、Clinical Calm / Firefly Glass / Living Archive 同结构比较、/design-preview 双材料与选择后另立迁移变更的边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 refine-product-motion-feedback/: 活动中的正式产品动效合同，保持 V3 视觉不变，收敛 route/stagger、control press、tab switch 与 icon swap 的时长、组合、性能和 reduced-motion 边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 default-background-audio-paused/: 活动中的背景音乐默认静音合同，定义首次打开保持暂停、已保存播放意图恢复与历史偏好兼容边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 archive/: 已归档 OpenSpec 变更集合，保存历史 proposal/design/spec/tasks 作为 rationale，不作为当前 baseline 直接入口，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

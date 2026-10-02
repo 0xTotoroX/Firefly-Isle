@@ -73,19 +73,9 @@ function createFetchMock(
       })
     }
 
-    if (url.includes('/rest/v1/subscriptions')) {
-      // 默认无订阅行 → free 档（quota 由环境窗口限流兜底）；测试可按需覆写。
-      return new Response('[]', { headers: { 'Content-Type': 'application/json' }, status: 200 })
-    }
-
-    if (url.includes('/rest/v1/usage_events') || url.includes('/rest/v1/rpc/record_usage')) {
-      if (ledgerBehavior === 'exhausted') {
-        return new Response('[]', { headers: { 'content-range': '0-0/99' }, status: 206 })
-      }
-
-      if (ledgerBehavior === 'error') {
-        throw new Error('ledger unavailable')
-      }
+    if (url.includes('/rest/v1/rpc/consume_usage')) {
+      if (ledgerBehavior === 'error') throw new Error('ledger unavailable')
+      return Response.json({ allowed: ledgerBehavior !== 'exhausted', reason: ledgerBehavior === 'exhausted' ? 'quota' : null })
     }
 
     if (upstreamResponse instanceof Error) {
@@ -135,12 +125,8 @@ function createSettingsFetchMock(
       })
     }
 
-    if (url.includes('/rest/v1/subscriptions')) {
-      return new Response('[]', { headers: { 'Content-Type': 'application/json' }, status: 200 })
-    }
-
-    if (url.includes('/rest/v1/usage_events') || url.includes('/rest/v1/rpc/record_usage')) {
-      return new Response('[]', { headers: { 'Content-Type': 'application/json' }, status: 200 })
+    if (url.includes('/rest/v1/rpc/consume_usage')) {
+      return Response.json({ allowed: true, reason: null })
     }
 
     if (upstreamResponse instanceof Error) {
@@ -170,18 +156,6 @@ function deepSeekResponse(model: string, content: string | null) {
       status: 200,
     },
   )
-}
-
-function createRequestWithIp(body: unknown, ip: string) {
-  return new Request('https://edge.test/llm-proxy', {
-    body: JSON.stringify(body),
-    headers: {
-      Authorization: 'Bearer session-token',
-      'CF-Connecting-IP': ip,
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  })
 }
 
 async function json(response: Response) {
@@ -299,24 +273,17 @@ describe('llm-proxy provider handler', () => {
     expect(payload.error?.name).toBe('LLMTimeoutError')
   })
 
-  it('rate limits anonymous sessions before calling the upstream model', async () => {
-    const { calls, fetchMock } = createFetchMock(
-      deepSeekResponse('deepseek-v4-flash', 'deepseek text'),
-      { id: 'anon-user-1', is_anonymous: true },
-    )
-    const handler = createLlmProxyHandler({
-      env: createEnv({ LLM_ANONYMOUS_RATE_LIMIT_PER_WINDOW: '1' }),
-      fetch: fetchMock,
-    })
+  it('honors the database short-window rejection before calling the upstream model', async () => {
+    const { calls, fetchMock } = createFetchMock()
+    const baseFetch = fetchMock.getMockImplementation()!
+    fetchMock.mockImplementation(async (input, init) => input.toString().includes('/rpc/consume_usage')
+      ? Response.json({ allowed: false, reason: 'window' })
+      : baseFetch(input, init))
+    const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
+    const response = await handler(createRequest({ messages, provider: 'deepseek' }))
 
-    const first = await handler(createRequestWithIp({ messages, provider: 'deepseek' }, '203.0.113.10'))
-    const second = await handler(createRequestWithIp({ messages, provider: 'deepseek' }, '203.0.113.10'))
-    const secondPayload = await json(second)
-
-    expect(first.status).toBe(200)
-    expect(second.status).toBe(429)
-    expect(secondPayload.error?.name).toBe('LLMRateLimitError')
-    expect(calls.filter((call) => call.url.includes('/chat/completions'))).toHaveLength(1)
+    expect(response.status).toBe(429)
+    expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
   })
 
   it('rejects models outside the provider allowlist before calling the upstream model', async () => {
@@ -346,61 +313,36 @@ describe('llm-proxy provider handler', () => {
     expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
   })
 
-  it('enforces the pro plan monthly quota over the window limit', async () => {
-    const { calls, fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'unused'))
-    const baseFetch = fetchMock.getMockImplementation()!
-    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = input.toString()
-
-      if (url.includes('/rest/v1/subscriptions')) {
-        return new Response(JSON.stringify([{ plan_id: 'pro', plans: { ai_chat_quota: 1000 } }]), {
-          headers: { 'Content-Type': 'application/json' },
-          status: 200,
-        })
-      }
-
-      if (url.includes('/rest/v1/usage_events')) {
-        return new Response('[]', { headers: { 'content-range': '0-0/1000' }, status: 206 })
-      }
-
-      return baseFetch(input, init)
-    })
-
+  it('fails closed without calling the model when the quota service is unavailable', async () => {
+    const { calls, fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'unused'), { id: 'auth-user' }, 'error')
     const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
     const response = await handler(createRequest({ messages, provider: 'deepseek' }))
-    const payload = await json(response)
 
-    expect(response.status).toBe(429)
-    expect(payload.error?.name).toBe('LLMRateLimitError')
+    expect(response.status).toBe(503)
     expect(calls.some((call) => call.url.includes('/chat/completions'))).toBe(false)
   })
 
-  it('fails open to window rate limiting when the plan lookup errors', async () => {
-    const { fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'deepseek text'))
-    const baseFetch = fetchMock.getMockImplementation()!
-    fetchMock.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
-      const url = input.toString()
-
-      if (url.includes('/rest/v1/subscriptions')) {
-        throw new Error('subscriptions unavailable')
-      }
-
-      return baseFetch(input, init)
-    })
-
+  it('records one attempt before upstream failure and never refunds or records twice', async () => {
+    const { calls, fetchMock } = createFetchMock(new Response('{}', { status: 503 }))
     const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
     const response = await handler(createRequest({ messages, provider: 'deepseek' }))
 
-    expect(response.status).toBe(200)
+    expect(response.status).toBe(502)
+    const usageCalls = calls.filter((call) => call.url.includes('/rpc/consume_usage'))
+    expect(usageCalls).toHaveLength(1)
+    expect(usageCalls[0].body).toEqual({ event_kind: 'llm_chat' })
+    expect(calls.indexOf(usageCalls[0])).toBeLessThan(calls.findIndex((call) => call.url.includes('/chat/completions')))
   })
 
-  it('fails open to the in-memory limiter when the usage ledger is unavailable', async () => {
-    const { fetchMock } = createFetchMock(deepSeekResponse('deepseek-v4-flash', 'deepseek text'), { id: 'auth-user' }, 'error')
-
+  it('does not consume model quota for settings or invalid model requests', async () => {
+    const { calls, fetchMock } = createFetchMock()
     const handler = createLlmProxyHandler({ env: createEnv(), fetch: fetchMock })
-    const response = await handler(createRequest({ messages, provider: 'deepseek' }))
+    const settings = await handler(createRequestWithMethod('/settings', 'GET'))
+    const invalid = await handler(createRequest({ messages, model: 'not-permitted', provider: 'deepseek' }))
 
-    expect(response.status).toBe(200)
+    expect(settings.status).toBe(200)
+    expect(invalid.status).toBe(400)
+    expect(calls.some((call) => call.url.includes('/rpc/consume_usage'))).toBe(false)
   })
 
   it('saves a preset user key and model encrypted, reads them for routing, and never returns plaintext', async () => {

@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 lucide-react 图标类型、lab-results 的 TumorMarkerRiseAlert、patient 的 LabResultCategory、lab-analytics-format 的数值格式化与 cn 类名合并工具。
- * [OUTPUT]: 对外提供统计页常量、SummaryCard、EditableLabValue、LabTimelineDragHint 与 formatAlertWindow。
- * [POS]: components/analytics 的小型展示部件层，把 dashboard 中可复用的控制台卡片、输入值、拖动提示和固定常量抽离，保持主界面只负责状态编排。
+ * [OUTPUT]: 对外提供统计页常量、SummaryCard、LabTimelineDragHint 与 formatAlertWindow。
+ * [POS]: components/analytics 的小型展示部件层，把 dashboard 中可复用的控制台卡片、拖动提示和固定常量抽离，保持主界面只负责状态编排。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import type { LucideIcon } from 'lucide-react'
@@ -10,7 +10,7 @@ import type { TumorMarkerRiseAlert } from '@/lib/lab-results'
 import { cn } from '@/lib/utils'
 import type { LabResultCategory } from '@/types/patient'
 
-import { formatNumber, formatValue } from './lab-analytics-format'
+import { formatValue } from './lab-analytics-format'
 
 export const categories: LabResultCategory[] = ['blood-routine', 'blood-biochemistry', 'tumor-marker']
 
@@ -62,54 +62,6 @@ export function SummaryCard({ Icon, index, label, tone, value }: { Icon: LucideI
         </div>
       </div>
     </div>
-  )
-}
-
-export function EditableLabValue({
-  ariaLabel,
-  isEditing,
-  onCommit,
-  unit,
-  value,
-}: {
-  ariaLabel: string
-  isEditing: boolean
-  onCommit: (value: number) => void
-  unit?: string
-  value: number
-}) {
-  if (!isEditing) {
-    return <span>{formatValue(value, unit)}</span>
-  }
-
-  return (
-    <span className="inline-flex min-w-0 items-center justify-end gap-1">
-      <input
-        aria-label={ariaLabel}
-        className="h-7 w-20 rounded-[var(--ff-radius-sm)] border border-[color-mix(in_srgb,var(--ff-accent-primary)_45%,var(--ff-border-default))] bg-[var(--ff-surface-panel)] px-2 text-right font-[var(--ff-font-mono)] text-sm text-[var(--ff-text-primary)] outline-none focus:border-[var(--ff-accent-primary)]"
-        defaultValue={formatNumber(value)}
-        inputMode="decimal"
-        key={value}
-        onBlur={(event) => {
-          const nextValue = Number(event.currentTarget.value)
-
-          if (Number.isFinite(nextValue)) {
-            onCommit(nextValue)
-          }
-        }}
-        onClick={(event) => event.stopPropagation()}
-        onKeyDown={(event) => {
-          event.stopPropagation()
-
-          if (event.key === 'Enter') {
-            event.currentTarget.blur()
-          }
-        }}
-        onPointerDown={(event) => event.stopPropagation()}
-        type="number"
-      />
-      {unit ? <span className="shrink-0 text-[var(--ff-text-secondary)]">{unit}</span> : null}
-    </span>
   )
 }
 

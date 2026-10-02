@@ -70,6 +70,12 @@ jobs:
       - name: Run type check
         run: npm run type-check
 
+      - name: Cache PostgreSQL test image
+        run: docker pull postgres:18-alpine
+
+      - name: Run isolated database behavior checks
+        run: npm run test:database
+
       - name: Run tests with coverage
         run: npm run test:coverage
 

@@ -5,7 +5,6 @@
 CLAUDE.md: 说明设计系统壳层与 surface 基元目录的边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 firefly-mark.tsx: 渲染一页萤屿“岛屿微光灯塔”透明品牌资产，被登录页、展开侧栏与 compact icon-only 侧栏复用，确保生产 mark 与 favicon 同源且不与标题绑定，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 firefly-brand-wordmark.tsx: 统一一页萤屿品牌字标，输出紧凑中英文侧栏 display token、英文登录页 Snell 艺术字、萤字橙色微光、渐隐横线与登录页可选副标题，被侧栏与登录页复用，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-brand-lockup.tsx: 侧栏品牌锁定组合候选组件，导出 BrandLockupVariant、候选元数据与 6 套萤火虫 mark + 星空 wordmark 预览，不替换生产侧栏，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 demo-mode-banner.tsx: 公开 Demo 页低干扰 disclosure，消费 locale 并以横向分隔和文字链接输出“公开演示数据、不写个人账号、可回登录页”的统一提示，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 network-status-banner.tsx: PWA 网络状态提示条，消费全局在线状态与 locale，只在离线时固定于安全区内提示需要重新连接，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 surfaces.tsx: 统一 Sidebar、TopBar、Main、Panel、Section 与 Action surface 的 V3 主题化结构基元，固定 1px 边界、8px 主圆角语义与 style passthrough，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

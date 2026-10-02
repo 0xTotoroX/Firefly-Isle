@@ -26,12 +26,11 @@ import {
 } from './provider-adapters.ts'
 import { createFunctionLogger } from '../_shared/logger.ts'
 import {
-  checkUserRateLimit,
-  enforceDurableRateLimit,
   isModelAllowed,
   parseModelAllowlist,
-  resolvePlanQuota,
 } from './rate-limits.ts'
+
+import { consumeUsage } from '../_shared/usage-limits.ts'
 
 const logger = createFunctionLogger('llm-proxy')
 
@@ -43,9 +42,6 @@ const corsHeaders = {
 
 const DEFAULT_LLM_PROVIDER: ChatProvider = 'deepseek'
 const DEFAULT_REQUEST_TIMEOUT_MS = 30_000
-const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000
-const DEFAULT_AUTHENTICATED_RATE_LIMIT_PER_WINDOW = 60
-const DEFAULT_ANONYMOUS_RATE_LIMIT_PER_WINDOW = 10
 const CLAUDE_BASE_URL = 'https://api.anthropic.com/v1'
 const DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
 const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta'
@@ -74,10 +70,8 @@ type RequestBody = {
 }
 
 type RuntimeConfig = {
-  anonymousRateLimitPerWindow: number
   claudeApiKey: string
   claudeBaseUrl: string
-  authenticatedRateLimitPerWindow: number
   deepseekApiKey: string
   deepseekBaseUrl: string
   defaultClaudeModel: string
@@ -97,7 +91,6 @@ type RuntimeConfig = {
   openaiApiKey: string
   openaiBaseUrl: string
   providerSettingsEncryptionKey: string
-  rateLimitWindowMs: number
   supabaseAnonKey: string
   supabaseUrl: string
 }
@@ -137,17 +130,10 @@ type ValidProviderSettingBody = {
   provider: ChatProvider
 }
 
-function parsePositiveInteger(value: string, fallback: number) {
-  const parsed = Number.parseInt(value, 10)
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
-}
-
 function readConfig(env: RuntimeEnv): RuntimeConfig {
   const get = (name: string) => env.get(name)?.trim() ?? ''
 
   return {
-    anonymousRateLimitPerWindow: parsePositiveInteger(get('LLM_ANONYMOUS_RATE_LIMIT_PER_WINDOW'), DEFAULT_ANONYMOUS_RATE_LIMIT_PER_WINDOW),
-    authenticatedRateLimitPerWindow: parsePositiveInteger(get('LLM_AUTHENTICATED_RATE_LIMIT_PER_WINDOW'), DEFAULT_AUTHENTICATED_RATE_LIMIT_PER_WINDOW),
     claudeApiKey: get('CLAUDE_API_KEY'),
     claudeBaseUrl: get('CLAUDE_BASE_URL') || CLAUDE_BASE_URL,
     deepseekApiKey: get('DEEPSEEK_API_KEY'),
@@ -177,7 +163,6 @@ function readConfig(env: RuntimeEnv): RuntimeConfig {
     openaiApiKey: get('OPENAI_API_KEY'),
     openaiBaseUrl: get('OPENAI_BASE_URL') || OPENAI_BASE_URL,
     providerSettingsEncryptionKey: get('LLM_PROVIDER_SETTINGS_ENCRYPTION_KEY'),
-    rateLimitWindowMs: parsePositiveInteger(get('LLM_RATE_LIMIT_WINDOW_MS'), DEFAULT_RATE_LIMIT_WINDOW_MS),
     supabaseAnonKey: get('SUPABASE_ANON_KEY'),
     supabaseUrl: get('SUPABASE_URL'),
   }
@@ -661,12 +646,6 @@ export function createLlmProxyHandler(options: HandlerOptions) {
 
       user = verifiedUser
 
-      const memoryLimit = user.is_anonymous === true ? config.anonymousRateLimitPerWindow : config.authenticatedRateLimitPerWindow
-
-      if (!checkUserRateLimit(user, request, memoryLimit, config.rateLimitWindowMs)) {
-        logger.warn('rate_limit_exceeded', { layer: 'memory' })
-        return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
-      }
     } catch {
       return errorResponse(500, 'ConfigurationError', 'Supabase auth verification failed.')
     }
@@ -750,17 +729,21 @@ export function createLlmProxyHandler(options: HandlerOptions) {
       return errorResponse(400, 'LLMInvalidRequestError', `Model '${providerOptions.model}' is not allowed for provider '${provider}'.`)
     }
 
-    const planQuota = await resolvePlanQuota(config, token, user, runtimeFetch)
-
-    if (!(await enforceDurableRateLimit(config, token, user, 'llm_chat', runtimeFetch, { planQuota }))) {
-      logger.warn('rate_limit_exceeded', { layer: planQuota?.aiChatQuota !== null && planQuota !== null ? 'plan_quota' : 'ledger' })
-      return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
-    }
-
     const providerRequest = buildProviderRequest(provider, body.messages, {
       ...providerOptions,
       responseFormat: normalizeResponseFormat(body.responseFormat),
     })
+
+    const usage = await consumeUsage({ ...config, userToken: token }, 'llm_chat', runtimeFetch)
+
+    if (usage === 'unavailable') {
+      logger.error('usage_service_unavailable', {})
+      return errorResponse(503, 'LLMUpstreamError', 'Usage service is temporarily unavailable.')
+    }
+    if (usage !== 'allowed') {
+      logger.warn('rate_limit_exceeded', { layer: usage })
+      return errorResponse(429, 'LLMRateLimitError', 'LLM request rate limit exceeded.')
+    }
 
     return fetchUpstream(provider, providerRequest, runtimeFetch, timeoutMs)
   }

@@ -68,6 +68,10 @@ function createFetchMock(upstreamResponse: Response = geminiResponse('病历 OCR
       return new Response(JSON.stringify({ id: 'auth-user' }), { status: 200 })
     }
 
+    if (url.includes('/rest/v1/rpc/consume_usage')) {
+      return Response.json({ allowed: true, reason: null })
+    }
+
     return upstreamResponse
   })
 
@@ -105,6 +109,35 @@ describe('medical-document-ocr handler', () => {
     })
   })
 
+  it.each([
+    [{ allowed: false, reason: 'quota' }, 429],
+    [{ allowed: false, reason: 'window' }, 429],
+    [{ invalid: true }, 503],
+  ])('stops OCR when quota RPC returns %j', async (decision, status) => {
+    const { calls, fetchMock } = createFetchMock()
+    const baseFetch = fetchMock.getMockImplementation()!
+    fetchMock.mockImplementation(async (input, init) => input.toString().includes('/rpc/consume_usage')
+      ? Response.json(decision)
+      : baseFetch(input, init))
+    const handler = createMedicalDocumentOcrHandler({ env: createEnv(), fetch: fetchMock })
+    const response = await handler(createRequest({ dataBase64: 'ZmlsZQ==', mimeType: 'image/png' }))
+    expect(response.status).toBe(status)
+    expect(calls.some((call) => call.url.includes('generativelanguage.googleapis.com'))).toBe(false)
+  })
+
+  it('does not call OCR when the quota database fails', async () => {
+    const { calls, fetchMock } = createFetchMock()
+    const baseFetch = fetchMock.getMockImplementation()!
+    fetchMock.mockImplementation(async (input, init) => {
+      if (input.toString().includes('/rpc/consume_usage')) throw new Error('offline')
+      return baseFetch(input, init)
+    })
+    const handler = createMedicalDocumentOcrHandler({ env: createEnv(), fetch: fetchMock })
+    const response = await handler(createRequest({ dataBase64: 'ZmlsZQ==', mimeType: 'image/png' }))
+    expect(response.status).toBe(503)
+    expect(calls.some((call) => call.url.includes('generativelanguage.googleapis.com'))).toBe(false)
+  })
+
   it('rejects unsupported file types before calling Gemini', async () => {
     const { calls, fetchMock } = createFetchMock()
     const handler = createMedicalDocumentOcrHandler({ env: createEnv(), fetch: fetchMock })
@@ -113,6 +146,7 @@ describe('medical-document-ocr handler', () => {
 
     expect(response.status).toBe(400)
     expect(payload.error?.name).toBe('OCRInvalidRequestError')
+    expect(calls.some((call) => call.url.includes('/rpc/consume_usage'))).toBe(false)
     expect(calls.some((call) => call.url.includes('generativelanguage.googleapis.com'))).toBe(false)
   })
 

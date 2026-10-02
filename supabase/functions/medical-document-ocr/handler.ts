@@ -5,12 +5,10 @@
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { createFunctionLogger } from '../_shared/logger.ts'
-import { countUsageInWindow, recordUsageEvent } from '../_shared/usage-limits.ts'
+import { consumeUsage } from '../_shared/usage-limits.ts'
 
 const logger = createFunctionLogger('medical-document-ocr')
 
-const DEFAULT_OCR_RATE_LIMIT_PER_WINDOW = 20
-const DEFAULT_OCR_RATE_LIMIT_WINDOW_MS = 60_000
 
 const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -59,7 +57,6 @@ type RuntimeConfig = {
   geminiApiKey: string
   geminiModel: string
   ocrProvider: OcrProvider
-  ocrRateLimitPerWindow: number
   supabaseAnonKey: string
   supabaseUrl: string
 }
@@ -78,11 +75,6 @@ type SupabaseAuthUser = {
   id?: string
 }
 
-function parsePositiveInteger(value: string, fallback: number) {
-  const parsed = Number.parseInt(value, 10)
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback
-}
-
 function readConfig(env: RuntimeEnv): RuntimeConfig {
   const get = (name: string) => env.get(name)?.trim() ?? ''
 
@@ -93,7 +85,6 @@ function readConfig(env: RuntimeEnv): RuntimeConfig {
     geminiApiKey: get('GEMINI_API_KEY'),
     geminiModel: get('GEMINI_OCR_MODEL') || get('DEFAULT_GEMINI_MODEL') || DEFAULT_GEMINI_MODEL,
     ocrProvider: (get('OCR_PROVIDER') || 'deepseek') === 'gemini' ? 'gemini' as const : 'deepseek' as const,
-    ocrRateLimitPerWindow: parsePositiveInteger(get('OCR_RATE_LIMIT_PER_WINDOW'), DEFAULT_OCR_RATE_LIMIT_PER_WINDOW),
     supabaseAnonKey: get('SUPABASE_ANON_KEY'),
     supabaseUrl: get('SUPABASE_URL'),
   }
@@ -251,10 +242,6 @@ function extractDeepSeekText(payload: unknown) {
 }
 
 async function callDeepSeek(body: RequestBody, config: RuntimeConfig, runtimeFetch: RuntimeFetch, timeoutMs: number) {
-  if (!config.deepseekApiKey) {
-    return errorResponse(500, 'ConfigurationError', 'DEEPSEEK_API_KEY is not configured.')
-  }
-
   const abortController = new AbortController()
   const timeoutId = setTimeout(() => abortController.abort('timeout'), timeoutMs)
 
@@ -299,10 +286,6 @@ async function callDeepSeek(body: RequestBody, config: RuntimeConfig, runtimeFet
 }
 
 async function callGemini(body: RequestBody, config: RuntimeConfig, runtimeFetch: RuntimeFetch, timeoutMs: number) {
-  if (!config.geminiApiKey) {
-    return errorResponse(500, 'ConfigurationError', 'GEMINI_API_KEY is not configured.')
-  }
-
   const abortController = new AbortController()
   const timeoutId = setTimeout(() => abortController.abort('timeout'), timeoutMs)
 
@@ -346,59 +329,6 @@ async function callGemini(body: RequestBody, config: RuntimeConfig, runtimeFetch
   }
 }
 
-const ocrRateBuckets = new Map<string, { count: number; windowStartedAt: number }>()
-
-function checkMemoryRateLimit(bucketKey: string, limit: number, windowMs: number, now = Date.now()) {
-  const current = ocrRateBuckets.get(bucketKey)
-
-  if (!current || now - current.windowStartedAt >= windowMs) {
-    ocrRateBuckets.set(bucketKey, { count: 1, windowStartedAt: now })
-    return true
-  }
-
-  if (current.count >= limit) {
-    return false
-  }
-
-  current.count += 1
-  return true
-}
-
-async function enforceOcrRateLimit(
-  config: RuntimeConfig,
-  token: string,
-  user: SupabaseAuthUser,
-  request: Request,
-  runtimeFetch: RuntimeFetch,
-) {
-  const forwardedFor = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
-  const ip = request.headers.get('cf-connecting-ip')?.trim() || forwardedFor || 'unknown'
-  const memoryOk = checkMemoryRateLimit(`${user.id}:${ip}`, config.ocrRateLimitPerWindow, DEFAULT_OCR_RATE_LIMIT_WINDOW_MS)
-
-  if (!memoryOk) {
-    return false
-  }
-
-  if (!config.supabaseUrl || !config.supabaseAnonKey || !user.id) {
-    return true
-  }
-
-  const ledgerConfig = {
-    supabaseAnonKey: config.supabaseAnonKey,
-    supabaseUrl: config.supabaseUrl,
-    userToken: token,
-  }
-  const used = await countUsageInWindow(ledgerConfig, 'ocr_document', user.id, DEFAULT_OCR_RATE_LIMIT_WINDOW_MS, runtimeFetch)
-
-  if (used !== null && used >= config.ocrRateLimitPerWindow) {
-    return false
-  }
-
-  await recordUsageEvent(ledgerConfig, 'ocr_document', runtimeFetch)
-
-  return true
-}
-
 export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
   const runtimeFetch = options.fetch ?? fetch
   const timeoutMs = options.timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS
@@ -427,10 +357,6 @@ export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
         return errorResponse(401, 'AuthError', 'Invalid Supabase session.')
       }
 
-      if (!(await enforceOcrRateLimit(config, token, user, request, runtimeFetch))) {
-        logger.warn('rate_limit_exceeded', {})
-        return errorResponse(429, 'OCRRateLimitError', 'OCR request rate limit exceeded.')
-      }
     } catch {
       return errorResponse(500, 'ConfigurationError', 'Supabase auth verification failed.')
     }
@@ -449,15 +375,28 @@ export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
       return errorResponse(400, 'OCRInvalidRequestError', validationError)
     }
 
-    if (config.ocrProvider === 'gemini') {
-      return callGemini(body, config, runtimeFetch, timeoutMs)
-    }
-
-    if (body.mimeType === 'application/pdf') {
+    if (config.ocrProvider === 'deepseek' && body.mimeType === 'application/pdf') {
       logger.warn('ocr_provider_unsupported_input', { provider: 'deepseek' })
       return errorResponse(400, 'OCRInvalidRequestError', 'The DeepSeek image model does not accept PDF input. Convert the page to an image, or set OCR_PROVIDER=gemini.')
     }
 
-    return callDeepSeek(body, config, runtimeFetch, timeoutMs)
+    const apiKey = config.ocrProvider === 'gemini' ? config.geminiApiKey : config.deepseekApiKey
+    if (!apiKey) {
+      return errorResponse(500, 'ConfigurationError', `${config.ocrProvider === 'gemini' ? 'GEMINI' : 'DEEPSEEK'}_API_KEY is not configured.`)
+    }
+
+    const usage = await consumeUsage({ ...config, userToken: token }, 'ocr_document', runtimeFetch)
+    if (usage === 'unavailable') {
+      logger.error('usage_service_unavailable', {})
+      return errorResponse(503, 'OCRUpstreamError', 'Usage service is temporarily unavailable.')
+    }
+    if (usage !== 'allowed') {
+      logger.warn('rate_limit_exceeded', { layer: usage })
+      return errorResponse(429, 'OCRRateLimitError', 'OCR request rate limit exceeded.')
+    }
+
+    return config.ocrProvider === 'gemini'
+      ? callGemini(body, config, runtimeFetch, timeoutMs)
+      : callDeepSeek(body, config, runtimeFetch, timeoutMs)
   }
 }

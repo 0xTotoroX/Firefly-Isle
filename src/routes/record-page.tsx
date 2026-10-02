@@ -1,7 +1,7 @@
 /**
- * [INPUT]: 依赖 @/components/app-shell 的 V3 可变侧栏与顶部状态条，依赖 @/components/system/surfaces 的 MainShell 与 DemoModeBanner，依赖全产品 Demo fixture、clinical-analysis、record-sharing、record-editing 字段 patch、patient-record-storage 持久化、./demo-mode.logic 的可选公开分享码 Demo 数据源、./record-page.view 的档案/极简表格/Gantt/分享/AI 分析内容组合，点击正式导出时动态加载 @/lib/export-record，依赖 react-router-dom 的 useLocation/useParams 与 transitions-dev.css 的 route/stagger 动效合同。
+ * [INPUT]: 依赖 @/components/app-shell 的 V3 可变侧栏与顶部状态条，依赖 @/components/system/surfaces 的 MainShell 与 DemoModeBanner，依赖全产品 Demo fixture、clinical-analysis、record-sharing、record-editing 字段 patch、patient-record-storage 持久化与 record-edit-queue 串行保存、./demo-mode.logic 的可选公开分享码 Demo 数据源、./record-page.view 的档案/极简表格/Gantt/分享/AI 分析内容组合，点击正式导出时动态加载 @/lib/export-record，依赖 react-router-dom 的 useLocation/useParams 与 transitions-dev.css 的 route/stagger 动效合同。
  * [OUTPUT]: 对外提供 RecordPage 组件，对应公开 /demo/record 与受保护 /record/:id，并挂载详情页主画布入场动效、Demo 模式提醒、可选 Supabase 公开 Demo 读取、Demo AI/分享预览、授权码分享、AI 辅助分析与字段级 Supabase 保存。
- * [POS]: routes 的档案详情 orchestration 层，只负责 Demo/真实路由参数、Demo 数据源加载、加载状态、视图状态、分享状态、AI 分析状态、页面级图表编辑状态、字段保存状态、导出状态、动效挂载与壳层组合；展示和数据映射下沉到 record-page.view、components/record 与 record-page.logic。
+ * [POS]: routes 的档案详情 orchestration 层，只负责 Demo/真实路由参数、Demo 数据源加载、加载状态、视图状态、分享状态、AI 分析状态、页面级图表编辑状态、按病历和账号隔离的字段保存状态、导出状态、动效挂载与壳层组合；展示和数据映射下沉到 record-page.view、components/record 与 record-page.logic。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { useEffect, useRef, useState } from 'react'
@@ -17,8 +17,9 @@ import { MainShell } from '@/components/system/surfaces'
 import { analyzePatientRecord, ClinicalAnalysisParseError, type ClinicalAnalysisResult } from '@/lib/clinical-analysis'
 import { useLocale } from '@/lib/locale'
 import { getOnlineRequiredMessage, isOnlineRequiredError } from '@/lib/network-status'
+import { createRecordEditQueue } from '@/lib/record-edit-queue'
 import { persistPatientRecord } from '@/lib/patient-record-storage'
-import { applyPatientRecordEdit, applyPatientRecordEdits, type PatientRecordEdit } from '@/lib/record-editing'
+import { type PatientRecordEdit } from '@/lib/record-editing'
 import { createRecordShare, listRecordShares, revokeRecordShare, type RecordShare } from '@/lib/record-sharing'
 import { useTheme } from '@/lib/theme'
 import { shellWideContentClass, sidebarOffsetClass, topBarOffsetClass } from '@/lib/theme/tokens'
@@ -97,8 +98,11 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
   const { id = 'demo' } = useParams()
   const location = useLocation()
   const { locale } = useLocale()
+  const localeRef = useRef(locale)
+  useEffect(() => { localeRef.current = locale }, [locale])
   const { theme } = useTheme()
   const recordRef = useRef<HTMLDivElement>(null)
+  const editQueueRef = useRef<ReturnType<typeof createRecordEditQueue> | null>(null)
   const publicDemoRoute = location.pathname.startsWith('/demo')
   const demoRoute = publicDemoRoute || id.trim() === 'demo'
   const [recordLoadState, setRecordLoadState] = useState<RecordLoadState>(() => ({
@@ -139,6 +143,8 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
   const dark = theme === 'dark'
 
   useEffect(() => {
+    editQueueRef.current = null
+    setSaveState({ error: null, status: 'idle' })
     if (demoRoute) {
       let active = true
 
@@ -152,6 +158,7 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
 
       return () => {
         active = false
+        editQueueRef.current = null
       }
     }
 
@@ -176,7 +183,7 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
         }
 
         setRecordLoadState({
-          error: isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : labels[locale].loadRecordError,
+          error: isOnlineRequiredError(error) ? getOnlineRequiredMessage(localeRef.current) : labels[localeRef.current].loadRecordError,
           isLoading: false,
           record: null,
           recordId: id,
@@ -185,8 +192,9 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
 
     return () => {
       active = false
+      editQueueRef.current = null
     }
-  }, [demoRoute, id, locale])
+  }, [demoRoute, id, userId])
 
   const activeRecordLoadState = getActiveRecordLoadState({ demoRoute, id, recordLoadState })
   const shareRecordId = demoRoute ? undefined : activeRecordLoadState.record?.id
@@ -263,55 +271,32 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
     }))
   }
 
-  async function persistEditedRecord(nextRecord: PatientRecord, previousRecord: PatientRecord) {
-    if (demoRoute) {
-      setSaveState({ error: null, status: 'saved' })
+  async function handleCommitEdits(edits: PatientRecordEdit[]) {
+    const record = getEditableRecord()
+    if (!record || edits.length === 0) return
+    if (!demoRoute && !userId) {
+      setSaveState({ error: locale === 'zh' ? '缺少登录用户，无法保存。' : 'Missing signed-in user.', status: 'error' })
       return
     }
-
-    if (!userId) {
-      setEditableRecord(previousRecord)
-      setSaveState({ error: locale === 'zh' ? '缺少登录用户，无法保存。' : 'Missing signed-in user. Save failed.', status: 'error' })
-      return
-    }
-
+    const queue = editQueueRef.current ?? createRecordEditQueue(record, demoRoute ? async (next) => next : (next) => persistPatientRecord(next, userId!))
+    editQueueRef.current = queue
     setSaveState({ error: null, status: 'saving' })
-
     try {
-      const persistedRecord = await persistPatientRecord(nextRecord, userId)
+      const persistedRecord = await queue.enqueue(edits)
+      if (editQueueRef.current !== queue) return
       setEditableRecord(persistedRecord)
-      setSaveState({ error: null, status: 'saved' })
+      setSaveState({ error: null, status: queue.pending ? 'saving' : 'saved' })
     } catch (error) {
-      setEditableRecord(previousRecord)
+      if (editQueueRef.current !== queue) return
       setSaveState({
-        error: isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : locale === 'zh' ? '保存失败，已恢复原值。' : 'Save failed. Previous value restored.',
+        error: isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : locale === 'zh' ? '这次修改未保存，请重试。' : 'This change was not saved. Please retry.',
         status: 'error',
       })
     }
   }
 
-  async function handleCommitEdits(edits: PatientRecordEdit[]) {
-    const previousRecord = getEditableRecord()
-
-    if (!previousRecord || edits.length === 0) {
-      return
-    }
-
-    const nextRecord = applyPatientRecordEdits(previousRecord, edits)
-    setEditableRecord(nextRecord)
-    await persistEditedRecord(nextRecord, previousRecord)
-  }
-
   async function handleCommitField(target: PatientFieldTarget, value: string) {
-    const previousRecord = getEditableRecord()
-
-    if (!previousRecord) {
-      return
-    }
-
-    const nextRecord = applyPatientRecordEdit(previousRecord, { target, value })
-    setEditableRecord(nextRecord)
-    await persistEditedRecord(nextRecord, previousRecord)
+    await handleCommitEdits([{ target, value }])
   }
 
   async function handleCommitRange(target: PatientRangeTarget, value: string) {

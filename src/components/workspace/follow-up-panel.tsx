@@ -12,12 +12,13 @@ import { useLocale } from '@/lib/locale'
 import { PanelSurface } from '@/components/system/surfaces'
 
 type FollowUpPanelProps = {
+  busy?: boolean
   currentQuestion: string
   onSubmit: (value: string) => void
   theme: 'dark' | 'light'
 }
 
-export function FollowUpPanel({ currentQuestion, onSubmit, theme }: FollowUpPanelProps) {
+export function FollowUpPanel({ busy = false, currentQuestion, onSubmit, theme }: FollowUpPanelProps) {
   const { locale } = useLocale()
   const [value, setValue] = useState('')
   const [open, setOpen] = useState(() => typeof document === 'undefined')
@@ -52,14 +53,17 @@ export function FollowUpPanel({ currentQuestion, onSubmit, theme }: FollowUpPane
         </h3>
         <p className="mt-3 text-sm leading-7 text-[var(--ff-text-subtle)]">{currentQuestion}</p>
         <textarea
+          disabled={busy}
           className={textareaClassName}
           onChange={(event) => setValue(event.target.value)}
           placeholder={getCopy(copy.workspace.followUp.placeholder, locale)}
           value={value}
         />
         <button
+          disabled={busy || !value.trim()}
           className={buttonClassName}
           onClick={() => {
+            if (busy || !value.trim()) return
             onSubmit(value)
             setValue('')
           }}

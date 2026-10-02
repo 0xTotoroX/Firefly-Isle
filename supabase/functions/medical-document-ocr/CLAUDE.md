@@ -10,7 +10,7 @@
 成员清单
 CLAUDE.md: 说明 medical-document-ocr 目录的职责边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 index.ts: Edge Function Deno 启动壳，读取运行时 env 并挂载统一 handler，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-handler.ts: 可测试核心，负责 JWT 校验、图片/PDF 输入校验、Gemini OCR header 鉴权转发、超时与具名错误响应，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-handler.test.ts: 图片/PDF Gemini 请求、header 密钥、错误映射、缺 key 与 secret 不泄露回归测试，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+handler.ts: 可测试核心，负责 JWT 校验、图片/PDF 输入校验、DeepSeek/Gemini OCR 转发、原子额度消费、超时与具名错误响应，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+handler.test.ts: 图片/PDF Gemini 请求、header 密钥、额度拒绝与故障停止、错误映射、缺 key 与 secret 不泄露回归测试，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
 法则: OCR 只提取原始文本；结构化 PatientRecord 仍交给现有提取链路。

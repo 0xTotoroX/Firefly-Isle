@@ -781,14 +781,7 @@ describe('RecordPage responsive dossier shell', () => {
     expect(source).not.toContain("const isDemoRecord = id === 'demo'")
   })
 
-  it('persists record-page field edits through the patient record storage boundary', () => {
-    const source = readRecordRouteSource()
 
-    expect(source).toContain('persistPatientRecord(nextRecord, userId)')
-    expect(source).toContain('applyPatientRecordEdit(previousRecord')
-    expect(source).toContain('applyPatientRecordEdits(previousRecord')
-    expect(source).toContain('setEditableRecord(previousRecord)')
-  })
 
   it('keeps the bulky demo record fixture outside record-copy copywriting', () => {
     const source = readFileSync(new URL('../components/record/record-copy.ts', import.meta.url), 'utf8')

@@ -38,7 +38,6 @@ const originStoryPaperSource = readFileSync(new URL('../../components/system/ori
 const privacyGateSource = readFileSync(new URL('../../components/privacy-gate.tsx', import.meta.url), 'utf8')
 const privacyPageSource = readFileSync(new URL('../../routes/privacy-page.tsx', import.meta.url), 'utf8')
 const recordPageSource = readFileSync(new URL('../../routes/record-page.tsx', import.meta.url), 'utf8')
-const brandLockupPreviewSource = readFileSync(new URL('../../routes/brand-lockup-preview-page.tsx', import.meta.url), 'utf8')
 
 describe('V3 theme token contract', () => {
   it('uses orange as the only primary action color across dark and light themes', () => {
@@ -125,7 +124,6 @@ describe('V3 theme token contract', () => {
       originStoryPaperSource,
       privacyPageSource,
       recordPageSource,
-      brandLockupPreviewSource,
       timelineTableSource,
       reportPreviewFrameSource,
       privacyGateSource,

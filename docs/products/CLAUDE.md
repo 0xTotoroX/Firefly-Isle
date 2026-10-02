@@ -2,6 +2,8 @@
 > L2 | 父级: /CLAUDE.md
 
 成员清单
+product-naming.md: 全新中英文候选、域名即时核验与未购买/未核验的边界。
+core-scope.md: 核心用户需求、保留/移除/延后范围、组件复用与轻量验收工作流。
 CLAUDE.md: 说明产品文档目录的当前真相源、历史快照与更新规则，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 prd-implementation-status.md: 当前 PRD 实现状态盘点，按已实现、部分实现、未实现、PWA foundation、Capacitor 本地壳、登录页公开 Demo、可选 Supabase Demo 数据源与额外能力标记产品能力落地情况，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 product-priority-roadmap.md: 当前产品优先级路线图，记录已完成里程碑、PWA-first 跨平台边界、Capacitor 本地壳基线、已归档 P0/Demo baseline、可选 Supabase Demo share-code 边界、下一阶段 P1/P2 排序、排序理由与 OpenSpec 切分建议，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

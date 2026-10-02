@@ -2,6 +2,8 @@
 > L2 | 父级: /src/CLAUDE.md
 
 成员清单
+record-saving.test.tsx: 真实 RecordPage 验证连续字段保存、失败后恢复、语言切换和迟到请求隔离。
+workspace-state.test.tsx: 真实 React 生命周期下验证主题/语言状态、保存、账号切换及追问并发。
 CLAUDE.md: 说明页面骨架文件、公开/受保护路由与设计预览隔离职责，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 login-page.tsx: 登录页容器，对应 /login，负责邮箱登录、注册、重置密码、手机/微信敬请期待占位、Google OAuth、匿名会话、主题选择与展示层接线，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 login-page.logic.ts: 登录页认证动作层，收敛 Supabase Auth 调用、反馈文案、无邮箱确认注册会话要求、密码重置 redirect 与 OAuth redirect 参数，Google redirect 指向公共 /auth/callback 并请求账号选择器，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -12,10 +14,6 @@ auth-callback-page.logic.test.ts: OAuth 回调动作回归测试，约束 provid
 privacy-page.tsx: 独立隐私条款页，对应 /privacy，消费 V3 topbar、surface token 与克制 route/stagger 动效，复用共享隐私真相源并提供可访问政策说明，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-analytics-page.tsx: 实验室趋势统计页，对应公开 /demo/analytics 与受保护 /analytics/:id、/analytics/demo，按 Demo/真实路由 id 读取真实病历、可选 Supabase 公开 Demo 病历或 demo lab fixture，显示 Demo 模式提醒，以纵向统计控制台承载只读趋势展示，并把文件上传入口交还 /app 输入区；页面根节点只消费 route reveal，子内容按需独立 stagger，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-analytics-page.test.tsx: 指标页 Demo route 回归测试，约束 /demo/analytics 显示 Demo 模式提醒、模式内导航与完整血常规/血生化/肿瘤标志物数据，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-brand-lockup-preview-page.tsx: 品牌锁定组合预览页，对应 /brand-lockup-preview，组合带 stagger/selection pulse 的 6 套侧栏品牌区候选并展示 full-label、icon-only、dark、light 四态供选择，不替换生产侧栏，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-brand-lockup-preview-page.test.tsx: 品牌锁定组合预览页回归测试，约束 6 套候选、light/dark、full-label/icon-only 四态标识与预览动效合同同时存在，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-design-preview-page.tsx: 隔离 V4 视觉评估页，对应公开 /design-preview，用同一虚构病历、同一 DOM 与本地状态比较 Clinical Calm / Firefly Glass / Living Archive 的 Light/Dark 材质，不读取远端患者数据、不写全局主题且不进入正式导航，[PROTOCOL]: 变更候选、数据结构、控件或路由边界时更新此头部、V4 DESIGN.md 与 CLAUDE.md
-design-preview-page.test.tsx: V4 视觉评估页静态渲染与源码合同测试，约束三候选、共享内容、默认推荐、原生 pressed 控件、lazy 路由、正式导航隔离、样式分层、移动溢出与 reduced-motion 合同，[PROTOCOL]: 变更预览路由或样式边界时更新此头部，然后检查 CLAUDE.md
 workspace-page.tsx: 临床工作区实现，对应 /app，在统一 system shell 与 surface token 上承载真实用户空白态、无自有病历时禁用病历/统计入口并提示先提取、文本/OCR 文件输入、自然语言修改、已有病历编辑/新病历提取分流、最多 3 轮追问、LLM 失败原因分流、解析失败重试、route reveal 根节点与独立 preview stagger 入场、经 patient-record-storage 恢复/持久化患者记录与实验室指标、匿名/非匿名会话身份展示、已有真实病历时的真实统计/病历入口、直接进入时间线主表面的报告预览、inline edit 持久化与工作区状态补丁 helpers，不承载正式 PDF/PNG 导出入口，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 workspace-page.test.tsx: 工作区报告区、真实治疗线预览、OCR 文件导入、OCR 文本确认、LLM provider 设置入口、自然语言编辑入口、单主按钮、输入 composer 工具行、全站动效合同、背景音 provider 壳层依赖、邮件 hover 联系弹窗与邮箱点击复制入口、移除侧栏状态卡、公开 Demo fallback 导航、主题/语言顺序、active 导航、病历/语言切换图标、匿名/非匿名身份图标、隐藏恢复胶囊、左缘渐进拉出、拖拽到隐藏、紧凑默认弹出宽度、locale 与 user.id 持久化回归测试，约束 dark/light 都不再渲染正式导出按钮、多余总标题壳、废弃控制块、装饰性运行状态卡、active 卡片高亮、边缘亮条、folder 病历图标、泛化语言图标、下拉误导箭头、过宽隐藏恢复按钮、旧侧栏宽度缓存污染、双语漂移或按 email/phone/provider 持久化病历，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 workspace-page-metrics.test.tsx: 工作区局部合同测试，约束已有病历编辑/新病历提取分流、失败追问回滚、OCR 失败不污染记录、OCR 确认文本归一、/app 姓名/性别/年龄/身高/体重展示且不渲染 BMI、姓名/证据/临床备注可编辑、Dense Clinical Ledger 预览、诊断日期前置、紧凑治疗时间线、最新检测摘要与既往检测历史，同时为 workspace-page.test.tsx 分担新增断言避免超过 800 行，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

@@ -1,10 +1,10 @@
 /**
- * [INPUT]: 依赖 @/components/app-shell 的设计复刻壳层，依赖 @/components/workspace 的输入区、追问区与报告预览 feature 组件，依赖 @/lib/auth 的当前会话身份标签，依赖 @/lib/extraction 的提取主链路，依赖 @/lib/record-editing 的自然语言编辑边界，依赖 @/lib/medical-document-ocr 的医学文档 OCR client，依赖 @/lib/patient-record-storage 的落库与最近记录恢复入口，依赖 @/lib/theme 的 useTheme。
+ * [INPUT]: 依赖 @/components/app-shell 的设计复刻壳层，依赖 @/components/workspace 的输入区、追问区与报告预览 feature 组件，依赖 @/lib/auth 的当前会话身份标签，依赖 @/lib/extraction 的提取主链路，依赖 @/lib/record-editing 的自然语言编辑边界，依赖 @/lib/medical-document-ocr 的医学文档 OCR client，依赖 @/lib/patient-record-storage 的落库与最近记录恢复入口，依赖 @/lib/theme 的 useTheme 与 record-edit-queue 的串行字段保存。
  * [OUTPUT]: 对外提供 WorkspacePage 组件与工作区状态补丁 helpers，对应 /app。
- * [POS]: routes 的临床工作区 orchestration 层，保留真实用户空白输入态、无病历时禁用病历/统计导航并提示先提取、文本/OCR 文件输入、追问、解析错误恢复、显式新病历提取分流与 inline edit 持久化，并编排统一 system shell 与 workspace feature 组件。
+ * [POS]: routes 的临床工作区 orchestration 层，保留真实用户空白输入态、无病历时禁用病历/统计导航并提示先提取、文本/OCR 文件输入、追问、解析错误恢复、显式新病历提取分流与 inline edit 持久化，保持主题/语言切换前状态，互斥模型修改并丢弃旧账号结果；编排统一 system shell 与 workspace feature 组件。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
 import { getCopy, copy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
@@ -22,8 +22,9 @@ import {
 } from '@/lib/extraction'
 import { getMedicalDocumentOcrMessage, recognizeMedicalDocument } from '@/lib/medical-document-ocr'
 import { getOnlineRequiredMessage, isOnlineRequiredError } from '@/lib/network-status'
+import { createRecordEditQueue } from '@/lib/record-edit-queue'
 import { loadLatestPatientRecord, persistPatientRecord } from '@/lib/patient-record-storage'
-import { RecordEditParseError, applyPatientRecordEdit, applyPatientRecordEdits, extractPatientRecordEdits } from '@/lib/record-editing'
+import { RecordEditParseError, applyPatientRecordEdits, extractPatientRecordEdits } from '@/lib/record-editing'
 import { useTheme } from '@/lib/theme'
 import { shellContentWidthClass, sidebarOffsetClass, topBarOffsetClass } from '@/lib/theme/tokens'
 import type { PatientFieldTarget, PatientRecord } from '@/types/patient'
@@ -115,10 +116,8 @@ export function getWorkspaceComposerMode(record: PatientRecord | null) {
   return record ? 'edit' : 'extract'
 }
 
-function useExtractionState() {
-  const { user } = useAuth()
-  const { locale } = useLocale()
-  const [state, setState] = useState<ExtractionState>({
+function createInitialExtractionState(): ExtractionState {
+  return {
     currentQuestion: null,
     editFeedback: null,
     error: null,
@@ -135,34 +134,33 @@ function useExtractionState() {
     remainingMissing: [],
     retryAnswer: null,
     retryMode: null,
-  })
+  }
+}
+
+function useExtractionState() {
+  const editQueueRef = useRef<ReturnType<typeof createRecordEditQueue> | null>(null)
+  const { user } = useAuth()
+  const { locale } = useLocale()
+  const userId = user?.id
+  const localeRef = useRef(locale)
+  const operationRef = useRef<symbol | null>(null)
+  const generationRef = useRef(0)
+  useEffect(() => { localeRef.current = locale }, [locale])
+  const [state, setState] = useState(createInitialExtractionState)
 
   useEffect(() => {
-    if (!user) {
-      setState((current) => {
-        if (current.record === null && current.remainingMissing.length === 0) {
-          return current
-        }
-
-        return {
-          ...current,
-          currentQuestion: null,
-          editFeedback: null,
-          error: null,
-          record: null,
-          remainingMissing: [],
-          retryAnswer: null,
-          retryMode: null,
-        }
-      })
-      return
-    }
+    editQueueRef.current = null
+    operationRef.current = null
+    generationRef.current += 1
+    const generation = generationRef.current
+    setState(createInitialExtractionState())
+    if (!userId) return
 
     let active = true
 
-    void loadLatestPatientRecord(user.id)
+    void loadLatestPatientRecord(userId)
       .then((record) => {
-        if (!active || !record) {
+        if (!active || !record || generationRef.current !== generation) {
           return
         }
 
@@ -184,16 +182,21 @@ function useExtractionState() {
 
         setState((current) => ({
           ...current,
-          error: current.record ? current.error : isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : getCopy(copy.workspace.errors.loadLatest, locale),
+          error: current.record ? current.error : isOnlineRequiredError(error) ? getOnlineRequiredMessage(localeRef.current) : getCopy(copy.workspace.errors.loadLatest, localeRef.current),
         }))
       })
 
     return () => {
       active = false
+      editQueueRef.current = null
+      operationRef.current = null
+      generationRef.current += 1
     }
-  }, [locale, user])
+  }, [userId])
 
   async function runInitialExtraction(inputOverride?: string) {
+    if (editQueueRef.current?.pending || operationRef.current) return
+    editQueueRef.current = null
     const extractionText = inputOverride ?? state.extractionInput
 
     if (!extractionText.trim()) {
@@ -205,6 +208,9 @@ function useExtractionState() {
       return
     }
 
+    const operation = Symbol()
+    operationRef.current = operation
+    generationRef.current += 1
     setState((current) => ({
       ...current,
       currentQuestion: null,
@@ -225,13 +231,16 @@ function useExtractionState() {
 
     try {
       const record = await extractPatientRecord(extractionText)
+      if (operationRef.current !== operation) return
       const missingFields = getMissingCriticalFields(record)
       let persistedRecord = record
       let persistenceError: string | null = null
 
       try {
         persistedRecord = await persistField(record)
+        if (operationRef.current !== operation) return
       } catch (error) {
+        if (operationRef.current !== operation) return
         persistenceError = isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : getCopy(copy.workspace.errors.savePatient, locale)
       }
 
@@ -248,6 +257,7 @@ function useExtractionState() {
         retryMode: null,
       }))
     } catch (error) {
+      if (operationRef.current !== operation) return
       setState((current) => ({
         ...current,
         error: getExtractionFailureMessage(error, locale, 'initial'),
@@ -255,16 +265,23 @@ function useExtractionState() {
         retryAnswer: null,
         retryMode: 'initial',
       }))
+    } finally {
+      if (operationRef.current === operation) operationRef.current = null
     }
   }
 
   async function runFollowUpExtraction(answer: string) {
+    if (editQueueRef.current?.pending || operationRef.current) return
+    editQueueRef.current = null
     if (!answer.trim() || !state.record) {
       return
     }
 
     const previousRecord = state.record
 
+    const operation = Symbol()
+    operationRef.current = operation
+    generationRef.current += 1
     setState((current) => ({
       ...current,
       error: null,
@@ -276,9 +293,11 @@ function useExtractionState() {
 
     try {
       const nextRecord = await extractPatientRecord(answer, previousRecord)
+      if (operationRef.current !== operation) return
 
       try {
         const persistedRecord = await persistField(nextRecord)
+        if (operationRef.current !== operation) return
         const nextMissing = getMissingCriticalFields(persistedRecord)
 
         setState((current) => {
@@ -298,6 +317,7 @@ function useExtractionState() {
           }
         })
       } catch (error) {
+        if (operationRef.current !== operation) return
         setState((current) => ({
           ...current,
           ...(isOnlineRequiredError(error)
@@ -315,6 +335,7 @@ function useExtractionState() {
         }))
       }
     } catch (error) {
+      if (operationRef.current !== operation) return
       setState((current) => ({
         ...current,
         editFeedback: null,
@@ -323,6 +344,8 @@ function useExtractionState() {
         retryAnswer: answer,
         retryMode: 'follow-up',
       }))
+    } finally {
+      if (operationRef.current === operation) operationRef.current = null
     }
   }
 
@@ -341,6 +364,8 @@ function useExtractionState() {
   }
 
   async function runConversationalEdit(inputOverride?: string) {
+    if (editQueueRef.current?.pending || operationRef.current) return
+    editQueueRef.current = null
     const editCommand = inputOverride ?? state.extractionInput
     const previousRecord = state.record
 
@@ -359,6 +384,9 @@ function useExtractionState() {
       return
     }
 
+    const operation = Symbol()
+    operationRef.current = operation
+    generationRef.current += 1
     setState((current) => ({
       ...current,
       editFeedback: null,
@@ -372,7 +400,9 @@ function useExtractionState() {
 
     try {
       nextRecord = applyPatientRecordEdits(previousRecord, await extractPatientRecordEdits(editCommand, previousRecord))
+      if (operationRef.current !== operation) return
     } catch (error) {
+      if (operationRef.current !== operation) return
       setState((current) => ({
         ...current,
         editFeedback: null,
@@ -382,11 +412,13 @@ function useExtractionState() {
         retryAnswer: editCommand,
         retryMode: 'edit',
       }))
+      operationRef.current = null
       return
     }
 
     try {
       const persistedRecord = await persistField(nextRecord)
+      if (operationRef.current !== operation) return
       const nextMissing = getMissingCriticalFields(persistedRecord)
 
       setState((current) => ({
@@ -402,6 +434,7 @@ function useExtractionState() {
         retryMode: null,
       }))
     } catch (error) {
+      if (operationRef.current !== operation) return
       setState((current) => ({
         ...current,
         editFeedback: null,
@@ -411,6 +444,8 @@ function useExtractionState() {
         retryAnswer: editCommand,
         retryMode: 'edit',
       }))
+    } finally {
+      if (operationRef.current === operation) operationRef.current = null
     }
   }
 
@@ -424,6 +459,7 @@ function useExtractionState() {
   }
 
   async function importMedicalDocument(file: File) {
+    const generation = ++generationRef.current
     setState((current) => ({
       ...current,
       error: null,
@@ -436,6 +472,7 @@ function useExtractionState() {
 
     try {
       const result = await recognizeMedicalDocument(file)
+      if (generationRef.current !== generation) return
 
       setState((current) => ({
         ...current,
@@ -446,6 +483,7 @@ function useExtractionState() {
         },
       }))
     } catch (error) {
+      if (generationRef.current !== generation) return
       setState((current) => ({
         ...current,
         ...getFailedOcrImportPatch(current, error, locale),
@@ -493,44 +531,23 @@ function useExtractionState() {
   }
 
   async function handleFieldCommit(target: PatientFieldTarget, value: string) {
-    if (!state.record) {
-      return
-    }
-
-    const previousRecord = state.record
-    const nextRecord = applyPatientRecordEdit(previousRecord, { target, value })
-    const nextMissing = getMissingCriticalFields(nextRecord)
-
-    setState((current) => ({
-      ...current,
-      currentQuestion: getNextQuestion(nextMissing, current.followUpAnswers.length),
-      editFeedback: null,
-      error: null,
-      isSaving: true,
-      record: nextRecord,
-      remainingMissing: nextMissing,
-      retryAnswer: null,
-      retryMode: null,
-    }))
-
+    if (!state.record || operationRef.current) return
+    const queue = editQueueRef.current ?? createRecordEditQueue(state.record, persistField)
+    editQueueRef.current = queue
+    setState((current) => ({ ...current, error: null, editFeedback: null, isSaving: true }))
     try {
-      const persistedRecord = await persistField(nextRecord)
-
+      const record = await queue.enqueue([{ target, value }])
+      if (editQueueRef.current !== queue) return
+      const remainingMissing = getMissingCriticalFields(record)
       setState((current) => ({
-        ...current,
-        editFeedback: null,
-        isSaving: false,
-        record: persistedRecord,
+        ...current, record, remainingMissing, isSaving: queue.pending > 0,
+        currentQuestion: getNextQuestion(remainingMissing, current.followUpAnswers.length),
       }))
     } catch (error) {
+      if (editQueueRef.current !== queue) return
       setState((current) => ({
-        ...current,
-        currentQuestion: getNextQuestion(getMissingCriticalFields(previousRecord), current.followUpAnswers.length),
-        editFeedback: null,
+        ...current, isSaving: queue.pending > 0,
         error: isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : getSaveErrorMessage(target, locale),
-        isSaving: false,
-        record: previousRecord,
-        remainingMissing: getMissingCriticalFields(previousRecord),
       }))
     }
   }
@@ -553,94 +570,9 @@ function useExtractionState() {
   }
 }
 
-function DarkWorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: WorkspacePageProps) {
+export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: WorkspacePageProps) {
   const { locale } = useLocale()
-  const {
-    currentQuestion,
-    editFeedback,
-    error,
-    extractionInput,
-    confirmOcrText,
-    discardOcrText,
-    handleFieldCommit,
-    importMedicalDocument,
-    isExtracting,
-    isSaving,
-    ocr,
-    record,
-    remainingMissing,
-    retryLastAction,
-    retryMode,
-    runFollowUpExtraction,
-    runInitialExtraction,
-    submitComposerInput,
-    setExtractionInput,
-  } = useExtractionState()
-  const displayRecord = record ?? EMPTY_RECORD
-
-  return (
-    <div className="min-h-screen bg-[var(--ff-surface-base)] font-[var(--ff-font-ui)] text-[var(--ff-text-primary)]">
-      <ClinicalTopBar theme="dark" title={locale === 'zh' ? '病程整理台' : 'Clinical Course Organizer'} withRail />
-      <ArchiveSideNav
-        analyticsHref={record?.id ? `/analytics/${record.id}` : undefined}
-        dark
-        isSigningOut={isSigningOut}
-        onSignOut={onSignOut}
-        recordHref={record?.id ? `/record/${record.id}` : undefined}
-        userIsAnonymous={userIsAnonymous}
-        userLabel={userLabel}
-      />
-
-      <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen`} theme="dark">
-        <SectionSurface className="border-0 px-4 pb-2 pt-4 md:px-8 md:pb-3 md:pt-4" theme="dark" tone="base">
-          <div className={`${shellContentWidthClass} t-route-reveal space-y-6`}>
-            <ExtractionComposer
-              composerMode={getWorkspaceComposerMode(record)}
-              error={error}
-              feedback={editFeedback}
-              extractionInput={extractionInput}
-              isExtracting={isExtracting}
-              isSaving={isSaving}
-              ocrState={ocr}
-              onConfirmOcrText={() => void confirmOcrText()}
-              onDiscardOcrText={discardOcrText}
-              onExtract={() => void submitComposerInput()}
-              onExtractAsNew={record ? () => void runInitialExtraction() : undefined}
-              onImportFile={(file) => void importMedicalDocument(file)}
-              onInputChange={setExtractionInput}
-              onRetry={() => void retryLastAction()}
-              remainingMissingCount={remainingMissing.length}
-              retryMode={retryMode}
-              theme="dark"
-            />
-
-            {currentQuestion ? (
-              <FollowUpPanel currentQuestion={currentQuestion} onSubmit={(value) => void runFollowUpExtraction(value)} theme="dark" />
-            ) : null}
-          </div>
-        </SectionSurface>
-
-        <SectionSurface className="border-0 px-4 pb-8 pt-2 md:px-8 md:pb-8 md:pt-3" theme="dark" tone="base">
-          <div className={`${shellContentWidthClass} t-stagger`} style={{ '--t-order': 1 } as CSSProperties}>
-            <ReportPreviewFrame
-              isExtracting={isExtracting}
-              isSaving={isSaving}
-              onCommitField={handleFieldCommit}
-              record={displayRecord}
-              recordDetailsHref={record?.id ? `/record/${record.id}` : undefined}
-              remainingMissing={remainingMissing}
-              setReportRef={() => undefined}
-              theme="dark"
-            />
-          </div>
-        </SectionSurface>
-      </MainShell>
-    </div>
-  )
-}
-
-function LightWorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: WorkspacePageProps) {
-  const { locale } = useLocale()
+  const { theme } = useTheme()
   const {
     currentQuestion,
     editFeedback,
@@ -666,11 +598,11 @@ function LightWorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabe
   const displayRecord = record ?? EMPTY_RECORD
 
   return (
-    <div className="ff-light-workspace-bg min-h-screen text-[var(--ff-text-primary)]">
-      <ClinicalTopBar theme="light" title={locale === 'zh' ? '病程整理台' : 'Clinical Course Organizer'} withRail />
+    <div className={`${theme === 'light' ? 'ff-light-workspace-bg' : 'bg-[var(--ff-surface-base)] font-[var(--ff-font-ui)]'} min-h-screen text-[var(--ff-text-primary)]`}>
+      <ClinicalTopBar theme={theme} title={locale === 'zh' ? '病程整理台' : 'Clinical Course Organizer'} withRail />
       <ArchiveSideNav
         analyticsHref={record?.id ? `/analytics/${record.id}` : undefined}
-        dark={false}
+        dark={theme === 'dark'}
         isSigningOut={isSigningOut}
         onSignOut={onSignOut}
         recordHref={record?.id ? `/record/${record.id}` : undefined}
@@ -678,8 +610,8 @@ function LightWorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabe
         userLabel={userLabel}
       />
 
-      <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen`} theme="light">
-        <SectionSurface className="border-0 px-4 pb-2 pt-4 md:px-8 md:pb-3 md:pt-4" theme="light" tone="base">
+      <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen`} theme={theme}>
+        <SectionSurface className="border-0 px-4 pb-2 pt-4 md:px-8 md:pb-3 md:pt-4" theme={theme} tone="base">
           <div className={`${shellContentWidthClass} t-route-reveal space-y-6`}>
             <ExtractionComposer
               composerMode={getWorkspaceComposerMode(record)}
@@ -698,16 +630,16 @@ function LightWorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabe
               onRetry={() => void retryLastAction()}
               remainingMissingCount={remainingMissing.length}
               retryMode={retryMode}
-              theme="light"
+              theme={theme}
             />
 
             {currentQuestion ? (
-              <FollowUpPanel currentQuestion={currentQuestion} onSubmit={(value) => void runFollowUpExtraction(value)} theme="light" />
+              <FollowUpPanel busy={isExtracting || isSaving} currentQuestion={currentQuestion} onSubmit={(value) => void runFollowUpExtraction(value)} theme={theme} />
             ) : null}
           </div>
         </SectionSurface>
 
-        <SectionSurface className="border-0 px-4 pb-8 pt-2 md:px-8 md:pb-8 md:pt-3" theme="light" tone="base">
+        <SectionSurface className="border-0 px-4 pb-8 pt-2 md:px-8 md:pb-8 md:pt-3" theme={theme} tone="base">
           <div className={`${shellContentWidthClass} t-stagger`} style={{ '--t-order': 1 } as CSSProperties}>
             <ReportPreviewFrame
               followUpCount={Math.min(MAX_FOLLOW_UP_ROUNDS, followUpAnswers.length)}
@@ -718,21 +650,11 @@ function LightWorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabe
               recordDetailsHref={record?.id ? `/record/${record.id}` : undefined}
               remainingMissing={remainingMissing}
               setReportRef={() => undefined}
-              theme="light"
+              theme={theme}
             />
           </div>
         </SectionSurface>
       </MainShell>
     </div>
-  )
-}
-
-export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: WorkspacePageProps) {
-  const { theme } = useTheme()
-
-  return theme === 'dark' ? (
-    <DarkWorkspacePage isSigningOut={isSigningOut} onSignOut={onSignOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
-  ) : (
-    <LightWorkspacePage isSigningOut={isSigningOut} onSignOut={onSignOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />
   )
 }

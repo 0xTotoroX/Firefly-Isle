@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 @/lib/supabase 的客户端入口与 @/types/patient 的 PatientRecord/TreatmentLine/LabReportBatch/LabResult 数据模型。
- * [OUTPUT]: 对外提供 loadPatientRecordById、loadSharedPatientRecordById、loadLatestPatientRecord、persistPatientRecord 与 lab batch/result row/payload 映射工具，并校验传入 patient id 的归属；远端未部署 clinical_notes / lab_results 时降级不中断主病历。
- * [POS]: lib 的患者记录持久化边界，统一 routes、workspace 与只读分享对 patients、clinical_notes、treatment_lines、可选 lab_results 的读写，让数据库身份只来自已归属行、新建行或 RLS 授权的 active share。
+ * [OUTPUT]: 对外提供 loadPatientRecordById、loadLatestPatientRecord、persistPatientRecord 与 lab batch/result row/payload 映射工具，并校验传入 patient id 的归属；旧 schema 仅在读取时降级，写入必须使用新 RPC。
+ * [POS]: lib 的患者记录持久化边界，统一 routes、workspace 对患者及子记录的读取映射和原子写入，使用单事务 RPC 核对发起账号并保留已归属子记录身份。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { getSupabaseClient } from '@/lib/supabase'
@@ -26,8 +26,6 @@ type TreatmentLineRow = {
   regimen: string | null
   start_date: string | null
 }
-
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 type SupabaseQueryError = {
   code?: string
@@ -78,36 +76,6 @@ const LAB_RESULT_COLUMNS_WITH_METADATA =
 const LAB_RESULT_COLUMNS_LEGACY =
   'id, patient_id, test_date, category, item_code, item_name, value, unit, reference_low, reference_high, source'
 
-function getPatientPayload(record: PatientRecord, includeClinicalNotes = true) {
-  const payload: {
-    basic_info: PatientRecord['basicInfo']
-    clinical_notes?: string | null
-    initial_onset: PatientRecord['initialOnset'] | null
-  } = {
-    basic_info: record.basicInfo ?? {},
-    initial_onset: record.initialOnset ? record.initialOnset : null,
-  }
-
-  if (includeClinicalNotes) {
-    payload.clinical_notes = record.clinicalNotes ?? null
-  }
-
-  return payload
-}
-
-function getTreatmentLinePayload(line: TreatmentLine, patientId: string) {
-  return {
-    biopsy: line.biopsy ?? null,
-    end_date: line.endDate ?? null,
-    genetic_test: line.geneticTest ?? null,
-    immunohistochemistry: line.immunohistochemistry ?? null,
-    line_number: line.lineNumber,
-    patient_id: patientId,
-    regimen: line.regimen ?? null,
-    start_date: line.startDate ?? null,
-  }
-}
-
 export function toLabResultPayload(reading: LabResult, patientId: string) {
   return {
     batch_id: reading.batchId ?? null,
@@ -119,21 +87,6 @@ export function toLabResultPayload(reading: LabResult, patientId: string) {
     reference_high: reading.referenceHigh ?? null,
     reference_low: reading.referenceLow ?? null,
     is_derived: reading.isDerived ?? false,
-    source: reading.source ?? (reading.isDerived ? 'derived' : 'manual'),
-    test_date: reading.testDate ?? null,
-    unit: reading.unit ?? null,
-    value: reading.value,
-  }
-}
-
-export function toLegacyLabResultPayload(reading: LabResult, patientId: string) {
-  return {
-    category: reading.category,
-    item_code: reading.itemCode,
-    item_name: reading.itemName,
-    patient_id: patientId,
-    reference_high: reading.referenceHigh ?? null,
-    reference_low: reading.referenceLow ?? null,
     source: reading.source ?? (reading.isDerived ? 'derived' : 'manual'),
     test_date: reading.testDate ?? null,
     unit: reading.unit ?? null,
@@ -321,21 +274,6 @@ export async function loadPatientRecordById(recordId: string): Promise<PatientRe
   return patient ? loadPatientChildren(patient) : null
 }
 
-export async function loadSharedPatientRecordById(recordId: string): Promise<PatientRecord | null> {
-  ensureBrowserOnline()
-
-  const supabase = getSupabaseClient()
-  const patient = await loadPatientRowWithFallback((columns) =>
-    supabase
-      .from('patients')
-      .select(columns)
-      .eq('id', recordId)
-      .maybeSingle<PatientRow>(),
-  )
-
-  return patient ? loadPatientChildren(patient) : null
-}
-
 export async function loadLatestPatientRecord(userId: string) {
   ensureBrowserOnline()
 
@@ -353,135 +291,10 @@ export async function loadLatestPatientRecord(userId: string) {
   return patient ? loadPatientChildren(patient) : null
 }
 
-async function ensurePatientRecordExists(record: PatientRecord, userId: string) {
-  if (record.id) {
-    const existingId = await findOwnedPatientId(record.id, userId)
-
-    if (existingId) {
-      return existingId
-    }
-  }
-
-  return insertPatientRecord(record, userId)
-}
-
-async function findOwnedPatientId(recordId: string, userId: string) {
-  if (!UUID_PATTERN.test(recordId)) {
-    return null
-  }
-
-  const supabase = getSupabaseClient()
-  const { data, error } = await supabase
-    .from('patients')
-    .select('id')
-    .eq('id', recordId)
-    .eq('user_id', userId)
-    .maybeSingle<Pick<PatientRow, 'id'>>()
-
-  if (error) {
-    throw error
-  }
-
-  return data?.id ?? null
-}
-
-async function insertPatientRecord(record: PatientRecord, userId: string) {
-  const supabase = getSupabaseClient()
-  const insert = (includeClinicalNotes: boolean) =>
-    supabase
-      .from('patients')
-      .insert({
-        ...getPatientPayload(record, includeClinicalNotes),
-        user_id: userId,
-      })
-      .select('id')
-      .single()
-  let { data, error } = await insert(true)
-
-  if (error && isMissingClinicalNotesColumnError(error)) {
-    ;({ data, error } = await insert(false))
-  }
-
-  if (error || !data) {
-    throw error
-  }
-
-  return data.id
-}
-
-async function updatePatientRecord(patientId: string, record: PatientRecord) {
-  const supabase = getSupabaseClient()
-  const update = (includeClinicalNotes: boolean) =>
-    supabase.from('patients').update(getPatientPayload(record, includeClinicalNotes)).eq('id', patientId)
-  let { error } = await update(true)
-
-  if (error && isMissingClinicalNotesColumnError(error)) {
-    ;({ error } = await update(false))
-  }
-
-  if (error) {
-    throw error
-  }
-}
-
-async function syncTreatmentLines(patientId: string, treatmentLines: TreatmentLine[]) {
-  const supabase = getSupabaseClient()
-  const { error: deleteError } = await supabase.from('treatment_lines').delete().eq('patient_id', patientId)
-
-  if (deleteError) {
-    throw deleteError
-  }
-
-  if (treatmentLines.length === 0) {
-    return
-  }
-
-  const { error: insertError } = await supabase
-    .from('treatment_lines')
-    .insert(treatmentLines.map((line) => getTreatmentLinePayload(line, patientId)))
-
-  if (insertError) {
-    throw insertError
-  }
-}
-
-export async function persistPatientRecord(record: PatientRecord, userId: string) {
+export async function persistPatientRecord(record: PatientRecord, expectedOwnerId: string): Promise<PatientRecord> {
   ensureBrowserOnline()
-
-  const patientId = await ensurePatientRecordExists(record, userId)
-  const persistedRecord = record.id === patientId ? record : { ...record, id: patientId }
-  const supabase = getSupabaseClient()
-
-  await updatePatientRecord(patientId, persistedRecord)
-  await syncTreatmentLines(patientId, persistedRecord.treatmentLines)
-
-  if (persistedRecord.labResults) {
-    const { error: deleteError } = await supabase.from('lab_results').delete().eq('patient_id', patientId)
-
-    if (deleteError) {
-      throw deleteError
-    }
-
-    if (persistedRecord.labResults.length > 0) {
-      const insertLabResults = (includeMetadata: boolean) =>
-        supabase
-          .from('lab_results')
-          .insert(
-            persistedRecord.labResults!.map((reading) =>
-              includeMetadata ? toLabResultPayload(reading, patientId) : toLegacyLabResultPayload(reading, patientId),
-            ),
-          )
-      let { error: labError } = await insertLabResults(true)
-
-      if (labError && isMissingLabResultMetadataColumnError(labError)) {
-        ;({ error: labError } = await insertLabResults(false))
-      }
-
-      if (labError) {
-        throw labError
-      }
-    }
-  }
-
-  return persistedRecord
+  const { data, error } = await getSupabaseClient().rpc('persist_patient_record', { record, expected_owner_id: expectedOwnerId })
+  if (error) throw error
+  if (!data?.id) throw new Error('Patient record was not saved.')
+  return data as PatientRecord
 }
