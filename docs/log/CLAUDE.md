@@ -10,3 +10,4 @@ index.md: commit history 总入口，按时间顺序列出日志文件、命名�
 法则: 默认每个 commit 一文件；专题复盘必须显式标注“不对应单个 commit”。git 是事实真相源，推断必须显式标注置信度。
 
 0024-426c97c-record-integrity-and-design.md: 病历事务、分享/额度、状态修复、旧预览清理和独立设计交付的实测提交日志。
+0025-238948d-monochrome-design-review.md: 黑白主题、八种强调色、页面方案与浏览器验收的提交日志。
