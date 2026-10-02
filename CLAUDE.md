@@ -58,7 +58,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `DESIGN.md`
   - project-level entrypoint for the independent SaaS design review and approval boundary
 - `docs/design/`
-  - `Image-2/` — image-model redesign batches, including V3 production rules and the V4 Clinical Calm / Firefly Glass / Living Archive evaluation contract
+  - `Image-2/` — image-model redesign batches, historical V1–V4 references; the V4 candidates are retired
   - `stitch/` — Stitch-origin design references and runtime screenshot evidence
 - `docs/products/`
   - `prd-implementation-status.md` — current PRD implementation status, preserving the implemented / partial / not implemented feature audit
@@ -183,7 +183,7 @@ When implementation starts, read these in roughly this order:
 
 1. `README.md` — concise project purpose and current repo baseline
 2. `docs/products/prd-implementation-status.md` — current PRD implementation status and pointers to archived product docs
-3. `DESIGN.md` — project-level visual-system entrypoint, separating the active V3 production source from the isolated V4 evaluation source
+3. `DESIGN.md` — current SaaS review entrypoint and the user-approval boundary before frontend visual migration
 4. `docs/products/archive/prd.md` — archived original user/problem framing and scope boundaries, when historical PRD context is needed
 5. `openspec/specs/**/*.md` — current baseline behavior requirements
 6. `src/**`, `supabase/**`, `.github/**`, `public/**` — current implementation reality and runtime boundaries
