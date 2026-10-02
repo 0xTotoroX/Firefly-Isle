@@ -70,6 +70,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `docs/log/`
   - `index.md` — commit history 总入口
   - `0001-*.md ~ 0022-*.md` — 每个 git commit 一份历史日志
+  - `0024-426c97c-record-integrity-and-design.md` — integrity, cleanup, independent design and local acceptance evidence
   - `0023-auth-login-wechat-learning.md` — 认证学习专题复盘，记录邮箱/Google/Supabase/微信登录的原理、数据流、配置边界与排错路径
 - `openspec/specs/`
   - current baseline requirements merged from archived MVP and commit-history changes

@@ -8,3 +8,5 @@ index.md: commit history 总入口，按时间顺序列出日志文件、命名�
 0023-auth-login-wechat-learning.md: 认证学习专题复盘，解释邮箱/Google/Supabase/微信登录的原理、数据流、外部配置、排错与后续步骤，不对应单个 commit，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 
 法则: 默认每个 commit 一文件；专题复盘必须显式标注“不对应单个 commit”。git 是事实真相源，推断必须显式标注置信度。
+
+0024-426c97c-record-integrity-and-design.md: 病历事务、分享/额度、状态修复、旧预览清理和独立设计交付的实测提交日志。
