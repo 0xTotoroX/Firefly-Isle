@@ -37,3 +37,4 @@
 
 24. [426c97c refactor(core): harden record workflows and retire obsolete previews](0024-426c97c-record-integrity-and-design.md)
 25. [238948d docs(design): add monochrome themes and calm page concepts](0025-238948d-monochrome-design-review.md)
+26. [6bd3b94 feat(selfhost): integrate backend migration preparation](0026-6bd3b94-selfhost-integration.md)

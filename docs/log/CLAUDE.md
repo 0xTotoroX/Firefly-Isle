@@ -11,3 +11,5 @@ index.md: commit history 总入口，按时间顺序列出日志文件、命名�
 
 0024-426c97c-record-integrity-and-design.md: 病历事务、分享/额度、状态修复、旧预览清理和独立设计交付的实测提交日志。
 0025-238948d-monochrome-design-review.md: 黑白主题、八种强调色、页面方案与浏览器验收的提交日志。
+
+0026-6bd3b94-selfhost-integration.md: 自托管准备整合、匿名会话修复、运维边界与本地验收证据。
