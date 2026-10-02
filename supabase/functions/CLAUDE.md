@@ -8,6 +8,7 @@
 > L2 | 父级: /supabase/CLAUDE.md
 
 成员清单
+stripe-webhook/: 原文验签后将一次性 Checkout 的 pending/paid/failed 事实提交 record_donation_payment；需先应用 20261002151647_donation_payment_integrity.sql，服务端独占记账 RPC。
 _shared/usage-limits.ts: 共享 consume_usage RPC 客户端；只接受明确的获准或拒绝结果，故障停止上游调用。
 _shared/usage-limits.test.ts: RPC 参数、结果校验及故障关闭测试。
 CLAUDE.md: 说明 Edge Functions 目录的边界与同步规则，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

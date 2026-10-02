@@ -2,6 +2,9 @@
 > L2 | 父级: /supabase/CLAUDE.md
 
 成员清单
+20261002161000_data_api_grants.sql: 显式 Data API 表/列/RPC 授权；未登录仅可读取分享 RPC，账本保持客户端只读，不依赖自动暴露配置。
+20261002161100_record_create_idempotency.sql: 草稿 UUID 原子创建/重试，重复请求返回已有记录；兼容旧两参数 RPC，保留已存在 ID 的 owner 更新约束。
+20261002151647_donation_payment_integrity.sql: 仅 service_role 的 record_donation_payment 原子合并捐赠状态，固定付款事实并保留注销后的解除关联。
 20261002105552_record_integrity_and_sharing.sql: 病历/报告事务、稳定子记录身份、发起账号核验、分享 RPC 和撤销权限收紧。
 CLAUDE.md: 说明迁移目录职责与命名规则，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 001_init.sql: 建立 patients、treatment_lines、RLS 与 updated_at trigger 的首个 MVP 迁移，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
