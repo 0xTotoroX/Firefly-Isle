@@ -82,6 +82,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `0024-426c97c-record-integrity-and-design.md` — integrity, cleanup, independent design and local acceptance evidence
   - `0023-auth-login-wechat-learning.md` — 认证学习专题复盘，记录邮箱/Google/Supabase/微信登录的原理、数据流、配置边界与排错路径
   - `0024-*.md` / `0025-*.md` — record-integrity delivery and monochrome design-review acceptance logs
+  - `0026-*.md` through `0029-*.md` — self-hosted preparation, data permissions, completed user workflows and development-branch CI evidence
 - `openspec/specs/`
   - current baseline requirements merged from archived MVP and commit-history changes
   - `CLAUDE.md` maps each baseline spec file and records that main specs must use `## Purpose` + `## Requirements`

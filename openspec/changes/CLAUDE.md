@@ -2,6 +2,7 @@
 > L2 | 父级: /CLAUDE.md
 
 成员清单
+complete-saas-user-workflows/: 十部分任务书下的化验审核、失败恢复、完整导出、诊断脱敏、捐赠原子状态、Demo 与云端验收合同；正式布局等待用户选择。
 self-host-supabase/: 自建后端准备已整合；SMTP/OAuth、当前 schema/functions 验收与正式切换仍待完成。
 archive/2026-10-02-harden-record-integrity-and-simplify/: 已完成并归档的病历/报告事务、授权码分享、配额、状态修复、代码精简及独立设计交付；当前行为见 record-integrity baseline，新视觉仍待确认。
 archive/2026-10-02-superseded-refresh-product-visual-system-v4/: 废弃 V4 候选的历史证据；未应用其 delta，预览代码已移除。

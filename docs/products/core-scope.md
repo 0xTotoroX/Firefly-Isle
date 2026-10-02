@@ -20,6 +20,8 @@
 
 继续用现有 React、Radix/shadcn、Tailwind 和 Supabase。已安装组件库覆盖本轮交互需求；不为换肤再引入一套完整 UI 框架。Carbon 用于研究语义颜色、状态与层级，Radix 用于交互和可访问性规则。数据事务使用 PostgreSQL RPC，前端队列只处理当前页面按顺序提交，不宣称支持跨设备冲突合并。
 
+2026-10-02 复核了两个仍维护的医疗时间线实现。[Medplum PatientTimeline](https://github.com/medplum/medplum/blob/main/packages/react/src/PatientTimeline/PatientTimeline.tsx) 可参考事件分组和临床日期处理，但直接接入依赖 FHIR、MedplumClient 与 Mantine，需要转换现有 PatientRecord/Supabase 边界。[cBioPortal 独立时间线包](https://github.com/cBioPortal/cbioportal-frontend/blob/master/packages/cbioportal-clinical-timeline/package.json) 支持 React 18，但当前包标识为 AGPL-3.0-or-later，另引入 MobX 等依赖。现有三视图已覆盖本产品需求，暂保留它们，不为了复用之名增加模型迁移和许可证决策。
+
 清理按可证明的职责和引用关系进行；保留原有数据、有效功能和回退记录。文件超过某个行数是审查信号，不替代行为、接口与复杂度判断。
 
 ## OpenSpec、Superpowers 与验收

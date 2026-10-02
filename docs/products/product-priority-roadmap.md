@@ -55,7 +55,7 @@
 
 4. Demo 覆盖完整产品功能
    - 状态：已新增登录页 `查看 Demo` 与公开 `/demo` 入口，Demo 病历和 Demo 统计复用同一患者与 `labResults`，每个 Demo 页面显示模式提醒，并展示 AI 分析预览、分享预览、TimelineTable、Gantt 与导出入口。
-   - 边界：真实登录或匿名用户的 `/app` 仍为空白工作区；Demo 可配置 `VITE_DEMO_RECORD_SHARE_CODE` 通过只读授权码读取 Supabase 演示病历，但不默认创建患者、实验室读数或 record_shares，也不调用真实 LLM；分享码缺失、失效或读回数据不完整时使用本地完整 fixture。
+   - 边界：真实登录或匿名用户没有病历时 `/app` 保持空白；Demo 使用三种虚构 fixture 和独立内存状态，不读取真实 session/分享码/账户偏好，不调用真实模型、OCR、支付、注销或密钥服务。演示内客户端导航保留修改，刷新或重置恢复。
    - Change：`make-demo-mode-cover-full-product`
 
 ## P1 重要但不抢主链路

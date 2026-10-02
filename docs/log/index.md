@@ -38,3 +38,6 @@
 24. [426c97c refactor(core): harden record workflows and retire obsolete previews](0024-426c97c-record-integrity-and-design.md)
 25. [238948d docs(design): add monochrome themes and calm page concepts](0025-238948d-monochrome-design-review.md)
 26. [6bd3b94 feat(selfhost): integrate backend migration preparation](0026-6bd3b94-selfhost-integration.md)
+27. [5eb85a7 fix(data): enforce API grants and atomic write boundaries](0027-5eb85a7-data-boundaries.md)
+28. [a4b3191 feat(saas): complete patient workflows and isolated demo](0028-a4b3191-saas-workflows.md)
+29. [2754acd ci: validate codex development branches](0029-2754acd-development-ci.md)
