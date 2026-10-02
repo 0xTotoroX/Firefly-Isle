@@ -14,8 +14,8 @@ import {
 
 function createCallbackClient(overrides: Partial<AuthCallbackClient> = {}): AuthCallbackClient {
   return {
-    exchangeCodeForSession: vi.fn().mockResolvedValue({ error: null }),
-    getSession: vi.fn().mockResolvedValue({ data: { session: { user: { id: 'auth-user-id' } } }, error: null }),
+    exchangeCodeForSession: vi.fn().mockResolvedValue({ data: { session: { access_token: 'synthetic-access', refresh_token: 'synthetic-refresh', user: { id: 'auth-user-id', email: 'synthetic@example.com' } } }, error: null }),
+    getSession: vi.fn().mockResolvedValue({ data: { session: { access_token: 'synthetic-access', refresh_token: 'synthetic-refresh', user: { id: 'auth-user-id', email: 'synthetic@example.com' } } }, error: null }),
     ...overrides,
   }
 }
@@ -51,8 +51,8 @@ describe('auth callback restore logic', () => {
     const result = await restoreAuthCallbackSession(auth, 'http://localhost:5173/auth/callback?code=oauth-code')
 
     expect(auth.exchangeCodeForSession).toHaveBeenCalledWith('oauth-code')
-    expect(auth.getSession).toHaveBeenCalledWith()
-    expect(result).toEqual({ status: 'authenticated' })
+    expect(auth.getSession).not.toHaveBeenCalled()
+    expect(result).toMatchObject({ status: 'authenticated' })
   })
 
   it('accepts an already-restored callback when Supabase removed the code from the URL', async () => {
@@ -62,7 +62,7 @@ describe('auth callback restore logic', () => {
 
     expect(auth.exchangeCodeForSession).not.toHaveBeenCalled()
     expect(auth.getSession).toHaveBeenCalledWith()
-    expect(result).toEqual({ status: 'authenticated' })
+    expect(result).toMatchObject({ status: 'authenticated' })
   })
 
   it('maps code exchange failures to friendly retry copy', async () => {
@@ -74,7 +74,7 @@ describe('auth callback restore logic', () => {
 
     expect(auth.getSession).not.toHaveBeenCalled()
     expect(result).toEqual({
-      message: '登录回调已失效，请重新使用 Google 继续。',
+      message: '登录回调已失效，请重新登录。',
       status: 'error',
     })
   })
@@ -88,4 +88,31 @@ describe('auth callback restore logic', () => {
 
     expect(result).toEqual({ status: 'anonymous' })
   })
+})
+
+it.each(['?error_code=expired', '#error=access_denied', '?code=valid#error_description=denied'])('prioritizes URL errors over a retained session: %s', async (suffix) => {
+  const auth = createCallbackClient()
+  expect(await restoreAuthCallbackSession(auth, `https://firefly.test/auth/reset-password${suffix}`, { requireCode: true })).toMatchObject({ status: 'error' })
+  expect(auth.getSession).not.toHaveBeenCalled()
+  expect(auth.exchangeCodeForSession).not.toHaveBeenCalled()
+})
+it('does not authorize a reset with only the old session', async () => {
+  const auth = createCallbackClient()
+  expect(await restoreAuthCallbackSession(auth, '/auth/reset-password', { requireCode: true })).toMatchObject({ status: 'error' })
+  expect(auth.getSession).not.toHaveBeenCalled()
+})
+it('exchanges a code once across concurrent callback consumers', async () => {
+  const auth = createCallbackClient()
+  const results = await Promise.all([restoreAuthCallbackSession(auth, '/auth/callback?code=one-time'), restoreAuthCallbackSession(auth, '/auth/callback?code=one-time')])
+  expect(results.every((result) => result.status === 'authenticated')).toBe(true)
+  expect(auth.exchangeCodeForSession).toHaveBeenCalledTimes(1)
+})
+it('does not reuse a retained session when a password code has expired', async () => {
+  const auth = createCallbackClient({ exchangeCodeForSession: vi.fn().mockResolvedValue({ data: { session: null }, error: new Error('expired') }) })
+  expect(await restoreAuthCallbackSession(auth, '/auth/reset-password?code=expired', { requireCode: true })).toMatchObject({ status: 'error' })
+  expect(auth.getSession).not.toHaveBeenCalled()
+})
+it('finishes with readable feedback after an exchange throws', async () => {
+  const auth = createCallbackClient({ exchangeCodeForSession: vi.fn().mockRejectedValue(new Error('network')) })
+  expect(await restoreAuthCallbackSession(auth, '/auth/callback?code=broken')).toMatchObject({ status: 'error' })
 })

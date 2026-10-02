@@ -53,7 +53,7 @@ vi.mock('@/lib/auth', async () => {
   const actual = await vi.importActual<typeof import('@/lib/auth')>('@/lib/auth')
   return {
     ...actual,
-    useAuth: () => ({
+    useOptionalAuth: () => ({
       authError: null,
       isAuthenticated: true,
       isAuthReady: true,

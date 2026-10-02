@@ -1,11 +1,12 @@
 /**
  * [INPUT]: 依赖 node:fs 读取 Supabase 迁移，依赖 vitest 断言，依赖 ./patient-record-storage 的 PatientRecord 持久化映射工具。
- * [OUTPUT]: 对外提供 lab_results/lab_report_batches 迁移/RLS 合同、患者记录 labResults/batch row 映射、record-page 字段编辑落库、clinical_notes 缺列降级、缺表读取降级与假 id 落库防线测试。
+ * [OUTPUT]: 对外提供病历摘要分页、lab_results/lab_report_batches 迁移/RLS 合同、row 映射、字段保存、旧 schema 降级与创建 UUID 重试测试。
  * [POS]: lib 的数据边界测试，约束患者记录读取/落库、持久化 id 所有权校验、可选 clinical_notes/lab_results 迁移缺口降级、字段级编辑 payload 与实验室指标 RLS 不分叉。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { createClient } from '@supabase/supabase-js'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const supabaseMocks = vi.hoisted(() => ({
@@ -18,12 +19,96 @@ vi.mock('@/lib/supabase', () => ({
 
 import {
   loadPatientRecordById,
+  loadPatientRecordSummaries,
   mapLabReportBatchRow,
   mapLabResultRow,
   persistPatientRecord,
   toLabReportBatchPayload,
   toLabResultPayload,
 } from './patient-record-storage'
+
+type SummaryFixture = { id: string; user_id: string; name: string; tumor_type: string; created_at: string; updated_at: string }
+
+function summarySource(serverLimit = 10) {
+  const owner = 'a0000000-0000-4000-8000-000000000001'
+  const source = {
+    owner,
+    currentOwner: owner,
+    rows: Array.from({ length: 23 }, (_, index): SummaryFixture => ({
+      id: `b0000000-0000-4000-8000-${String(index).padStart(12, '0')}`,
+      user_id: owner,
+      name: `患者 ${index}`,
+      tumor_type: '乳腺癌',
+      created_at: `2026-10-${String(Math.floor(index / 5) + 1).padStart(2, '0')}T00:00:00+00:00`,
+      updated_at: '2026-10-03T00:00:00+00:00',
+    })),
+    requests: [] as URLSearchParams[],
+    failed: false,
+  }
+  const client = createClient('https://records.example.test', 'synthetic-key', {
+    accessToken: async () => 'synthetic-token',
+    global: { fetch: async (input: RequestInfo | URL) => {
+      const query = new URL(input instanceof Request ? input.url : String(input)).searchParams
+      source.requests.push(query)
+      if (source.failed) return new Response(JSON.stringify({ message: 'records unavailable' }), { status: 500 })
+      let rows = source.rows.filter((row) => row.user_id === source.currentOwner && query.get('user_id') === `eq.${row.user_id}`)
+      const cursor = query.get('or')?.match(/^\(created_at\.lt\.(.+),and\(created_at\.eq\.(.+),id\.lt\.([^)]+)\)\)$/)
+      if (query.has('or') && !cursor) throw new Error('Invalid PostgREST cursor')
+      if (cursor) rows = rows.filter((row) => row.created_at < cursor[1] || (row.created_at === cursor[2] && row.id < cursor[3]))
+      if (query.get('order') === 'created_at.desc,id.desc') rows.sort((a, b) => b.created_at.localeCompare(a.created_at) || b.id.localeCompare(a.id))
+      const count = rows.length
+      rows = rows.slice(0, Math.min(serverLimit, Number(query.get('limit') ?? 1000)))
+      return new Response(JSON.stringify(rows), { headers: { 'Content-Type': 'application/json', 'Content-Range': `0-${Math.max(rows.length - 1, 0)}/${count}` } })
+    } },
+  })
+  supabaseMocks.getSupabaseClient.mockReturnValue({
+    auth: { getUser: async () => ({ data: { user: { id: source.currentOwner } }, error: null }) },
+    from: client.from.bind(client),
+  })
+  return source
+}
+
+describe('patient record summary pagination', () => {
+  it('loads all owned summaries with equal timestamps and a server cap smaller than a page', async () => {
+    const source = summarySource(3)
+    source.rows.push({ ...source.rows[0], id: 'other-record', user_id: 'other-owner' })
+    const records = []
+    let cursor = null
+    do {
+      const page = await loadPatientRecordSummaries(source.owner, cursor)
+      records.push(...page.records)
+      cursor = page.nextCursor
+    } while (cursor)
+    expect(records.map((record) => record.id)).toEqual(source.rows.filter((row) => row.user_id === source.owner).map((row) => row.id).reverse())
+    expect(new Set(records.map((record) => record.id)).size).toBe(23)
+    expect(records[0]).toEqual({ id: source.rows[22].id, name: '患者 22', tumorType: '乳腺癌', updatedAt: source.rows[22].updated_at })
+    expect(source.requests.every((query) => query.get('select') === 'id,name:basic_info->>name,tumor_type:basic_info->>tumorType,created_at,updated_at')).toBe(true)
+  })
+
+  it('keeps later pages reachable when an earlier row is deleted and a later row is edited', async () => {
+    const source = summarySource(3)
+    const first = await loadPatientRecordSummaries(source.owner)
+    source.rows = source.rows.filter((row) => row.id !== first.records[0].id)
+    source.rows[19].updated_at = '2026-10-10T00:00:00+00:00'
+    const second = await loadPatientRecordSummaries(source.owner, first.nextCursor)
+    expect(second.records.map((record) => record.name)).toEqual(['患者 19', '患者 18', '患者 17'])
+  })
+
+  it('rejects a changed account before issuing a data request', async () => {
+    const source = summarySource()
+    source.currentOwner = 'other-owner'
+    await expect(loadPatientRecordSummaries(source.owner)).rejects.toThrow('Account changed')
+    expect(source.requests).toHaveLength(0)
+  })
+
+  it('distinguishes empty ownership from a failed page', async () => {
+    const source = summarySource()
+    source.rows = []
+    await expect(loadPatientRecordSummaries(source.owner)).resolves.toEqual({ records: [], nextCursor: null })
+    source.failed = true
+    await expect(loadPatientRecordSummaries(source.owner)).rejects.toMatchObject({ message: 'records unavailable' })
+  })
+})
 
 const labMigrationSql = readFileSync(resolve(process.cwd(), 'supabase/migrations/002_lab_results.sql'), 'utf8')
 const clinicalNotesMigrationSql = readFileSync(resolve(process.cwd(), 'supabase/migrations/004_patient_clinical_notes.sql'), 'utf8')
@@ -328,6 +413,32 @@ describe('patient-record-storage patient identity', () => {
     supabaseMocks.getSupabaseClient.mockReturnValue({ rpc: vi.fn().mockResolvedValue({ data: null, error }), from })
     await expect(persistPatientRecord({ treatmentLines: [] }, 'owner-a')).rejects.toEqual(error)
     expect(from).not.toHaveBeenCalled()
+  })
+
+  it('keeps the caller creation UUID across a lost response and a retry', async () => {
+    const draft = { treatmentLines: [{ lineNumber: 1, regimen: 'A' }] }
+    const requestId = 'c0000000-0000-4000-8000-000000000011'
+    const saved = { ...draft, id: requestId }
+    const rpc = vi.fn().mockRejectedValueOnce(new TypeError('Failed to fetch'))
+      .mockResolvedValueOnce({ data: saved, error: null })
+    supabaseMocks.getSupabaseClient.mockReturnValue({ rpc })
+    await expect(persistPatientRecord(draft, 'owner-a', requestId)).rejects.toThrow('Failed to fetch')
+    await expect(persistPatientRecord(draft, 'owner-a', requestId)).resolves.toEqual(saved)
+    expect(rpc.mock.calls).toEqual(Array.from({ length: 2 }, () => ['persist_patient_record', {
+      record: draft, expected_owner_id: 'owner-a', create_request_id: requestId,
+    }]))
+  })
+
+  it('uses each new draft UUID separately and omits it on existing-record edits', async () => {
+    const rpc = vi.fn().mockResolvedValue({ data: { id: 'saved-id', treatmentLines: [] }, error: null })
+    supabaseMocks.getSupabaseClient.mockReturnValue({ rpc })
+    const firstId = 'c0000000-0000-4000-8000-000000000011'
+    const nextId = 'c0000000-0000-4000-8000-000000000012'
+    await persistPatientRecord({ treatmentLines: [] }, 'owner-a', firstId)
+    await persistPatientRecord({ treatmentLines: [] }, 'owner-a', nextId)
+    await persistPatientRecord({ id: firstId, treatmentLines: [] }, 'owner-a', nextId)
+    expect(rpc.mock.calls.map((call) => call[1].create_request_id)).toEqual([firstId, nextId, undefined])
+    expect(rpc.mock.calls[2][1].record.id).toBe(firstId)
   })
 })
 

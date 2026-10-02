@@ -1,10 +1,11 @@
 /**
- * [INPUT]: 依赖 @/components/app-shell 的 V3 可变侧栏与顶部状态条，依赖 @/components/system/surfaces 的 MainShell 与 DemoModeBanner，依赖全产品 Demo fixture、clinical-analysis、record-sharing、record-editing 字段 patch、patient-record-storage 持久化与 record-edit-queue 串行保存、./demo-mode.logic 的可选公开分享码 Demo 数据源、./record-page.view 的档案/极简表格/Gantt/分享/AI 分析内容组合，点击正式导出时动态加载 @/lib/export-record，依赖 react-router-dom 的 useLocation/useParams 与 transitions-dev.css 的 route/stagger 动效合同。
- * [OUTPUT]: 对外提供 RecordPage 组件，对应公开 /demo/record 与受保护 /record/:id，并挂载详情页主画布入场动效、Demo 模式提醒、可选 Supabase 公开 Demo 读取、Demo AI/分享预览、授权码分享、AI 辅助分析与字段级 Supabase 保存。
- * [POS]: routes 的档案详情 orchestration 层，只负责 Demo/真实路由参数、Demo 数据源加载、加载状态、视图状态、分享状态、AI 分析状态、页面级图表编辑状态、按病历和账号隔离的字段保存状态、导出状态、动效挂载与壳层组合；展示和数据映射下沉到 record-page.view、components/record 与 record-page.logic。
+ * [INPUT]: react 状态与现有档案/统计/分享展示、Demo 内存会话、真实持久化和字段编辑队列。
+ * [OUTPUT]: RecordPage，复用正式病历编辑和导出；Demo 读写内存并展示固定 AI/分享预览。
+ * [POS]: 病历页路由编排，真实与演示数据只在服务边界分流。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { useEffect, useRef, useState } from 'react'
+import { useDemoSession, useProductPath } from '@/lib/demo-session'
 import { useLocation, useParams } from 'react-router-dom'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
@@ -51,7 +52,7 @@ function getDemoSharePreviewUrl() {
 
 function getDemoSharePreviewState(): RecordSharePanelState {
   return {
-    createdUrl: getDemoSharePreviewUrl(),
+    createdUrl: null,
     error: null,
     isCreating: false,
     isLoading: false,
@@ -96,6 +97,8 @@ export function parseRecordRangeEdits(target: PatientRangeTarget, value: string)
 
 export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, userLabel }: RecordPageProps) {
   const { id = 'demo' } = useParams()
+  const demoSession = useDemoSession()?.session
+  const productPath = useProductPath()
   const location = useLocation()
   const { locale } = useLocale()
   const localeRef = useRef(locale)
@@ -118,7 +121,7 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
   })
   const [recordViewMode, setRecordViewMode] = useState<RecordViewMode>('dossier')
   const [isChartEditing, setIsChartEditing] = useState(false)
-  const [demoRecord, setDemoRecord] = useState<PatientRecord>(demoLabAnalyticsRecord)
+  const [demoRecord, setDemoRecord] = useState<PatientRecord>(() => demoSession?.getState().records.find((record) => record.id === id) ?? demoLabAnalyticsRecord)
   const [saveState, setSaveState] = useState<RecordSaveState>({ error: null, status: 'idle' })
   const [clinicalAnalysisState, setClinicalAnalysisState] = useState<{
     error: string | null
@@ -148,7 +151,7 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
     if (demoRoute) {
       let active = true
 
-      void loadDemoPatientRecord().then(({ record }) => {
+      void (demoSession ? demoSession.loadRecord(id).then((record) => ({ record })) : loadDemoPatientRecord()).then(({ record }) => {
         if (!active) {
           return
         }
@@ -194,7 +197,7 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
       active = false
       editQueueRef.current = null
     }
-  }, [demoRoute, id, userId])
+  }, [demoRoute, id, userId, demoSession])
 
   const activeRecordLoadState = getActiveRecordLoadState({ demoRoute, id, recordLoadState })
   const shareRecordId = demoRoute ? undefined : activeRecordLoadState.record?.id
@@ -278,7 +281,7 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
       setSaveState({ error: locale === 'zh' ? '缺少登录用户，无法保存。' : 'Missing signed-in user.', status: 'error' })
       return
     }
-    const queue = editQueueRef.current ?? createRecordEditQueue(record, demoRoute ? async (next) => next : (next) => persistPatientRecord(next, userId!))
+    const queue = editQueueRef.current ?? createRecordEditQueue(record, demoRoute ? (next) => demoSession ? demoSession.saveRecord(next) : Promise.resolve(next) : (next) => persistPatientRecord(next, userId!))
     editQueueRef.current = queue
     setSaveState({ error: null, status: 'saving' })
     try {
@@ -450,11 +453,11 @@ export function RecordPage({ isSigningOut, onSignOut, userId, userIsAnonymous, u
     <div className={dark ? 'min-h-screen bg-[var(--ff-surface-base)] text-[var(--ff-text-primary)]' : 'ff-light-record-bg min-h-screen text-[var(--ff-text-primary)]'}>
       <ClinicalTopBar theme={theme} title={locale === 'zh' ? '病历详情' : 'Record Detail'} withRail />
       <ArchiveSideNav
-        analyticsHref={demoRoute ? (publicDemoRoute ? '/demo/analytics' : '/analytics/demo') : `/analytics/${id}`}
+        analyticsHref={productPath(`/analytics/${id}`)}
         dark={dark}
         isSigningOut={isSigningOut}
         onSignOut={onSignOut}
-        recordHref={demoRoute ? (publicDemoRoute ? '/demo/record' : '/record/demo') : `/record/${id}`}
+        recordHref={productPath(`/record/${id}`)}
         userIsAnonymous={userIsAnonymous}
         userLabel={userLabel ?? (demoRoute ? 'DEMO_MODE' : id)}
       />

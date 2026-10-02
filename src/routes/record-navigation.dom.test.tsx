@@ -48,6 +48,7 @@ it('supports End and arrow keys while preserving focus on the selected tab', asy
 it('keeps patient-scoped links and sharing collapsed above the dossier', () => {
   const { container } = render(<Page />)
   expect(screen.getByRole('navigation', { name: '当前病历导航' })).toBeVisible()
+  expect(screen.getByRole('link', { name: '返回工作台' })).toHaveAttribute('href', '/app?patient=p1')
   expect(screen.getByTestId('record-follow-up-link')).toHaveAttribute('href', '/record/p1/follow-up')
   expect(container.querySelector('details')).not.toHaveAttribute('open')
   expect(screen.getByText('展开分享设置')).toBeVisible()

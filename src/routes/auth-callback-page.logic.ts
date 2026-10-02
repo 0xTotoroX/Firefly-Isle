@@ -1,77 +1,85 @@
 /**
- * [INPUT]: 依赖 Supabase Auth 的 exchangeCodeForSession 与 getSession 方法，依赖浏览器回调 URL。
- * [OUTPUT]: 对外提供 restoreAuthCallbackSession、getOAuthCallbackErrorMessage 与 AuthCallbackClient 类型。
- * [POS]: routes 的 OAuth 回调动作层，把 URL code 或错误参数归一为 Supabase session/友好反馈，供 /auth/callback 与路由入口消费。
+ * [INPUT]: Supabase Auth 的 code exchange/session 方法与回调 URL。
+ * [OUTPUT]: 统一 query/fragment 错误、一次性 code 兑换与显式终态；重置密码可要求本次 code 产生会话。
+ * [POS]: 两个公共认证回调的共享动作层；SDK 在这些路由关闭自动 URL 兑换，避免重复消费 code。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
-export type AuthCallbackClient = {
-  exchangeCodeForSession: (code: string) => Promise<{ error: unknown | null }>
-  getSession: () => Promise<{ data: { session: unknown | null }; error: unknown | null }>
-}
+import { copy, getCopy } from '@/lib/copy'
+import type { Locale } from '@/lib/locale'
+import type { RecoverySession } from '@/lib/password-recovery'
 
+export type CallbackSession = RecoverySession & { user: { id: string; email?: string; is_anonymous?: boolean } }
+export type AuthCallbackClient = {
+  exchangeCodeForSession: (code: string) => Promise<{ data: { session: CallbackSession | null }; error: unknown | null }>
+  getSession: () => Promise<{ data: { session: CallbackSession | null }; error: unknown | null }>
+}
 export type AuthCallbackResult =
-  | { status: 'authenticated' }
+  | { status: 'authenticated'; session: CallbackSession }
   | { status: 'anonymous' }
   | { message: string; status: 'error' }
+
+const exchanges = new WeakMap<AuthCallbackClient, Map<string, ReturnType<AuthCallbackClient['exchangeCodeForSession']>>>()
 
 function getCallbackHref() {
   return typeof window === 'undefined' ? undefined : window.location.href
 }
 
-function readCallbackCode(href = getCallbackHref()) {
-  if (!href) {
-    return null
-  }
-
+function callbackParams(href = getCallbackHref()) {
   try {
-    return new URL(href).searchParams.get('code')
+    const url = new URL(href ?? '', 'https://firefly.local')
+    return { query: url.searchParams, fragment: new URLSearchParams(url.hash.slice(1)) }
   } catch {
-    return null
+    return { query: new URLSearchParams(), fragment: new URLSearchParams() }
   }
 }
 
-export function getOAuthCallbackErrorMessage(href = getCallbackHref()) {
-  if (!href) {
-    return null
-  }
-
-  try {
-    const params = new URL(href, 'https://firefly.local').searchParams
-    const errorCode = params.get('error_code')
-    const errorDescription = params.get('error_description') ?? ''
-
-    if (errorCode === 'bad_oauth_state' || errorDescription.includes('OAuth state has expired')) {
-      return 'Google 登录请求已过期，请重新使用 Google 继续。'
+export function getOAuthCallbackErrorMessage(href = getCallbackHref(), locale: Locale = 'zh') {
+  const { query, fragment } = callbackParams(href)
+  for (const params of [query, fragment]) {
+    const description = params.get('error_description') ?? ''
+    if (params.get('error_code') === 'bad_oauth_state' || description.includes('OAuth state has expired')) {
+      return locale === 'zh' ? 'Google 登录请求已过期，请重新使用 Google 继续。' : 'The Google sign-in request expired. Try Google again.'
     }
-
-    return params.has('error') ? 'Google 登录没有完成，请重新使用 Google 继续。' : null
-  } catch {
-    return null
+    if (['error', 'error_code', 'error_description'].some((key) => params.has(key))) {
+      return getCopy(copy.authFeedback.callbackInvalid, locale)
+    }
   }
+  return null
 }
 
-export async function restoreAuthCallbackSession(auth: AuthCallbackClient, href?: string): Promise<AuthCallbackResult> {
-  const callbackErrorMessage = getOAuthCallbackErrorMessage(href)
-
-  if (callbackErrorMessage) {
-    return { message: callbackErrorMessage, status: 'error' }
+function exchangeOnce(auth: AuthCallbackClient, code: string) {
+  let requests = exchanges.get(auth)
+  if (!requests) {
+    requests = new Map()
+    exchanges.set(auth, requests)
   }
-
-  const code = readCallbackCode(href)
-
-  if (code) {
-    const { error } = await auth.exchangeCodeForSession(code)
-
-    if (error) {
-      return { message: '登录回调已失效，请重新使用 Google 继续。', status: 'error' }
-    }
+  let request = requests.get(code)
+  if (!request) {
+    request = Promise.resolve().then(() => auth.exchangeCodeForSession(code))
+    requests.set(code, request)
   }
+  return request
+}
 
-  const { data, error } = await auth.getSession()
+export async function restoreAuthCallbackSession(
+  auth: AuthCallbackClient,
+  href = getCallbackHref(),
+  options: { requireCode?: boolean; locale?: Locale } = {},
+): Promise<AuthCallbackResult> {
+  const locale = options.locale ?? 'zh'
+  const invalid = getCopy(options.requireCode ? copy.authFeedback.resetLinkInvalid : copy.authFeedback.callbackInvalid, locale)
+  const callbackError = getOAuthCallbackErrorMessage(href, locale)
+  if (callbackError) return { message: options.requireCode ? invalid : callbackError, status: 'error' }
+  const code = callbackParams(href).query.get('code')
+  if (options.requireCode && !code) return { message: invalid, status: 'error' }
 
-  if (error) {
-    return { message: '无法恢复登录状态，请刷新后重试。', status: 'error' }
+  try {
+    // Never consult a retained session after a failed exchange.
+    const { data, error } = code ? await exchangeOnce(auth, code) : await auth.getSession()
+    if (error) return { message: code ? invalid : getCopy(copy.authFeedback.restoreFailed, locale), status: 'error' }
+    if (options.requireCode && (!data.session?.user.email || data.session.user.is_anonymous || !data.session.access_token || !data.session.refresh_token)) return { message: invalid, status: 'error' }
+    return data.session ? { status: 'authenticated', session: data.session } : code ? { message: invalid, status: 'error' } : { status: 'anonymous' }
+  } catch {
+    return { message: getCopy(copy.authFeedback.callbackUnavailable, locale), status: 'error' }
   }
-
-  return data.session ? { status: 'authenticated' } : { status: 'anonymous' }
 }

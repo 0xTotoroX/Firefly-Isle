@@ -53,16 +53,18 @@ function readStoredAccent() {
   return normalizeAccentHex(window.localStorage.getItem(ACCENT_STORAGE_KEY))
 }
 
-export function ThemeProvider({ children }: PropsWithChildren) {
-  const [theme, setThemeState] = useState<Theme>(readStoredTheme)
-  const [accent, setAccentState] = useState(readStoredAccent)
+export function ThemeProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
+  const [theme, setThemeState] = useState<Theme>(() => persist ? readStoredTheme() : 'dark')
+  const [accent, setAccentState] = useState(() => persist ? readStoredAccent() : defaultAccentHex)
 
   useEffect(() => {
     applyTheme(theme)
     applyAccent(accent, theme)
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-    window.localStorage.setItem(ACCENT_STORAGE_KEY, accent)
-  }, [accent, theme])
+    if (persist) {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme)
+      window.localStorage.setItem(ACCENT_STORAGE_KEY, accent)
+    }
+  }, [accent, theme, persist])
 
   const setTheme = useCallback((nextTheme: Theme) => {
     setThemeState(nextTheme)

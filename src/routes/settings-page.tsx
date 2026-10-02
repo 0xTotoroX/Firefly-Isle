@@ -4,13 +4,15 @@
  * [POS]: routes 的账户设置 orchestration 层，负责账户身份展示、显示名称/界面语言/外观主题的读写，档案服务缺失时降级为本地偏好并明示。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { useDemoSession } from '@/lib/demo-session'
+import { DemoModeBanner } from '@/components/system/demo-mode-banner'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
 import { MainShell } from '@/components/system/surfaces'
 import { useAsyncResource } from '@/lib/async-resource'
-import { useAuth } from '@/lib/auth'
+import { useOptionalAuth } from '@/lib/auth'
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale, type Locale } from '@/lib/locale'
 import { getOnlineRequiredMessage } from '@/lib/network-status'
@@ -40,11 +42,12 @@ type SettingsPageProps = {
 }
 
 export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: SettingsPageProps) {
-  const { user } = useAuth()
+  const user = useOptionalAuth()?.user
+  const demo = useDemoSession()
   const { locale, setLocale } = useLocale()
   const { accent, setAccent, theme, setTheme } = useTheme()
   const dark = theme === 'dark'
-  const resource = useAsyncResource(() => getUserProfile(), [])
+  const resource = useAsyncResource(() => demo ? demo.session.loadProfile() : getUserProfile(), [demo?.session])
   const [displayName, setDisplayName] = useState('')
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
@@ -61,7 +64,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
     }
   }, [resource.data])
 
-  const accountLabel = userIsAnonymous || user?.is_anonymous ? getCopy(copy.settings.anonymousLabel, locale) : user?.email ?? getCopy(copy.settings.anonymousLabel, locale)
+  const accountLabel = demo ? (locale === 'zh' ? '虚构演示账号' : 'Fictional demo account') : userIsAnonymous || user?.is_anonymous ? getCopy(copy.settings.anonymousLabel, locale) : user?.email ?? getCopy(copy.settings.anonymousLabel, locale)
   const profileUnavailable = !resource.isLoading && !resource.error && resource.data === null
   const loadFailed = Boolean(resource.error)
 
@@ -71,7 +74,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
     setSaved(false)
 
     try {
-      await saveUserProfile({ displayName, locale, theme })
+      await (demo ? demo.session.saveProfile : saveUserProfile)({ displayName, locale, theme })
       setSaved(true)
     } catch (error: unknown) {
       setSaveError(
@@ -88,7 +91,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
     setLocale(nextLocale)
 
     if (resource.data) {
-      void saveUserProfile({ locale: nextLocale }).catch(() => undefined)
+      void (demo ? demo.session.saveProfile : saveUserProfile)({ locale: nextLocale }).catch(() => undefined)
     }
   }
 
@@ -96,7 +99,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
     setTheme(nextTheme)
 
     if (resource.data) {
-      void saveUserProfile({ theme: nextTheme }).catch(() => undefined)
+      void (demo ? demo.session.saveProfile : saveUserProfile)({ theme: nextTheme }).catch(() => undefined)
     }
   }
 
@@ -105,7 +108,14 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
     setExportError(null)
 
     try {
-      await downloadAccountDataExport()
+      if (demo) {
+        const url = URL.createObjectURL(new Blob([JSON.stringify({ demo: true, disclosure: '完全虚构的演示资料', ...demo.session.getState() }, null, 2)], { type: 'application/json' }))
+        const anchor = document.createElement('a')
+        anchor.href = url
+        anchor.download = 'firefly-demo-data.json'
+        anchor.click()
+        URL.revokeObjectURL(url)
+      } else await downloadAccountDataExport()
     } catch (error: unknown) {
       setExportError(
         error instanceof ProfileSettingsError && error.requiresOnline
@@ -118,6 +128,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
   }
 
   async function handleDeleteAccount() {
+    if (demo) return
     if (deleteConfirmText !== getCopy(copy.settings.deleteConfirmWord, locale)) {
       setDeleteError(getCopy(copy.settings.deleteConfirmMismatch, locale))
       return
@@ -149,6 +160,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
       />
       <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen px-4 pb-8 md:px-6 md:pb-10`} theme={theme}>
         <div className={`${shellWideContentClass} t-route-reveal mt-5 md:mt-6`}>
+          {demo ? <DemoModeBanner /> : null}
           <h1 className="font-[var(--ff-font-display)] text-3xl font-black tracking-tight">{getCopy(copy.settings.title, locale)}</h1>
 
           {loadFailed ? (
@@ -291,12 +303,14 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
               {getCopy(copy.settings.donateSection, locale)}
             </div>
             <p className="mt-3 text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.donate.description, locale)}</p>
+            {demo ? <p className="mt-4 text-sm">{locale === 'zh' ? '捐赠仅供预览，演示不发起付款。' : 'Donation preview only. Demo does not initiate payments.'}</p> : (
             <Link
               className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] bg-[var(--ff-accent-primary)] px-5 text-sm font-bold text-[var(--ff-accent-foreground)]"
               to="/donate"
             >
               {getCopy(copy.settings.donateLink, locale)}
             </Link>
+            )}
           </section>
 
           <section className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-6">
@@ -322,11 +336,12 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
                 </button>
               </div>
               <div>
-                <p className="text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.settings.deleteDescription, locale)}</p>
+                <p className="text-sm leading-6 text-[var(--ff-text-secondary)]">{demo ? (locale === 'zh' ? '账户删除仅供预览，演示不能删除真实账户。' : 'Account deletion is unavailable in Demo.') : getCopy(copy.settings.deleteDescription, locale)}</p>
                 <input
                   aria-label={getCopy(copy.settings.deleteConfirmLabel, locale)}
                   className="mt-3 w-full rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] px-3 py-2 text-sm font-semibold outline-none focus-visible:border-[var(--ff-accent-primary)]"
                   data-testid="settings-delete-confirm-input"
+                  disabled={Boolean(demo)}
                   onChange={(event) => setDeleteConfirmText(event.target.value)}
                   placeholder={getCopy(copy.settings.deleteConfirmLabel, locale)}
                   type="text"
@@ -340,7 +355,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
                 <button
                   className="t-control-press mt-4 inline-flex min-h-[44px] items-center justify-center rounded-[14px] border border-[var(--ff-accent-primary)] px-5 text-sm font-bold text-[var(--ff-accent-text)] transition-colors hover:bg-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-foreground)] disabled:cursor-not-allowed disabled:opacity-60"
                   data-testid="settings-delete-button"
-                  disabled={deleting || deleteConfirmText !== getCopy(copy.settings.deleteConfirmWord, locale)}
+                  disabled={Boolean(demo) || deleting || deleteConfirmText !== getCopy(copy.settings.deleteConfirmWord, locale)}
                   onClick={() => void handleDeleteAccount()}
                   type="button"
                 >

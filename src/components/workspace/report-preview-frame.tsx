@@ -17,6 +17,7 @@ type ReportPreviewFrameProps = {
   followUpCount?: number
   isExtracting: boolean
   isSaving: boolean
+  isLocked?: boolean
   onCommitField: (target: PatientFieldTarget, value: string) => void
   record: PatientRecord
   recordDetailsHref?: string
@@ -463,6 +464,7 @@ export function ReportPreviewFrame({
   followUpCount = 0,
   isExtracting,
   isSaving,
+  isLocked = false,
   onCommitField,
   record,
   recordDetailsHref,
@@ -471,7 +473,7 @@ export function ReportPreviewFrame({
   theme,
 }: ReportPreviewFrameProps) {
   const { locale } = useLocale()
-  const disabled = isExtracting || isSaving
+  const disabled = isExtracting || isSaving || isLocked
   const recordHasData = hasRecordData(record)
   const basicInfo = record.basicInfo
   const lineOne = firstTreatmentLine(record)

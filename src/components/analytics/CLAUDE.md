@@ -3,8 +3,8 @@
 
 成员清单
 CLAUDE.md: 说明统计页展示组件目录职责，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-demo-lab-analytics.ts: 全产品 Demo 的演示实验室趋势和静态 AI 分析数据源，压缩血常规/血生化/肿瘤指标三份表格为网页端 labResults fixture，并让 /demo/record 与 /demo/analytics 共享同一语义患者记录，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-lab-analytics-dashboard.tsx: 实验室趋势统计主界面，编排中文摘要指标条、可搜索/可滚动分类指标索引、趋势图控制、等价数据表、最近异常、肿瘤标志物连续上涨提醒联动高亮、公开 Demo 空态引导与非诊断监测面板，文件上传入口留在 /app 输入区，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+demo-lab-analytics.ts: 统一虚构 fixture 的化验/病历兼容导出和明确标注的固定 AI 预览。
+lab-analytics-dashboard.tsx: 实验室趋势统计主界面，区分加载/失败/真实空态并提供重试，编排中文摘要指标条、分类索引、趋势图控制、等价数据表、异常与连续上涨提醒；化验上传链接保留患者上下文并进入 /app，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-analytics-controls.tsx: 统计页常量与小型展示部件，提供分类顺序、默认指标、滚动/监测行样式、摘要卡、只读数值、拖动提示和肿瘤上涨窗口格式化，避免 dashboard 超过 800 行，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-analytics-format.tsx: 统计页状态文案、数值/比例格式化、状态标签与上涨比例标签展示工具，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-trend-chart.tsx: 横向 SVG 趋势图组件，负责冻结 Y 轴刻度、参考范围、图表点键盘/点击选择、肿瘤连续上涨段高亮、拖动误选抑制与时间点显示密度控制，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

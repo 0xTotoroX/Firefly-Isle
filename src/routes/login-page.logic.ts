@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 @/components/login-page-view 的 AuthMode/AuthFeedback 类型，依赖 Supabase Auth 方法的结构化子集。
  * [OUTPUT]: 对外提供 submitEmailAuth、startAnonymousAuth、startGoogleAuth、getAuthRedirectTo 与 LoginAuthClient 类型。
- * [POS]: routes 的登录页动作层，隔离 Supabase Auth 调用、反馈文案、无邮箱确认注册会话要求与 Google OAuth 参数，让 login-page.tsx 只负责状态接线。
+ * [POS]: routes 的登录页动作层，区分本次认证成功、邮箱确认等待与 OAuth 跳转，供容器安全决定导航。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import type { AuthFeedback, AuthMode } from '@/components/login-page-view'
@@ -17,10 +17,11 @@ export type LoginAuthClient = {
     options?: { queryParams?: { prompt?: 'select_account' }; redirectTo?: string }
   }) => Promise<{ error: unknown | null }>
   signInWithPassword: (input: { email: string; password: string }) => Promise<{ error: unknown | null }>
-  signUp: (input: { email: string; password: string }) => Promise<{ data: { session: unknown | null } | null; error: unknown | null }>
+  signUp: (input: { email: string; password: string; options?: { emailRedirectTo?: string } }) => Promise<{ data: { session: unknown | null; user?: unknown | null } | null; error: unknown | null }>
 }
 
 export type AuthActionResult = {
+  authenticated?: true
   clearPassword?: boolean
   feedback: AuthFeedback
   nextMode?: AuthMode
@@ -33,9 +34,10 @@ type SubmitEmailAuthInput = {
   mode: AuthMode
   password: string
   passwordResetRedirectTo?: string
+  signUpRedirectTo?: string
 }
 
-export function getAuthRedirectTo(path: '/app' | '/auth/callback' | '/login' = '/app') {
+export function getAuthRedirectTo(path: '/app' | '/auth/callback' | '/auth/reset-password' | '/login' = '/app') {
   if (typeof window === 'undefined') {
     return undefined
   }
@@ -61,6 +63,7 @@ export async function submitEmailAuth({
   mode,
   password,
   passwordResetRedirectTo,
+  signUpRedirectTo,
 }: SubmitEmailAuthInput): Promise<AuthActionResult> {
   if (isBrowserOffline()) {
     return {
@@ -93,11 +96,12 @@ export async function submitEmailAuth({
     }
 
     return {
+      authenticated: true,
       feedback: { message: getCopy(copy.authFeedback.signingIn, locale), tone: 'neutral' },
     }
   }
 
-  const { data, error } = await auth.signUp({ email, password })
+  const { data, error } = await auth.signUp({ email, password, ...(signUpRedirectTo ? { options: { emailRedirectTo: signUpRedirectTo } } : {}) })
 
   if (error) {
     return {
@@ -107,13 +111,18 @@ export async function submitEmailAuth({
 
   if (data?.session) {
     return {
+      authenticated: true,
       clearPassword: true,
       feedback: { message: getCopy(copy.authFeedback.signUpSuccess, locale), tone: 'neutral' },
     }
   }
 
-  return {
-    feedback: { message: getCopy(copy.authFeedback.signUpNoSession, locale), tone: 'error' },
+  return data?.user ? {
+    clearPassword: true,
+    feedback: { message: getCopy(copy.authFeedback.signUpPending, locale), tone: 'success' },
+    nextMode: 'login',
+  } : {
+    feedback: { message: getCopy(copy.authFeedback.signUpFailed, locale), tone: 'error' },
   }
 }
 
@@ -133,6 +142,7 @@ export async function startAnonymousAuth(auth: LoginAuthClient, locale: Locale =
   }
 
   return {
+    authenticated: true,
     feedback: { message: getCopy(copy.authFeedback.anonymousReady, locale), tone: 'neutral' },
   }
 }

@@ -8,7 +8,6 @@ import type { RefObject } from 'react'
 import { ClinicalRecordNav } from '@/components/record/clinical-record-nav'
 
 import type { ClinicalAnalysisPanelState } from '@/components/record/ClinicalAnalysisPanel'
-import { demoTreatmentGanttSupplementNotes } from '@/components/record/demo-record'
 import { labels } from '@/components/record/record-copy'
 import { RecordSharePanel, type RecordSharePanelState } from '@/components/record/RecordSharePanel'
 import { RecordDossier, RecordUnavailableDossier } from '@/components/record/record-dossier'
@@ -217,7 +216,7 @@ export function RecordPageContent({
   ) : null
   const controlsNode = ganttRecord ? (
     <>
-    {!demoRoute && ganttRecord.id ? <ClinicalRecordNav active="record" locale={locale} patientId={ganttRecord.id} /> : null}
+    {ganttRecord.id ? <ClinicalRecordNav active="record" locale={locale} patientId={ganttRecord.id} /> : null}
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       {switchNode}
       <div className="flex items-center gap-3">
@@ -239,7 +238,6 @@ export function RecordPageContent({
             onCommitField={onCommitField}
             onCommitRange={onCommitRange}
             record={ganttRecord}
-            supplementNotes={demoRoute ? demoTreatmentGanttSupplementNotes : undefined}
           />
         </div>
       </>

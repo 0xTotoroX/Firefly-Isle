@@ -4,6 +4,8 @@
  * [POS]: /record/:id/follow-up 的前端编排；读取失败不伪装为空态，保存成功后重新读取。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { useDemoSession } from '@/lib/demo-session'
+import { DemoModeBanner } from '@/components/system/demo-mode-banner'
 import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
@@ -49,8 +51,9 @@ export function FollowUpPage(props: FollowUpPageProps) {
 function FollowUpPatientPage({ patientId, isSigningOut, onSignOut, userIsAnonymous, userLabel }: FollowUpPageProps & { patientId: string }) {
   const { locale } = useLocale()
   const { theme } = useTheme()
-  const recordResource = useAsyncResource(() => loadPatientRecordById(patientId), [patientId])
-  const visitsResource = useAsyncResource(() => loadFollowUpVisits(patientId), [patientId])
+  const demo = useDemoSession()
+  const recordResource = useAsyncResource(() => (demo ? demo.session.loadRecord : loadPatientRecordById)(patientId), [patientId])
+  const visitsResource = useAsyncResource(() => (demo ? demo.session.loadVisits : loadFollowUpVisits)(patientId), [patientId])
   const [form, setForm] = useState(blankVisit)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [operation, setOperation] = useState<'save' | 'status' | 'delete' | null>(null)
@@ -87,8 +90,8 @@ function FollowUpPatientPage({ patientId, isSigningOut, onSignOut, userIsAnonymo
     setError(null)
     setFeedback(null)
     try {
-      if (editingId) await updateFollowUpVisit(editingId, form)
-      else await createFollowUpVisit(patientId, form)
+      if (editingId) await (demo ? demo.session.updateVisit : updateFollowUpVisit)(editingId, form)
+      else await (demo ? demo.session.createVisit : createFollowUpVisit)(patientId, form)
       resetForm()
       setFeedback(getCopy(copy.followUp.savedFeedback, locale))
       visitsResource.reload()
@@ -103,7 +106,7 @@ function FollowUpPatientPage({ patientId, isSigningOut, onSignOut, userIsAnonymo
     if (operation) throw new Error('Another operation is pending.')
     setOperation('delete')
     try {
-      await deleteFollowUpVisit(visitId)
+      await (demo ? demo.session.deleteVisit : deleteFollowUpVisit)(visitId)
       if (editingId === visitId) resetForm()
       setFeedback(getCopy(copy.clinicalWorkflow.deleted, locale))
       visitsResource.reload()
@@ -118,7 +121,7 @@ function FollowUpPatientPage({ patientId, isSigningOut, onSignOut, userIsAnonymo
     setError(null)
     setFeedback(null)
     try {
-      await setFollowUpStatus(patientId, next)
+      await (demo ? demo.session.setFollowUpStatus : setFollowUpStatus)(patientId, next)
       setFeedback(getCopy(copy.followUp.statusSavedFeedback, locale))
       recordResource.reload()
     } catch {
@@ -137,6 +140,7 @@ function FollowUpPatientPage({ patientId, isSigningOut, onSignOut, userIsAnonymo
           <p className="text-sm text-[var(--ff-text-muted)]">{recordResource.data?.basicInfo?.name}</p>
           <h1 className="mt-1 font-[var(--ff-font-display)] text-3xl font-bold">{getCopy(copy.followUp.title, locale)}</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.followUp.description, locale)}</p>
+          {demo ? <DemoModeBanner /> : null}
           <ClinicalRecordNav locale={locale} active="followUp" patientId={patientId} />
           {feedback ? <p className="my-3 text-sm text-[var(--ff-accent-success)]" role="status">{feedback}</p> : null}
           {error ? <p className="my-3 text-sm text-[var(--ff-critical)]" role="alert">{error}</p> : null}

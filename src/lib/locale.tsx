@@ -51,8 +51,8 @@ function readStoredLocale(): Locale {
   return window.localStorage.getItem(LOCALE_STORAGE_KEY) === 'en' ? 'en' : 'zh'
 }
 
-export function LocaleProvider({ children }: PropsWithChildren) {
-  const [locale, setLocaleState] = useState<Locale>(readStoredLocale)
+export function LocaleProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
+  const [locale, setLocaleState] = useState<Locale>(() => persist ? readStoredLocale() : 'zh')
 
   useEffect(() => {
     syncDocumentLocale(locale)
@@ -60,16 +60,16 @@ export function LocaleProvider({ children }: PropsWithChildren) {
 
   const setLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale)
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
-  }, [])
+    if (persist) window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
+  }, [persist])
 
   const toggleLocale = useCallback(() => {
     setLocaleState((currentLocale) => {
       const nextLocale = currentLocale === 'zh' ? 'en' : 'zh'
-      window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
+      if (persist) window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
       return nextLocale
     })
-  }, [])
+  }, [persist])
 
   const value = useMemo(
     () => ({ locale, setLocale, toggleLocale }),

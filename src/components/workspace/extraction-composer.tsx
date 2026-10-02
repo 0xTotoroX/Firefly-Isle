@@ -1,9 +1,10 @@
 /**
  * [INPUT]: 依赖 react 的 Effect、ref 与本地文字切换状态，依赖 @/components/system/surfaces 的 ActionSurface 与 PanelSurface，依赖 react-router-dom 的 Link 指向 /models，依赖 @/lib/copy 的工作区文案真相源与外部传入的工作区提取/OCR/编辑模式状态，依赖 transitions-dev.css 的 .t-icon-swap、.t-text-swap、.t-control-press 与 .t-popover 动效合同。
- * [OUTPUT]: 对外提供 ExtractionComposer 组件，渲染同构文本输入、OCR 文件输入、LLM provider 设置、语音工具、OCR 确认、编辑反馈、错误提示、重试入口、已有病历编辑主动作与新病历提取分流动作。
+ * [OUTPUT]: 对外提供 ExtractionComposer，保留病历文本/OCR 输入、模型设置、编辑/新建分流，并支持独立重试保存和化验审核期间锁定。
  * [POS]: components/workspace 的输入与主操作区块，被 workspace-page 组合，负责把 /app 收敛为病史输入、病历/检验报告文件上传、模型设置、医学文档 OCR 与结构化提取工作台。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { useDemoSession, useProductPath } from '@/lib/demo-session'
 import { useEffect, useRef, useState } from 'react'
 
 import { getCopy, copy } from '@/lib/copy'
@@ -19,6 +20,7 @@ type ExtractionComposerProps = {
   feedback?: string | null
   isExtracting: boolean
   isSaving: boolean
+  isLocked?: boolean
   ocrState?: OcrState
   onConfirmOcrText?: () => void
   onDiscardOcrText?: () => void
@@ -28,7 +30,7 @@ type ExtractionComposerProps = {
   onInputChange: (value: string) => void
   onRetry: () => void
   remainingMissingCount: number
-  retryMode: 'initial' | 'follow-up' | 'edit' | null
+  retryMode: 'initial' | 'follow-up' | 'edit' | 'save' | null
   theme: 'dark' | 'light'
 }
 
@@ -45,7 +47,7 @@ function getUnavailableTitle(feature: string, locale: 'zh' | 'en') {
 }
 
 function getUploadTitle(locale: 'zh' | 'en') {
-  return locale === 'zh' ? '上传病历图片、检验报告或 PDF' : 'Upload record image, lab report, or PDF'
+  return locale === 'zh' ? '上传病历图片或 PDF' : 'Upload a medical record image or PDF'
 }
 
 export function ExtractionComposer({
@@ -55,6 +57,7 @@ export function ExtractionComposer({
   feedback = null,
   isExtracting,
   isSaving,
+  isLocked = false,
   ocrState = { error: null, isProcessing: false, text: null },
   onConfirmOcrText,
   onDiscardOcrText,
@@ -69,7 +72,10 @@ export function ExtractionComposer({
 }: ExtractionComposerProps) {
   const { locale } = useLocale()
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const disabled = isExtracting || isSaving || ocrState.isProcessing
+  const demo = useDemoSession()
+  const productPath = useProductPath()
+  const disabled = isLocked || isExtracting || isSaving || ocrState.isProcessing
+  const awaitingSave = retryMode === 'save'
   const isEditMode = composerMode === 'edit'
   const statusLabel = isExtracting
     ? getCopy(copy.workspace.composer.analyzing, locale)
@@ -134,6 +140,7 @@ export function ExtractionComposer({
           value={extractionInput}
         />
         <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between gap-3">
+          {demo ? <button className="pointer-events-auto inline-flex min-h-[44px] items-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-3 text-sm font-semibold" disabled={disabled || awaitingSave} onClick={() => onImportFile?.(new File([''], '虚构病历示例.txt', { type: 'text/plain' }))} type="button">{locale === 'zh' ? '体验固定识别示例' : 'Preview fixed OCR example'}</button> : (
           <label
             aria-label={getCopy(copy.workspace.composer.importRecordFile, locale)}
             className="t-control-press pointer-events-auto inline-flex h-10 items-center justify-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-3 font-[var(--ff-font-ui)] text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-50"
@@ -143,7 +150,7 @@ export function ExtractionComposer({
             <input
               accept="image/*,application/pdf"
               className="sr-only"
-              disabled={disabled}
+              disabled={disabled || awaitingSave}
               onChange={(event) => {
                 const file = event.currentTarget.files?.[0]
 
@@ -159,6 +166,7 @@ export function ExtractionComposer({
             <span className="material-symbols-outlined text-lg">upload_file</span>
             {getCopy(copy.workspace.composer.importRecordFile, locale)}
           </label>
+          )}
           <div className="pointer-events-auto flex items-center gap-3">
             <button
               aria-label={getCopy(copy.workspace.composer.voiceInput, locale)}
@@ -193,7 +201,7 @@ export function ExtractionComposer({
       <Link
         className="t-control-press mt-3 inline-flex min-h-[38px] items-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
         data-testid="composer-model-settings-link"
-        to="/models"
+        to={productPath('/models')}
       >
         <span aria-hidden="true" className="material-symbols-outlined text-[18px]">tune</span>
         {locale === 'zh' ? '模型设置' : 'Model settings'}
@@ -243,9 +251,10 @@ export function ExtractionComposer({
             <button
               className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
               onClick={onRetry}
+              disabled={disabled}
               type="button"
             >
-              {retryMode === 'follow-up'
+              {retryMode === 'save' ? (locale === 'zh' ? '重试保存病历' : 'Retry saving record') : retryMode === 'follow-up'
                 ? getCopy(copy.workspace.composer.retryFollowUp, locale)
                 : retryMode === 'edit'
                   ? getCopy(copy.workspace.composer.retryEdit, locale)
@@ -255,7 +264,7 @@ export function ExtractionComposer({
           {isEditMode && onExtractAsNew ? (
             <button
               className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
-              disabled={disabled || inputTooLong}
+              disabled={disabled || awaitingSave || inputTooLong}
               onClick={onExtractAsNew}
               type="button"
             >
@@ -265,7 +274,7 @@ export function ExtractionComposer({
         </div>
         <button
           className="t-control-press inline-flex h-12 items-center justify-center gap-3 rounded-[var(--ff-radius-md)] bg-[var(--ff-accent-primary)] px-6 font-[var(--ff-font-ui)] text-sm font-bold text-[var(--ff-accent-foreground)] transition-colors hover:bg-[var(--ff-accent-strong)] disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={disabled || inputTooLong}
+          disabled={disabled || awaitingSave || inputTooLong}
           onClick={onExtract}
           type="button"
         >

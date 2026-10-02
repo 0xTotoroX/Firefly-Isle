@@ -4,6 +4,8 @@
  * [POS]: routes 的模型配置页，按 Codex++ 目录协议展示默认模型目录（文字 deepseek-v4-flash / 图像 deepseek-v4-image），并承载从工作区输入区迁移过来的自带密钥设置面板。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { useDemoSession, useProductPath } from '@/lib/demo-session'
+import { DemoModeBanner } from '@/components/system/demo-mode-banner'
 import { Link } from 'react-router-dom'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
@@ -34,6 +36,8 @@ type ModelsPageProps = {
 
 export function ModelsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: ModelsPageProps) {
   const { locale } = useLocale()
+  const demo = useDemoSession()
+  const productPath = useProductPath()
   const { theme } = useTheme()
   const dark = theme === 'dark'
   const entries = listVisibleModels()
@@ -53,6 +57,7 @@ export function ModelsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel
           <div className="font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]">
             {getCopy(copy.models.eyebrow, locale)}
           </div>
+          {demo ? <DemoModeBanner /> : null}
           <h1 className="mt-1 font-[var(--ff-font-display)] text-3xl font-black tracking-tight">{getCopy(copy.models.title, locale)}</h1>
 
           <section className="mt-6 rounded-[var(--ff-radius-lg)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] p-6">
@@ -104,7 +109,7 @@ export function ModelsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel
 
           <Link
             className="t-control-press mt-6 inline-flex min-h-[40px] items-center rounded-[12px] border border-[var(--ff-border-default)] px-4 text-sm font-bold text-[var(--ff-text-primary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
-            to="/settings"
+            to={productPath('/settings')}
           >
             {getCopy(copy.settings.title, locale)}
           </Link>

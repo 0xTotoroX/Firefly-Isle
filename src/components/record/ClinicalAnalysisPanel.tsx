@@ -100,6 +100,7 @@ export function ClinicalAnalysisPanel({
         </div>
         <button
           className='t-control-press w-fit border-b border-[var(--ff-border-default)] pb-0.5 text-sm font-semibold text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-text-primary)] disabled:cursor-not-allowed disabled:opacity-50'
+          data-html2canvas-ignore
           disabled={disabled || state.isLoading || !onAnalyze}
           onClick={onAnalyze}
           type='button'

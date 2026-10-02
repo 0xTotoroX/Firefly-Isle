@@ -60,3 +60,10 @@ describe('Supabase client migration wiring', () => {
     expect(() => client.completeSupabaseSessionMigration(token('https://supabase.ghibli1024.com'))).not.toThrow()
   })
 })
+
+it.each(['/auth/callback', '/auth/reset-password', '/login', '/'])('assigns exactly one URL exchange owner for %s', async (pathname) => {
+  Object.assign(window, { location: { pathname } })
+  const client = await import('./supabase')
+  client.getSupabaseClient()
+  expect(mock.createClient).toHaveBeenCalledWith(expect.any(String), expect.any(String), expect.objectContaining({ auth: expect.objectContaining({ flowType: 'pkce', detectSessionInUrl: !pathname.startsWith('/auth/') }) }))
+})

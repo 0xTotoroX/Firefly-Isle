@@ -1,9 +1,10 @@
 /**
  * [INPUT]: 依赖 react 的状态、ref 与 pointer/keyboard 事件，依赖 react-router-dom 的 Link/useLocation，依赖 FireflyMark、FireflyBrandWordmark 与 SidebarShell，依赖 @/lib/theme、locale、可选真实病历/统计 href 与紧凑可拖拽侧栏 token。
  * [OUTPUT]: 对外提供 ArchiveSideNav 组件、ArchiveSideNavProps 类型与 AVATAR_PLACEHOLDER 常量。
- * [POS]: src/components/system 的共享侧栏导航组件，统一 dark/light 的紧凑桌面默认展开、移动端默认收起、真实病历/统计入口、显式公开 Demo 入口、固定账户设置入口、无自有病历时禁用病历/统计并显示“先提取”提示、独立品牌 mark/中英文 display token 侧栏字标、中文“萤”与英文 Firefly 主题光晕、边线胶囊折叠、44px 恢复热区、左缘渐进拉出、拖拽缩放到隐藏、阈值 icon-only、active 细左标与低强度行面、Google Translate 与临床笔记图标、匿名/非匿名身份图标、无下拉误导的偏好控制与会话出口。
+ * [POS]: src/components/system 的共享侧栏导航组件，统一 dark/light 的紧凑桌面默认展开、移动端默认收起、真实病历/统计入口、显式公开 Demo 入口、固定账户设置入口、无当前患者时转到总览病历列表，工作区明确为空时保留“先提取”提示、独立品牌 mark/中英文 display token 侧栏字标、中文“萤”与英文 Firefly 主题光晕、边线胶囊折叠、44px 恢复热区、左缘渐进拉出、拖拽缩放到隐藏、阈值 icon-only、active 细左标与低强度行面、Google Translate 与临床笔记图标、匿名/非匿名身份图标、无下拉误导的偏好控制与会话出口。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { useDemoSession, useProductPath } from '@/lib/demo-session'
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
@@ -76,11 +77,11 @@ function shouldStartHidden() {
 }
 
 export type ArchiveSideNavProps = {
-  analyticsHref?: string
+  analyticsHref?: string | null
   dark: boolean
   isSigningOut?: boolean
   onSignOut?: () => void
-  recordHref?: string
+  recordHref?: string | null
   userIsAnonymous?: boolean
   userLabel?: string
 }
@@ -105,10 +106,12 @@ function isActive(pathname: string, href: string) {
 
 export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSignOut, recordHref, userIsAnonymous = false, userLabel }: ArchiveSideNavProps) {
   const location = useLocation()
+  const demo = useDemoSession()
+  const productPath = useProductPath()
   const { locale } = useLocale()
-  const [expandedWidth, setExpandedWidth] = useState(readStoredExpandedWidth)
+  const [expandedWidth, setExpandedWidth] = useState(() => demo ? sidebarDefaultWidth : readStoredExpandedWidth())
   const [hidden, setHidden] = useState(shouldStartHidden)
-  const [width, setWidth] = useState(readStoredExpandedWidth)
+  const [width, setWidth] = useState(() => demo ? sidebarDefaultWidth : readStoredExpandedWidth())
   const dragMovedRef = useRef(false)
   const hiddenRevealDragRef = useRef<HiddenRevealDrag | null>(null)
   const resolvedUserLabel = userLabel ?? getCopy(copy.shell.nav.pendingAccess, locale)
@@ -120,8 +123,8 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
     () => [
       { icon: 'space_dashboard', href: '/dashboard', labelKey: 'dashboard' },
       { icon: 'my_location', href: '/app', labelKey: 'extract' },
-      { icon: 'clinical_notes', href: recordHref, labelKey: 'record' },
-      { icon: 'bar_chart', href: analyticsHref, labelKey: 'analytics' },
+      { icon: 'clinical_notes', href: recordHref === undefined ? '/dashboard#records' : recordHref ?? undefined, labelKey: 'record' },
+      { icon: 'bar_chart', href: analyticsHref === undefined ? '/dashboard#records' : analyticsHref ?? undefined, labelKey: 'analytics' },
       { icon: 'tune', href: '/models', labelKey: 'models' },
       { icon: 'settings', href: '/settings', labelKey: 'settings' },
     ],
@@ -159,7 +162,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
       const normalizedWidth = normalizeExpandedWidth(nextWidth)
 
       setExpandedWidth(normalizedWidth)
-      writeStoredExpandedWidth(normalizedWidth)
+      if (!demo) writeStoredExpandedWidth(normalizedWidth)
     }
   }
 
@@ -211,7 +214,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
       const normalizedWidth = normalizeExpandedWidth(nextWidth)
 
       setExpandedWidth(normalizedWidth)
-      writeStoredExpandedWidth(normalizedWidth)
+      if (!demo) writeStoredExpandedWidth(normalizedWidth)
     }
   }
 
@@ -432,7 +435,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
                   'group flex min-w-0 rounded-[var(--ff-radius-md)] text-[var(--ff-text-primary)] outline-none transition-[color] duration-200 focus-visible:ring-2 focus-visible:ring-[var(--ff-accent-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ff-surface-sidebar)]',
                   compact ? 'items-center justify-center' : 'items-end justify-start gap-1.5',
                 )}
-                to="/app"
+                to={productPath('/app')}
               >
                 <FireflyMark className={compact ? undefined : 'h-[52px] w-[52px]'} size={compact ? 'rail' : 'large'} />
                 {renderBrandTitle()}
@@ -440,8 +443,9 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
             </div>
 
             <nav className={cn('flex w-full flex-col gap-1', compact ? 'items-center' : 'items-stretch')}>
+              {!demo ? <a className="flex min-h-[44px] items-center gap-3 px-4 text-sm font-semibold text-[var(--ff-text-secondary)]" href="/demo"><span aria-hidden="true" className="material-symbols-outlined">play_circle</span>{compact ? null : (locale === 'zh' ? '体验演示' : 'Try demo')}</a> : null}
               {navItems.map((item) => {
-                const active = item.href ? isActive(location.pathname, item.href) : false
+                const active = item.href ? isActive(location.pathname.replace(/^\/demo(?=\/)/, ''), item.href.replace(/^\/demo(?=\/)/, '')) : false
                 const label = getCopy(copy.shell.nav[item.labelKey], locale)
                 const unavailableHint = item.href ? null : getCopy(copy.shell.nav.extractFirst, locale)
                 const navigationLabel = unavailableHint ? `${label}：${unavailableHint}` : label
@@ -477,7 +481,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
                 )
 
                 return item.href ? (
-                  <Link aria-label={navigationLabel} className={itemClassName} key={item.labelKey} title={navigationLabel} to={item.href}>
+                  <Link aria-label={navigationLabel} className={itemClassName} key={item.labelKey} title={navigationLabel} to={productPath(item.href)}>
                     {itemContent}
                   </Link>
                 ) : (

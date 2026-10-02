@@ -1,7 +1,7 @@
 # demo-mode Specification
 
 ## Purpose
-TBD - created by archiving change make-demo-mode-cover-full-product. Update Purpose after archive.
+定义无需认证、仅用明确虚构资料的完整产品演示。演示复用正式页面与交互，独立于真实账户和数据库。
 ## Requirements
 ### Requirement: 公开 Demo 模式覆盖完整产品主链路
 系统 SHALL 提供无需登录即可访问的 Demo 模式，用于投资人演示、使用教程和开发调试，并覆盖当前产品主链路的主要可见能力。
@@ -13,9 +13,9 @@ TBD - created by archiving change make-demo-mode-cover-full-product. Update Purp
 - **AND** 系统 SHALL 展示真实产品页面组件，而不是营销落地页
 
 #### Scenario: Demo 页面显示模式提醒
-- **WHEN** 用户访问 `/demo/record` 或 `/demo/analytics`
+- **WHEN** 用户访问任意 `/demo` 页面
 - **THEN** 页面 SHALL 显示当前为 Demo 视图的提醒
-- **AND** 提醒 SHALL 说明数据为公开演示数据
+- **AND** 提醒 SHALL 说明资料完全虚构、操作仅影响演示状态
 - **AND** 提醒 SHALL 说明 Demo 不会写入个人账号
 
 #### Scenario: Demo 覆盖病历详情能力
@@ -28,16 +28,17 @@ TBD - created by archiving change make-demo-mode-cover-full-product. Update Purp
 - **THEN** 页面 SHALL 展示血常规、血生化和肿瘤标志物趋势
 - **AND** Demo 统计页 SHALL 与 Demo 病历页使用同一语义患者记录和同一组 `labResults`
 
-#### Scenario: Demo 读取公开 Supabase 演示病历
-- **WHEN** 系统配置了 `VITE_DEMO_RECORD_SHARE_CODE`
-- **THEN** Demo 病历页和 Demo 统计页 SHALL 通过既有只读分享授权码边界读取 Supabase 中的公开演示病历
-- **AND** 该读取 SHALL NOT 暴露原始 owner user id
-- **AND** 该读取 SHALL NOT 绕过 `record_shares` / RLS 约束
+#### Scenario: Demo 固定示例与真实账户隔离
+- **WHEN** 用户进入演示，包括已登录真实账户的用户
+- **THEN** 系统 SHALL 仅读取本地虚构 fixture，不通过分享码或真实 session 取得演示数据
+- **AND** 示例 SHALL 覆盖非晚期、初诊晚期、复发晚期三种模型形态
+- **AND** 演示 SHALL NOT 初始化真实账户数据读取或提供真实 Key、支付、注销入口
 
-#### Scenario: Demo 公开病历不可用时降级
-- **WHEN** `VITE_DEMO_RECORD_SHARE_CODE` 缺失、错误、过期、撤销、不可用、读取失败或读回记录缺少完整治疗线 / `labResults`
-- **THEN** Demo SHALL 回退到本地完整 fixture 数据
-- **AND** Demo 页面 SHALL 保持可展示、可调试、可教程化
+#### Scenario: Demo 覆盖持续记录工作流
+- **WHEN** 用户在演示中进入总览、录入、化验、症状、随访、设置和模型配置预览
+- **THEN** 系统 SHALL 复用正式产品组件，提供对应的演示资料和本地交互
+- **AND** 提取/OCR/AI 输出 SHALL 明确使用固定示例，不发送文件或文字到真实服务
+- **AND** 页面之间 SHALL 共享当前演示状态，刷新或明确重置后可恢复固定示例
 
 ### Requirement: Demo 不污染真实用户数据
 系统 SHALL 将 Demo 数据保持为本地 fixture 或只读预览，不得默认写入真实用户或匿名用户的 Supabase 数据空间。
@@ -49,7 +50,7 @@ TBD - created by archiving change make-demo-mode-cover-full-product. Update Purp
 
 #### Scenario: Demo 编辑不落库
 - **WHEN** 用户在 Demo 病历页开启编辑并修改字段
-- **THEN** 修改 MAY 在当前页面内临时呈现
+- **THEN** 修改 SHALL 在当前演示会话中临时呈现，跨演示页面保持一致
 - **AND** 系统 SHALL NOT 调用真实 patient 持久化写入
 
 #### Scenario: Demo 分享不创建授权码
@@ -74,6 +75,11 @@ TBD - created by archiving change make-demo-mode-cover-full-product. Update Purp
 ### Requirement: Demo 导航保持模式内闭环
 系统 SHALL 在 Demo 模式中使用 Demo 路由闭环导航，避免把公开 Demo 用户带入受保护真实记录路由。
 
+#### Scenario: 演示全局与患者导航
+- **WHEN** 用户使用演示内总览、录入、模型、设置、病历、化验、症状或随访入口
+- **THEN** 导航 SHALL 保持在 `/demo` 范围内
+- **AND** 进入真实产品 SHALL 是明确标识的退出演示动作
+
 #### Scenario: Demo 病历页侧栏
 - **WHEN** 用户位于 Demo 病历页
 - **THEN** 侧栏病历入口 SHALL 指向 Demo 病历页
@@ -83,4 +89,3 @@ TBD - created by archiving change make-demo-mode-cover-full-product. Update Purp
 - **WHEN** 用户位于 Demo 统计页
 - **THEN** 侧栏病历入口 SHALL 指向 Demo 病历页
 - **AND** 侧栏统计入口 SHALL 指向 Demo 统计页
-

@@ -309,15 +309,15 @@ function createBrowserAudio(source: string): AudioLike | null {
   return new Audio(source)
 }
 
-export function BackgroundAudioProvider({ children }: PropsWithChildren) {
+export function BackgroundAudioProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
   const controllerRef = useRef<BackgroundAudioController | null>(null)
-  const [snapshot, setSnapshot] = useState<BackgroundAudioSnapshot>(() => getInitialSnapshot(readBrowserStorage()))
+  const [snapshot, setSnapshot] = useState<BackgroundAudioSnapshot>(() => getInitialSnapshot(persist ? readBrowserStorage() : null))
 
   useEffect(() => {
     const controller = createBackgroundAudioController({
       audio: createBrowserAudio(BACKGROUND_AUDIO_SRC),
       onChange: setSnapshot,
-      storage: readBrowserStorage(),
+      storage: persist ? readBrowserStorage() : null,
     })
 
     controllerRef.current = controller
@@ -334,7 +334,7 @@ export function BackgroundAudioProvider({ children }: PropsWithChildren) {
       controller.destroy()
       controllerRef.current = null
     }
-  }, [])
+  }, [persist])
 
   const requestPlayback = useCallback(() => controllerRef.current?.requestPlayback() ?? Promise.resolve(snapshot), [snapshot])
   const pause = useCallback(() => controllerRef.current?.pause() ?? snapshot, [snapshot])

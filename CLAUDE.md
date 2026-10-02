@@ -4,6 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository state
 
+- The current ten-part SaaS task is tracked by `docs/products/saas-acceptance.md` and `openspec/changes/complete-saas-user-workflows/`. Branch consolidation is complete; naming, production layout selection, hosting and mini-program delivery remain distinct decisions and acceptance boundaries.
+- `docs/architecture/data-model.md` maps every application table and RLS rule. Migrations now explicitly grant Data API access; all 19 migrations pass fresh-database checks, and a complete local Auth/PostgREST stack verifies account isolation, CRUD, sharing and idempotent creation. This is local acceptance, not evidence of production migration.
+- `docs/operations/codex-cloud.md` records the private published development environment and exact cloud validation evidence; environment publication is not product deployment.
+
 - Self-hosted backend preparation lives in `ops/self-hosted/` and `docs/operations/supabase-self-hosted.md`, with the active contract at `openspec/changes/self-host-supabase/`. Production cloud configuration remains unchanged until cutover acceptance.
 
 - The integrity/cleanup change is archived at `openspec/changes/archive/2026-10-02-harden-record-integrity-and-simplify/`; current contracts live in `openspec/specs/record-integrity/spec.md`. Local verification does not imply remote deployment.
@@ -35,7 +39,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - Verified commands at the current baseline: `npm run build`, `npm run lint`, `npm run type-check`, `npm run type-check:functions`, `npm run test`, `npm run test:watch`, `npm run test:coverage`, `npm run dev`.
 - Tests run in node by default via `vite.config.ts` (`test.globals` on for testing-library cleanup); DOM interaction tests opt into happy-dom with a `@vitest-environment happy-dom` docblock. Coverage uses `@vitest/coverage-v8` (`coverage/` is gitignored).
-- Lint currently passes with warnings related to fast-refresh export boundaries in generated/shared modules; resolve those warnings as follow-up work instead of guessing around them.
+- Lint passes without warnings at the current SaaS acceptance baseline. The production build still reports existing chunks above 500 kB; this is not a failed build or measured runtime performance result.
 
 ## High-level architecture
 
@@ -63,10 +67,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `Image-2/` — image-model redesign batches, historical V1–V4 references; the V4 candidates are retired
   - `stitch/` — Stitch-origin design references and runtime screenshot evidence
 - `docs/products/`
+  - `saas-acceptance.md` — consolidated requirements, 17 capabilities, branch audit and verified/unverified delivery status
+  - `domestic-launch.md` — domestic hosting, mini-program implementation and filing/category evidence with pending owner choices
   - `prd-implementation-status.md` — current PRD implementation status, preserving the implemented / partial / not implemented feature audit
   - `product-priority-roadmap.md` — current product priority roadmap, separating completed OpenSpec milestones, archived P0/Demo baseline behavior, and next work such as WeChat auth
   - `archive/` — archived product snapshots: `prd.md`, `spec.md`, `design-system.md`, `stitch-screen-mapping.md`, and `product-goals-2026-05-05.md`; archived `design-system.md` is historical and must not override `DESIGN.md`, and archived goals are not the current execution queue
 - `docs/operations/`
+  - `codex-cloud.md` — private development environment setup, fresh-task verification and GitHub delivery flow
   - `clinical-workflow-release.md` — migration order, isolated database checks, deployment verification and compatibility boundary for clinical workflows
   - `capacitor-mobile-shell.md` — local Capacitor build/sync/open runbook, native project checks, platform-sensitive product-flow matrix, and signing-secret boundary
 - `docs/log/`
@@ -122,7 +129,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `android/`
   - Capacitor-generated Android shell project; loads the existing Vite build and keeps keystores/local Gradle artifacts out of Git
 - `wrangler.jsonc`
-  - Cloudflare Pages build config; public Vite vars include Supabase URL/anon key/Edge Function URL, optional public Demo share code, and a retained non-secret `custom:wechat` provider identifier for future WeChat work; server-side vars/bindings expose the WeChat OAuth adapter client id, callback URL, public base URL and short-lived KV namespace
+  - Cloudflare Pages build config; public Vite vars include Supabase URL/anon key/Edge Function URL, and a retained non-secret `custom:wechat` provider identifier for future WeChat work; server-side vars/bindings expose the WeChat OAuth adapter client id, callback URL, public base URL and short-lived KV namespace
 - `functions/`
   - Cloudflare Pages Functions; currently contains WeChat OAuth2 adapter prework that can translate Supabase custom provider requests into WeChat Open Platform QR login, while the active login page keeps WeChat as `敬请期待`
 - `scripts/check-clinical-workflows.sh`
@@ -152,7 +159,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Observability:** `src/lib/error-reporting.ts` forwards sanitized window errors to `VITE_ERROR_REPORT_URL` (no-op when unset); `supabase/functions/_shared/logger.ts` emits single-line JSON logs on upstream failure, timeout and rate-limit paths
 - **AI boundary:** frontend calls a Supabase Edge Function proxy; system provider keys stay server-side, and user-owned provider keys are saved only through encrypted `llm_provider_settings` rows
 - **Core workflow:** natural-language intake → structured extraction → up to 3 clarification rounds → timeline table render → inline editing → formal record page → AI auxiliary analysis / read-only sharing / PDF/PNG export
-- **Demo workflow:** public `/demo` routes remain directly accessible; the login page no longer exposes a Demo CTA; Demo pages reuse the real record and analytics surfaces with a visible Demo reminder, optional Supabase public share-code record, unified sample patient/lab fallback data, static non-diagnostic AI analysis preview, disabled share preview and client-side export, without creating Supabase records from Demo
+- **Demo workflow:** `/demo` opens the shared Dashboard, workspace, record, analytics, symptoms, follow-up, settings and model surfaces. `demo-fixtures.ts` contains three wholly fictional patient archetypes; `demo-session.tsx` owns in-memory CRUD across routes and resets on refresh or explicit reset. Demo never mounts AuthProvider, initializes Supabase, reads real preferences/keys, or calls OCR/LLM/payment/account deletion services. AI/OCR/extraction use labeled fixed examples; sharing is a disabled preview; PDF/PNG export remains client-side. Enter/exit use full navigation; internal links preserve the session. Login keeps no Demo CTA.
 - **Privacy boundary:** first-use privacy gate and `/privacy` page share the same text source in `src/lib/privacy.ts`
 - **Current truth sources:** behavior lives in `openspec/specs/**/*.md`; visual ownership starts at `DESIGN.md`, with the new SaaS board awaiting approval and old references retained only for history; implementation details live in `src/`, `supabase/`, `.github/`, and `public/`; archive change designs are historical rationale, not the primary current-state entrypoint
 

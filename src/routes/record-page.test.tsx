@@ -14,6 +14,7 @@ import { summaryMetrics } from '@/components/record/record-copy'
 import { demoPatientRecord } from '@/components/record/demo-record'
 import { demoLabAnalyticsRecord } from '@/components/analytics/demo-lab-analytics'
 import { getRecordSummaryMetrics } from '@/components/record/record-derived'
+import { DemoSessionProvider } from '@/lib/demo-session'
 import { BackgroundAudioProvider } from '@/lib/background-audio'
 import { LocaleProvider } from '@/lib/locale'
 import { shellWideContentClass } from '@/lib/theme/tokens'
@@ -70,18 +71,18 @@ function readTransitionsSource() {
   return readFileSync(new URL('../styles/transitions-dev.css', import.meta.url), 'utf8')
 }
 
-function renderRecord(theme: 'light' | 'dark', initialEntry = '/record/demo') {
+function renderRecord(theme: 'light' | 'dark', initialEntry = '/demo/record/demo-relapsed') {
   currentTheme = theme
 
   return renderToStaticMarkup(
     <LocaleProvider>
       <BackgroundAudioProvider>
-        <MemoryRouter initialEntries={[initialEntry]}>
+        <MemoryRouter initialEntries={[initialEntry === '/demo/record' ? '/demo/record/demo-relapsed' : initialEntry]}><DemoSessionProvider>
           <Routes>
             <Route path="/record/:id" element={<RecordPage isSigningOut={false} onSignOut={() => undefined} userLabel="ANON_SESSION" />} />
-            <Route path="/demo/record" element={<RecordPage userIsAnonymous userLabel="DEMO_MODE" />} />
+            <Route path="/demo/record/:id" element={<RecordPage userIsAnonymous userLabel="DEMO_MODE" />} />
           </Routes>
-        </MemoryRouter>
+        </DemoSessionProvider></MemoryRouter>
       </BackgroundAudioProvider>
     </LocaleProvider>,
   )
@@ -171,17 +172,17 @@ describe('RecordPage responsive dossier shell', () => {
   it('renders public Demo record as a full-product showcase without live LLM or real share writes', () => {
     const markup = renderRecord('light', '/demo/record')
 
-    expect(markup).toContain('href="/demo/record"')
-    expect(markup).toContain('href="/demo/analytics"')
+    expect(markup).toContain('href="/demo/record/demo-relapsed"')
+    expect(markup).toContain('href="/demo/analytics/demo-relapsed"')
     expect(markup).toContain('data-testid="demo-mode-banner"')
-    expect(markup).toContain('当前为 Demo 视图')
+    expect(markup).toContain('演示模式')
     expect(markup).toContain('AI 辅助分析')
-    expect(markup).toContain('Demo 示例仅展示病历整理和随访沟通方式')
+    expect(markup).toContain('固定 AI 示例，未调用模型，也未分析当前病历')
     expect(markup).toContain('指标趋势摘要')
     expect(markup).toContain('授权码分享')
     expect(markup).toContain('Demo 只展示分享入口形态')
     expect(markup).toContain('实验室趋势')
-    expect(markup).toContain('糖类抗原153')
+    expect(markup).toContain('癌胚抗原')
     expect(markup).toContain('导出 PDF')
     expect(markup).toContain('导出 PNG')
     expect(markup).toContain('<details')
@@ -255,7 +256,7 @@ describe('RecordPage responsive dossier shell', () => {
 
     expect(markup).toContain('时间线表格')
     expect(markup).toContain('基本信息')
-    expect(markup).toContain('氟唑帕利 + 哌柏西利 + 托瑞米芬')
+    expect(markup).toContain('示例方案 F（虚构）')
     expect(markup).not.toContain('导出 PDF')
     expect(markup).not.toContain('导出 PNG')
   })
@@ -267,9 +268,9 @@ describe('RecordPage responsive dossier shell', () => {
     })
 
     expect(markup).toContain('治疗方案')
-    expect(markup).toContain('氟唑帕利 + 哌柏西利 + 托瑞米芬')
-    expect(markup).toContain('PFS=约5.8个月')
-    expect(markup).toContain('PTEN 拷贝数缺失')
+    expect(markup).toContain('示例方案 F（虚构）')
+    expect(markup).toContain('PFS=')
+    expect(markup).toContain('示例复查结果')
     expect(markup).not.toContain('张三')
     expect(markup).not.toContain('NSCLC')
     expect(markup).not.toContain('奥希替尼')
@@ -488,74 +489,35 @@ describe('RecordPage responsive dossier shell', () => {
     expect(markup).not.toContain('PFS=15个月')
   })
 
-  it('does not render an empty lab trend placeholder for the demo dossier', () => {
+  it('renders populated lab trends for the fictional demo dossier', () => {
     const markup = renderRecordContent({
       demoRoute: true,
       viewMode: 'dossier',
     })
 
-    expect(markup).not.toContain('实验室趋势')
+    expect(markup).toContain('实验室趋势')
     expect(markup).not.toContain('暂无实验室趋势')
   })
 
-  it('renders every demo treatment as its own dossier timeline entry', () => {
-    const markup = renderRecordContent({
-      demoRoute: true,
-      viewMode: 'dossier',
-    })
-
-    expect(markup).not.toContain('初发治疗')
+  it('renders every fictional treatment as its own dossier timeline entry', () => {
+    const markup = renderRecordContent({ demoRoute: true, viewMode: 'dossier' })
     expect(markup).toContain('>BL</span>')
     expect(markup).toContain('>L1</span>')
     expect(markup).toContain('>L2</span>')
-    expect(markup).toContain('>L9</span>')
-    expect(markup).not.toContain('>00</span>')
-    expect(markup).not.toContain('/ 基线')
-    expect(markup).not.toContain('/ 一线治疗')
-    expect(markup).not.toContain('/ 二线治疗')
-    expect(markup).not.toContain('/ 三线治疗')
-    expect(markup).not.toContain('/ 九线治疗')
-    expect(markup).toContain('data-timeline-rail-date="2021.07-2022.10"')
-    expect(markup).toContain('data-timeline-rail-date="2022.10-2023.05"')
-    expect(markup).toContain('data-timeline-rail-date="2023.05-2023.10"')
-    expect(markup).toContain('data-timeline-rail-date="2023.10-2023.11"')
-    expect(markup).toContain('data-timeline-rail-date="2025.10.01-至今"')
+    expect(markup).not.toContain('>L3</span>')
+    expect(markup).toContain('data-timeline-rail-date="2025-03-08-2026-02-10"')
+    expect(markup).toContain('data-timeline-rail-date="2026-02-10-2026-06-30"')
+    expect(markup).toContain('data-timeline-rail-date="2026-07-15-至今"')
     expect(markup).toContain('md:grid-cols-[56px_12rem_minmax(0,1fr)]')
-    expect(markup).toContain('whitespace-nowrap')
-    expect(markup).toContain('PFS=7个月')
-    expect(markup).toContain('PFS=5个月')
-    expect(markup).toContain('PFS=进行中')
     expect(markup).toContain('data-timeline-mobile-pfs="PFS=进行中"')
-    expect(markup).toContain('Luminal B；ER90%+，PR90%+，HER2 0，AR30%，Ki67 60%。')
-    expect(markup).toContain('阿贝西利 + 氟维司群 + 亮丙瑞林 + 地舒单抗')
-    expect(markup).toContain('氟唑帕利 + 哌柏西利 + 托瑞米芬')
+    expect(markup).toContain('示例初始报告')
+    expect(markup).toContain('示例方案 E（虚构）')
+    expect(markup).toContain('示例方案 F（虚构）')
+    expect(markup).toContain('示例复发病理，内容待核对')
+    expect(markup).toContain('示例复查结果')
     expect(markup).not.toContain('初发免疫组化')
-    expect(markup).not.toContain('text-3xl font-bold tracking-normal')
     expect(markup).not.toContain('>治疗</h3>')
-    expect(markup).not.toContain('1L 治疗')
-    expect(markup).not.toContain('2L 治疗')
-    expect(markup).not.toContain('3L 治疗')
-    expect(markup).not.toContain('4L 治疗')
-    expect(markup).not.toContain('5L 治疗')
-    expect(markup).not.toContain('6L 治疗')
-    expect(markup).not.toContain('7L 治疗')
-    expect(markup).not.toContain('8L 治疗')
-    expect(markup).not.toContain('9L 治疗')
-    expect(markup).not.toContain('>01</span>')
-    expect(markup).not.toContain('>02</span>')
-    expect(markup).not.toContain('PFS=15个月')
-    expect(markup).not.toContain('/ 治疗线')
-    expect(markup).not.toContain('治疗线 1-6')
-    expect(markup).not.toContain('治疗线 7-9')
-    expect(markup).not.toContain('开始时间')
-    expect(markup).not.toContain('结束时间')
     expect(markup).not.toContain('<p>补充资料：')
-    expect(markup).not.toContain('>补充资料</span><span')
-    expect(markup).not.toContain('<p>该治疗线原始资料')
-    expect(markup).not.toContain('补充资料：2023.11 血液 NGS')
-    expect(markup).not.toContain('原始资料未记录额外补充信息')
-    expect(markup).toContain('2023.10 肝转单发')
-    expect(markup).toContain('2023.11 血液 NGS：PTEN 拷贝数缺失')
   })
 
   it('summarizes demo genetic tests and IHC as dated evidence lines', () => {
@@ -566,11 +528,9 @@ describe('RecordPage responsive dossier shell', () => {
     const geneticTest = getMetricValue(summaryMetrics.zh, '基因检测')
     const ihc = getMetricValue(summaryMetrics.zh, '免疫组化')
 
-    expect(geneticTest).toContain('2023.11：血液 NGS：PTEN 拷贝数缺失')
-    expect(geneticTest).toContain('2024.08：PTEN缺失，CCND1/FGFR1扩增')
-    expect(ihc).toContain('2021.07：Luminal B；ER90%+')
-    expect(ihc).toContain('2024.02：内分泌变三阴')
-    expect(ihc).toContain('2024.08：ER-，PR60%')
+    expect(geneticTest).toContain('2025-03-08：示例初始检测')
+    expect(geneticTest).toContain('2026-02-10：示例复查结果')
+    expect(ihc).toContain('2025-03-08：示例初始报告')
     expect(markup).toContain('whitespace-pre-line')
   })
 
@@ -627,7 +587,7 @@ describe('RecordPage responsive dossier shell', () => {
     })
 
     expect(markup).toContain('癌种')
-    expect(markup).toContain('乳腺癌')
+    expect(markup).toContain('消化道肿瘤（虚构示例）')
     expect(markup).not.toContain('乳腺癌 · 复发/晚期 · PTEN / FGFR1')
     expect(markup).not.toContain('CLINICAL HISTORY DOSSIER')
   })

@@ -64,7 +64,8 @@ export function getSupabaseClient() {
     client = createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
         autoRefreshToken: true,
-        detectSessionInUrl: true,
+        // These routes explicitly exchange once and inspect errors before retained sessions.
+        detectSessionInUrl: typeof window === 'undefined' || !['/auth/callback', '/auth/reset-password'].includes(window.location?.pathname ?? ''),
         flowType: 'pkce',
         persistSession: true,
       },

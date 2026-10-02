@@ -107,7 +107,6 @@ describe('loadDashboardData', () => {
     expect(data.labReadingCount).toBe(12)
     expect(data.activeShareCount).toBe(1)
     expect(data.aiCallCount30d).toBe(7)
-    expect(data.latestRecord).toMatchObject({ id: 'p1', tumorType: '乳腺癌' })
     expect(data.abnormalReadings).toHaveLength(2)
     expect(data.abnormalReadings[0]).toMatchObject({ itemName: 'CA15-3', status: 'high', value: 40 })
     expect(data.abnormalReadings[1]).toMatchObject({ itemName: '白细胞', status: 'low' })

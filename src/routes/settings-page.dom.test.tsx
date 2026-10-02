@@ -41,7 +41,7 @@ const setLocale = vi.fn()
 const setTheme = vi.fn()
 
 vi.mock('@/lib/auth', async () => ({
-  useAuth: () => ({
+  useOptionalAuth: () => ({
     user: { id: 'user-1', email: 'rider@firefly.test', is_anonymous: false },
   }),
 }))

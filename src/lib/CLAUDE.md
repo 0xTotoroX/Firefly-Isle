@@ -2,6 +2,14 @@
 > L2 | 父级: /src/CLAUDE.md
 
 成员清单
+demo-fixtures.ts: 三种完全虚构的患者模型、化验、症状、随访与固定提取示例。
+demo-session.tsx: 演示唯一内存数据源，提供跨页面 CRUD、Dashboard 派生、重置和 Demo 路由映射，不使用真实服务或本机持久化。
+demo-session.test.ts: 三种模型、跨读取者编辑、症状/随访 CRUD、化验重复覆盖和重置回归。
+account-data-export.ts: 全用户表稳定 id 分页与小批患者查询，采集到下载持续绑定身份，保留 v1 结构并排除密钥和分享 hash。
+account-data-export.test.ts: 真实查询构造器驱动的分页/行数上限、账号切换、完整下载、查询失败和敏感列排除回归。
+profile-settings.ts: owner 档案读写与账户注销；档案可绑定预期账号，只有缺少可选 profiles 表时读取降级。
+error-reporting.ts: 固定路由和已知错误类别的 JSON/Sentry 上报，不采集任意文本或堆栈，包含同步及异步发送失败。
+error-reporting.dom.test.tsx: 全请求体隐私、Sentry event 信封、发送失败不递归与全局监听清理的回归。
 supabase-session-migration.ts: 自建目标的旧会话导入、issuer 判定与迁移完成标记，保留源凭据。
 supabase-session-migration.test.ts: 旧会话复制、重试、完成后退出和目标身份优先的回归。
 supabase-session-client.test.ts: 真实客户端入口的配置隔离、待迁移状态、持久化标记和存储失败降级。
@@ -17,15 +25,17 @@ app.spec.ts: 应用级合同测试，约束隐私内容、患者类型、认证�
 capacitor-mobile-shell.test.ts: Capacitor 移动壳合同测试，约束包版本、mobile scripts、app id/name、dist webDir、无 dev-server URL、原生工程标识和 signing ignore 边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 clinical-analysis.ts: 临床辅助分析边界，把 PatientRecord 与 labResults 压缩为非诊断 LLM prompt，校验 JSON 输出并提供 analyzePatientRecord 入口，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 clinical-analysis.test.ts: 临床辅助分析回归测试，约束非诊断 prompt、json_object 调用、无 labResults 降级与非法响应拒绝，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-theme.tsx: Dark / Light 主题状态、持久化与 document 根节点主题标记同步，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-locale.tsx: 全局 locale 状态中心，负责 zh / en 切换、持久化恢复、HTML lang/data-locale 同步与 useLocale 消费入口，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+theme.tsx: Dark/Light、主题色和 DOM 同步；persist=false 时从默认值开始，仅保留会话内偏好。
+locale.tsx: 中英文状态与文档语言同步；persist=false 时不读取或写入本机偏好。
 locale.test.ts: locale 文档语义回归测试，约束 zh/en 到 HTML lang/data-locale 的映射与 LocaleProvider 同步桥接，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 copy.ts: app shell、background audio、login、workspace、record 的语言真相源，包含顶栏邮件联系弹窗与复制反馈、背景音乐播放/暂停/拦截文案、简洁歌单控制、简洁社交认证、无病历侧栏“先提取”提示、病历/检验报告上传、OCR/编辑/新病历/BMI 与病程资料空态文案，禁止组件继续内联双语字符串，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-export-record.ts: 正式病历导出工具，复用 html2canvas 与 jsPDF 生成 PDF/PNG，并在克隆 DOM 中清洗现代 CSS 色值供 /record/:id 独占消费，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-export-record.test.ts: 正式病历导出工具回归测试，约束 PDF/PNG 继续走共享截图、分页、下载链路与 html2canvas 安全色/背景图/滤镜降级，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+export-record.ts: 正式病历导出工具，复用 html2canvas-pro 与 jsPDF，将现有正文隔离为带边距的浅色副本，隐藏操作，按正文块和文字行分页并压缩 PDF。
+export-record.test.ts: 正式病历导出的克隆隔离、连续块分页、标题跟随、超长段落分行、压缩与下载回归测试。
 file-size-contract.test.ts: 结构债回归测试，递归约束 src、functions、supabase 下 .ts/.tsx/.sql 文件均不超过 800 行，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 theme/: 设计系统 token 目录，收敛 surface、text、border、accent 与 motion 真相源
-auth.tsx: Supabase session 恢复、URL callback 初始化、认证状态广播与 signOut 边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+auth.tsx: Supabase session 恢复、URL callback 初始化、认证广播与 signOut；useOptionalAuth 允许共享 Demo 页面在未挂载认证 Provider 时读取空身份。
+password-recovery.ts: 将密码修改绑定回调取得的凭据，以独立内存 AuthClient 防止其他标签的账号切换影响目标身份。
+password-recovery.test.ts: 用真实 AuthClient 与请求探针验证固定身份改密、无凭据拒绝及共享登录状态不被覆盖。
 auth.test.tsx: Supabase URL callback 初始化、session 恢复、认证广播、订阅清理与 signOut 的源码合同测试，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 llm/: 前端 LLM adapter 目录，收敛 chat 接口、provider 设置客户端、provider/model/responseFormat 请求协议、类型与错误映射，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 extractionPrompt.ts: PatientRecord 一句式 JSON 字段合同提示词与输出约束边界，包含 name、clinicalNotes 与治疗线证据字段，避免长 schema 或多消息 prompt 触发上游失败，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -33,8 +43,8 @@ extraction.ts: 信息提取主链路，负责解析、姓名/性别/年龄/身�
 extraction.test.ts: 信息提取协议回归测试，约束结构化提取优先请求 JSON object 输出、模型 id 不污染持久化身份、密集病史末尾人口学信息补全、上游失败降级重试、502 Gemini 兜底、提示词紧凑合同、日期归一化、错误文案分流，并保持 labResults 不混入 treatmentLines，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-dictionary.ts: 实验室指标字典与 OCR 候选归一化边界，吸收 update-followup-data 的血常规、血生化、肿瘤标志物行映射并输出稳定 itemCode、单位与参考范围，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-dictionary.test.ts: 实验室字典回归测试，约束三类指标别名映射、参考范围解析、OCR 候选归一化与未映射行复核边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-lab-report-ingestion.ts: 网页端实验室报告摄入纯逻辑，把 OCR 文本转为可编辑复核行，并在确认后输出可保存 LabResult 与 CBC 派生读数，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-lab-report-ingestion.test.ts: 实验室报告摄入测试，约束 OCR candidate 复核、保存前修正、未解析行阻塞/排除和 CBC 派生 payload，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+lab-report-ingestion.ts: 化验 OCR 复核纯逻辑，保留未知候选行，校验映射/完整日期/有限数值/参考范围，确认后输出 LabResult 与 CBC 派生读数，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+lab-report-ingestion.test.ts: 覆盖未知行映射/排除、错误日期和数值、参考范围逆序、人工修正保存及 CBC 派生读数，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-report-storage.ts: 单 RPC 保存/替换化验批次并返回重复状态，任一失败整笔回滚。
 lab-report-storage.test.ts: 实验室报告持久化测试，约束重复批次检测、未确认替换不写入、确认后批次和读数 payload 形状，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 lab-results.ts: 实验室指标趋势纯逻辑，集中默认参考范围、异常分类、血常规 NLR/PLR/MLR 派生、图表序列、最近异常、肿瘤标志物连续上涨提示与非诊断输出边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
@@ -45,8 +55,8 @@ timeline-duration.ts: 病程时间纯逻辑，集中日期清理/解析、含 on
 timeline-duration.test.ts: 病程时间合同测试，约束 baseline rail 时间段、每线 PFS、日精度约数、进行中与待补充状态，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 medical-document-ocr.ts: 医学文档 OCR 前端协议边界，负责图片/PDF 校验、base64 编码、Supabase JWT 透传、Edge Function 调用与本地化错误映射，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 medical-document-ocr.test.ts: 医学文档 OCR client 回归测试，约束图片/PDF 成功、类型拒绝、错误 envelope、空文本与浏览器不泄露 provider key，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-patient-record-storage.ts: 病历与子记录读取映射；写入经单事务 RPC，并在数据库核对发起账号；旧 schema 仅保留读取降级。
-patient-record-storage.test.ts: 读取映射、旧 schema 读取降级与单 RPC 保存协议测试；事务/RLS 由 SQL 验证。
+patient-record-storage.ts: 病历与子记录读取映射，按创建时间/id 游标分页读取当前账号病历摘要；单事务 RPC 核对发起账号，新草稿可传稳定 createRequestId 供失败重试复用；旧 schema 仅保留读取降级。
+patient-record-storage.test.ts: 摘要分页、身份与服务端行数上限，读取映射、旧 schema 读取降级、单 RPC 保存与创建 UUID 重试协议测试；事务/RLS 由 SQL 验证。
 privacy.ts: 隐私页 href、隐私门控确认 key 与共享隐私文案真相源，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 network-status.ts: 浏览器在线状态、OnlineRequiredError 与中英文在线依赖提示边界，供 PWA 离线壳和网络动作提前失败复用，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 network-status.test.ts: PWA 网络状态测试，约束显式离线检测、OnlineRequiredError 与中英文在线依赖反馈，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

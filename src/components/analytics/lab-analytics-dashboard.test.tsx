@@ -4,6 +4,7 @@
  * [POS]: components/analytics 的界面合同测试，约束选定深色临床控制塔布局在无浏览器交互时也保留核心信息结构、公开 /demo/analytics 引导与肿瘤标志物提醒联动标识。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
+import { MemoryRouter } from 'react-router-dom'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
@@ -28,10 +29,10 @@ const smallDecimalResults: LabResult[] = [
 
 function renderDashboard(options: Partial<{ isDemo: boolean; labResults: LabResult[]; record: PatientRecord | null }> = {}) {
   return renderToStaticMarkup(
-    <LabAnalyticsDashboard
+    <MemoryRouter><LabAnalyticsDashboard
       labResults={options.labResults ?? labResults}
       theme="dark"
-    />,
+    /></MemoryRouter>,
   )
 }
 

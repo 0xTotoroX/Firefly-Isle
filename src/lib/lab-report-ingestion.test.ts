@@ -6,7 +6,7 @@
  */
 import { describe, expect, it } from 'vitest'
 
-import { buildLabReportDate, extractLabReportReviewRows, hasBlockingReviewRows, toConfirmedLabReadings, type LabReviewRow } from './lab-report-ingestion'
+import { buildLabReportDate, extractLabReportReviewRows, getLabReviewIssues, hasBlockingReviewRows, toConfirmedLabReadings, type LabReviewRow } from './lab-report-ingestion'
 
 describe('lab report ingestion', () => {
   it('extracts dated OCR rows into editable review rows', () => {
@@ -66,5 +66,34 @@ describe('lab report ingestion', () => {
 
     expect(hasBlockingReviewRows([row])).toBe(true)
     expect(hasBlockingReviewRows([{ ...row, include: false }])).toBe(false)
+  })
+
+  it('keeps unknown OCR candidates until the user maps or excludes them', () => {
+    const rows = extractLabReportReviewRows('报告日期：2026-10-02\n未知检验 5.5\n白细胞 4.2', 'blood-routine')
+    expect(rows).toHaveLength(2)
+    expect(rows[0]).toMatchObject({ rawText: '未知检验 5.5', itemCode: '', status: 'needs-review', include: true })
+    expect(hasBlockingReviewRows(rows, 'blood-routine')).toBe(true)
+    expect(() => toConfirmedLabReadings(rows, 'blood-routine')).toThrow()
+    expect(toConfirmedLabReadings([{ ...rows[0], include: false }, rows[1]], 'blood-routine')).toHaveLength(1)
+    expect(toConfirmedLabReadings([{ ...rows[0], itemCode: 'wbc', value: '4.8' }], 'blood-routine')[0]).toMatchObject({ itemCode: 'wbc', value: 4.8 })
+  })
+
+  it.each(['2026-02-30', '2026-10', '2026-13-01', ''])('requires a real full test date: %s', (testDate) => {
+    const [row] = extractLabReportReviewRows('2026-10-02\n白细胞 4.2', 'blood-routine')
+    expect(getLabReviewIssues({ ...row, testDate }, 'blood-routine')).toContain('date')
+  })
+
+  it.each(['', 'NaN', 'Infinity', '0x12', '12mg'])('rejects invalid numeric values: %s', (value) => {
+    const [row] = extractLabReportReviewRows('2026-10-02\n白细胞 4.2', 'blood-routine')
+    expect(getLabReviewIssues({ ...row, value }, 'blood-routine')).toContain('value')
+  })
+
+  it('rejects invalid or reversed ranges and saves the corrected values exactly', () => {
+    const [row] = extractLabReportReviewRows('2026-10-02\n白细胞 4.2', 'blood-routine')
+    expect(getLabReviewIssues({ ...row, referenceLow: '9', referenceHigh: '2' })).toContain('reference')
+    expect(getLabReviewIssues({ ...row, referenceHigh: 'unknown' })).toContain('reference')
+    const [reading] = toConfirmedLabReadings([{ ...row, value: '5.1', unit: 'custom', referenceLow: '', referenceHigh: '8.2' }], 'blood-routine')
+    expect(reading).toMatchObject({ value: 5.1, unit: 'custom', referenceHigh: 8.2 })
+    expect(reading.referenceLow).toBeUndefined()
   })
 })

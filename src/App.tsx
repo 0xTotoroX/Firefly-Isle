@@ -1,16 +1,19 @@
 /**
- * [INPUT]: 依赖 react 的 lazy/Suspense/useMemo，依赖 react-router-dom 的 BrowserRouter、Routes、Route、Navigate、useLocation，依赖 ThemeProvider、BackgroundAudioProvider、AuthProvider、PrivacyGate、NetworkStatusBanner、PRIVACY_PAGE_HREF 与按路由动态加载的页面组件。
- * [OUTPUT]: 对外提供 App 组件。
- * [POS]: src 的路由装配入口，连接主题系统、隐私门控、双层渲染崩溃护栏、PWA 离线状态提示、Supabase session 持久化、匿名/非匿名身份标记、公开 Demo、记录页用户归属保存 id、OAuth 错误归一与 /login、/auth/callback、/privacy、/app、/demo、/record/:id、/share/:code、/analytics/:id、/dashboard、/models 页面。
+ * [INPUT]: React/Router、共享页面、账户认证 Provider、Demo 内存会话、主题/语言/背景音和隐私门控。
+ * [OUTPUT]: App，提供公开演示和认证账户的独立运行边界。
+ * [POS]: 路由装配入口；Demo 不挂载认证，使用会话内偏好，真实页面保持原认证/隐私/错误护栏。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { lazy, Suspense, type ReactNode, useMemo } from 'react'
-import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams, Link } from 'react-router-dom'
 
 import { PrivacyGate } from '@/components/privacy-gate'
 import { ErrorBoundary } from '@/components/error-boundary'
 import { NetworkStatusBanner } from '@/components/system/network-status-banner'
 import { AuthProvider, useAuth } from '@/lib/auth'
+import { DemoModeBanner } from '@/components/system/demo-mode-banner'
+import { DemoSessionProvider, useDemoSession } from '@/lib/demo-session'
+import { DEMO_DEFAULT_PATIENT_ID } from '@/lib/demo-fixtures'
 import { BackgroundAudioProvider } from '@/lib/background-audio'
 import { getCopy, copy } from '@/lib/copy'
 import { LocaleProvider, useLocale } from '@/lib/locale'
@@ -20,6 +23,7 @@ import { getOAuthCallbackErrorMessage } from '@/routes/auth-callback-page.logic'
 
 const DonatePage = lazy(() => import('@/routes/donate-page').then((module) => ({ default: module.DonatePage })))
 const DashboardPage = lazy(() => import('@/routes/dashboard-page').then((module) => ({ default: module.DashboardPage })))
+const ResetPasswordPage = lazy(() => import('@/routes/reset-password-page').then((module) => ({ default: module.ResetPasswordPage })))
 const AuthCallbackPage = lazy(() => import('@/routes/auth-callback-page').then((module) => ({ default: module.AuthCallbackPage })))
 const FollowUpPage = lazy(() => import('@/routes/follow-up-page').then((module) => ({ default: module.FollowUpPage })))
 const LoginPage = lazy(() => import('@/routes/login-page').then((module) => ({ default: module.LoginPage })))
@@ -65,11 +69,11 @@ function getUserLabel(locale: 'zh' | 'en', isAnonymous: boolean, email?: string 
   return email ?? getCopy(copy.app.userLabel.authenticated, locale)
 }
 
-function AppProviders({ children }: { children: ReactNode }) {
+function AppProviders({ children, persist = true }: { children: ReactNode; persist?: boolean }) {
   return (
-    <ThemeProvider>
-      <LocaleProvider>
-        <BackgroundAudioProvider>
+    <ThemeProvider persist={persist}>
+      <LocaleProvider persist={persist}>
+        <BackgroundAudioProvider persist={persist}>
           <NetworkStatusBanner />
           {children}
         </BackgroundAudioProvider>
@@ -79,17 +83,43 @@ function AppProviders({ children }: { children: ReactNode }) {
 }
 
 function AppContent() {
+  const { pathname } = useLocation()
+  const isDemo = pathname === '/demo' || pathname.startsWith('/demo/') || pathname === '/record/demo' || pathname === '/analytics/demo'
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <RouteErrorBoundary>
-          <PrivacyGate>
-            <AppRoutes />
-          </PrivacyGate>
-        </RouteErrorBoundary>
-      </BrowserRouter>
-    </AuthProvider>
+    <AppProviders key={isDemo ? 'demo' : 'account'} persist={!isDemo}>
+      {isDemo ? <DemoSessionProvider><DemoRoutes /></DemoSessionProvider> : (
+        <AuthProvider><RouteErrorBoundary><PrivacyGate><AppRoutes /></PrivacyGate></RouteErrorBoundary></AuthProvider>
+      )}
+    </AppProviders>
   )
+}
+
+function DemoRoutes() {
+  const demo = useDemoSession()!
+  const identity = { userLabel: '演示账号', userIsAnonymous: true }
+  return <RouteErrorBoundary key={demo.state.resetVersion}><Suspense fallback={<AppBootScreen />}><Routes>
+    <Route path="/record/demo" element={<Navigate replace to={`/demo/record/${DEMO_DEFAULT_PATIENT_ID}`} />} />
+    <Route path="/analytics/demo" element={<Navigate replace to={`/demo/analytics/${DEMO_DEFAULT_PATIENT_ID}`} />} />
+    <Route path="/demo" element={<Navigate replace to="/demo/dashboard" />} />
+    <Route path="/demo/dashboard" element={<DashboardPage {...identity} />} />
+    <Route path="/demo/app" element={<WorkspacePage {...identity} />} />
+    <Route path="/demo/record" element={<Navigate replace to={`/demo/record/${DEMO_DEFAULT_PATIENT_ID}`} />} />
+    <Route path="/demo/analytics" element={<Navigate replace to={`/demo/analytics/${DEMO_DEFAULT_PATIENT_ID}`} />} />
+    <Route path="/demo/record/:id" element={<DemoPatientBoundary><RecordPage {...identity} /></DemoPatientBoundary>} />
+    <Route path="/demo/analytics/:id" element={<DemoPatientBoundary><LabAnalyticsPage {...identity} /></DemoPatientBoundary>} />
+    <Route path="/demo/record/:id/side-effects" element={<DemoPatientBoundary><SideEffectsPage {...identity} /></DemoPatientBoundary>} />
+    <Route path="/demo/record/:id/follow-up" element={<DemoPatientBoundary><FollowUpPage {...identity} /></DemoPatientBoundary>} />
+    <Route path="/demo/settings" element={<SettingsPage {...identity} />} />
+    <Route path="/demo/models" element={<ModelsPage {...identity} />} />
+    <Route path="/demo/*" element={<Navigate replace to="/demo/dashboard" />} />
+  </Routes></Suspense></RouteErrorBoundary>
+}
+
+function DemoPatientBoundary({ children }: { children: ReactNode }) {
+  const { id } = useParams()
+  const demo = useDemoSession()!
+  if (demo.state.records.some((record) => record.id === id)) return children
+  return <main className="mx-auto max-w-3xl px-5 py-10 text-[var(--ff-text-primary)]"><DemoModeBanner /><h1 className="text-2xl font-bold">没有找到这份演示病历</h1><Link className="mt-6 inline-flex min-h-[44px] items-center font-semibold text-[var(--ff-accent-text)]" to="/demo/dashboard">返回总览选择病历</Link></main>
 }
 
 function RouteErrorBoundary({ children }: { children: ReactNode }) {
@@ -102,8 +132,8 @@ function AppRoutes() {
   const { authError, isAuthenticated, isAuthReady, isSigningOut, signOut, user } = useAuth()
   const { locale } = useLocale()
   const location = useLocation()
-  const oauthRedirectError = getOAuthCallbackErrorMessage(location.search)
-  const loginError = authError ?? oauthRedirectError
+  const oauthRedirectError = getOAuthCallbackErrorMessage(`${location.search}${location.hash}`, locale)
+  const loginError = oauthRedirectError ?? authError
   const userLabel = useMemo(() => {
     if (!user) {
       return undefined
@@ -123,10 +153,10 @@ function AppRoutes() {
         <Route
           path="/"
           element={
-            isAuthenticated ? (
-              <Navigate replace to="/dashboard" />
-            ) : oauthRedirectError ? (
+            oauthRedirectError ? (
               <LoginPage authError={oauthRedirectError} />
+            ) : isAuthenticated ? (
+              <Navigate replace to="/dashboard" />
             ) : (
               <Navigate replace to="/login" />
             )
@@ -134,17 +164,15 @@ function AppRoutes() {
         />
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate replace to="/dashboard" /> : <LoginPage authError={loginError} />}
+          element={oauthRedirectError || new URLSearchParams(location.search).get('mode') === 'password-reset' ? <LoginPage authError={loginError} /> : isAuthenticated ? <Navigate replace to="/dashboard" /> : <LoginPage authError={loginError} />}
         />
         <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
         <Route
           path={PRIVACY_PAGE_HREF}
           element={<PrivacyPage />}
         />
         <Route path="/share/:code" element={<SharedRecordPage />} />
-        <Route path="/demo" element={<Navigate replace to="/demo/record" />} />
-        <Route path="/demo/record" element={<RecordPage userIsAnonymous userLabel="DEMO_MODE" />} />
-        <Route path="/demo/analytics" element={<LabAnalyticsPage userIsAnonymous userLabel="DEMO_MODE" />} />
         <Route
           path="/models"
           element={
@@ -177,7 +205,7 @@ function AppRoutes() {
         />
         <Route
           path="/analytics"
-          element={isAuthenticated ? <Navigate replace to="/analytics/demo" /> : <Navigate replace to="/login" />}
+          element={isAuthenticated ? <Navigate replace to="/dashboard#records" /> : <Navigate replace to="/login" />}
         />
         <Route
           path="/analytics/:id"
@@ -248,9 +276,7 @@ function AppRoutes() {
 function App() {
   return (
     <ErrorBoundary>
-      <AppProviders>
-        <AppContent />
-      </AppProviders>
+      <BrowserRouter><AppContent /></BrowserRouter>
     </ErrorBoundary>
   )
 }

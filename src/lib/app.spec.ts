@@ -76,12 +76,12 @@ describe('auth route guard contract', () => {
     expect(source).toContain('<Navigate replace to="/login" />')
   })
 
-  it('keeps /analytics protected and mounted through demo/id statistics routes', () => {
+  it('keeps /analytics protected and sends unselected patients to the dashboard', () => {
     const source = readAppSource()
 
     expect(source).toContain('const LabAnalyticsPage = lazy')
     expect(source).toContain('path="/analytics"')
-    expect(source).toContain('to="/analytics/demo"')
+    expect(source).toContain('to="/dashboard#records"')
     expect(source).toContain('path="/analytics/:id"')
     expect(source).toContain('<LabAnalyticsPage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />')
   })
@@ -90,11 +90,15 @@ describe('auth route guard contract', () => {
     const source = readAppSource()
 
     expect(source).toContain('path="/demo"')
-    expect(source).toContain('to="/demo/record"')
+    expect(source).toContain('to="/demo/dashboard"')
     expect(source).toContain('path="/demo/record"')
     expect(source).toContain('path="/demo/analytics"')
-    expect(source).toContain('<RecordPage userIsAnonymous userLabel="DEMO_MODE" />')
-    expect(source).toContain('<LabAnalyticsPage userIsAnonymous userLabel="DEMO_MODE" />')
+    expect(source).toContain('<DemoSessionProvider><DemoRoutes /></DemoSessionProvider>')
+    expect(source).toContain('path="/demo/record/:id/follow-up"')
+    expect(source).toContain('path="/demo/record/:id/side-effects"')
+    expect(source).toContain('path="/demo/app"')
+    expect(source).toContain('path="/demo/settings"')
+    expect(source).toContain('path="/demo/models"')
     expect(source.indexOf('path="/demo/record"')).toBeLessThan(source.indexOf('path="/app"'))
   })
 
@@ -116,7 +120,7 @@ describe('auth route guard contract', () => {
   it('surfaces root-level OAuth provider errors instead of discarding them during redirect', () => {
     const source = readAppSource()
 
-    expect(source).toContain('const oauthRedirectError = getOAuthCallbackErrorMessage(location.search)')
+    expect(source).toContain('const oauthRedirectError = getOAuthCallbackErrorMessage(`${location.search}${location.hash}`, locale)')
     expect(source).toContain('<LoginPage authError={oauthRedirectError} />')
   })
 
@@ -124,9 +128,9 @@ describe('auth route guard contract', () => {
     const source = readAppSource()
 
     expect(source).toContain('BackgroundAudioProvider')
-    expect(source).toContain('<BackgroundAudioProvider>')
-    expect(source.indexOf('<NetworkStatusBanner />')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider>'))
-    expect(source.indexOf('{children}')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider>'))
-    expect(source.indexOf('<BackgroundAudioProvider>')).toBeLessThan(source.indexOf('<AppContent />'))
+    expect(source).toContain('<BackgroundAudioProvider persist={persist}>')
+    expect(source.indexOf('<NetworkStatusBanner />')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider persist={persist}>'))
+    expect(source.indexOf('{children}')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider persist={persist}>'))
+    expect(source.indexOf('<BackgroundAudioProvider persist={persist}>')).toBeLessThan(source.indexOf('<AppContent />'))
   })
 })

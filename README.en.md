@@ -16,13 +16,19 @@
   </p>
 </div>
 
+Open `/demo` to try the existing product screens with three fictional patient records. Dashboard, intake, lab review, symptoms, follow-ups, settings and model previews share an in-memory session. Refreshing or resetting restores the examples. Extraction, OCR and AI return labeled fixed examples; Demo never initializes a real account or sends patient content to a service. PDF/PNG export runs in the browser.
+
 ## Product Background
 
 Firefly-Isle comes from a real need shared by cancer patients and their families. Patients with advanced cancer often go through repeated recurrence, disease progression, and multiple treatment lines. When preparing medical records or discussing care across hospitals, information overload can make communication fragmented, while outpatient doctors often have limited time for each patient. This project helps patients and families organize treatment plans and clinical records into a clearer, more portable timeline.
 
 ## Current local development baseline
 
-The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up navigation, recoverable clinical forms and visit summaries. V3 retains white/black surfaces with eight muted presets and separate button-foreground and clinical-status colors. V4 remains an isolated evaluation surface.
+The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; production still targets Supabase Cloud.
+
+The new black/white, eight-accent specification is linked from [DESIGN.md](DESIGN.md); production layout migration awaits the user's selection. The old V4 preview code has been removed, while historical images remain. The repository name is retained for compatibility while a new product name is being selected.
+
+See the [17-capability acceptance ledger](docs/products/saas-acceptance.md) for verified behavior and remaining gaps, and the [data model](docs/architecture/data-model.md) for table relationships and RLS. Local checks, cloud development readiness and production readiness are verified separately.
 
 Apply the new database migration before releasing the updated frontend. Local completion does not imply remote deployment. See the [clinical workflow release notes](docs/operations/clinical-workflow-release.md).
 
@@ -30,8 +36,10 @@ Apply the new database migration before releasing the updated frontend. Local co
 
 ### 1. Install dependencies
 
+Use Node.js 22 and the committed lockfile:
+
 ```bash
-npm install
+npm ci
 ```
 
 ### 2. Configure environment variables
@@ -52,8 +60,8 @@ For the auth path, confirm these settings in Supabase Dashboard / Auth Providers
 
 - Email provider is enabled.
 - Anonymous Sign-In is enabled.
-- Email confirmation is disabled for the current registration flow, because `signUp()` must directly return a session.
-- Site URL points to a valid redirect target. If email verification is re-enabled later, add the current origin to Additional Redirect URLs.
+- Email confirmation may be enabled: signup without a session displays a confirmation-pending state; confirmation-disabled signup signs in immediately. Production email delivery requires working SMTP.
+- Site URL points to the frontend. Additional Redirect URLs must include its `/auth/callback` and `/auth/reset-password` paths for confirmation/OAuth and setting a new password.
 
 For the LLM adapter / Edge Function path, configure:
 
@@ -100,16 +108,19 @@ npm run lint
 npm run type-check
 npm run test
 # Requires Docker and a locally cached postgres:18-alpine image
+docker pull postgres:18-alpine
 npm run test:database
 ```
+
+Database checks initialize every application migration and verify transactions, quota concurrency, table permissions and account deletion with synthetic data. They do not connect to a remote database. Real Auth registration, email and session behavior require separate acceptance.
 
 ### 6. GitHub Actions CI + CD -> Cloudflare Pages
 
 The repository uses two GitHub Actions workflows:
 
 - `.github/workflows/ci.yml`
-  - Runs on `main` pushes and PRs targeting `main`.
-  - Runs `npm run lint`, `npm run type-check`, `npm run test`, and `npm run build`.
+  - Runs on `main` / `codex/**` pushes, PRs targeting `main`, and manual dispatch.
+  - Runs `npm run lint`, `npm run type-check`, `npm run test:database`, `npm run test:coverage`, and `npm run build`.
 - `.github/workflows/cd.yml`
   - Runs only on `v*` tag pushes or manual `workflow_dispatch`.
   - Builds `dist/` and deploys to Cloudflare Pages through `wrangler pages deploy`.
@@ -135,3 +146,9 @@ Disable automatic production / preview deployments from Cloudflare Pages Git int
 ## Self-hosted Supabase
 
 Deployment configuration, backup scripts and session migration preparation are documented in the [self-hosting runbook](docs/operations/supabase-self-hosted.md). Production configuration still targets Supabase Cloud. Before preview or cutover, reconcile the target database and Edge Functions with the current SaaS version.
+
+## Cloud development and domestic launch
+
+The [Codex Cloud runbook](docs/operations/codex-cloud.md) covers installation, startup, fresh-task validation and returning changes through GitHub. Personal local skills and credentials do not automatically follow the repository. Cloud checks do not replace browser, export or device acceptance.
+
+The [domestic launch assessment](docs/products/domestic-launch.md) compares database/frontend hosting, filing requirements, WeChat categories and mini-program options. Web is the first milestone; the mini-program is a separate deliverable. Naming, operating entity, production hosting and payment choices remain open. Publishing a development environment does not deploy the product.
