@@ -1,18 +1,18 @@
-# 产品名称与定位：知见 / Medclear
+# 产品名称与定位：知见（英文待选）
 
-定稿日期：2026 年 10 月 4 日（北京时间）。用户已确认中文名“知见”、英文名“Medclear”；此前候选不再作为当前推荐。此次确认的是品牌名称与产品定位，名称可用性仍待核验。
+更新日期：2026 年 10 月 4 日（北京时间）。用户确认保留中文名“知见”，因 medclear.com 已被注册而撤回 Medclear，英文重新筛选。专业治疗信息管理的定位保持当前决定。
 
 ## 名称与使用
 
-| 项目 | 定稿 |
+| 项目 | 当前决定 |
 | --- | --- |
 | 中文名称 | 知见 |
-| 英文名称 | Medclear（统一采用该大小写，不使用中文拼音） |
-| 中英文并列 | 知见 / Medclear |
+| 英文名称 | 待用户选择；Medclear 已退出 |
+| 中英文并列 | 待英文确认后确定；英文不使用中文拼音 |
 | 中文产品说明 | 面向肿瘤患者与家属的专业治疗信息管理工具。 |
 | 英文产品说明 | A treatment information management tool for people with cancer and their families. |
 
-“知”表达理解医学信息，“见”表达看清记录、变化与关联。Medclear 由医疗语境的 Med 与 clear 组合，命名意图是让复杂治疗信息清楚可读，不表示诊断、医疗许可或疗效保证。
+“知”表达理解医学信息，“见”表达看清记录、变化与关联。英文候选应简短、专业、自然易读，覆盖记录管理与信息理解；不表示诊断、医疗许可或疗效保证。完整同名 .com 与 .cn 的普通注册状态及同名产品须在定稿前核查。
 
 ## 产品背景与范围
 
@@ -26,11 +26,32 @@
 
 ## 确认与实施边界
 
-品牌定稿已写入本文件、中英文 README 与当前产品范围。现有界面、PWA/原生应用显示名和旧版图标尚未迁移；仓库目录、包名、app id、存储键与部署标识仍保留原值。后续实施品牌替换时单独检查兼容性，不将本次文档确认写成已上线。
+中文名称与当前定位已写入本文件、中英文 README 与产品范围，英文处于待选择状态。现有界面、PWA/原生应用显示名和旧版图标尚未迁移；仓库目录、包名、app id、存储键与部署标识仍保留原值。后续实施品牌替换时单独检查兼容性，不将本次文档确认写成已上线。
 
-“知见 / Medclear”的同名产品、商标、微信名称及域名可用性尚未核验，也没有注册或购买域名。下文旧候选的可注册记录不能作为 Medclear 的可用性证据。
+尚未完成“知见”及新英文候选的商标与微信名称核验，也没有注册或购买域名。普通注册状态与网络同名初筛不能证明名称独占或商标可用。
 
 此前考虑的 Medwise 已有同领域的医学信息检索服务，因此本次未采用。[Medwise 官方产品说明](https://medwise.ai/terms.html)
+
+## 本轮英文候选与实查
+
+以下为未定稿候选。域名要求是完整匹配英文名称的 .com 与 .cn，避免通过拼写错误、数字、连字符或额外前后缀绕开主名。
+
+| 候选 | 命名意图与取舍 | 2026-10-04 腾讯云实际结果 |
+| --- | --- | --- |
+| Medveria | Med 与 verify 的品牌构词意图，强调资料核对和有依据的理解；建议读 med-VEER-ee-uh。属于造词，单看名字不一定能读出核验含义，仍需产品说明。 | medveria.com、medveria.cn 均显示“立即加购”，分别为 83 元/首年、33 元/首年。 |
+| Medclevia | Med、clear 与 via 的品牌构词意图，强调把治疗资料和过程理清；建议读 med-KLEE-vee-uh。拼写与构词需要解释，读感较长。 | medclevia.com、medclevia.cn 均显示“立即加购”，分别为 83 元/首年、33 元/首年。 |
+
+两组由主 Agent 补充，Claude Fable 5.1 在原会话评审后更推荐 Medveria；其读感与品牌联想属于意见，不作为词源或药品命名事实。初步网络精确拼写检索未找到这两组同名产品，不构成商标核验。四个域名的可注册判断来自 [腾讯云批量查询](https://buy.cloud.tencent.com/domain/bulkregister) 的实际结果，.com 注册局 RDAP 均未返回登记对象，仅作为辅助证据；尚未加购或购买，最终以注册成功为准。
+
+当前标准续费价 .com 为 90 元/年，.cn 为 38 元/年，后续可能调整。[腾讯云价格表](https://buy.cloud.tencent.com/domain/price)
+
+Claude 新提案中的 Treatline、Clinote、Healthmap、Oncoview、Insightmed、Logimed、Recormed、Vitapath、Notemed 的 .com 均由腾讯云显示已注册。第二批 Evimed、Veritrace、Chronicare、Signalpath、Traceline、Archimed、Timelogic、Linemark，以及后续 Clarivo、Visitrack、Lumepath、Knowline 的 .com 均有注册局登记，未进入优先名单。Curemap 因治愈含义不符合要求而排除。
+
+## 撤回 Medclear 的依据
+
+2026-10-04 用户在了解域名登记后撤回 Medclear，并明确保留“知见”，仅重取英文。medclear.com 的 .com 注册局登记时间为 2008-09-28，当前不能按普通未注册域名购买。[注册局 RDAP](https://rdap.verisign.com/com/v1/domain/medclear.com)
+
+此前用户浏览器查询的 medclaer.com 是 e/a 顺序相反的另一域名，其可注册状态不能证明 medclear.com 可用，也不采用它替代品牌。此前 Medclear 的定稿记录见对应 Git 历史与 [定稿日志](../log/0031-medclear-naming-decision.md)。
 
 ## 历史命名与查询记录
 

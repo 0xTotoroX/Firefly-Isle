@@ -43,3 +43,4 @@
 29. [2754acd ci: validate codex development branches](0029-2754acd-development-ci.md)
 30. [90e931f fix(pwa): preserve private routes and offline build consistency](0030-90e931f-offline-runtime-validation.md)
 31. [docs(brand): confirm Medclear naming and product positioning](0031-medclear-naming-decision.md) — 随对应提交记录，hash 由该文件的 Git 历史回查
+32. [docs(brand): reopen English naming after domain checks](0032-english-name-domain-recheck.md) — 随对应提交记录，hash 由该文件的 Git 历史回查

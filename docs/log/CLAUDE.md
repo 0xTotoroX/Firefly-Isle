@@ -18,3 +18,4 @@ index.md: commit history 总入口，按时间顺序列出日志文件、命名�
 0029-2754acd-development-ci.md: 开发分支与手动 CI 的触发范围及独立发布边界。
 0030-90e931f-offline-runtime-validation.md: PWA 缓存隐私、离线图标、构建版本交接与真实 Cloudflare 预览证据。
 0031-medclear-naming-decision.md: 知见 / Medclear 品牌与专业化定位定稿、规划及未迁移/未核验边界，随对应提交记录。
+0032-english-name-domain-recheck.md: 用户撤回 Medclear、保留知见、新英文候选与 .com/.cn 实查，英文尚未选定。

@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="public/logo-island-lighthouse.png" alt="知见 / Medclear" width="140" />
-  <h1>知见 / Medclear</h1>
+  <img src="public/logo-island-lighthouse.png" alt="知见" width="140" />
+  <h1>知见</h1>
   <p><strong>面向肿瘤患者与家属的专业治疗信息管理工具。</strong></p>
   <p>
     中文 |
@@ -26,7 +26,7 @@
 
 当前实现包含 Dashboard、病历/指标/症状/随访、可恢复表单、复诊摘要、模型设置、账户管理与配额。代码已统一到本仓库，旧自托管实验中的有效准备工作已整合；生产配置仍连接 Supabase Cloud。
 
-新黑白双主题与八种强调色的规范见 [设计入口](DESIGN.md)，正式布局迁移等待用户选择。旧 V4 预览代码已移除，历史图片保留作证据。产品名称已定为“知见 / Medclear”，见 [命名与定位](docs/products/product-naming.md)。当前界面、应用显示名和图标仍沿用旧品牌，品牌迁移尚未实施；仓库与技术标识保留兼容。名称、商标及域名可用性尚未核验。
+新黑白双主题与八种强调色的规范见 [设计入口](DESIGN.md)，正式布局迁移等待用户选择。旧 V4 预览代码已移除，历史图片保留作证据。中文名称已定为“知见”；Medclear 因同名 .com 已注册而撤回，英文待选，见 [命名与定位](docs/products/product-naming.md)。当前界面、应用显示名和图标仍沿用旧品牌，品牌迁移尚未实施；仓库与技术标识保留兼容。新英文候选已有域名初查；商标及微信名称尚未核验。
 
 当前交付范围和真实缺口见 [17 项功能验收表](docs/products/saas-acceptance.md)，数据关系与逐表权限见 [数据模型](docs/architecture/data-model.md)。本地检查、云端开发和生产可用分别验收。
 

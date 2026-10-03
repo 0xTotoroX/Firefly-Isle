@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="public/logo-island-lighthouse.png" alt="Medclear" width="140" />
-  <h1>Medclear</h1>
+  <img src="public/logo-island-lighthouse.png" alt="知见" width="140" />
+  <h1>知见</h1>
   <p><strong>A treatment information management tool for people with cancer and their families.</strong></p>
   <p>
     <a href="README.md">中文</a> |
@@ -18,7 +18,7 @@ Open `/demo` to try the existing product screens with three fictional patient re
 
 ## Product Background
 
-Medclear helps people with cancer and their families organize medical records, test results and treatment history, track changes in readings and symptoms, and understand medical information for discussions with clinicians. Record preparation is one part of a broader treatment and follow-up workflow.
+The product helps people with cancer and their families organize medical records, test results and treatment history, track changes in readings and symptoms, and understand medical information for discussions with clinicians. Record preparation is one part of a broader treatment and follow-up workflow.
 
 Future work includes interpreting genetic test reports and showing relationships between specific variants and signaling pathways, with sources, evidence and uncertainty. This capability is not implemented. The product focuses on information management and understanding; emotional companionship is not a core feature. It does not replace clinical care or promise treatment outcomes.
 
@@ -26,7 +26,7 @@ Future work includes interpreting genetic test reports and showing relationships
 
 The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; production still targets Supabase Cloud.
 
-The new black/white, eight-accent specification is linked from [DESIGN.md](DESIGN.md); production layout migration awaits the user's selection. The old V4 preview code has been removed, while historical images remain. The confirmed product names are 知见 in Chinese and Medclear in English; see the [naming decision](docs/products/product-naming.md). The running UI, installed-app names and logo still use the previous brand. Brand migration has not been implemented, and repository and technical identifiers remain unchanged for compatibility. Name, trademark and domain availability have not been verified.
+The new black/white, eight-accent specification is linked from [DESIGN.md](DESIGN.md); production layout migration awaits the user's selection. The old V4 preview code has been removed, while historical images remain. The Chinese name 知见 is confirmed. Medclear was withdrawn because medclear.com is already registered; a new English name is pending selection. See the [naming decision](docs/products/product-naming.md). The running UI, installed-app names and logo still use the previous brand. Brand migration has not been implemented, and repository and technical identifiers remain unchanged for compatibility. New candidates have preliminary domain checks; trademark and WeChat name availability remain unverified.
 
 See the [17-capability acceptance ledger](docs/products/saas-acceptance.md) for verified behavior and remaining gaps, and the [data model](docs/architecture/data-model.md) for table relationships and RLS. Local checks, cloud development readiness and production readiness are verified separately.
 
