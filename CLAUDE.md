@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository state
 
-- The current ten-part SaaS task is tracked by `docs/products/saas-acceptance.md` and `openspec/changes/complete-saas-user-workflows/`. Branch consolidation is complete; naming, production layout selection, hosting and mini-program delivery remain distinct decisions and acceptance boundaries.
+- The current ten-part SaaS task is tracked by `docs/products/saas-acceptance.md` and `openspec/changes/complete-saas-user-workflows/`. Branch consolidation is complete; the product name is confirmed as 知见 / Medclear (2026-10-04), while brand migration, production layout selection, hosting and mini-program delivery remain separate acceptance boundaries.
 - `docs/architecture/data-model.md` maps every application table and RLS rule. Migrations now explicitly grant Data API access; all 19 migrations pass fresh-database checks, and a complete local Auth/PostgREST stack verifies account isolation, CRUD, sharing and idempotent creation. This is local acceptance, not evidence of production migration.
 - `docs/operations/codex-cloud.md` records the private published development environment and exact cloud validation evidence; environment publication is not product deployment.
 
@@ -78,6 +78,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   - `capacitor-mobile-shell.md` — local Capacitor build/sync/open runbook, native project checks, platform-sensitive product-flow matrix, and signing-secret boundary
 - `docs/log/`
   - `index.md` — commit history 总入口
+  - `0031-medclear-naming-decision.md` — confirmed 知见 / Medclear naming and positioning, with implementation and availability boundaries
   - `0001-*.md ~ 0022-*.md` — 每个 git commit 一份历史日志
   - `0024-426c97c-record-integrity-and-design.md` — integrity, cleanup, independent design and local acceptance evidence
   - `0023-auth-login-wechat-learning.md` — 认证学习专题复盘，记录邮箱/Google/Supabase/微信登录的原理、数据流、配置边界与排错路径
@@ -227,7 +228,7 @@ If future work uses the archived Stitch artifacts in `docs/products/archive/stit
 
 ## Current integrity and scope boundaries
 
-- `docs/products/core-scope.md` defines the product core and deferred work; `docs/products/product-naming.md` records unselected brand/domain candidates.
+- `docs/products/core-scope.md` defines the product core and deferred work; `docs/products/product-naming.md` records the confirmed 知见 / Medclear brand and professional treatment-information positioning, pending name/domain checks, and historical candidates. UI/native brand migration is not implemented; gene-variant/pathway interpretation remains future work.
 - Record and batch writes are database transactions. `persist_patient_record` checks `expected_owner_id = auth.uid()` and preserves child identity; it has no unsafe legacy write fallback.
 - Public sharing resolves capability and sanitized data in `get_shared_patient_record`; base tables remain owner-only.
 - Field edits use one queue per record/account; locale and theme do not reset it. Workspace model operations are mutually exclusive and stale account results are discarded.

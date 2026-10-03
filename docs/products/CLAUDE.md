@@ -4,7 +4,7 @@
 成员清单
 domestic-launch.md: 国内托管、小程序技术路线、备案/类目证据与待确定的主体及发布范围。
 saas-acceptance.md: 十部分用户任务书、17项功能去向、分支整合证据与真实验收缺口的当前交付清单。
-product-naming.md: 全新中英文候选、域名即时核验与未购买/未核验的边界。
+product-naming.md: 已确认的知见 / Medclear 名称与专业治疗信息管理定位、待核验/待迁移边界及历史命名证据。
 core-scope.md: 核心用户需求、保留/移除/延后范围、组件复用与轻量验收工作流。
 CLAUDE.md: 说明产品文档目录的当前真相源、历史快照与更新规则，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 prd-implementation-status.md: 当前 PRD 实现状态盘点，按已实现、部分实现、未实现、PWA foundation、Capacitor 本地壳、登录页公开 Demo、可选 Supabase Demo 数据源与额外能力标记产品能力落地情况，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

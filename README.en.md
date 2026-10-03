@@ -1,9 +1,7 @@
 <div align="center">
-  <img src="public/logo-island-lighthouse.png" alt="Firefly-Isle logo" width="140" />
-  <h1>Firefly-Isle</h1>
-  <p><strong>One-page oncology treatment timeline and record builder.</strong></p>
-  <p>A clinical record assistant for late-stage cancer treatment planning.</p>
-  <p>Keep it running, make it helpful.</p>
+  <img src="public/logo-island-lighthouse.png" alt="Medclear" width="140" />
+  <h1>Medclear</h1>
+  <p><strong>A treatment information management tool for people with cancer and their families.</strong></p>
   <p>
     <a href="README.md">中文</a> |
     English
@@ -20,13 +18,15 @@ Open `/demo` to try the existing product screens with three fictional patient re
 
 ## Product Background
 
-Firefly-Isle comes from a real need shared by cancer patients and their families. Patients with advanced cancer often go through repeated recurrence, disease progression, and multiple treatment lines. When preparing medical records or discussing care across hospitals, information overload can make communication fragmented, while outpatient doctors often have limited time for each patient. This project helps patients and families organize treatment plans and clinical records into a clearer, more portable timeline.
+Medclear helps people with cancer and their families organize medical records, test results and treatment history, track changes in readings and symptoms, and understand medical information for discussions with clinicians. Record preparation is one part of a broader treatment and follow-up workflow.
+
+Future work includes interpreting genetic test reports and showing relationships between specific variants and signaling pathways, with sources, evidence and uncertainty. This capability is not implemented. The product focuses on information management and understanding; emotional companionship is not a core feature. It does not replace clinical care or promise treatment outcomes.
 
 ## Current local development baseline
 
 The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; production still targets Supabase Cloud.
 
-The new black/white, eight-accent specification is linked from [DESIGN.md](DESIGN.md); production layout migration awaits the user's selection. The old V4 preview code has been removed, while historical images remain. The repository name is retained for compatibility while a new product name is being selected.
+The new black/white, eight-accent specification is linked from [DESIGN.md](DESIGN.md); production layout migration awaits the user's selection. The old V4 preview code has been removed, while historical images remain. The confirmed product names are 知见 in Chinese and Medclear in English; see the [naming decision](docs/products/product-naming.md). The running UI, installed-app names and logo still use the previous brand. Brand migration has not been implemented, and repository and technical identifiers remain unchanged for compatibility. Name, trademark and domain availability have not been verified.
 
 See the [17-capability acceptance ledger](docs/products/saas-acceptance.md) for verified behavior and remaining gaps, and the [data model](docs/architecture/data-model.md) for table relationships and RLS. Local checks, cloud development readiness and production readiness are verified separately.
 

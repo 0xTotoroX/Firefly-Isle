@@ -1,9 +1,7 @@
 <div align="center">
-  <img src="public/logo-island-lighthouse.png" alt="Firefly-Isle logo" width="140" />
-  <h1>Firefly-Isle</h1>
-  <p><strong>一页萤屿，晚期癌症患者治疗方案管理助手。</strong></p>
-  <p>One-page oncology treatment timeline and record builder.</p>
-  <p>Keep it running, make it helpful.</p>
+  <img src="public/logo-island-lighthouse.png" alt="知见 / Medclear" width="140" />
+  <h1>知见 / Medclear</h1>
+  <p><strong>面向肿瘤患者与家属的专业治疗信息管理工具。</strong></p>
   <p>
     中文 |
     <a href="README.en.md">English</a>
@@ -20,13 +18,15 @@
 
 ## 项目背景
 
-本项目源于癌症患者及其家属的真实需求。晚期癌症患者由于频繁复发和疾病进展，往往需要经历多线治疗。在整理病历和治疗信息的过程中，患者及家属常因信息过载而感到无助；而在异地就医或门诊沟通中，由于患者数量众多，医生能够分配给单个患者的沟通时间有限，难以进行充分、系统的交流。因此，本项目旨在帮助患者更好地进行治疗方案与病历信息的管理。
+知见帮助肿瘤患者与家属整理分散的病历、检查结果和治疗记录，跟踪指标与症状变化，理解相关医学信息，为就医沟通提供清楚、可核查的资料。产品覆盖治疗与随访过程，病历整理是其中一项功能。
+
+后续计划增加基因检测报告解读，展示具体变异与信号通路的关联，并说明依据和不确定性；该能力尚未实现。产品以专业信息管理和理解支持为主，不以情绪陪伴为核心功能，不替代医生诊疗或承诺治疗效果。
 
 ## 当前本地开发基线
 
 当前实现包含 Dashboard、病历/指标/症状/随访、可恢复表单、复诊摘要、模型设置、账户管理与配额。代码已统一到本仓库，旧自托管实验中的有效准备工作已整合；生产配置仍连接 Supabase Cloud。
 
-新黑白双主题与八种强调色的规范见 [设计入口](DESIGN.md)，正式布局迁移等待用户选择。旧 V4 预览代码已移除，历史图片保留作证据。产品名称正在重选，当前仓库名保留兼容，不代表最终命名。
+新黑白双主题与八种强调色的规范见 [设计入口](DESIGN.md)，正式布局迁移等待用户选择。旧 V4 预览代码已移除，历史图片保留作证据。产品名称已定为“知见 / Medclear”，见 [命名与定位](docs/products/product-naming.md)。当前界面、应用显示名和图标仍沿用旧品牌，品牌迁移尚未实施；仓库与技术标识保留兼容。名称、商标及域名可用性尚未核验。
 
 当前交付范围和真实缺口见 [17 项功能验收表](docs/products/saas-acceptance.md)，数据关系与逐表权限见 [数据模型](docs/architecture/data-model.md)。本地检查、云端开发和生产可用分别验收。
 
