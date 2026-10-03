@@ -1,8 +1,11 @@
-const CACHE_VERSION = 'firefly-pwa-v1'
+const CACHE_VERSION = 'firefly-pwa-v2'
 const STATIC_CACHE = `${CACHE_VERSION}-static`
 const APP_SHELL_URL = '/'
 
-const CORE_ASSETS = [
+// Workbox supplies only public build assets; their revisions also version this cache.
+const BUILD_ASSETS = self.__WB_MANIFEST || []
+const CORE_ASSETS = [...new Set([
+  ...BUILD_ASSETS.map((entry) => `/${entry.url}`),
   APP_SHELL_URL,
   '/manifest.webmanifest',
   '/icons/firefly-pwa-192.png',
@@ -10,7 +13,7 @@ const CORE_ASSETS = [
   '/icons/firefly-maskable-512.png',
   '/icons/apple-touch-icon.png',
   '/logo-island-lighthouse.ico',
-]
+])]
 
 const STATIC_PATH_PREFIXES = [
   '/assets/',
@@ -59,7 +62,7 @@ function isCacheableStaticRequest(request) {
 
   const url = new URL(request.url)
 
-  if (url.origin !== self.location.origin) {
+  if (url.origin !== self.location.origin || url.search) {
     return false
   }
 
@@ -73,7 +76,7 @@ async function deleteOldCaches() {
 
 async function cacheCoreAssets() {
   const cache = await caches.open(STATIC_CACHE)
-  await cache.addAll(CORE_ASSETS)
+  await cache.addAll(CORE_ASSETS.map((path) => new Request(new URL(path, self.location.origin), { cache: 'reload' })))
 }
 
 function canCacheResponse(response) {
@@ -96,24 +99,20 @@ async function staleWhileRevalidate(request) {
   return cached ?? network
 }
 
-async function networkFirstNavigation(request) {
+async function appShellNavigation(request) {
+  // Keep the HTML and lazy chunks on the controlling worker's build until its successor activates.
+  // The public shell has no auth code, share capability or patient ID in its response URL.
   try {
-    const response = await fetch(request)
-
-    if (canCacheResponse(response)) {
-      const cache = await caches.open(STATIC_CACHE)
-      await cache.put(APP_SHELL_URL, response.clone())
-    }
-
-    return response
-  } catch {
     const cache = await caches.open(STATIC_CACHE)
     const cachedShell = await cache.match(APP_SHELL_URL)
+    if (cachedShell) return cachedShell
+  } catch {
+    // An unavailable cache must not block an otherwise successful online navigation.
+  }
 
-    if (cachedShell) {
-      return cachedShell
-    }
-
+  try {
+    return await fetch(request)
+  } catch {
     return new Response('Firefly Isle is offline. Reconnect and try again.', {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
       status: 503,
@@ -122,7 +121,8 @@ async function networkFirstNavigation(request) {
 }
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(cacheCoreAssets().then(() => self.skipWaiting()))
+  // Let an existing worker finish serving open tabs before removing its build assets.
+  event.waitUntil(cacheCoreAssets())
 })
 
 self.addEventListener('activate', (event) => {
@@ -137,7 +137,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirstNavigation(request))
+    event.respondWith(appShellNavigation(request))
     return
   }
 

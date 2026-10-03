@@ -17,3 +17,7 @@
 - [x] Run lint, complete type checks, tests, build and database checks; review changes and save scoped commits.
 - [ ] Publish Codex Cloud environment and validate a fresh independent cloud task against the synchronized commit.
 - [x] Update README, model/RLS documentation and current acceptance evidence; retain explicit production and small-program limitations.
+
+- [x] Fix PWA navigation metadata privacy and first-install asset caching; validate a real CSP-enabled Cloudflare preview with the ordinary HTTP cache disabled.
+- [ ] Confirm the production backend target, prepare a verified backup and deploy the missing database/function contracts without resetting existing records.
+- [ ] Complete native public links, authentication return handling and file export, then validate the synchronized Capacitor shell.

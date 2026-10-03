@@ -231,6 +231,18 @@ a {
 }
 
 .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined Variable';
+  font-size: 24px;
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  font-feature-settings: 'liga';
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   vertical-align: middle;
 }
@@ -297,3 +309,9 @@ a {
   width: 4px;
   background-color: var(--ff-accent-primary);
 }
+
+/* Export clone layout is served with the application stylesheet under the production CSP. */
+[data-firefly-export-snapshot] * { min-width: 0; overflow-wrap: anywhere; }
+[data-firefly-export-snapshot] > header > div { display: block !important; }
+[data-firefly-export-snapshot] [data-export-summary] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+[data-firefly-export-snapshot] [data-export-timeline] { grid-template-columns: 32px 140px minmax(0, 1fr); gap: 16px; }

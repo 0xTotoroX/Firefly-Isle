@@ -61,7 +61,7 @@ privacy.ts: 隐私页 href、隐私门控确认 key 与共享隐私文案真相�
 network-status.ts: 浏览器在线状态、OnlineRequiredError 与中英文在线依赖提示边界，供 PWA 离线壳和网络动作提前失败复用，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 network-status.test.ts: PWA 网络状态测试，约束显式离线检测、OnlineRequiredError 与中英文在线依赖反馈，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 pwa.ts: PWA service worker 注册与敏感请求缓存判定边界，确保生产安全上下文才注册外层壳缓存且动态医疗数据不进入 Cache Storage，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-pwa.test.ts: PWA 合同测试，约束 manifest 安装字段、headers、SPA 深链路 fallback、service worker 注册条件与敏感动态请求缓存排除，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+pwa.test.ts: PWA 合同与实际 worker 事件测试，约束首次构建资源预缓存、导航响应元信息隔离、离线回退、旧缓存清理和安装元数据，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 record-sharing.ts: 授权码 hash、所有者管理与单 RPC 读取脱敏病历，不再通过患者 ID 读取分享数据。
 record-sharing.test.ts: 病历分享回归测试，约束授权码 hash、record_shares 迁移/RLS/RPC、非 owner 拒绝、撤销写入、active/expired/revoked/unavailable 状态与单份记录读取，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
 record-editing.ts: 自然语言病历编辑边界，要求 LLM 返回 PatientFieldTarget 字段级 patch，并复用逐格编辑的归一化 merge 语义，支持姓名、临床备注与可带单位的数值字段，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md

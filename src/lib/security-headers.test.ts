@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 node:fs 的部署头合同检查。
  * [OUTPUT]: 对外提供 public/_headers 安全响应头的回归测试。
- * [POS]: lib 的安全头合同测试，约束 CSP 只允许自身脚本（内联主题引导按 hash 白名单）、Supabase 网络域、Google Fonts 与头像域，并保持 HSTS 与点击劫持防护存在。
+ * [POS]: lib 的安全头合同测试，约束 CSP 只允许自身脚本（内联主题引导按 hash 白名单）、Supabase 网络域、自托管字体与 Google 头像域，并保持 HSTS 与点击劫持防护存在。
  * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
  */
 import { readFileSync } from 'node:fs'
@@ -38,7 +38,7 @@ describe('deployment security headers contract', () => {
     expect(csp).not.toContain("script-src 'self' 'unsafe-inline'")
   })
 
-  it('allows only supabase, google fonts and google avatars as external origins', () => {
+  it('allows only supabase and google avatars as external origins', () => {
     const source = readHeadersSource()
     const csp = source.match(/Content-Security-Policy: (.*)/)?.[1] ?? ''
     const allowedOrigins = new Set([
@@ -46,8 +46,6 @@ describe('deployment security headers contract', () => {
       'https://*.supabase.co',
       'https://*.functions.supabase.co',
       'wss://*.supabase.co',
-      'https://fonts.googleapis.com',
-      'https://fonts.gstatic.com',
       'https://*.googleusercontent.com',
     ])
     const declaredOrigins = csp.split(/[\s;]+/).filter((token) => token.includes('://'))

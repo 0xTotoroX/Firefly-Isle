@@ -89,6 +89,8 @@ describe('export-record helpers', () => {
     expect(doc.querySelector('main')).toBeNull()
     expect(doc.documentElement.classList.contains('dark')).toBe(false)
     expect(doc.documentElement.style.getPropertyValue('--ff-critical')).toBe('#B42318')
+    expect(doc.head.querySelector('style')).toBeNull()
+    expect(root.dataset.fireflyExportSnapshot).toBe('true')
     expect(root.style.width).toBe('960px')
     expect(root.style.padding).toBe('40px')
     expect(root.style.margin).toBe('0px')

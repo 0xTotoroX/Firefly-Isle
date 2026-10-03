@@ -48,14 +48,6 @@ function prepareRecordExportClone(cloneDocument: Document, cloneRoot: HTMLElemen
   cloneDocument.body.style.cssText = `margin: 0; width: ${EXPORT_WIDTH}px; min-width: 0; background: white;`
   cloneRoot.style.cssText = `box-sizing: border-box; width: ${EXPORT_WIDTH}px; max-width: none; margin: 0; padding: 40px; background: white; color: var(--ff-text-primary);`
   cloneRoot.setAttribute('data-firefly-export-snapshot', 'true')
-  const exportStyle = cloneDocument.createElement('style')
-  exportStyle.textContent = `
-    [data-firefly-export-snapshot] * { min-width: 0; overflow-wrap: anywhere; }
-    [data-firefly-export-snapshot] > header > div { display: block !important; }
-    [data-firefly-export-snapshot] [data-export-summary] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    [data-firefly-export-snapshot] [data-export-timeline] { grid-template-columns: 32px 140px minmax(0, 1fr); gap: 16px; }
-  `
-  cloneDocument.head.appendChild(exportStyle)
   for (const node of [cloneRoot, ...cloneRoot.querySelectorAll<HTMLElement>('*')]) {
     node.style.animation = 'none'
     node.style.transition = 'none'
