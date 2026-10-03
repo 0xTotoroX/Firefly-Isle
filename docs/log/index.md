@@ -41,3 +41,4 @@
 27. [5eb85a7 fix(data): enforce API grants and atomic write boundaries](0027-5eb85a7-data-boundaries.md)
 28. [a4b3191 feat(saas): complete patient workflows and isolated demo](0028-a4b3191-saas-workflows.md)
 29. [2754acd ci: validate codex development branches](0029-2754acd-development-ci.md)
+30. [90e931f fix(pwa): preserve private routes and offline build consistency](0030-90e931f-offline-runtime-validation.md)

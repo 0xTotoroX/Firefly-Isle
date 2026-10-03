@@ -16,3 +16,4 @@ index.md: commit history 总入口，按时间顺序列出日志文件、命名�
 0027-5eb85a7-data-boundaries.md: 显式 Data API 权限、创建幂等、捐赠原子记账与真实服务验收。
 0028-a4b3191-saas-workflows.md: 化验与认证流程、账户导出、独立 Demo 和实际 PDF/PNG 验收。
 0029-2754acd-development-ci.md: 开发分支与手动 CI 的触发范围及独立发布边界。
+0030-90e931f-offline-runtime-validation.md: PWA 缓存隐私、离线图标、构建版本交接与真实 Cloudflare 预览证据。
