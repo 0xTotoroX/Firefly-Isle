@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,700;0,800;1,400&amp;family=Noto+Serif+SC:wght@400;700&amp;family=Inter:wght@400;500;700&amp;family=JetBrains+Mono:wght@400;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#1a1c19",
+                    "secondary-container": "#e0e0db",
+                    "surface-dim": "#dadad8",
+                    "surface-bright": "#f9f9f7",
+                    "error-container": "#ffdad6",
+                    "inverse-primary": "#c8c6c5",
+                    "surface-variant": "#e2e3e1",
+                    "surface": "#f9f9f7",
+                    "tertiary": "#000000",
+                    "surface-container-low": "#f4f4f2",
+                    "primary-fixed-dim": "#c8c6c5",
+                    "on-background": "#1a1c1b",
+                    "surface-container-high": "#e8e8e6",
+                    "inverse-on-surface": "#f1f1ef",
+                    "secondary-fixed-dim": "#c6c7c2",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-primary-container": "#858383",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#474646",
+                    "on-primary-fixed": "#1c1b1b",
+                    "on-surface": "#1a1c1b",
+                    "on-secondary-container": "#62635f",
+                    "on-surface-variant": "#444748",
+                    "on-primary": "#ffffff",
+                    "surface-container-highest": "#e2e3e1",
+                    "background": "#f9f9f7",
+                    "surface-container": "#eeeeec",
+                    "primary-container": "#1c1b1b",
+                    "primary": "#000000",
+                    "tertiary-fixed-dim": "#ffb4a8",
+                    "secondary-fixed": "#e3e3de",
+                    "on-error-container": "#93000a",
+                    "tertiary-container": "#410000",
+                    "on-error": "#ffffff",
+                    "on-secondary-fixed-variant": "#464744",
+                    "primary-fixed": "#e5e2e1",
+                    "surface-tint": "#5f5e5e",
+                    "secondary": "#5d5f5b",
+                    "outline": "#747878",
+                    "on-tertiary-fixed-variant": "#930000",
+                    "on-tertiary-fixed": "#410000",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-container": "#fb3222",
+                    "tertiary-fixed": "#ffdad4",
+                    "outline-variant": "#c4c7c7",
+                    "inverse-surface": "#2f3130"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Newsreader", "serif"],
+                    "body": ["Noto Serif SC", "serif"],
+                    "label": ["Inter", "sans-serif"],
+                    "mono": ["JetBrains Mono", "monospace"],
+                    "display": ["Playfair Display", "serif"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-image: radial-gradient(#e5e5e0 0.5px, transparent 0.5px);
+            background-size: 12px 12px;
+            background-color: #f9f9f7;
+        }
+        .ink-double-rule {
+            border-top: 4px solid #111111;
+            border-bottom: 1px solid #111111;
+            height: 8px;
+            margin: 1rem 0;
+        }
+        .ink-card-shadow {
+            box-shadow: 4px 4px 0px 0px #111111;
+        }
+        .ink-card-shadow:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px 0px #111111;
+        }
+        .vertical-text {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+    </style>
+</head>
+<body class="font-body text-primary antialiased min-h-screen flex">
+<!-- Shared SideNavBar -->
+<aside class="h-screen w-64 border-r-2 border-[#111111] dark:border-[#E5E5E0] bg-[#F9F9F7] dark:bg-[#111111] flex flex-col justify-between p-6 overflow-y-auto shrink-0 sticky top-0">
+<div class="space-y-8">
+<!-- Brand -->
+<div class="flex flex-col gap-1">
+<div class="text-2xl font-bold uppercase tracking-tighter text-[#111111] dark:text-[#F9F9F7] font-['Newsreader']">一页萤岛</div>
+<div class="text-[10px] uppercase tracking-[0.2em] font-label text-[#111111]/60">Clinical AI Workspace</div>
+</div>
+<!-- CTA -->
+<button class="w-full bg-[#111111] text-[#F9F9F7] dark:bg-[#F9F9F7] dark:text-[#111111] py-3 font-label font-bold tracking-tight hover:opacity-90 transition-opacity">
+                New Extraction
+            </button>
+<!-- Navigation -->
+<nav class="flex flex-col gap-4 font-['Newsreader'] tracking-tight">
+<a class="flex items-center gap-3 text-[#111111]/60 dark:text-[#F9F9F7]/60 font-medium hover:bg-[#111111] hover:text-[#F9F9F7] dark:hover:bg-[#F9F9F7] dark:hover:text-[#111111] transition-colors duration-75 p-2" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="clinical_notes">clinical_notes</span>
+<span>提取</span>
+</a>
+<a class="flex items-center gap-3 text-[#111111] dark:text-[#F9F9F7] font-bold border-b-4 border-[#111111] dark:border-[#F9F9F7] pb-1 translate-x-1 duration-75" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="description">description</span>
+<span>病历</span>
+</a>
+<a class="flex items-center gap-3 text-[#111111]/60 dark:text-[#F9F9F7]/60 font-medium hover:bg-[#111111] hover:text-[#F9F9F7] dark:hover:bg-[#F9F9F7] dark:hover:text-[#111111] transition-colors duration-75 p-2" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="analytics">analytics</span>
+<span>统计</span>
+</a>
+</nav>
+</div>
+<div class="space-y-4">
+<nav class="flex flex-col gap-2 font-['Newsreader'] tracking-tight">
+<button class="flex items-center gap-3 text-[#111111]/60 dark:text-[#F9F9F7]/60 font-medium hover:bg-[#111111] hover:text-[#F9F9F7] p-2">
+<span class="material-symbols-outlined text-lg" data-icon="contrast">contrast</span>
+<span>Theme Toggle</span>
+</button>
+<button class="flex items-center gap-3 text-[#111111]/60 dark:text-[#F9F9F7]/60 font-medium hover:bg-[#111111] hover:text-[#F9F9F7] p-2">
+<span class="material-symbols-outlined text-lg" data-icon="account_circle">account_circle</span>
+<span>User Profile</span>
+</button>
+</nav>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-grow p-8 max-w-6xl mx-auto">
+<!-- Top Masthead -->
+<header class="mb-12">
+<div class="flex justify-between items-end border-b-4 border-primary pb-2">
+<div class="font-display text-7xl font-black tracking-tighter leading-none">THE ARCHIVE</div>
+<div class="font-mono text-xs text-right">
+<p>RECORD_ID: 2024-OX-0912</p>
+<p>LAST_UPDATED: 2023.10.15</p>
+</div>
+</div>
+<div class="h-px bg-primary mt-1"></div>
+</header>
+<!-- Patient Identity Block -->
+<section class="grid grid-cols-12 gap-0 border-2 border-primary bg-white mb-12 ink-card-shadow">
+<div class="col-span-3 border-r-2 border-primary p-6 flex flex-col justify-center items-center bg-primary text-white">
+<div class="w-24 h-24 border-2 border-white mb-4 overflow-hidden">
+<img alt="Patient portrait" class="w-full h-full object-cover grayscale contrast-125" data-alt="Monochrome close-up portrait of an elderly man with dignified features, sharp lighting, archival documentary photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZCy5t3XPMK327PGErIcSg1MRYIX8RJhtcdNzKQtCxLr4eIIYaIJ6wuKVSLwAfQ01bIY46M556q01rUFGgs-JA_2AwcrIOJ0mcRTqD5msnum4pQ25GB4MAdxQURwEs3XGEWS4jslphvQSQyguHCvc_milzP6Z_S2lQy36viUyAEIEaYfKQy1Y59cIB1xZJkgoCP2ubbzl8L2kXREklHy49VXgu-8AQJm6ULR6hIV_VhyQpN68fpwqa5V6wLMKJ3_hGA55cEoPKbuiN"/>
+</div>
+<h1 class="font-headline text-3xl font-bold tracking-tight text-center">陈先生</h1>
+<p class="font-mono text-xs uppercase opacity-80">MALE / 64 YEARS</p>
+</div>
+<div class="col-span-9 grid grid-cols-4 divide-x-2 divide-primary">
+<div class="p-6 flex flex-col justify-between">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-secondary">年龄</span>
+<span class="font-headline text-4xl font-extrabold italic">64</span>
+</div>
+<div class="p-6 flex flex-col justify-between bg-surface-container">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-secondary">血型</span>
+<span class="font-headline text-4xl font-extrabold italic">A+</span>
+</div>
+<div class="p-6 flex flex-col justify-between">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-secondary">身高</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline text-4xl font-extrabold italic">178</span>
+<span class="font-mono text-xs">CM</span>
+</div>
+</div>
+<div class="p-6 flex flex-col justify-between bg-surface-container">
+<span class="font-label text-[10px] font-bold uppercase tracking-widest text-secondary">体重</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline text-4xl font-extrabold italic">72</span>
+<span class="font-mono text-xs">KG</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Editorial Flow: Treatment Journey -->
+<div class="flex gap-12 relative">
+<!-- Left Sidebar Meta -->
+<div class="w-16 shrink-0 hidden lg:block">
+<div class="sticky top-12 flex flex-col items-center">
+<div class="vertical-text font-mono text-[10px] uppercase tracking-widest py-4 border-y-2 border-primary mb-4">
+                        CHRONOLOGICAL REPORT
+                    </div>
+<div class="w-px h-64 bg-primary/20"></div>
+</div>
+</div>
+<!-- Content Body -->
+<div class="flex-grow space-y-16">
+<!-- 01 初发诊断 -->
+<article>
+<div class="flex items-baseline gap-4 mb-6">
+<span class="font-display text-6xl font-black text-primary/10">01</span>
+<h2 class="font-headline text-4xl font-bold border-b-2 border-primary pr-8 pb-2">初发诊断</h2>
+<span class="font-mono text-sm bg-primary text-white px-2 ml-auto">OCT 2021</span>
+</div>
+<div class="grid grid-cols-7 gap-8">
+<div class="col-span-5">
+<p class="font-body text-xl leading-relaxed text-justify first-letter:text-7xl first-letter:font-display first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:leading-[0.8]">
+                                患者于2021年10月因持续性干咳就诊。胸部CT显示左肺下叶占位，大小约 3.2 x 2.8 cm，伴纵隔淋巴结肿大。纤维支气管镜活检确诊为肺腺癌。病理分期定为 T2aN2M0 (IIIA期)。
+                            </p>
+<div class="mt-8 border-l-4 border-primary pl-6 py-2 italic text-secondary">
+                                "诊断过程伴随显著体重减轻，患者自述伴有阵发性胸痛。"
+                            </div>
+</div>
+<div class="col-span-2 border-2 border-primary p-4 bg-white ink-card-shadow h-fit">
+<div class="font-label font-bold text-[10px] uppercase border-b border-primary mb-3 pb-1">IHC Markers</div>
+<ul class="font-mono text-xs space-y-2">
+<li class="flex justify-between"><span>TTF-1</span> <span class="font-bold text-error">(+)</span></li>
+<li class="flex justify-between"><span>Napsin A</span> <span class="font-bold text-error">(+)</span></li>
+<li class="flex justify-between"><span>P40</span> <span>(-)</span></li>
+<li class="flex justify-between"><span>CK7</span> <span class="font-bold text-error">(+)</span></li>
+<li class="flex justify-between"><span>Ki-67</span> <span class="font-bold">25%</span></li>
+</ul>
+</div>
+</div>
+</article>
+<div class="ink-double-rule"></div>
+<!-- 02 一线治疗 -->
+<article>
+<div class="flex items-baseline gap-4 mb-6">
+<span class="font-display text-6xl font-black text-primary/10">02</span>
+<h2 class="font-headline text-4xl font-bold border-b-2 border-primary pr-8 pb-2">一线治疗</h2>
+<span class="font-mono text-sm bg-primary text-white px-2 ml-auto">NOV 2021 - JUN 2022</span>
+</div>
+<div class="grid grid-cols-7 gap-8">
+<div class="col-span-2 space-y-4">
+<div class="border-2 border-primary p-4 bg-primary text-white">
+<div class="font-label font-bold text-[10px] uppercase border-b border-white/30 mb-3 pb-1">Genetic Data</div>
+<div class="font-headline text-2xl font-bold">EGFR 19-del</div>
+<p class="font-mono text-[10px] mt-1 opacity-70">Exon 19 Deletion Detected</p>
+</div>
+<div class="border-2 border-primary p-4 bg-white">
+<div class="font-label font-bold text-[10px] uppercase mb-2">Protocol</div>
+<p class="font-body text-sm font-bold">奥希替尼 (Osimertinib)</p>
+<p class="font-mono text-xs mt-1">80mg qd, Oral</p>
+</div>
+</div>
+<div class="col-span-5">
+<p class="font-body text-xl leading-relaxed text-justify">
+                                基因检测提示EGFR 19号外显子缺失。患者开始接受第三代TKI奥希替尼治疗。初期疗效评价为PR（部分缓解），肿瘤缩小40%以上。治疗期间耐受良好，主要副作用为I级皮疹及偶发腹泻，均在可控范围内。
+                            </p>
+<div class="mt-6 flex gap-4 overflow-x-auto pb-4">
+<div class="min-w-[140px] aspect-square border-2 border-primary overflow-hidden grayscale hover:grayscale-0 transition-all duration-300">
+<img alt="CT Scan early" class="w-full h-full object-cover" data-alt="Medical CT scan slice showing thoracic cavity with high contrast lung structures, monochrome clinical aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIwAaPORS3qiXqWxIzVwSRQz5zsHUdSDHZ65CVNm52sSYNPegfX4Ji6IvrRm1NgX7aLyPq5gYNfMecx0iBJzeA-ntwTRfmbkWpFuGPrSNvkd5wHt_LIWP_17YcmA-dL_OUvcpN_wp-jyn8wXiRyjF42FblzEL_6wnJCJP6GzPycv0fRjWSjwS1_xNVxzD4936hCCGE1e5cMUG1fZkc_6OiNMEcVuqgtqcGBh2RnPwBYsL21g_vcuQgUhHTWT7Q_4gojBwKUhyTIo6w"/>
+</div>
+<div class="min-w-[140px] aspect-square border-2 border-primary overflow-hidden grayscale hover:grayscale-0 transition-all duration-300">
+<img alt="CT Scan mid" class="w-full h-full object-cover" data-alt="Microscopic view of cellular structures, medical pathology slide with purple and pink staining, high detail" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOSPocHG_hrOiExe-cxT7ts-cfaH_51_OTMT3yC1yKKwz-uL9Hlo3LJiu3nw0VuEJJXmNompcIJJFyHs9k2mSDK1mXX89s0MWZufAzpQB9eSIA5NtNgz01GtD4Q8Jamod0sDj8rSbKgc3oj_TEpC6mpybF45zjJHv1mjaCi4lx9tKbgE61EG40E0ASllr-yboGCP_9DGRcrbVi7UjKTprA4xICHdDIq-tUiLYOovfAQyJ6aE1uNpix0vR1IspbLgNUIWYShgJ9pWSj"/>
+</div>
+</div>
+</div>
+</div>
+</article>
+<div class="ink-double-rule"></div>
+<!-- 03 二线治疗 -->
+<article class="pb-24">
+<div class="flex items-baseline gap-4 mb-6">
+<span class="font-display text-6xl font-black text-primary/10">03</span>
+<h2 class="font-headline text-4xl font-bold border-b-2 border-primary pr-8 pb-2 text-error">二线治疗</h2>
+<span class="font-mono text-sm bg-error text-white px-2 ml-auto">JUL 2023 - PRESENT</span>
+</div>
+<div class="border-2 border-primary bg-secondary-container p-8 relative">
+<div class="absolute -top-4 right-8 bg-error text-white font-mono text-[10px] px-3 py-1 uppercase tracking-widest font-bold">Resistance Detected</div>
+<p class="font-body text-xl leading-relaxed text-justify mb-6">
+                            2023年7月随访发现疾病进展（PD），左肺原发灶增大，并出现多发骨转移（肋骨、椎体）。进行二次活检及液体活检，未发现T790M突变，提示复杂的耐药机制，可能涉及c-MET扩增。
+                        </p>
+<div class="grid grid-cols-2 gap-8 border-t border-primary/30 pt-6">
+<div>
+<span class="font-label font-bold text-[10px] uppercase text-secondary mb-2 block">新方案拟定</span>
+<p class="font-headline text-2xl font-bold">培美曲塞 + 顺铂 + 贝伐珠单抗</p>
+<p class="font-body text-sm mt-1">联合抗血管生成治疗以应对骨转移风险。</p>
+</div>
+<div class="bg-white p-4 border border-primary">
+<span class="font-label font-bold text-[10px] uppercase text-secondary mb-2 block">风险提示</span>
+<div class="flex items-center gap-2 text-error">
+<span class="material-symbols-outlined text-lg" data-icon="warning">warning</span>
+<span class="font-mono text-xs font-bold tracking-tighter">BONE METASTASIS: HIGH SKELETAL EVENT RISK</span>
+</div>
+</div>
+</div>
+</div>
+</article>
+</div>
+</div>
+<!-- Footer / Editorial Colophon -->
+<footer class="border-t-4 border-primary pt-8 flex justify-between items-start">
+<div class="max-w-md">
+<p class="font-display text-2xl font-black italic mb-2 tracking-tighter">Verification</p>
+<p class="font-body text-xs text-secondary leading-relaxed">
+                    此报告由一页萤岛临床AI系统根据原始病历扫描件及病理报告自动生成。结构化数据已通过三级审核。所有临床决策须由主治医师最终确认。
+                </p>
+</div>
+<div class="text-right">
+<div class="flex gap-4 justify-end mb-4">
+<button class="border-2 border-primary px-4 py-1 font-label text-xs font-bold hover:bg-primary hover:text-white transition-colors">导出 PDF</button>
+<button class="border-2 border-primary px-4 py-1 font-label text-xs font-bold hover:bg-primary hover:text-white transition-colors">修正数据</button>
+</div>
+<p class="font-mono text-[10px] opacity-50 uppercase">© 2024 CLINICAL INTELLIGENCE ARCHIVE. ALL RIGHTS RESERVED.</p>
+</div>
+</footer>
+</main>
+</body></html>

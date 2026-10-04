@@ -8,7 +8,7 @@ product-naming.md: 已确认的中文知见、英文重选、专业治疗信息�
 core-scope.md: 核心用户需求、保留/移除/延后范围、组件复用与轻量验收工作流。
 prd-implementation-status.md: 历史 PRD 对应的已实现/部分/未实现盘点及入口；当前完整产品验收与服务缺口先读 saas-acceptance.md，Demo 只用本地虚构资料。
 product-priority-roadmap.md: 产品里程碑与后续排序，区分 Web/PWA、Capacitor 壳和独立小程序；历史阶段不替代当前验收清单。
-archive/: 历史 PRD、spec 与 Goal 草案；视觉设计系统和 Stitch 映射已移至根 archive/，其余快照不作为当前实现真相源
+archive/: 历史 PRD、spec、Goal 草案、旧设计系统及 Stitch 映射；当前视觉入口为根 DESIGN.md，历史快照不作为当前实现真相源
 
 saas-refactoring-plan.md: 2026-09-02 SaaS 专业化重构的历史阶段、决策与回滚说明；不是当前十部分任务书或前端迁移执行清单。
 

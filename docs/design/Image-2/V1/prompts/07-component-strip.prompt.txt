@@ -1,0 +1,22 @@
+Use case: ui-mockup
+Asset type: Firefly-Isle dual-theme component strip
+Input images: Use the six Firefly-Isle full-page screenshots as visual references for structure, labels, component roles, and product identity.
+
+Create one dual-theme component strip for Firefly-Isle, not a real page. Show the same component roles in dark and light: sidebar item, primary extraction button, secondary export button, textarea, status chip, timeline section, patient metric, missing-field warning, verification stamp. Keep all labels editable-looking, code-native, and Chinese-legible. Do not invent unrelated product features.
+
+System direction:
+The component strip must prove that dark and light belong to one coherent product system. Dark = black clinical control room with surgical orange firefly accent, luminous hairline rules, protocol metadata, high-contrast labels. Light = white forensic medical archive with ink rules, paper panels, stamped labels, document grids, and clinical form discipline. Same roles, same hierarchy, different material expression.
+
+Required components:
+- Sidebar item in active and inactive states.
+- Primary extraction button.
+- Secondary export button.
+- Textarea / clinical intake field.
+- Status chip / ready or processing state.
+- Timeline section header and sample row.
+- Patient metric tile.
+- Missing-field warning.
+- Verification stamp / AI checked badge.
+
+Constraints:
+No browser chrome, no device mockup, no stock medical imagery. No generic SaaS component library. No soft pastel dashboard. No blue enterprise UI. No purple gradients. No decorative blobs. Chinese labels must be readable and first-class.

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>一页萤岛 - 临床 AI 控制台</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Inter+Tight:wght@700;800;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#3e0500",
+                    "on-secondary-fixed-variant": "#8d1500",
+                    "surface-dim": "#131313",
+                    "on-secondary-container": "#ffd7cf",
+                    "on-error": "#690005",
+                    "on-secondary": "#640c00",
+                    "error-container": "#93000a",
+                    "tertiary-container": "#909191",
+                    "secondary": "#ffb4a5",
+                    "surface-variant": "#353534",
+                    "on-tertiary": "#2f3131",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-primary-container": "#560e00",
+                    "inverse-primary": "#b42800",
+                    "inverse-on-surface": "#313030",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "surface-container-low": "#1c1b1b",
+                    "primary-container": "#ff562c",
+                    "outline-variant": "#5e3f38",
+                    "surface-tint": "#ffb4a2",
+                    "on-surface-variant": "#e8bdb3",
+                    "inverse-surface": "#e5e2e1",
+                    "surface-bright": "#3a3939",
+                    "tertiary": "#c6c6c7",
+                    "surface-container": "#201f1f",
+                    "primary": "#ffb4a2",
+                    "secondary-fixed-dim": "#ffb4a5",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface": "#131313",
+                    "secondary-fixed": "#ffdad3",
+                    "on-surface": "#e5e2e1",
+                    "on-primary": "#621100",
+                    "secondary-container": "#c12101",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "on-tertiary-container": "#282a2a",
+                    "primary-fixed-dim": "#ffb4a2",
+                    "error": "#ffb4ab",
+                    "surface-container-high": "#2a2a2a",
+                    "primary-fixed": "#ffdad2",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#353534",
+                    "on-primary-fixed-variant": "#8a1d00",
+                    "on-primary-fixed": "#3c0700",
+                    "outline": "#ae887f",
+                    "on-background": "#e5e2e1",
+                    "background": "#131313"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter Tight", "sans-serif"],
+                    "body": ["Inter", "sans-serif"],
+                    "label": ["JetBrains Mono", "monospace"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .text-neon-orange { color: #FF3D00; }
+        .bg-neon-orange { background-color: #FF3D00; }
+        .border-neon-orange { border-color: #FF3D00; }
+        .negative-hover:hover { background-color: #FF3D00; color: #0A0A0A; }
+        body { background-color: #0A0A0A; color: #FAFAFA; }
+    </style>
+</head>
+<body class="font-body selection:bg-neon-orange selection:text-black overflow-hidden h-screen flex flex-col">
+<!-- TopAppBar Fragment (Fixed Shell Implementation) -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center h-16 px-6 bg-[#0A0A0A] border-b border-[#262626]">
+<div class="flex items-center">
+<span class="text-[#FAFAFA] font-black tracking-tighter border-l-2 border-[#FF3D00] pl-4 font-['Inter_Tight'] text-xl uppercase">一页萤岛</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-[#FAFAFA] hover:text-[#FF3D00] transition-none">help</button>
+<button class="material-symbols-outlined text-[#FAFAFA] hover:text-[#FF3D00] transition-none">settings</button>
+</div>
+</header>
+<!-- Main Content Container: Asymmetric Editorial Grid -->
+<main class="flex-grow flex flex-col md:flex-row pt-16 h-full">
+<!-- Left Column: The Spine (Poster Heading) - 65% width for drama -->
+<section class="w-full md:w-[65%] p-12 md:p-24 flex flex-col justify-center border-r border-[#262626] relative overflow-hidden">
+<!-- Background Texture Decal -->
+<div class="absolute top-0 right-0 p-8 font-label text-[10px] opacity-20 tracking-widest text-right leading-relaxed select-none">
+                FORENSIC_ARCHIVE_SYSTEM_V1.0<br/>
+                ENCRYPTION_LEVEL: TRIPLE_AES_256<br/>
+                DATA_EXTRACTION_PROTOCOL: ACTIVE
+            </div>
+<div class="max-w-4xl space-y-8">
+<div class="inline-block px-2 py-1 bg-[#1A1A1A] text-neon-orange font-label text-[11px] tracking-widest uppercase mb-4 border border-[#262626]">
+                    Clinical AI Intelligence
+                </div>
+<h1 class="font-headline text-[clamp(3rem,8vw,6rem)] leading-[0.9] font-black tracking-tighter text-[#FAFAFA]">
+                    把复杂治疗史<br/>整理成<span class="text-neon-orange">一页纸</span>
+</h1>
+<p class="font-body text-xl md:text-2xl text-[#FAFAFA] opacity-60 max-w-2xl leading-relaxed">
+                    临床精密性的本质在于对复杂信息的降维与提取。
+                </p>
+<div class="flex items-center gap-4 pt-12">
+<div class="h-[1px] w-24 bg-[#262626]"></div>
+<span class="font-label text-[10px] tracking-[0.3em] uppercase opacity-40">System Ready for Analysis</span>
+</div>
+</div>
+<!-- Absolute Decorative Rule -->
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-[#262626]"></div>
+</section>
+<!-- Right Column: The Inspector (The Form) - 35% width -->
+<section class="w-full md:w-[35%] bg-[#0A0A0A] p-12 md:p-16 flex flex-col justify-center relative">
+<div class="w-full max-w-sm mx-auto space-y-8">
+<header class="space-y-2">
+<h2 class="font-label text-[11px] tracking-widest text-neon-orange uppercase">Authentication</h2>
+<p class="text-lg font-bold tracking-tight">身份访问控制台</p>
+</header>
+<div class="space-y-4 mb-8">
+<button class="w-full border border-[#262626] text-[#FAFAFA] font-label text-[12px] py-4 flex items-center justify-center gap-3 transition-all hover:border-neon-orange hover:text-neon-orange">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8.218 7.652c1.971 0 3.506.967 3.506 2.158 0 1.191-1.535 2.158-3.506 2.158-1.971 0-3.506-.967-3.506-2.158 0-1.191 1.535-2.158 3.506-2.158zm7.404 1.902c1.588 0 2.827.778 2.827 1.737 0 .959-1.239 1.737-2.827 1.737-1.588 0-2.827-.778-2.827-1.737 0-.959 1.239-1.737 2.827-1.737zm6.378 1.956c0-4.56-4.32-8.258-9.643-8.258-5.322 0-9.643 3.698-9.643 8.258 0 4.14 3.551 7.587 8.358 8.163l-1.049 3.033 3.619-1.81c.883.254 1.821.393 2.715.393 5.323 0 9.643-3.722 9.643-8.258l-.001.479zm-13.061 5.36c-.461 0-.913-.035-1.354-.101l-1.808.904.524-1.516c-2.404-.288-4.181-2.009-4.181-4.08 0-2.28 2.378-4.128 5.312-4.128 2.934 0 5.312 1.848 5.312 4.128 0 2.28-2.378 4.128-5.312 4.128l.207-.835z"></path></svg>
+<span>微信快捷登录 / WECHAT_AUTH</span>
+</button>
+<button class="w-full border border-[#262626] text-[#FAFAFA] font-label text-[12px] py-4 flex items-center justify-center gap-3 transition-all hover:border-neon-orange hover:text-neon-orange">
+<svg class="w-5 h-5 fill-current" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.747-.053-1.453-.16-2.053H12.48z"></path></svg>
+<span>谷歌账号登录 / GOOGLE_AUTH</span>
+</button>
+<div class="flex items-center gap-4 py-4">
+<div class="h-[1px] flex-grow bg-[#262626]"></div>
+<span class="font-label text-[9px] tracking-widest opacity-30 uppercase">或使用邮箱凭证 / OR_EMAIL</span>
+<div class="h-[1px] flex-grow bg-[#262626]"></div>
+</div>
+</div><form class="space-y-10">
+<div class="space-y-1 group">
+<label class="block font-label text-[10px] tracking-widest uppercase opacity-40 group-focus-within:text-neon-orange transition-colors" for="email">Registered Email</label>
+<input class="w-full bg-transparent border-b border-[#262626] py-3 text-[#FAFAFA] focus:outline-none focus:border-neon-orange focus:ring-0 placeholder:opacity-20 placeholder:text-sm rounded-none border-t-0 border-x-0 transition-all" id="email" placeholder="输入临床邮箱" type="email"/>
+</div>
+<div class="space-y-1 group">
+<label class="block font-label text-[10px] tracking-widest uppercase opacity-40 group-focus-within:text-neon-orange transition-colors" for="key">Encryption Key</label>
+<input class="w-full bg-transparent border-b border-[#262626] py-3 text-[#FAFAFA] focus:outline-none focus:border-neon-orange focus:ring-0 placeholder:opacity-20 placeholder:text-sm rounded-none border-t-0 border-x-0 transition-all" id="key" placeholder="输入 256 位加密密钥" type="password"/>
+</div>
+<div class="pt-6">
+<button class="w-full bg-neon-orange text-[#0A0A0A] font-headline font-bold py-5 flex justify-between items-center px-8 transition-all hover:bg-[#FAFAFA] active:scale-[0.98]" type="submit">
+<span class="tracking-widest">验证并进入控制台</span>
+<span class="material-symbols-outlined">arrow_forward_ios</span>
+</button>
+</div>
+</form>
+<footer class="pt-8 flex flex-col space-y-6">
+<div class="h-16 w-full relative">
+<img class="w-full h-full object-cover grayscale opacity-30 filter contrast-150" data-alt="Abstract microscopic medical data visualization with glowing orange neon particles over a deep black background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8egfpCbDKutF3Pj8yUX771rGTYNwb_Yr_nkSbp9YjObJgp5NyZ0tpUpWqt8wfssDZt9eVyaSPT0crzG3BZtKLq8CsdKamZzlaUf8FjNbBo5vF0aS2EbyfHd9musVqkWQMbO2U2INWo3g3Xd_P9_jwjyBvyuNexTF8A7wkvb3iV2bl-XSJ9C8FTEbodtoJN80B-ZwSfSgkCgVCYx7NNrtn1W4lx9CpL0avpzD3r0-y9CE3CsHsFo4nnHulDkfVwE78wG3nyoPHViia"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] to-transparent"></div>
+</div>
+</footer>
+</div>
+<!-- SideNavBar Component Logic (Switch Theme Implementation) -->
+<div class="absolute bottom-10 right-10 flex flex-col items-center gap-4">
+<button class="flex items-center justify-center p-3 border border-[#262626] hover:bg-[#1A1A1A] text-[#FAFAFA] transition-none group">
+<span class="material-symbols-outlined group-hover:text-neon-orange" data-icon="dark_mode">dark_mode</span>
+</button>
+<div class="h-12 w-[1px] bg-[#262626]"></div>
+</div>
+</section>
+</main>
+<!-- Fixed Footer Metadata -->
+<footer class="h-12 bg-[#0A0A0A] border-t border-[#262626] px-6 flex items-center justify-between z-50">
+<div class="flex items-center gap-8">
+<span class="font-label text-[9px] tracking-widest text-[#FAFAFA] opacity-30 uppercase">© 2024 一页萤岛 ARCHIVE</span>
+<span class="font-label text-[9px] tracking-widest text-[#FAFAFA] opacity-30 uppercase">Clinical_Control_V1.4.2</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-neon-orange animate-pulse"></span>
+<span class="font-label text-[9px] tracking-widest text-neon-orange uppercase">Secure Link Active</span>
+</div>
+</div>
+</footer>
+</body></html>

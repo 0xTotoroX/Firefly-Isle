@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="light" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Noto+Serif:ital,wght@0,100..900;1,100..900&amp;family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..800&amp;family=Playfair+Display:wght@400..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-fixed": "#1a1c19",
+                        "secondary-container": "#e0e0db",
+                        "surface-dim": "#dadad8",
+                        "surface-bright": "#f9f9f7",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#c8c6c5",
+                        "surface-variant": "#e2e3e1",
+                        "surface": "#f9f9f7",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f4f4f2",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1a1c1b",
+                        "surface-container-high": "#e8e8e6",
+                        "inverse-on-surface": "#f1f1ef",
+                        "secondary-fixed-dim": "#c6c7c2",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#858383",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface": "#1a1c1b",
+                        "on-secondary-container": "#62635f",
+                        "on-surface-variant": "#444748",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e2e3e1",
+                        "background": "#f9f9f7",
+                        "surface-container": "#eeeeec",
+                        "primary-container": "#1c1b1b",
+                        "primary": "#000000",
+                        "tertiary-fixed-dim": "#ffb4a8",
+                        "secondary-fixed": "#e3e3de",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#410000",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#464744",
+                        "primary-fixed": "#e5e2e1",
+                        "surface-tint": "#5f5e5e",
+                        "secondary": "#5d5f5b",
+                        "outline": "#747878",
+                        "on-tertiary-fixed-variant": "#930000",
+                        "on-tertiary-fixed": "#410000",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#fb3222",
+                        "tertiary-fixed": "#ffdad4",
+                        "outline-variant": "#c4c7c7",
+                        "inverse-surface": "#2f3130",
+                        "editorial-accent": "#CC0000"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Noto Serif", "serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "display": ["Playfair Display", "serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+            font-family: 'Noto Serif', serif;
+        }
+        .ink-border-b { border-bottom: 2px solid #111111; }
+        .ink-border-r { border-right: 2px solid #111111; }
+        .ink-border-all { border: 2px solid #111111; }
+        .double-rule { border-top: 4px solid #111111; border-bottom: 1px solid #111111; height: 8px; margin: 1rem 0; }
+        .hard-shadow { box-shadow: 4px 4px 0px 0px #111111; }
+        .drop-cap::first-letter {
+            float: left;
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            line-height: 1;
+            padding-right: 8px;
+            color: #111111;
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body class="bg-background text-primary min-h-screen flex overflow-hidden">
+<!-- Sidebar Navigation Shell -->
+<aside class="flex flex-col justify-between h-screen p-6 overflow-y-auto bg-[#F9F9F7] dark:bg-[#111111] h-full w-64 border-r-2 border-[#111111] dark:border-[#E5E5E0] font-['Newsreader'] tracking-tight">
+<div class="space-y-12">
+<!-- Masthead Logo -->
+<div class="flex flex-col gap-1">
+<span class="text-2xl font-bold uppercase tracking-tighter text-[#111111] dark:text-[#F9F9F7]">一页莹岛</span>
+<span class="text-[10px] font-mono tracking-widest opacity-60 uppercase">Clinical AI Workspace</span>
+</div>
+<!-- Primary Navigation -->
+<nav class="flex flex-col gap-6">
+<a class="flex items-center gap-4 text-[#111111] dark:text-[#F9F9F7] font-bold border-b-4 border-[#111111] dark:border-[#F9F9F7] pb-1 translate-x-1 duration-75 group" href="#">
+<span class="material-symbols-outlined text-2xl">clinical_notes</span>
+<span class="font-label text-sm uppercase tracking-widest">提取</span>
+</a>
+<a class="flex items-center gap-4 text-[#111111]/60 dark:text-[#F9F9F7]/60 font-medium hover:bg-[#111111] hover:text-[#F9F9F7] dark:hover:bg-[#F9F9F7] dark:hover:text-[#111111] transition-colors duration-75 p-2 -ml-2 group" href="#">
+<span class="material-symbols-outlined text-2xl">description</span>
+<span class="font-label text-sm uppercase tracking-widest">病历</span>
+</a>
+<a class="flex items-center gap-4 text-[#111111]/60 dark:text-[#F9F9F7]/60 font-medium hover:bg-[#111111] hover:text-[#F9F9F7] dark:hover:bg-[#F9F9F7] dark:hover:text-[#111111] transition-colors duration-75 p-2 -ml-2 group" href="#">
+<span class="material-symbols-outlined text-2xl">analytics</span>
+<span class="font-label text-sm uppercase tracking-widest">统计</span>
+</a>
+</nav>
+<button class="w-full bg-primary text-background font-label uppercase tracking-widest text-xs py-3 font-bold hover:bg-background hover:text-primary border-2 border-primary transition-all">
+                New Extraction
+            </button>
+</div>
+<div class="space-y-4 pt-12 border-t border-primary/10">
+<div class="flex items-center gap-4 px-2 text-primary/60 hover:text-primary cursor-pointer transition-colors">
+<span class="material-symbols-outlined">contrast</span>
+<span class="font-label text-xs uppercase tracking-widest">Theme Toggle</span>
+</div>
+<div class="flex items-center gap-4 px-2 text-primary/60 hover:text-primary cursor-pointer transition-colors">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-label text-xs uppercase tracking-widest">User Profile</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto p-12 bg-background flex flex-col gap-12">
+<!-- Header Section -->
+<header class="w-full max-w-6xl mx-auto">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h1 class="font-display text-7xl font-black -tracking-widest uppercase leading-none">EXTRACTOR</h1>
+<p class="font-mono text-xs uppercase tracking-widest mt-2 opacity-60">Session ID: AI-2949-01 // Clinical Intelligence Engine</p>
+</div>
+<div class="text-right">
+<span class="font-mono text-xs block opacity-40">DATE: 2024.05.20</span>
+<span class="font-mono text-xs block opacity-40">LOCATION: SHANGHAI CLINIC</span>
+</div>
+</div>
+<div class="double-rule"></div>
+</header>
+<!-- Top Section: Multi-modal Input -->
+<section class="w-full max-w-6xl mx-auto grid grid-cols-12 gap-8">
+<div class="col-span-8 flex flex-col gap-6">
+<div class="ink-border-all p-6 bg-surface-container-lowest">
+<div class="flex justify-between items-center mb-4">
+<label class="font-label font-bold text-xs uppercase tracking-[0.2em] text-primary">文字输入 / TEXT INPUT</label>
+<span class="font-mono text-[10px] text-editorial-accent font-bold">READY TO ANALYZE</span>
+</div>
+<textarea class="w-full h-48 bg-transparent border-0 focus:ring-0 font-body text-xl leading-relaxed resize-none placeholder:opacity-20" placeholder="在此输入患者病史或临床表现描述..."></textarea>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="ink-border-all p-6 flex flex-col items-center justify-center border-dashed border-2 bg-secondary-container/20 hover:bg-secondary-container/40 transition-colors cursor-pointer group">
+<span class="material-symbols-outlined text-4xl mb-2 group-hover:scale-110 transition-transform">upload_file</span>
+<span class="font-label font-bold text-xs uppercase tracking-widest">图片及 PDF 输入</span>
+<span class="font-mono text-[10px] mt-1 opacity-50">Drag &amp; Drop Documents</span>
+</div>
+<div class="p-6 flex flex-col items-center justify-center bg-editorial-accent text-white hard-shadow hover:-translate-y-1 transition-all cursor-pointer">
+<span class="material-symbols-outlined text-4xl mb-2" data-weight="fill">mic</span>
+<span class="font-label font-bold text-xs uppercase tracking-widest">语音录入</span>
+<span class="font-mono text-[10px] mt-1 opacity-80">HOLD TO RECORD</span>
+</div>
+</div>
+</div>
+<!-- Contextual Information Sidebar -->
+<div class="col-span-4 border-l-2 border-primary pl-8 flex flex-col gap-8">
+<div>
+<h3 class="font-display text-2xl font-bold border-b border-primary pb-2 mb-4">Instructional</h3>
+<p class="font-body text-sm leading-relaxed drop-cap italic">
+                        Please ensure all medical records are anonymized before processing. The AI engine will cross-reference current symptoms with historic records to generate a comprehensive structural report.
+                    </p>
+</div>
+<div class="bg-primary text-background p-6">
+<h4 class="font-label font-bold text-[10px] uppercase tracking-widest mb-4">Current Parameters</h4>
+<ul class="font-mono text-[11px] space-y-2 opacity-80">
+<li class="flex justify-between"><span>MODEL</span> <span>CLINIC-V4</span></li>
+<li class="flex justify-between"><span>SENSITIVITY</span> <span>HIGH</span></li>
+<li class="flex justify-between"><span>LANGUAGE</span> <span>ZH-CN</span></li>
+</ul>
+</div>
+</div>
+</section>
+<!-- Bottom Section: Structured Report -->
+<section class="w-full max-w-6xl mx-auto mt-8">
+<div class="flex items-baseline gap-4 mb-6">
+<h2 class="font-headline text-4xl font-bold tracking-tighter">临床结构化报告</h2>
+<div class="flex-1 h-[2px] bg-primary"></div>
+</div>
+<div class="grid grid-cols-12 gap-0 ink-border-all">
+<!-- Meta Column -->
+<div class="col-span-3 ink-border-r p-6 bg-surface-container-low">
+<h3 class="font-label font-black text-xs uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">person_search</span>
+                        患者元数据
+                    </h3>
+<div class="space-y-6">
+<div>
+<span class="font-mono text-[10px] uppercase block opacity-60">Age / 年龄</span>
+<span class="font-headline text-3xl font-bold">45</span>
+</div>
+<div>
+<span class="font-mono text-[10px] uppercase block opacity-60">Blood Type / 血型</span>
+<span class="font-headline text-3xl font-bold">AB+</span>
+</div>
+<div>
+<span class="font-mono text-[10px] uppercase block opacity-60">Gender / 性别</span>
+<span class="font-headline text-3xl font-bold">Male</span>
+</div>
+<div>
+<span class="font-mono text-[10px] uppercase block opacity-60">Weight / 体重</span>
+<span class="font-headline text-3xl font-bold">78 kg</span>
+</div>
+</div>
+</div>
+<!-- Timeline and Content -->
+<div class="col-span-9 p-8 bg-white">
+<div class="flex justify-between items-center mb-8">
+<h3 class="font-label font-black text-xs uppercase tracking-[0.2em]">治疗时间轴 / TREATMENT TIMELINE</h3>
+<div class="flex gap-2">
+<span class="w-2 h-2 bg-primary"></span>
+<span class="w-2 h-2 bg-primary/20"></span>
+<span class="w-2 h-2 bg-primary/20"></span>
+</div>
+</div>
+<!-- Timeline Visualization -->
+<div class="relative pl-12 border-l-2 border-primary/10 space-y-12">
+<div class="relative">
+<span class="absolute -left-[54px] top-0 w-3 h-3 bg-primary"></span>
+<div class="flex justify-between items-start">
+<span class="font-mono text-xs font-bold bg-primary text-background px-2 py-1">2024.04.12</span>
+<span class="font-label font-bold text-[10px] uppercase text-editorial-accent">Primary Symptom</span>
+</div>
+<h4 class="font-headline text-xl font-bold mt-2">初步诊断：持续性偏头痛</h4>
+<p class="font-body text-sm mt-1 text-primary/70">患者主诉头痛伴有恶心，休息后无明显缓解。既往有轻度高血压病史。</p>
+</div>
+<div class="relative">
+<span class="absolute -left-[54px] top-0 w-3 h-3 bg-primary/40"></span>
+<div class="flex justify-between items-start">
+<span class="font-mono text-xs font-bold border border-primary px-2 py-1">2024.04.28</span>
+<span class="font-label font-bold text-[10px] uppercase text-primary/40">Lab Result</span>
+</div>
+<h4 class="font-headline text-xl font-bold mt-2">生化检查与影像学分析</h4>
+<p class="font-body text-sm mt-1 text-primary/70">CT扫描未见明显占位，实验室检查显示炎性指标轻微升高。建议进行进一步睡眠监测。</p>
+</div>
+<div class="relative">
+<span class="absolute -left-[54px] top-0 w-3 h-3 border-2 border-primary bg-background"></span>
+<div class="flex justify-between items-start">
+<span class="font-mono text-xs font-bold border border-primary px-2 py-1">2024.05.15</span>
+<span class="font-label font-bold text-[10px] uppercase text-primary/40">Observation</span>
+</div>
+<h4 class="font-headline text-xl font-bold mt-2">随访与用药调整</h4>
+<p class="font-body text-sm mt-1 text-primary/70">目前采用联合用药方案，患者反馈症状频率降低 40%。继续观察治疗方案的耐受性。</p>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-primary/10">
+<div class="grid grid-cols-2 gap-12">
+<div>
+<h5 class="font-label font-bold text-[10px] uppercase tracking-widest mb-4">Clinical Notes</h5>
+<p class="font-body text-xs italic opacity-60">"The digital extraction of these patterns suggests a correlation between environmental stressors and acute episodes..."</p>
+</div>
+<div class="flex flex-col justify-end">
+<div class="bg-surface-container p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center text-background font-display text-xl font-black">AI</div>
+<div>
+<p class="font-label font-bold text-[10px] leading-none uppercase">Verified by AI Agent</p>
+<p class="font-mono text-[9px] opacity-60">CONFIDENCE: 98.4%</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-editorial-accent">verified</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer / Editorial Mark -->
+<footer class="w-full max-w-6xl mx-auto py-12 text-center opacity-30 border-t border-primary/10 mt-12">
+<span class="font-display text-4xl font-black italic tracking-tighter uppercase">Ink &amp; Archive</span>
+<p class="font-mono text-[10px] uppercase tracking-[0.4em] mt-2">Protocol: CLINICAL-ALPHA-01 // NO UNMATCHED DATA</p>
+</footer>
+</main>
+</body></html>

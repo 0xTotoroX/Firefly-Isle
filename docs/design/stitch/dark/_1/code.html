@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Inter+Tight:wght@700;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#FF3D00",
+                        "background": "#0A0A0A",
+                        "surface": "#000000",
+                        "border": "#262626",
+                        "text-main": "#FAFAFA",
+                        "text-muted": "#666666"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter Tight"],
+                        "body": ["Inter"],
+                        "label": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body { background-color: #0A0A0A; color: #FAFAFA; }
+        .editorial-rule { border-top: 1px solid #262626; margin-top: 4rem; margin-bottom: 4rem; }
+        .marker-line { position: relative; }
+        .marker-line::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #FF3D00;
+        }
+        ::selection { background-color: #FF3D00; color: #000; }
+    </style>
+</head>
+<body class="font-body">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-background border-b border-border flex justify-between items-center h-16 px-6">
+<div class="flex items-center">
+<div class="text-text-main font-black tracking-tighter border-l-2 border-primary pl-4 font-headline uppercase text-xl">
+                一页萤岛
+            </div>
+</div>
+<div class="flex items-center gap-6">
+<button class="text-text-main hover:bg-primary hover:text-background transition-none p-2">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-text-main hover:bg-primary hover:text-background transition-none p-2">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+</header>
+<!-- SideNavBar (Restored from SCREEN_15 style) -->
+<aside class="fixed left-0 top-0 h-full w-[15%] bg-surface border-r border-border flex flex-col z-40 mt-16">
+<div class="p-8">
+<div class="text-xl font-bold tracking-tight text-[#FAFAFA] font-headline">一页萤岛</div>
+<div class="text-[10px] font-label text-[#FF3D00] mt-1 tracking-widest opacity-80 uppercase">Clinical AI</div>
+</div>
+<nav class="flex-1 mt-4">
+<a class="flex items-center px-8 py-4 text-[#FAFAFA] opacity-50 hover:bg-[#FAFAFA] hover:text-[#0A0A0A] hover:opacity-100 transition-colors duration-0 group font-label text-[11px] tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="clinical_notes">clinical_notes</span>
+                提取
+            </a>
+<a class="flex items-center px-8 py-4 text-[#FF3D00] border-r-2 border-[#FF3D00] transition-all group font-label text-[11px] tracking-widest uppercase font-bold bg-surface" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="folder_managed">folder_managed</span>
+                病历
+            </a>
+<a class="flex items-center px-8 py-4 text-[#FAFAFA] opacity-50 hover:bg-[#FAFAFA] hover:text-[#0A0A0A] hover:opacity-100 transition-colors duration-0 group font-label text-[11px] tracking-widest uppercase" href="#">
+<span class="material-symbols-outlined mr-4" data-icon="analytics">analytics</span>
+                统计
+            </a>
+</nav>
+<div class="p-8 border-t border-border">
+<div class="flex items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary flex items-center justify-center text-background font-bold text-xs">JD</div>
+<div class="overflow-hidden">
+<div class="text-sm font-bold truncate">Dr. Archivist</div>
+<div class="text-[10px] font-label opacity-40 uppercase">主任医师</div>
+</div>
+</div>
+<div class="flex border border-border p-0.5 bg-background">
+<button class="p-1 flex items-center justify-center hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]">light_mode</span>
+</button>
+<button class="p-1 flex items-center justify-center text-primary transition-colors">
+<span class="material-symbols-outlined text-[16px]" style='font-variation-settings: "FILL" 1;'>dark_mode</span>
+</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Editorial Content -->
+<main class="ml-[15%] mt-16 p-12 min-h-screen">
+<div class="max-w-4xl mx-auto">
+<!-- Header -->
+<header class="mb-12 marker-line">
+<div class="font-label text-[12px] tracking-[0.3em] text-primary mb-4 uppercase">Archive Node: Firefly-2024-0892</div>
+<h1 class="text-8xl font-black tracking-tighter uppercase font-headline text-text-main leading-[0.85] mb-8">
+                    临床<br/>病史档案
+                </h1>
+<!-- Reintegrated Patient Info Grid (Style from SCREEN_15) -->
+<div class="grid grid-cols-4 border-t border-b border-border mb-12">
+<div class="p-6 border-r border-border">
+<label class="font-label text-[10px] text-text-muted uppercase block mb-4 tracking-widest">年龄</label>
+<div class="font-headline text-4xl font-black tracking-tighter text-text-main">34</div>
+</div>
+<div class="p-6 border-r border-border">
+<label class="font-label text-[10px] text-text-muted uppercase block mb-4 tracking-widest">血型</label>
+<div class="font-headline text-4xl font-black tracking-tighter text-text-main">A-</div>
+</div>
+<div class="p-6 border-r border-border">
+<label class="font-label text-[10px] text-text-muted uppercase block mb-4 tracking-widest">身高</label>
+<div class="font-headline text-4xl font-black tracking-tighter text-text-main">178cm</div>
+</div>
+<div class="p-6">
+<label class="font-label text-[10px] text-text-muted uppercase block mb-4 tracking-widest">体重</label>
+<div class="font-headline text-4xl font-black tracking-tighter text-text-main">68kg</div>
+</div>
+</div>
+<div class="flex flex-wrap gap-x-12 gap-y-2 font-label text-[11px] text-text-muted pt-2">
+<div class="flex flex-col">
+<span class="uppercase">Subject_ID</span>
+<span class="text-text-main font-bold">FF-2024-0892</span>
+</div>
+<div class="flex flex-col">
+<span class="uppercase">Creation_Date</span>
+<span class="text-text-main font-bold">2024.11.24</span>
+</div>
+<div class="flex flex-col">
+<span class="uppercase">Security_Protocol</span>
+<span class="text-text-main font-bold">LEVEL_A_ENCRYPTED</span>
+</div>
+<div class="flex flex-col">
+<span class="uppercase">Data_Node</span>
+<span class="text-text-main font-bold">HK-CENTRAL-09-B</span>
+</div>
+</div>
+</header>
+<!-- Section 01: Initial Diagnosis -->
+<section class="mb-20">
+<div class="flex items-baseline gap-4 mb-10">
+<span class="font-label text-4xl text-primary font-black">01</span>
+<h2 class="text-5xl font-black font-headline uppercase tracking-tight text-text-main">初发诊断 <span class="text-lg font-normal font-label opacity-30 ml-2">/ INITIAL_ONSET</span></h2>
+</div>
+<div class="grid grid-cols-12 gap-12">
+<div class="col-span-8">
+<h3 class="text-3xl font-bold font-headline mb-6 text-text-main leading-tight">非小细胞肺癌 (NSCLC)</h3>
+<p class="text-xl text-text-main leading-relaxed mb-8 opacity-90">
+                            患者于 2023 年 4 月因持续性咳嗽及胸痛就诊。CT 检查显示左上肺占位性病变（3.2cm x 2.8cm），伴有纵隔淋巴结肿大。活检病理确认为肺腺癌。
+                        </p>
+</div>
+<div class="col-span-4 space-y-8">
+<!-- Integrated IHC & Genetic -->
+<div class="bg-surface border border-border p-6">
+<div class="font-label text-[10px] tracking-widest text-primary mb-4 uppercase">Immunohistochemistry / IHC</div>
+<ul class="space-y-3 font-label text-xs">
+<li class="flex justify-between border-b border-border/50 pb-1">
+<span class="opacity-50">PD-L1</span>
+<span class="font-bold">TPS: 45%</span>
+</li>
+<li class="flex justify-between border-b border-border/50 pb-1">
+<span class="opacity-50">TTF-1</span>
+<span class="font-bold">(+)</span>
+</li>
+<li class="flex justify-between border-b border-border/50 pb-1">
+<span class="opacity-50">Napsin A</span>
+<span class="font-bold">(+)</span>
+</li>
+</ul>
+</div>
+<div class="bg-surface border border-border p-6">
+<div class="font-label text-[10px] tracking-widest text-primary mb-4 uppercase">Genetic / 基因检测</div>
+<ul class="space-y-3 font-label text-xs">
+<li class="flex justify-between border-b border-border/50 pb-1">
+<span class="opacity-50">EGFR</span>
+<span class="font-bold">L858R (+)</span>
+</li>
+<li class="flex justify-between border-b border-border/50 pb-1">
+<span class="opacity-50">ALK</span>
+<span class="font-bold">NEG (-)</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<div class="editorial-rule"></div>
+<!-- Section 02: Treatment Line 1 -->
+<section class="mb-20">
+<div class="flex items-baseline gap-4 mb-10">
+<span class="font-label text-4xl text-primary font-black">02</span>
+<h2 class="text-5xl font-black font-headline uppercase tracking-tight text-text-main">一线治疗 <span class="text-lg font-normal font-label opacity-30 ml-2">/ LINE_01</span></h2>
+</div>
+<div class="mb-8">
+<div class="flex items-center gap-4 mb-6">
+<span class="bg-primary text-background px-3 py-1 text-[11px] font-bold font-label uppercase">Phase Completed</span>
+<span class="font-label text-sm text-text-muted">2023.05 — 2024.02</span>
+</div>
+<h3 class="text-4xl font-bold font-headline mb-6 text-text-main">奥希替尼 (Osimertinib) 靶向治疗</h3>
+<div class="max-w-2xl">
+<p class="text-lg text-text-main leading-relaxed opacity-80 mb-10">
+                            患者开始接受第三代 EGFR-TKI 治疗。初始反应良好，肿瘤体积缩小约 40%。治疗 9 个月后，复查显示左肺病灶增大，并出现微小脑转移灶，判定为疾病进展 (PD)。
+                        </p>
+</div>
+</div>
+<!-- Resistance Detail Block -->
+<div class="bg-border/30 border-l-4 border-primary p-8">
+<div class="font-label text-[11px] text-primary mb-3 uppercase tracking-widest">Resistance_Analysis / 耐药分析</div>
+<div class="text-2xl font-bold font-headline text-text-main italic">
+                        检测到 EGFR T790M 突变消失，伴随 MET 基因扩增 (FISH 阳性)。
+                    </div>
+</div>
+</section>
+<div class="editorial-rule"></div>
+<!-- Section 03: Treatment Line 2 -->
+<section class="mb-24">
+<div class="flex items-baseline gap-4 mb-10">
+<span class="font-label text-4xl text-primary font-black">03</span>
+<h2 class="text-5xl font-black font-headline uppercase tracking-tight text-text-main">二线治疗 <span class="text-lg font-normal font-label opacity-30 ml-2">/ LINE_02</span></h2>
+</div>
+<div class="mb-8">
+<div class="flex items-center gap-4 mb-6">
+<span class="border border-primary text-primary px-3 py-1 text-[11px] font-bold font-label uppercase">In Progress</span>
+<span class="font-label text-sm text-text-muted">2024.03 — PRESENT</span>
+</div>
+<h3 class="text-4xl font-bold font-headline mb-6 text-text-main">培美曲塞 + 卡铂 + 赛沃替尼 (Savolitinib)</h3>
+<div class="max-w-2xl mb-12">
+<p class="text-lg text-text-main leading-relaxed opacity-80">
+                            针对 MET 扩增，调整方案为化疗联合 MET 抑制剂治疗。目前已完成 4 个周期。患者自述呼吸困难症状缓解，脑部病灶稳定。
+                        </p>
+</div>
+</div>
+<!-- Predictive Module -->
+<div class="grid grid-cols-2 gap-px bg-border">
+<div class="bg-background p-8">
+<div class="font-label text-[10px] text-text-muted mb-2 uppercase tracking-[0.2em]">AI_Confidence_Log</div>
+<div class="text-xl font-bold text-text-main font-headline">方案匹配度: 94.2%</div>
+<div class="font-label text-[11px] opacity-40 uppercase mt-1">MET_TARGETED_PATHWAY</div>
+</div>
+<div class="bg-background p-8 text-right">
+<div class="font-label text-[10px] text-text-muted mb-2 uppercase tracking-[0.2em]">Stability_Index</div>
+<div class="text-xl font-bold text-primary font-headline">STABLE_PREDICTED</div>
+<div class="font-label text-[11px] opacity-40 uppercase mt-1">PROGNOSIS_OPTIMISTIC</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="pt-12 border-t border-border flex justify-between items-start text-[10px] font-label text-text-muted uppercase tracking-widest">
+<div class="max-w-xs leading-relaxed">
+                    Verification_Stamp:<br/>
+                    此档案由萤岛临床 AI 自动提取并结构化。所有数据点均经过病理报告与影像诊断交叉验证。
+                </div>
+<div class="text-right">
+                    Authorized_System<br/>
+<span class="text-text-main font-bold">FIREFLY_ISLE_CORE_V1.0</span>
+</div>
+</footer>
+</div>
+</main>
+<!-- Scroll Indicator -->
+<div class="fixed right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-4 z-50">
+<div class="h-32 w-[1px] bg-border relative">
+<div class="absolute top-1/3 h-8 w-[2px] bg-primary -left-[0.5px]"></div>
+</div>
+<div class="font-label text-[10px] [writing-mode:vertical-lr] text-text-muted tracking-widest uppercase opacity-40">
+            SCROLL_TO_AUDIT
+        </div>
+</div>
+</body></html>

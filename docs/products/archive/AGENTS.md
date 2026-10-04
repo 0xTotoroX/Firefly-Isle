@@ -8,6 +8,7 @@ product-goals-2026-05-05.md: 2026-05-05 Goal Forge 草案归档，保留当时 1
 
 法则: archive 是证据库，不是当前命令源；当前执行顺序以 ../product-priority-roadmap.md 为准。
 
-视觉资料已归档: 旧设计系统与 Stitch 映射见根 [归档索引](../../../archive/README.md)；历史正文中的原路径只作当时证据索引，不是本目录当前成员。
+design-system.md: 恢复到原位置的历史设计系统；当前视觉入口为根 [DESIGN.md](../../../DESIGN.md)。
+stitch-screen-mapping.md: 恢复到原位置的历史 Stitch 页面与组件映射，保留来源和命名证据。
 
 [PROTOCOL]: 结构或契约事实变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md，已加载且未变化的内容不重读。

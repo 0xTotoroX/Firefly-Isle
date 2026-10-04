@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>一页萤岛 - Clinical AI Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&amp;family=Lora:ital,wght@0,400;0,700;1,400&amp;family=Inter:wght@400;500;700&amp;family=Newsreader:ital,wght@0,400;0,700;0,800;1,400&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#1a1c19",
+                        "secondary-container": "#e0e0db",
+                        "surface-dim": "#dadad8",
+                        "surface-bright": "#f9f9f7",
+                        "error-container": "#ffdad6",
+                        "inverse-primary": "#c8c6c5",
+                        "surface-variant": "#e2e3e1",
+                        "surface": "#f9f9f7",
+                        "tertiary": "#000000",
+                        "surface-container-low": "#f4f4f2",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-background": "#1a1c1b",
+                        "surface-container-high": "#e8e8e6",
+                        "inverse-on-surface": "#f1f1ef",
+                        "secondary-fixed-dim": "#c6c7c2",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#858383",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#474646",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-surface": "#1a1c1b",
+                        "on-secondary-container": "#62635f",
+                        "on-surface-variant": "#444748",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e2e3e1",
+                        "background": "#f9f9f7",
+                        "surface-container": "#eeeeec",
+                        "primary-container": "#1c1b1b",
+                        "primary": "#000000",
+                        "tertiary-fixed-dim": "#ffb4a8",
+                        "secondary-fixed": "#e3e3de",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#410000",
+                        "on-error": "#ffffff",
+                        "on-secondary-fixed-variant": "#464744",
+                        "primary-fixed": "#e5e2e1",
+                        "surface-tint": "#5f5e5e",
+                        "secondary": "#5d5f5b",
+                        "outline": "#747878",
+                        "on-tertiary-fixed-variant": "#930000",
+                        "on-tertiary-fixed": "#410000",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#fb3222",
+                        "tertiary-fixed": "#ffdad4",
+                        "outline-variant": "#c4c7c7",
+                        "inverse-surface": "#2f3130"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Lora", "serif"],
+                        "label": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                        "display": ["Playfair Display", "serif"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #F9F9F7;
+            background-image: radial-gradient(#111111 0.5px, transparent 0.5px);
+            background-size: 12px 12px;
+            background-attachment: fixed;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .drop-cap::first-letter {
+            float: left;
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            line-height: 1;
+            padding-right: 0.75rem;
+            color: #000000;
+            font-weight: 900;
+            margin-top: 0.25rem;
+        }
+        .ink-border {
+            border: 1px solid #111111;
+        }
+        .ink-border-heavy {
+            border: 2px solid #111111;
+        }
+        .editorial-shadow {
+            box-shadow: 4px 4px 0px 0px #111111;
+        }
+        .editorial-shadow-hover:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 8px 8px 0px 0px #111111;
+        }
+    </style>
+</head>
+<body class="font-body text-primary antialiased min-h-screen flex flex-col">
+<!-- Top Masthead -->
+<header class="w-full bg-background pt-8 pb-4 px-6 md:px-12">
+<div class="flex flex-col items-center">
+<h1 class="text-6xl md:text-8xl font-display font-black uppercase tracking-tighter text-primary">
+                一页萤岛
+            </h1>
+<div class="w-full h-1 bg-primary mt-4"></div>
+<div class="w-full h-[1px] bg-primary mt-1"></div>
+<div class="w-full flex justify-between items-center py-2 text-xs font-mono uppercase tracking-widest">
+<span>VOL. 01 — NO. 52</span>
+<span>Clinical AI Workspace</span>
+<span>EST. 2024</span>
+</div>
+<div class="w-full h-[1px] bg-primary"></div>
+</div>
+</header>
+<main class="flex-grow flex flex-col md:flex-row w-full max-w-[1440px] mx-auto px-6 md:px-12 py-12 gap-12">
+<!-- Left Section: Large Statement -->
+<section class="w-full md:w-7/12 flex flex-col gap-8">
+<div class="ink-border-heavy p-8 bg-background relative overflow-hidden">
+<!-- Decorative Corner -->
+<div class="absolute top-0 right-0 w-16 h-16 border-l-2 border-b-2 border-primary"></div>
+<h2 class="text-5xl md:text-7xl font-display leading-[0.95] text-primary mb-8 tracking-tight">
+                    把复杂治疗史<br/>整理成一页纸
+                </h2>
+<div class="w-24 h-2 bg-primary mb-8"></div>
+<p class="drop-cap text-xl md:text-2xl leading-relaxed text-justify mb-8 font-body">
+                    在数字化医疗的洪流中，信息的碎片化成为了精准诊疗的阻碍。一页萤岛利用先进的语义提取引擎，将跨度数年的电子病历、检验报告及主观叙述，浓缩为具备高度逻辑性的临床全景。我们不只是在整理数据，更是在重构生命叙事。
+                </p>
+<div class="grid grid-cols-2 gap-6 mt-12">
+<div class="ink-border p-4 bg-surface-container-low">
+<span class="font-mono text-xs block mb-2">PRECISION // 01</span>
+<h4 class="font-headline font-bold text-lg">结构化重塑</h4>
+<p class="text-sm opacity-80 mt-1">自动识别140余种临床实体，将非结构化文本转化为标准医学图谱。</p>
+</div>
+<div class="ink-border p-4 bg-surface-container-low">
+<span class="font-mono text-xs block mb-2">INTELLIGENCE // 02</span>
+<h4 class="font-headline font-bold text-lg">时间轴推理</h4>
+<p class="text-sm opacity-80 mt-1">跨时空对比关键指标变化，自动勾勒病情进展与治疗反应曲线。</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 text-xs font-mono uppercase">
+<span class="material-symbols-outlined text-base">verified</span>
+<span>Clinical Data Encryption Standard ISO-27001 Certified</span>
+</div>
+</section>
+<!-- Right Section: Login Form -->
+<section class="w-full md:w-5/12">
+<div class="ink-border-heavy p-8 bg-background editorial-shadow">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h3 class="text-3xl font-display font-bold leading-tight">身份访问控制台</h3>
+<p class="font-mono text-[10px] uppercase tracking-tighter mt-1">Identity Access Management / Secure Gateway</p>
+</div>
+<button class="ink-border p-2 hover:bg-primary hover:text-background transition-colors">
+<span class="material-symbols-outlined text-lg">contrast</span>
+</button>
+</div>
+<!-- Main Login Options -->
+<div class="space-y-4">
+<div class="group">
+<label class="block font-label font-bold text-[10px] tracking-widest uppercase mb-1">Electronic Mail</label>
+<input class="w-full bg-transparent border-t-0 border-l-0 border-r-0 border-b-2 border-primary px-0 py-3 font-body focus:ring-0 focus:border-primary placeholder:text-primary/30 transition-all" placeholder="输入邮箱地址" type="email"/>
+</div>
+<div class="group">
+<label class="block font-label font-bold text-[10px] tracking-widest uppercase mb-1">Encryption Key / Password</label>
+<input class="w-full bg-transparent border-t-0 border-l-0 border-r-0 border-b-2 border-primary px-0 py-3 font-mono focus:ring-0 focus:border-primary placeholder:text-primary/30 transition-all" placeholder="••••••••" type="password"/>
+</div>
+</div>
+<button class="w-full mt-10 bg-primary text-background py-4 font-label font-bold uppercase tracking-widest text-sm hover:bg-background hover:text-primary border-2 border-primary transition-all active:translate-y-1">
+                    验证并进入系统
+                </button>
+<div class="relative flex items-center my-12">
+<div class="flex-grow border-t border-primary/20"></div>
+<span class="flex-shrink mx-4 font-mono text-[10px] uppercase tracking-widest">第三方鉴权</span>
+<div class="flex-grow border-t border-primary/20"></div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<button class="ink-border py-3 flex items-center justify-center gap-2 font-label font-medium hover:bg-primary hover:text-background transition-colors group">
+<img alt="WeChat" class="w-4 h-4 grayscale group-hover:invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBENcjiU82jtpJo8cffyabcrVxd__Iz5VLI_StMAAMIuXtkQbq_w9NBtPmf3b_b3TtmA0QjwnWGc5un6mv619Cq1k6bo6nDHhij04dVA9asRSiI1gN0YrgOGUa11d1cc9YazDzK6nDXjqXqF4P-1xdrDXwrrDEzzK7B97qVWtxR3z0NhxxkLXJOOLdf_aVKd9tjnB28NflL6wQtnTbdIajZWK12XfTXDwJLvlAf-xaJzHpjpc0s6NidKZHAB34AlQnfSrC5DXc2YQja"/>
+<span class="text-xs uppercase tracking-tighter">WeChat</span>
+</button>
+<button class="ink-border py-3 flex items-center justify-center gap-2 font-label font-medium hover:bg-primary hover:text-background transition-colors group">
+<img alt="Google" class="w-4 h-4 grayscale group-hover:invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOmWE02XUxPbmd1ZekN9XjAMyJg_-Hd0J8-5_Zqv-d7GjQz6fP-WitTalM_YoIuCZ1M5VDPcDmofR10cNDnHxAKFNOcwcrG0lhf_jBSV7TdIw5jKCdEenY0wrsZV3I1s_BO6E6-kv2cc50dXiFBKRzmfpH0HHDW3avqihQy_xyzvj5Lcp_tpYzo3y1o-LuvtHgloXNi44_Y8uj4CG2UXli-KdQtOdM1uwOJZ2k7soVBhHTHr7pLTn1G9aL62JGYTzZpFu7dG3H3sVZ"/>
+<span class="text-xs uppercase tracking-tighter">Google</span>
+</button>
+</div>
+<div class="mt-12 pt-8 border-t border-primary/10">
+<p class="text-[11px] leading-relaxed opacity-60 text-center font-body italic">
+                        "继续即代表您同意本平台的《数据隐私协议》与《临床研究伦理规范》。我们对所有医疗数据采用零知识证明存储。"
+                    </p>
+</div>
+</div>
+<!-- Supporting Small Card Below -->
+<div class="mt-8 grid grid-cols-2 gap-4">
+<div class="bg-primary text-background p-4 flex flex-col justify-between">
+<span class="font-mono text-[10px]">UPTIME</span>
+<span class="text-2xl font-display font-bold">99.9%</span>
+</div>
+<div class="ink-border p-4 flex flex-col justify-between bg-surface-container">
+<span class="font-mono text-[10px]">USERS ONLINE</span>
+<span class="text-2xl font-display font-bold">1.2K+</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Decoration -->
+<footer class="mt-auto w-full px-6 md:px-12 py-8">
+<div class="w-full h-[4px] bg-primary mb-1"></div>
+<div class="w-full h-[1px] bg-primary mb-4"></div>
+<div class="flex flex-col md:flex-row justify-between items-center text-[10px] font-mono tracking-widest opacity-60 uppercase">
+<span>© 2024 一页萤岛 ARCHIVE SYSTEM</span>
+<div class="flex gap-8 mt-4 md:mt-0">
+<a class="underline underline-offset-4" href="#">Legal Disclaimer</a>
+<a class="underline underline-offset-4" href="#">System Status</a>
+<a class="underline underline-offset-4" href="#">Support Cluster</a>
+</div>
+</div>
+</footer>
+<!-- Decorative Sidebar Text (Vertical) -->
+<div class="fixed right-4 top-1/2 -translate-y-1/2 hidden xl:block pointer-events-none">
+<span class="font-mono text-[10px] uppercase tracking-[0.5em] rotate-90 inline-block origin-center whitespace-nowrap opacity-20">
+            CONFIDENTIAL CLINICAL WORKFLOW ENVIRONMENT — AUTHENTICATION REQUIRED
+        </span>
+</div>
+</body></html>

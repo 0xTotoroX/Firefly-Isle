@@ -7,10 +7,11 @@ work/
 .wrangler/
 coverage/
 output/
-# Local archive payloads; keep the archive index and maintenance map in Git.
+# Local recovery backups; keep the archive index and maintenance map in Git.
 /archive/backups/
-/archive/design-kit/
 /archive/legacy-projects/
+# Restored local QA captures were not tracked before archival.
+/docs/design/Image-2/V4/.qa*.png
 /*.png
 /*-snapshot.md
 .env.local

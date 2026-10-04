@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&amp;family=Inter+Tight:wght@700;800;900&amp;family=JetBrains+Mono:wght@400;700&amp;family=Space+Grotesk:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#3e0500",
+                    "on-secondary-fixed-variant": "#8d1500",
+                    "surface-dim": "#131313",
+                    "on-secondary-container": "#ffd7cf",
+                    "on-error": "#690005",
+                    "on-secondary": "#640c00",
+                    "error-container": "#93000a",
+                    "tertiary-container": "#909191",
+                    "secondary": "#ffb4a5",
+                    "surface-variant": "#353534",
+                    "on-tertiary": "#2f3131",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-primary-container": "#560e00",
+                    "inverse-primary": "#b42800",
+                    "inverse-on-surface": "#313030",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "surface-container-low": "#1c1b1b",
+                    "primary-container": "#ff562c",
+                    "outline-variant": "#5e3f38",
+                    "surface-tint": "#ffb4a2",
+                    "on-surface-variant": "#e8bdb3",
+                    "inverse-surface": "#e5e2e1",
+                    "surface-bright": "#3a3939",
+                    "tertiary": "#c6c6c7",
+                    "surface-container": "#201f1f",
+                    "primary": "#ffb4a2",
+                    "secondary-fixed-dim": "#ffb4a5",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface": "#131313",
+                    "secondary-fixed": "#ffdad3",
+                    "on-surface": "#e5e2e1",
+                    "on-primary": "#621100",
+                    "secondary-container": "#c12101",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "on-tertiary-container": "#282a2a",
+                    "primary-fixed-dim": "#ffb4a2",
+                    "error": "#ffb4ab",
+                    "surface-container-high": "#2a2a2a",
+                    "primary-fixed": "#ffdad2",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-highest": "#353534",
+                    "on-primary-fixed-variant": "#8a1d00",
+                    "on-primary-fixed": "#3c0700",
+                    "outline": "#ae887f",
+                    "on-background": "#e5e2e1",
+                    "background": "#131313"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0px",
+                    "lg": "0px",
+                    "xl": "0px",
+                    "full": "0px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter Tight"],
+                    "body": ["Inter"],
+                    "label": ["JetBrains Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .negative-state-on-hover:hover {
+            background-color: #FF3D00;
+            color: #0A0A0A;
+        }
+        .clinical-table-row {
+            border-top: 1px solid #262626;
+        }
+        .glass-overlay {
+            background: rgba(26, 26, 26, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        /* Overriding any default rounding for this specific task */
+        * { border-radius: 0 !important; }
+    </style>
+</head>
+<body class="bg-[#0A0A0A] text-[#FAFAFA] font-body selection:bg-[#FF3D00] selection:text-[#0A0A0A]">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#0A0A0A] border-b border-[#262626] flex justify-between items-center h-16 px-6">
+<div class="text-[#FAFAFA] font-black tracking-tighter border-l-2 border-[#FF3D00] pl-4 font-['Inter_Tight'] tracking-tighter uppercase font-bold text-xl">
+            一页萤岛
+        </div>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-[#FAFAFA] cursor-pointer hover:bg-[#FF3D00] hover:text-[#0A0A0A] p-1">settings</span>
+<span class="material-symbols-outlined text-[#FAFAFA] cursor-pointer hover:bg-[#FF3D00] hover:text-[#0A0A0A] p-1">help</span>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[15%] bg-[#000000] border-r border-[#262626] flex flex-col py-8 z-40 pt-20">
+<div class="px-6 mb-8">
+<div class="font-['JetBrains_Mono'] text-[11px] tracking-widest uppercase text-[#FAFAFA] opacity-60 mb-1">FORENSIC_ARCHIVE_V1</div>
+<div class="font-['JetBrains_Mono'] text-[14px] font-bold text-[#FF3D00]">临床 AI 控制台</div>
+</div>
+<nav class="flex-1 flex flex-col">
+<a class="flex items-center gap-3 px-6 py-4 text-[#FF3D00] font-['JetBrains_Mono'] text-[11px] tracking-widest uppercase transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="content_paste_search">content_paste_search</span>
+                提取
+            </a>
+<a class="flex items-center gap-3 px-6 py-4 text-[#FAFAFA] opacity-60 hover:text-[#FF3D00] transition-colors font-['JetBrains_Mono'] text-[11px] tracking-widest uppercase group" href="#">
+<span class="material-symbols-outlined" data-icon="folder_managed">folder_managed</span>
+                病历
+            </a>
+<a class="flex items-center gap-3 px-6 py-4 text-[#FAFAFA] opacity-60 hover:text-[#FF3D00] transition-colors font-['JetBrains_Mono'] text-[11px] tracking-widest uppercase group" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                统计
+            </a>
+</nav>
+<div class="px-6 mt-auto flex flex-col gap-4">
+<button class="flex items-center gap-3 text-[#FAFAFA] opacity-60 hover:text-[#FF3D00] transition-colors font-['JetBrains_Mono'] text-[11px] tracking-widest uppercase">
+<span class="material-symbols-outlined" data-icon="dark_mode">dark_mode</span>
+                切换主题
+            </button>
+<div class="flex items-center gap-3 border-t border-[#262626] pt-4">
+<div class="w-8 h-8 bg-[#262626] border border-[#353534] flex items-center justify-center overflow-hidden">
+<img alt="用户头像" data-alt="professional medical doctor profile avatar in grayscale minimalist style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBkHYctOEhI9aqSSxbv-d8PP9dV4BClO1EwGd1OO2l69w9lThnnTLBoPBO8-Sp8GPx2ofiKOO9Rz4nJnWoYww9EvtQG4C_rkiLkEWq7mNrJA_kORudcZdPtTopsy8pz_pftXyqmsyYtOis4v5ZX7Kr6gaaWBVJvDrIoF6lQjiiiZTh8-p0cqSHkt-xkOoxKbgYH3PdgjKekdaoxQ0aBX7vgNmykPGaT4I8qqoehbA7cEzWKbIAt8uypCq6CEkAWaxaePc4BZA0Se3Ej"/>
+</div>
+<div class="overflow-hidden">
+<div class="font-['JetBrains_Mono'] text-[10px] text-[#FAFAFA] truncate">DR_EXPERT_01</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-[15%] pt-16 min-h-screen flex flex-col">
+<!-- 上方输入区 -->
+<section class="p-8 border-b border-[#262626] bg-[#0A0A0A]">
+<div class="max-w-6xl mx-auto space-y-6">
+<div class="flex flex-col gap-2">
+<label class="font-['JetBrains_Mono'] text-[10px] tracking-widest uppercase text-[#FF3D00]">PATIENT_HISTORY_INPUT</label>
+<textarea class="w-full h-48 bg-[#1A1A1A] border-none border-b border-[#262626] focus:ring-0 focus:border-[#FF3D00] focus:border-b-2 text-[#FAFAFA] placeholder:text-[#353534] p-4 font-body resize-none" placeholder="请描述患者的病情及治疗历程..."></textarea>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="border-2 border-dashed border-[#262626] hover:border-[#FF3D00] bg-[#131313] flex flex-col items-center justify-center py-10 transition-colors group cursor-pointer">
+<span class="material-symbols-outlined text-4xl text-[#353534] group-hover:text-[#FF3D00] mb-2">upload_file</span>
+<span class="font-['JetBrains_Mono'] text-[11px] tracking-widest uppercase text-[#353534] group-hover:text-[#FAFAFA]">点击或拖拽上传图片/PDF</span>
+</div>
+<div class="flex items-center justify-center">
+<button class="bg-[#FF3D00] text-[#0A0A0A] w-full h-full min-h-[120px] flex flex-col items-center justify-center gap-3 hover:bg-[#FAFAFA] transition-colors">
+<span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">mic</span>
+<span class="font-['Inter_Tight'] font-black text-xl uppercase tracking-tighter">语音录入</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- 下方输出区 (结构化报告) -->
+<section class="p-8 flex-1 bg-[#131313]">
+<div class="max-w-6xl mx-auto bg-white text-[#0A0A0A] p-10 shadow-2xl relative overflow-hidden">
+<!-- Watermark Background for Editorial feel -->
+<div class="absolute top-0 right-0 opacity-5 font-black text-8xl -rotate-12 pointer-events-none select-none">FORENSIC</div>
+<div class="border-b-4 border-[#0A0A0A] pb-4 mb-8 flex justify-between items-end">
+<div>
+<h1 class="font-['Inter_Tight'] text-5xl font-black tracking-tighter leading-none">临床结构化报告</h1>
+<p class="font-['JetBrains_Mono'] text-[10px] tracking-widest mt-2">GENERATED BY ONE-PAGE FIREFLY AI ARCHIVE</p>
+</div>
+<div class="text-right">
+<p class="font-['JetBrains_Mono'] text-xs font-bold">REPORT_ID: 2024-X0892</p>
+<p class="font-['JetBrains_Mono'] text-xs">DATE: 2024.05.20</p>
+</div>
+</div>
+<!-- Basic Info -->
+<div class="grid grid-cols-4 border-2 border-[#0A0A0A] mb-8">
+<div class="border-r border-[#0A0A0A] p-2 bg-[#F0F0F0]">
+<label class="block font-['JetBrains_Mono'] text-[9px] font-bold">AGE / 年龄</label>
+<span class="text-lg font-bold">54</span>
+</div>
+<div class="border-r border-[#0A0A0A] p-2 bg-[#F0F0F0]">
+<label class="block font-['JetBrains_Mono'] text-[9px] font-bold">BLOOD TYPE / 血型</label>
+<span class="text-lg font-bold">A+</span>
+</div>
+<div class="border-r border-[#0A0A0A] p-2 bg-[#F0F0F0]">
+<label class="block font-['JetBrains_Mono'] text-[9px] font-bold">GENDER / 性别</label>
+<span class="text-lg font-bold">女</span>
+</div>
+<div class="p-2 bg-[#F0F0F0]">
+<label class="block font-['JetBrains_Mono'] text-[9px] font-bold">WEIGHT / 体重</label>
+<span class="text-lg font-bold">62 KG</span>
+</div>
+</div>
+<!-- 初发区块 -->
+<div class="mb-8">
+<h2 class="bg-[#0A0A0A] text-white px-4 py-1 text-sm font-bold tracking-widest uppercase inline-block mb-2">初发区块 / PRIMARY ONSET</h2>
+<table class="w-full border-collapse border-2 border-[#0A0A0A]">
+<tbody>
+<tr class="border-b border-[#0A0A0A]">
+<td class="w-1/4 p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A]">触发时间</td>
+<td class="w-3/4 p-2">2022-03-15</td>
+</tr>
+<tr class="border-b border-[#0A0A0A]">
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A]">初始方案</td>
+<td class="p-2 font-medium">改良根治术 + AC-T 化疗方案</td>
+</tr>
+<tr class="border-b border-[#0A0A0A]">
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A]">免疫组化 (IHC)</td>
+<td class="p-2">
+<div class="grid grid-cols-4 gap-4">
+<div><span class="text-[10px] block opacity-60">ER</span><span class="font-bold">80%(+)</span></div>
+<div><span class="text-[10px] block opacity-60">PR</span><span class="font-bold">20%(+)</span></div>
+<div><span class="text-[10px] block opacity-60">HER2</span><span class="font-bold">1(+)</span></div>
+<div><span class="text-[10px] block opacity-60">Ki67</span><span class="font-bold">15%</span></div>
+</div>
+</td>
+</tr>
+<tr>
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A]">基因检测</td>
+<td class="p-2 italic text-sm">BRCA1/2 突变：阴性 (Negative)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- 治疗线区块 -->
+<div class="mb-8">
+<h2 class="bg-[#0A0A0A] text-white px-4 py-1 text-sm font-bold tracking-widest uppercase inline-block mb-2">治疗线区块 / TREATMENT LINES</h2>
+<!-- Line 1 -->
+<div class="border-2 border-[#0A0A0A] mb-4">
+<div class="bg-[#0A0A0A] text-white p-2 flex justify-between items-center">
+<span class="font-bold text-xs tracking-tighter">一线治疗 / FIRST LINE</span>
+<span class="font-['JetBrains_Mono'] text-[10px]">2022.06 - 2023.01</span>
+</div>
+<table class="w-full">
+<tbody><tr class="border-b border-[#0A0A0A]">
+<td class="w-1/4 p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">用药情况</td>
+<td class="p-2 text-sm">他莫昔芬 (Tamoxifen) 20mg qd po</td>
+</tr>
+<tr class="border-b border-[#0A0A0A]">
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">穿刺/活检</td>
+<td class="p-2 text-sm">左锁骨上淋巴结穿刺 (2022-05-30)</td>
+</tr>
+<tr class="border-b border-[#0A0A0A]">
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">免疫组化</td>
+<td class="p-2 text-xs">ER(90%+), PR(10%+), HER2(0), Ki67(10%)</td>
+</tr>
+<tr>
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">基因检测</td>
+<td class="p-2 text-sm">未见明显驱动基因突变</td>
+</tr>
+</tbody></table>
+</div>
+<!-- Line 2 -->
+<div class="border-2 border-[#0A0A0A]">
+<div class="bg-[#0A0A0A] text-white p-2 flex justify-between items-center">
+<span class="font-bold text-xs tracking-tighter">二线治疗 / SECOND LINE</span>
+<span class="font-['JetBrains_Mono'] text-[10px]">2023.02 - 至今</span>
+</div>
+<table class="w-full">
+<tbody><tr class="border-b border-[#0A0A0A]">
+<td class="w-1/4 p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">用药情况</td>
+<td class="p-2 text-sm">氟维司群 + CDK4/6 抑制剂 (阿贝西利)</td>
+</tr>
+<tr class="border-b border-[#0A0A0A]">
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">穿刺/活检</td>
+<td class="p-2 text-sm">肝脏占位穿刺活检 (2023-02-10)</td>
+</tr>
+<tr class="border-b border-[#0A0A0A]">
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">免疫组化</td>
+<td class="p-2 text-xs">ER(70%+), PR(-), HER2(1+), Ki67(30%)</td>
+</tr>
+<tr>
+<td class="p-2 bg-[#F0F0F0] font-bold border-r border-[#0A0A0A] text-xs">基因检测</td>
+<td class="p-2 text-sm font-bold text-[#FF3D00]">PIK3CA 突变阳性</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+<!-- Footer signature -->
+<div class="mt-12 flex justify-between items-center border-t-2 border-[#0A0A0A] pt-4">
+<div class="text-[9px] font-['JetBrains_Mono'] max-w-[400px]">
+                        声明：本报告由人工智能辅助系统自动提取，仅供医疗专业人士参考。最终诊断需结合原始影像及病理报告。
+                    </div>
+<div class="border border-[#0A0A0A] p-2 flex flex-col items-center">
+<div class="w-16 h-16 bg-[#F0F0F0] flex items-center justify-center">
+<img alt="验证码" data-alt="black and white clinical verification qr code with sharp geometric borders" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCodMwGgWvuwF5LOmg917ngq1oe0WPAGBvhZreAMsUlKJvYTRJWEVO4reEpFvrks9HRlph4tMYP8n0cUIH1tr0G1iY4h8ejtcyA9YbsVggEGH8XpAXsiVtqDp_iUEs4YkP7ZBbbfvVG8Smlndbs3Pep1M4IC4QyLH2XKQ6__VO4hEqXYrsZyIviesrCk1LwAv-73YdRfFeRkZAR_YYQdbAXSNUwkXW5lO17y6apkHeyptmFTiCLefqtyyFjUSMkduWUunUTiDnmQsBc"/>
+</div>
+<span class="text-[8px] mt-1">扫码验证报告</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

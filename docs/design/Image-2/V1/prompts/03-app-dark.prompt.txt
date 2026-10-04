@@ -1,0 +1,11 @@
+Use case: ui-mockup
+Asset type: Firefly-Isle /app dark redesign reference
+Input image: /app dark full-page screenshot; use as layout and content reference.
+
+Redesign this existing Firefly-Isle product screenshot as one page in a coherent dual-theme product system. Preserve the exact page type, desktop full-page composition, Chinese oncology information architecture, major labels, and core workflow semantics. Dark theme = black clinical control room. Light theme = white forensic medical archive. Keep sharp editorial grid, hard edges, high-contrast Chinese typography, report and evidence aesthetics, AI extraction workspace, patient dossier logic, and treatment timeline hierarchy. Chinese labels must remain legible and first-class, never pseudo-text. Redesign the visual system, typography, spacing, borders, surfaces, and icon language; do not turn it into a generic SaaS dashboard. No pastel dashboards, no blue enterprise UI, no purple gradients, no decorative blobs, no stock medical imagery.
+
+Page delta:
+Redesign the extraction workspace as an active black clinical command surface. Preserve the sidebar, top system bar, text intake area, extraction/export controls, current parameter block, report preview, treatment timeline table, missing-field logic, and verification area. Make the textarea feel like an intake terminal, the primary extraction action like a command pad, and the timeline like a structured clinical assembly surface. Use layered black panels, thin orange signal lines, high-contrast typography, and precise audit metadata. Refined protocol energy, not cyberpunk.
+
+Constraints:
+Do not remove the Chinese AI extraction workflow or timeline hierarchy. Avoid dashboard cards, blue SaaS, gradients, floating blobs, or stock imagery. Keep all UI labels editable-looking and legible.
