@@ -1,7 +1,7 @@
 /**
  * [INPUT]: React/Tailwind Vite 插件、Vitest、Workbox 清单及 Node 文件/加密 API。
  * [OUTPUT]: Vite/Vitest 配置、历史归档测试排除、静态预缓存清单与 SHA-256 版本化 worker 构建插件。
- * [POS]: 根目录构建和测试装配；为 PWA 提供每个构建的静态资产与缓存版本。
+ * [POS]: 根目录构建和测试装配；为 PWA 提供每个构建的静态资产与缓存版本，别名使用 import.meta.dirname。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { configDefaults, defineConfig } from 'vitest/config'
@@ -39,7 +39,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss(), precacheBuildAssets()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
   test: {

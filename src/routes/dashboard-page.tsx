@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 React Router、V3 壳层、认证状态、dashboard-data 聚合数据、patient-record-storage 摘要分页与纯展示 PatientRecordList。
  * [OUTPUT]: 对外提供 DashboardPage 组件，对应 /dashboard。
- * [POS]: 登录后总览，展示真实计数、我的病历与临床摘要；列表独立分页、失败可重试并隔离账号切换后的迟到响应。
+ * [POS]: 登录后总览；账号 key 隔离分页，请求开始由事件/初始状态表达，回复与失败在异步回调更新。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -176,11 +176,10 @@ function DashboardRecords({ userId }: { userId: string }) {
   const [state, setState] = useState<{ records: PatientRecordSummary[]; cursor: PatientRecordCursor | null; isLoading: boolean; hasError: boolean }>({
     records: [], cursor: null, isLoading: true, hasError: false,
   })
-  const loadPage = useCallback(async (cursor: PatientRecordCursor | null) => {
+  const requestPage = useCallback(async (cursor: PatientRecordCursor | null) => {
     if (loadingRef.current) return
     loadingRef.current = true
     const requestId = ++requestRef.current
-    setState((current) => ({ ...current, isLoading: true, hasError: false }))
     try {
       const page = await loadPatientRecordSummaries(userId, cursor)
       if (requestId !== requestRef.current) return
@@ -191,10 +190,24 @@ function DashboardRecords({ userId }: { userId: string }) {
       if (requestId === requestRef.current) loadingRef.current = false
     }
   }, [userId])
+  function loadPage(cursor: PatientRecordCursor | null) {
+    if (loadingRef.current) return
+    setState((current) => ({ ...current, isLoading: true, hasError: false }))
+    void requestPage(cursor)
+  }
   useEffect(() => {
-    void loadPage(null)
+    loadingRef.current = true
+    const requestId = ++requestRef.current
+    void loadPatientRecordSummaries(userId, null)
+      .then((page) => {
+        if (requestId === requestRef.current) setState({ records: page.records, cursor: page.nextCursor, isLoading: false, hasError: false })
+      })
+      .catch(() => {
+        if (requestId === requestRef.current) setState((current) => ({ ...current, isLoading: false, hasError: true }))
+      })
+      .finally(() => { if (requestId === requestRef.current) loadingRef.current = false })
     return () => { requestRef.current += 1; loadingRef.current = false }
-  }, [loadPage])
+  }, [userId])
   return (
     <PatientRecordList
       hasError={state.hasError}

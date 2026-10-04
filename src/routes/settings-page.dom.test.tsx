@@ -7,10 +7,10 @@
  */
 import '@testing-library/jest-dom/vitest'
 
-import { render, screen, waitFor } from '@testing-library/react'
+import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BackgroundAudioProvider } from '@/lib/background-audio'
 
@@ -39,10 +39,11 @@ Object.defineProperty(window, 'localStorage', { configurable: true, value: local
 
 const setLocale = vi.fn()
 const setTheme = vi.fn()
+const identity = vi.hoisted(() => ({ user: { id: 'user-1', email: 'rider@firefly.test', is_anonymous: false } }))
 
 vi.mock('@/lib/auth', async () => ({
   useOptionalAuth: () => ({
-    user: { id: 'user-1', email: 'rider@firefly.test', is_anonymous: false },
+    user: identity.user,
   }),
 }))
 
@@ -98,6 +99,26 @@ function renderSettings() {
 }
 
 describe('SettingsPage', () => {
+  beforeEach(() => { identity.user = { id: 'user-1', email: 'rider@firefly.test', is_anonymous: false } })
+
+  it('preserves a draft across rerenders and clears the previous account name on account change', async () => {
+    let resolveProfile!: (profile: { displayName: string; locale: string; theme: string }) => void
+    getUserProfile.mockResolvedValueOnce({ displayName: 'First', locale: 'zh', theme: 'dark' })
+      .mockReturnValueOnce(new Promise((resolve) => { resolveProfile = resolve }))
+    const view = renderSettings()
+    const name = await screen.findByDisplayValue('First')
+    await userEvent.clear(name)
+    await userEvent.type(name, 'Draft')
+    const page = () => <MemoryRouter><BackgroundAudioProvider><SettingsPage /></BackgroundAudioProvider></MemoryRouter>
+    view.rerender(page())
+    expect(screen.getByDisplayValue('Draft')).toBeInTheDocument()
+    identity.user = { id: 'user-2', email: 'second@firefly.test', is_anonymous: false }
+    view.rerender(page())
+    expect(screen.queryByDisplayValue('Draft')).not.toBeInTheDocument()
+    await act(async () => { resolveProfile({ displayName: 'Second', locale: 'zh', theme: 'dark' }) })
+    expect(screen.getByDisplayValue('Second')).toBeInTheDocument()
+  })
+
   it('shows the account email from the session truth source', () => {
     getUserProfile.mockResolvedValue(null)
     renderSettings()

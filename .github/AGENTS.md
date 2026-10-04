@@ -11,3 +11,5 @@ dependabot.yml: npm 与 GitHub Actions 的每周依赖检查及 minor/patch 分�
 法则: workflow 先验证再发布，Secrets/Vars 只声明接口不写死敏感值。
 
 [PROTOCOL]: 结构或契约事实变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md，已加载且未变化的内容不重读。
+
+依赖升级：checkout/setup-node/upload-artifact 使用已在 main 验证的新版 Actions；CI 安装 Supabase CLI 并本地编译 Pages Functions，均不部署。supabase-deploy.yml 仍只手动触发。

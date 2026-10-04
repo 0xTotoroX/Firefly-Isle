@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react 的 useEffect/useState 与调用方注入的 loader。
  * [OUTPUT]: 对外提供 useAsyncResource 与 AsyncResource 类型。
- * [POS]: lib 的共享异步数据加载基元，统一「data/error/isLoading + 竞态守卫 + reload」样板，替代页面层手写的 active 守卫 effect；deps 变化时重置回 initialData/加载态，loader 通过 effect 内联调用，由 deps 驱动重载。
+ * [POS]: 共享异步资源；输入/重载变化时在渲染阶段条件重置，effect 仅启动外部请求并隔离迟到结果。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useState } from 'react'
@@ -24,11 +24,16 @@ export function useAsyncResource<T>(
     error: null,
     isLoading: initialData === null,
   }))
+  const inputs = [...deps, nonce]
+  const [previousInputs, setPreviousInputs] = useState(inputs)
+
+  if (inputs.length !== previousInputs.length || inputs.some((input, index) => !Object.is(input, previousInputs[index]))) {
+    setPreviousInputs(inputs)
+    setState({ data: initialData, error: null, isLoading: initialData === null })
+  }
 
   useEffect(() => {
     let active = true
-
-    setState({ data: initialData, error: null, isLoading: initialData === null })
 
     void loader()
       .then((data) => {

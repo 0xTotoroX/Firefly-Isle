@@ -84,3 +84,8 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 - 文件增删/重命名、职责、接口、依赖、数据结构及运行入口变化后，先更新受影响 L3，再同步 L2；只有顶层结构或项目约定受影响才同步 L1。只读/普通测试/格式调整不自动启动地图维护。
 - 地图说明职责、成员、关键依赖和必要接口；父级使用真实可解析的相对链接。操作方式变化时同步已有 runbook，不把操作步骤重复抄入地图。档案地图标注历史范围，不修改已归档行为合同来记录新任务。
 - 验证实际成员、父级/入口链接和文档与代码的一致性；文件正确不代表所有客户端已重新加载新指令。
+
+## 依赖升级整合
+
+- 保留 main 的兼容依赖和 GitHub Actions 升级：React Router 7、Vitest/coverage 5、ESLint 10、Capacitor 四包 8.5.2。安装/CI 使用 Node.js 22 与锁文件；正式原生签名、真机和产品发布另验。
+- SaaS 的 html2canvas-pro、Material Symbols 与 Workbox 继续保留；Vite 别名使用 import.meta.dirname，预缓存摘要和 archive/ 排除同时生效。

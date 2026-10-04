@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 现有化验识别、审核和批次保存边界，以及 Demo 固定示例和内存会话。
  * [OUTPUT]: LabReportImport，多文件队列逐份核对、保存、重试和重复批次确认。
- * [POS]: 工作区化验录入；真实文件走服务，演示只加载固定文本并保存到内存。
+ * [POS]: 按患者 key 隔离化验队列和迟到请求；真实文件走服务，演示只加载固定文本并保存到内存。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession, useProductPath } from '@/lib/demo-session'
@@ -53,7 +53,11 @@ type ReportDraft = {
   duplicate: boolean
 }
 
-export function LabReportImport({ disabled, record, theme, onActiveChange, onSaved }: LabReportImportProps) {
+export function LabReportImport(props: LabReportImportProps) {
+  return <PatientLabReportImport key={props.record?.id ?? 'no-patient'} {...props} />
+}
+
+function PatientLabReportImport({ disabled, record, theme, onActiveChange, onSaved }: LabReportImportProps) {
   const demo = useDemoSession()
   const productPath = useProductPath()
   const { locale } = useLocale()
@@ -88,16 +92,9 @@ export function LabReportImport({ disabled, record, theme, onActiveChange, onSav
   useEffect(() => {
     alive.current = true
     generationRef.current += 1
-    queueRef.current = []
-    setQueue([])
-    setSelectedId(null)
-    setRefreshing(false)
-    setRefreshError(null)
-    setSaved(false)
-    refreshRef.current = null
     onActiveChange(false)
     return () => { alive.current = false; generationRef.current += 1; onActiveChange(false) }
-  }, [onActiveChange, patientId])
+  }, [onActiveChange])
 
   function discard() {
     generationRef.current += 1

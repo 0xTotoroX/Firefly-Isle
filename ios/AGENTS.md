@@ -11,3 +11,5 @@ debug.xcconfig: Capacitor iOS debug 配置入口，不应写入 Apple Team、证
 法则: iOS 目录是现有 Web app 的原生外壳，不是第二套医疗业务实现；业务路由、认证和患者数据真相仍回到 React/Supabase。
 
 [PROTOCOL]: 结构或契约事实变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md，已加载且未变化的内容不重读。
+
+依赖兼容：App/CapApp-SPM/Package.swift 的 Capacitor Swift 包 exact 8.5.2 与 package.json 四个 Capacitor 包保持一致。

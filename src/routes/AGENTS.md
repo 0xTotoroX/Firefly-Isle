@@ -42,14 +42,17 @@ dashboard-page.dom.test.tsx: 真实计数、病历分页与患者链接、空态
 
 record-navigation.dom.test.tsx: 患者导航、默认折叠分享及方向键/Home/End 页签切换与焦点回归
 
-auth-callback-pages.dom.test.tsx: 真实 React/Router 生命周期验证回调终态、错误优先、恢复凭据和新密码表单的隔离与恢复。
+auth-callback-pages.dom.test.tsx: 真实 React/Router 生命周期验证回调终态、错误优先、恢复凭据与表单重试，验证账号切换取消迟到密码提交。
 donate-page.tsx: routes 的一次性捐赠页。功能全免费，这里只发起 Stripe payment checkout；未配置密钥时展示说明而不假装可支付。
 models-page.dom.test.tsx: routes 的模型配置页 DOM 测试，约束目录条目渲染、DeepSeek v4 默认标记、自带密钥面板承载与设置页入口。
 models-page.tsx: routes 的模型配置页，按 Codex++ 目录协议展示默认模型目录（文字 deepseek-v4-flash / 图像 deepseek-v4-image），并承载从工作区输入区迁移过来的自带密钥设置面板。
-reset-password-page.tsx: /auth/reset-password 公共入口，不用浏览器保留的会话替代有效重置链接。
+reset-password-page.tsx: /auth/reset-password 公共入口；链接/账号 key 隔离表单与迟到提交，不用浏览器会话替代有效链接。
 settings-page.dom.test.tsx: routes 的账户设置 DOM 测试，验证账户身份展示、显示名称保存链路、语言/主题偏好即时应用与档案写入、档案服务缺失时的降级提示。
 settings-page.tsx: 账户身份、档案和本地语言/主题/强调色偏好编排，提供完整 JSON 导出与确认词注销；Demo 仅预览，缺可选 profiles 表时明示本地降级。
 
 法则: 路由页负责组合页面块；认证动作可局部抽离为同目录逻辑层，但不能绕过 Supabase Auth 或复制全局 session 状态机；分享页只能消费授权码换回的单份只读记录。
 
 [PROTOCOL]: 结构或契约事实变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md，已加载且未变化的内容不重读。
+
+router-upgrade.dom.test.tsx: 真实 BrowserRouter 验证匿名守卫、患者链接、公开分享与认证回调。
+升级兼容：SettingsPage 同时绑定 Demo 会话和真实账号，普通重渲染保留草稿，身份变化清空旧档案；症状摘要随范围/源数据/语言条件变化清除。

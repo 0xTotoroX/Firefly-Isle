@@ -118,7 +118,7 @@ describe('patient-scoped lab report review', () => {
     const props = { disabled: false, onActiveChange: vi.fn(), onSaved: vi.fn(), theme: 'light' as const }
     const view = render(<MemoryRouter><LabReportImport {...props} key="a" record={patient} /></MemoryRouter>)
     fireEvent.change(screen.getByLabelText('报告图片或 PDF'), { target: { files: [new File(['a'], 'a.png', { type: 'image/png' })] } })
-    view.rerender(<MemoryRouter><LabReportImport {...props} key="b" record={{ ...patient, id: 'patient-b', basicInfo: { name: '合成患者乙' } }} /></MemoryRouter>)
+    view.rerender(<MemoryRouter><LabReportImport {...props} record={{ ...patient, id: 'patient-b', basicInfo: { name: '合成患者乙' } }} /></MemoryRouter>)
     await act(async () => resolve({ text: '2026-10-02\n白细胞 4.2' }))
     expect(screen.queryByRole('table')).toBeNull()
     expect(screen.getByRole('link', { name: '合成患者乙' }).getAttribute('href')).toBe('/record/patient-b')

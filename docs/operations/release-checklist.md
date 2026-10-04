@@ -114,3 +114,9 @@
 - Storage 跨 uid 访问仍可读
 - `llm-proxy` 未部署或无法处理当前 token
 - `/privacy` 页面不可访问
+
+## Dependency maintenance
+
+Upgrade ESLint with compatible rules/plugins and upgrade Vitest together with its exact-match coverage provider. Use Node.js 22 (22.12+ for Vitest 5), install with the lockfile, and run lint, full type checks, coverage tests, build and the isolated database check. CI additionally installs Supabase CLI and checks Wrangler/version plus a local Pages Functions build without production credentials. These smoke checks do not establish production deployment or native-device acceptance.
+
+Consolidated maintenance may supersede bot PRs: merge the checked head first, then close the superseded PRs and delete their branches. Do not alter the active developer checkout or disable dependency monitoring as part of branch cleanup.

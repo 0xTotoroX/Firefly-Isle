@@ -1,12 +1,12 @@
 /**
  * [INPUT]: 依赖 react-router-dom 的 Link/useParams，依赖 app-shell 的 V3 壳层与 surfaces，依赖 patient-record-storage 的病历读取（取治疗线）、side-effect-storage 的 CRUD、async-resource 加载基元、copy 字典、locale/theme 与 theme tokens。
  * [OUTPUT]: 对外提供 SideEffectsPage，对应 /record/:id/side-effects。
- * [POS]: 患者隔离的症状日志与复诊摘要；范围按症状持续期相交计算，读取失败可重试、删除需确认。
+ * [POS]: 患者症状与复诊摘要；依赖变化时在渲染阶段条件清除摘要，保留日期相交与失败恢复规则。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession } from '@/lib/demo-session'
 import { DemoModeBanner } from '@/components/system/demo-mode-banner'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
@@ -141,11 +141,14 @@ function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIs
   const ready = !loading && !recordResource.error && !effectsResource.error && Boolean(recordResource.data)
   const summaryReady = ready && !visitsResource.isLoading && !visitsResource.error
 
-  useEffect(() => {
+  const summaryInputs = [summaryFrom, summaryTo, effectsResource.data, visitsResource.data, recordResource.data, locale]
+  const [previousSummaryInputs, setPreviousSummaryInputs] = useState(summaryInputs)
+  if (summaryInputs.some((input, index) => !Object.is(input, previousSummaryInputs[index]))) {
+    setPreviousSummaryInputs(summaryInputs)
     setSummaryText('')
     setSummaryCopied(false)
     setSummaryError(null)
-  }, [summaryFrom, summaryTo, effectsResource.data, visitsResource.data, recordResource.data, locale])
+  }
 
   const lines = recordResource.data?.treatmentLines ?? []
   const presetLabels = new Set<string>(

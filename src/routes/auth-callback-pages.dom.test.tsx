@@ -24,14 +24,15 @@ import { AuthCallbackPage } from './auth-callback-page'
 import { ResetPasswordPage } from './reset-password-page'
 
 let nextCode = 0
-function mount(path: string) {
-  return render(<StrictMode><MemoryRouter initialEntries={[path]}><Routes>
+function pageTree(path: string) {
+  return <StrictMode><MemoryRouter initialEntries={[path]}><Routes>
     <Route path="/auth/callback" element={<AuthCallbackPage />} />
     <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
     <Route path="/dashboard" element={<p>总览页面</p>} />
     <Route path="/login" element={<p>登录入口</p>} />
-  </Routes></MemoryRouter></StrictMode>)
+  </Routes></MemoryRouter></StrictMode>
 }
+function mount(path: string) { return render(pageTree(path)) }
 const validUrl = () => `/auth/reset-password?code=test-${++nextCode}`
 function fillPassword(password = 'new-secret', confirmation = password) {
   fireEvent.change(screen.getByLabelText('新密码'), { target: { value: password } })
@@ -112,5 +113,22 @@ describe('reset password page', () => {
     fillPassword()
     await screen.findByText('重置链接无效或已过期，请重新请求重置邮件。')
     expect(mock.updateRecoveredPassword).not.toHaveBeenCalled()
+  })
+  it('discards a pending password submission when the displayed account changes', async () => {
+    const path = validUrl()
+    const view = mount(path)
+    await screen.findByLabelText('新密码')
+    let finishSession!: (value: unknown) => void
+    mock.auth.getSession.mockReturnValueOnce(new Promise((resolve) => { finishSession = resolve }))
+    const oldUser = mock.user
+    fillPassword()
+    await waitFor(() => expect(mock.auth.getSession).toHaveBeenCalledTimes(1))
+    mock.user = { id: 'another-owner', email: 'other@example.test' }
+    view.rerender(pageTree(path))
+    await screen.findByText('重置链接无效或已过期，请重新请求重置邮件。')
+    expect(screen.queryByLabelText('新密码')).toBeNull()
+    await act(async () => finishSession({ data: { session: { user: oldUser } }, error: null }))
+    expect(mock.updateRecoveredPassword).not.toHaveBeenCalled()
+    expect(screen.queryByText('密码已更新。')).toBeNull()
   })
 })

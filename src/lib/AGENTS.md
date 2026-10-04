@@ -86,7 +86,6 @@ accent.ts: 八色预设与主色/按钮前景/可读强调文字的派生，临�
 
 accent.test.ts: 验证八色及两种主题的按钮、悬停、强调文字和状态色对比度及语义独立性
 
-async-resource.test.ts: lib 的异步资源基元合同测试，约束 effect 携带 active 守卫与清理、deps 变化时重置 loading、reload 通过 nonce 触发。
 async-resource.ts: lib 的共享异步数据加载基元，统一「data/error/isLoading + 竞态守卫 + reload」样板，替代页面层手写的 active 守卫 effect；deps 变化时重置回 initialData/加载态，loader 通过 effect 内联调用，由 deps 驱动重载。
 clipboard.ts: lib 的剪贴板边界，旧 execCommand 路径优先、异步 API 兜底，供顶栏联系邮箱与复诊摘要复制共用。
 error-reporting.test.ts: lib 的可观测性测试，约束 DSN 形态、envelope 三段结构与脱敏负载。
@@ -98,3 +97,6 @@ side-effect-storage.test.ts: lib 的副作用存储测试，约束 row→record 
 法则: 基础设施集中在这里，页面只消费结果，不重复发明边界。
 
 [PROTOCOL]: 结构或契约事实变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md，已加载且未变化的内容不重读。
+
+async-resource.test.tsx: 真实 hook 生命周期验证输入切换、重载、失败恢复、initialData 与卸载时的迟到结果隔离，替代旧源码字符串测试。
+升级兼容：异步资源在输入/重载变化时条件重置；Auth 缺配置就绪与反馈用初始化/派生值表达，保留 useOptionalAuth 和 Demo 无认证 Provider 的边界。

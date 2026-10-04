@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 公共 PKCE 回调、当前认证身份、Supabase updateUser 与本地化反馈。
  * [OUTPUT]: ResetPasswordPage；本次链接成功换取会话后才允许设置密码，失败保留可重试表单。
- * [POS]: /auth/reset-password 公共入口，不用浏览器保留的会话替代有效重置链接。
+ * [POS]: /auth/reset-password 公共入口；链接/账号 key 隔离表单与迟到提交，不用浏览器会话替代有效链接。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type FormEvent, useEffect, useRef, useState } from 'react'
@@ -18,10 +18,15 @@ import { restoreAuthCallbackSession, type AuthCallbackResult } from './auth-call
 const FIELD = 'mt-2 min-h-[44px] w-full rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-base)] px-3 text-base'
 
 export function ResetPasswordPage() {
-  const { locale } = useLocale()
   const { user } = useAuth()
   const location = useLocation()
   const href = `${location.pathname}${location.search}${location.hash}`
+  return <ResetPasswordForm key={`${href}:${user?.id ?? ''}`} href={href} />
+}
+
+function ResetPasswordForm({ href }: { href: string }) {
+  const { locale } = useLocale()
+  const { user } = useAuth()
   const [password, setPassword] = useState('')
   const [confirmation, setConfirmation] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -38,16 +43,7 @@ export function ResetPasswordPage() {
   const linkError = resource.data?.status === 'error' ? resource.data.message : resource.error ? getCopy(copy.authFeedback.callbackUnavailable, locale) : null
   const feedback = (key: keyof typeof copy.authFeedback) => getCopy(copy.authFeedback[key], locale)
 
-  useEffect(() => {
-    generation.current += 1
-    submitting.current = false
-    setPassword('')
-    setConfirmation('')
-    setError(null)
-    setSaved(false)
-    setSaving(false)
-    return () => { generation.current += 1 }
-  }, [href, user?.id])
+  useEffect(() => () => { generation.current += 1 }, [])
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

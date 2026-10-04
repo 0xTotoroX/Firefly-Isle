@@ -13,13 +13,13 @@ import { AuthProvider, useAuth } from './auth'
 const mock = vi.hoisted(() => ({
   initialize: vi.fn(), getSession: vi.fn(), refreshSession: vi.fn(), signOut: vi.fn(),
   unsubscribe: vi.fn(), complete: vi.fn(),
-  pending: false, selfHosted: true,
+  pending: false, selfHosted: true, hasEnv: true,
   listener: null as null | ((event: string, session: Session | null) => void),
 }))
 
 vi.mock('./locale', () => ({ useLocale: () => ({ locale: 'zh' }) }))
 vi.mock('./supabase', () => ({
-  hasSupabaseEnv: true,
+  get hasSupabaseEnv() { return mock.hasEnv },
   get hasPendingSupabaseSessionMigration() { return mock.pending },
   needsSupabaseSessionRefresh: (token: string) => mock.selfHosted && token === 'legacy',
   completeSupabaseSessionMigration: (token: string) => mock.complete(token),
@@ -53,6 +53,7 @@ async function ready() { await waitFor(() => expect(screen.getByTestId('ready').
 beforeEach(() => {
   vi.resetAllMocks()
   mock.pending = false
+  mock.hasEnv = true
   mock.selfHosted = true
   mock.listener = null
   mock.initialize.mockResolvedValue({ error: null })
@@ -64,6 +65,16 @@ beforeEach(() => {
 afterEach(cleanup)
 
 describe('AuthProvider endpoint migration', () => {
+  it('is ready with a configuration message without initializing an unavailable backend', () => {
+    mock.hasEnv = false
+    mount()
+    expect(screen.getByTestId('ready').textContent).toBe('true')
+    expect(screen.getByTestId('identity').textContent).toBe('signed-out')
+    expect(screen.getByTestId('error').textContent).not.toBe('')
+    expect(mock.initialize).not.toHaveBeenCalled()
+    expect(mock.getSession).not.toHaveBeenCalled()
+  })
+
   it('keeps routes closed through early auth events until the old JWT has been exchanged', async () => {
     let resolveRefresh!: (value: unknown) => void
     mock.refreshSession.mockReturnValue(new Promise((resolve) => { resolveRefresh = resolve }))
