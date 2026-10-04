@@ -48,6 +48,12 @@ Read the Web app from `src/main.tsx` → `src/App.tsx` → `src/routes/`. Routes
 
 Start at [AGENTS.md](AGENTS.md) for module maps. The existing UI combines Radix interaction primitives with custom application and feature components. The `radix-nova` configuration in `components.json` is not a complete component catalog for the proposed design. Runtime theme code stays in `src/index.css`, `src/lib/accent.ts` and `src/lib/theme/`.
 
+## Documentation and browsing
+
+Use the [documentation index](docs/README.md) for current scope, acceptance and design inputs, and the [OpenSpec index](openspec/README.md) for pending, checklist-complete and archived contracts. Historical navigation is collapsed by default; files remain at their existing paths.
+
+[Workspace settings](.vscode/settings.json) hide node_modules, dist, coverage, output and work in VS Code-compatible explorers. Set an exclusion to false to show it again. These settings do not change Finder and are not guaranteed to affect the Codex file tree.
+
 ## Development
 
 ### 1. Install dependencies

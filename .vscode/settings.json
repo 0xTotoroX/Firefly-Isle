@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "node_modules": true,
+    "dist": true,
+    "coverage": true,
+    "output": true,
+    "work": true
+  }
+}

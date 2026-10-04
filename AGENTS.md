@@ -22,16 +22,18 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | config/ | TypeScript、Vite/Vitest、ESLint 与移动壳配置正文；[地图](config/AGENTS.md) |
 | scripts/ | 网络隔离的真实数据库验证入口；[地图](scripts/AGENTS.md) |
 | public/ | 静态资源、PWA worker/图标、部署 headers/redirects、授权音频；[地图](public/AGENTS.md) |
+| .vscode/ | 项目级浏览过滤，仅隐藏五类本地依赖/产物；[地图](.vscode/AGENTS.md) |
 | .github/ | PR 模板、依赖检查、CI 与显式发布；[地图](.github/AGENTS.md) |
 | ops/ | 自托管运行模板、备份恢复与切换准备；[地图](ops/AGENTS.md) |
 | mobile/ | 非当前优先目标的 Capacitor iOS/Android 原生壳与合同测试；[地图](mobile/AGENTS.md) |
+| docs/ | [文档入口](docs/README.md)优先展示当前范围、验收、设计与规范；历史导航折叠，原路径保留 |
 | docs/design/ | 当前 OpenDesign 材料、差异依据与历史视觉归档分离；[入口](DESIGN.md)、[地图](docs/design/AGENTS.md) |
 | docs/products/ | 范围、17 项验收、路线、命名与国内上线；[地图](docs/products/AGENTS.md) |
 | docs/architecture/ | 数据模型、架构图和详细基线说明；[地图](docs/architecture/AGENTS.md) |
 | docs/operations/ | 发布、云开发、PWA/原生验证、自托管手册；[地图](docs/operations/AGENTS.md) |
 | docs/log/ | 提交日志与专题复盘，事实由 Git 和对应证据核对；[地图](docs/log/AGENTS.md) |
 | archive/ | 本地恢复备份及原桌面旧项目；视觉正文已分类至 docs/design/archive/，历史源码排除 lint/测试；[索引](archive/README.md)、[地图](archive/AGENTS.md) |
-| openspec/ | specs 是行为真相，changes 是活动/归档合同；使用以上对应地图，纯容器不另造重复地图 |
+| openspec/ | [阅读入口](openspec/README.md)区分待办、清单完成与归档；specs/changes 地图继续维护合同，不新增重复指令地图 |
 
 ## 根配置与运行入口
 

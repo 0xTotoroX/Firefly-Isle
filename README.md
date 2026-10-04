@@ -48,6 +48,12 @@
 
 目录职责和维护规则从 [AGENTS.md](AGENTS.md) 进入。当前 UI 使用 Radix 交互基元与自研壳层/业务组件；`components.json` 的 `radix-nova` 配置不是完整的新设计系统组件清单。运行时主题在 `src/index.css`、`src/lib/accent.ts` 和 `src/lib/theme/`。
 
+## 文档导航与浏览
+
+从[文档入口](docs/README.md)查当前范围、验收和设计材料，从[OpenSpec 入口](openspec/README.md)区分待办、清单完成和已归档合同。历史资料的导航默认折叠，原文件和路径保留。
+
+VS Code/Cursor 项目视图通过 [.vscode/settings.json](.vscode/settings.json) 隐藏 node_modules、dist、coverage、output、work；需要时将对应排除项设为 false。该设置不改变 Finder，也不保证影响 Codex 文件树。
+
 ## 开发启动
 
 ### 1. 安装依赖
