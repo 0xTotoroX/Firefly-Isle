@@ -11,7 +11,7 @@ import { describe, expect, it } from 'vitest'
 
 const APP_ID = 'com.ghibli1024.fireflyisle'
 const APP_NAME = '一页萤屿'
-const CAPACITOR_VERSION = '8.3.4'
+const CAPACITOR_VERSION = '8.5.2'
 
 function readProjectFile(path: string) {
   return readFileSync(resolve(process.cwd(), path), 'utf8')
@@ -29,6 +29,7 @@ describe('Capacitor mobile shell contract', () => {
     expect(pkg.dependencies?.['@capacitor/ios']).toBe(CAPACITOR_VERSION)
     expect(pkg.dependencies?.['@capacitor/android']).toBe(CAPACITOR_VERSION)
     expect(pkg.devDependencies?.['@capacitor/cli']).toBe(CAPACITOR_VERSION)
+    expect(readProjectFile('ios/App/CapApp-SPM/Package.swift')).toContain(`exact: "${CAPACITOR_VERSION}"`)
     expect(pkg.scripts?.['mobile:sync']).toBe('npm run build && cap sync')
     expect(pkg.scripts?.['mobile:open:ios']).toBe('cap open ios')
     expect(pkg.scripts?.['mobile:open:android']).toBe('cap open android')

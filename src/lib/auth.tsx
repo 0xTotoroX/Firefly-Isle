@@ -1,8 +1,8 @@
 /**
  * [INPUT]: 依赖 react 的 Context、hooks，依赖 @supabase/supabase-js 的 Session/User，依赖 @/lib/supabase 的客户端入口、@/lib/locale 的界面语言与 copy 字典的认证反馈文案。
  * [OUTPUT]: 对外提供 AuthProvider 与 useAuth；在路由就绪前完成 URL callback、会话恢复及自建后端旧 JWT 换取。
- * [POS]: lib 的认证状态中心，统一管理 session 恢复、认证状态广播与登出动作。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [POS]: 认证状态中心；缺配置就绪状态由初始化决定，effect 仅恢复和订阅真实会话。
+ * [PROTOCOL]: 契约变化时同步 AGENTS.md。
  */
 import {
   createContext,
@@ -41,13 +41,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const { locale } = useLocale()
   const [session, setSession] = useState<Session | null>(null)
   const [authError, setAuthError] = useState<string | null>(null)
-  const [isAuthReady, setIsAuthReady] = useState(false)
+  const [isAuthReady, setIsAuthReady] = useState(!hasSupabaseEnv)
   const [isSigningOut, setIsSigningOut] = useState(false)
 
   useEffect(() => {
     if (!hasSupabaseEnv) {
-      setAuthError(getCopy(copy.authFeedback.missingEnv, locale))
-      setIsAuthReady(true)
       return
     }
 
@@ -149,7 +147,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      authError,
+      authError: hasSupabaseEnv ? authError : getCopy(copy.authFeedback.missingEnv, locale),
       isAuthenticated: session !== null,
       isAuthReady,
       isSigningOut,
@@ -157,7 +155,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signOut,
       user: session?.user ?? null,
     }),
-    [authError, isAuthReady, isSigningOut, session, signOut],
+    [authError, isAuthReady, isSigningOut, locale, session, signOut],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

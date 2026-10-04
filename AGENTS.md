@@ -1,1 +1,229 @@
-CLAUDE.md
+# Firefly-Isle
+
+Repository map and working conventions for coding agents.
+
+## Repository state
+
+- Self-hosted backend preparation lives in `ops/self-hosted/` and `docs/operations/supabase-self-hosted.md`, with the active contract at `openspec/changes/self-host-supabase/`. Production cloud configuration remains unchanged until cutover acceptance.
+
+- The integrity/cleanup change is archived at `openspec/changes/archive/2026-10-02-harden-record-integrity-and-simplify/`; current contracts live in `openspec/specs/record-integrity/spec.md`. Local verification does not imply remote deployment.
+
+- This repository has completed its MVP implementation baseline. The full MVP change was archived at `openspec/changes/archive/2026-04-13-mvp-core/`.
+- The commit-history documentation change was archived at `openspec/changes/archive/2026-04-14-commit-history-log/`.
+- The current baseline specs now live under `openspec/specs/`.
+- The input/export ownership change is archived at `openspec/changes/archive/2026-04-28-separate-workspace-input-record-export/`.
+- The login intro/drawer refinement is archived at `openspec/changes/archive/2026-04-29-refine-login-intro-drawer/`.
+- The DeepSeek API provider integration is archived at `openspec/changes/archive/2026-05-02-integrate-deepseek-api/`.
+- The user-owned LLM provider settings work is archived at `openspec/changes/archive/2026-05-05-add-user-llm-provider-settings/`; current baseline behavior lives in `openspec/specs/llm-provider-settings/spec.md`, `openspec/specs/llm-adapter/spec.md`, and `openspec/specs/supabase-schema/spec.md`.
+- Background music work is archived under `openspec/changes/archive/2026-05-03-add-background-music-toggle/` and `openspec/changes/archive/2026-05-03-add-local-background-playlist/`; current baseline behavior lives in `openspec/specs/background-audio*.md`.
+- Lab analytics, P0 clinical analysis, secure sharing, restored TimelineTable, full-product Demo, PWA foundation, and Capacitor mobile shell work are archived under `openspec/changes/archive/2026-05-16-*`; current behavior lives in `openspec/specs/`.
+- Product context lives in `README.md`, `README.en.md`, `docs/products/prd-implementation-status.md`, `docs/products/product-priority-roadmap.md`, `docs/products/saas-refactoring-plan.md` (SaaS refactor phases, status and pending owner decisions), and archived product snapshots / historical Goal drafts under `docs/products/archive/`.
+- The V3 theme uses eight muted presets (default `#C48A4A`) from `src/lib/accent.ts`; primary fills, black/white button foregrounds and readable accent text have separate roles. Warning, critical, low and success colors remain independent of the selected preset and adapt to dark/light surfaces.
+- Current design review lives in `docs/design/saas-review/` via `DESIGN.md`; the black/white themes and eight accent presets await user approval before frontend visual migration. V3 describes the unchanged current UI; V4 preview code is retired.
+- Community governance now lives at the repository root: `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`, and `CODE_OF_CONDUCT.md`.
+
+## Common commands
+
+### OpenSpec workflow
+
+- `openspec list --json` — list active changes and completion state
+- `openspec status --change "<change-name>" --json` — inspect artifact status for a specific active change
+- `openspec instructions apply --change "<change-name>" --json` — get implementation context and task list for an active change
+- `openspec new change "<name>"` — create a new change when work needs a new spec track
+
+### Current limitation
+
+- Verified commands at the current baseline: `npm run build`, `npm run lint`, `npm run type-check`, `npm run type-check:functions`, `npm run test`, `npm run test:watch`, `npm run test:coverage`, `npm run dev`.
+- Tests run in node by default via `vite.config.ts` (`test.globals` on for testing-library cleanup); DOM interaction tests opt into happy-dom with a `@vitest-environment happy-dom` docblock. Coverage uses `@vitest/coverage-v8` (`coverage/` is gitignored).
+- Lint currently passes with warnings related to fast-refresh export boundaries in generated/shared modules; resolve those warnings as follow-up work instead of guessing around them.
+
+## High-level architecture
+
+### What exists today
+
+- `LICENSE`
+  - MIT license grant for public reuse, modification, distribution, and warranty disclaimer
+- `SECURITY.md`
+  - private vulnerability reporting policy for auth, RLS, Edge Functions, Cloudflare Functions, provider-key storage, and privacy-sensitive flows
+- `CONTRIBUTING.md`
+  - contributor workflow, verification commands, OpenSpec/GEB documentation rules, PR expectations, and Conventional Commits format
+- `CODE_OF_CONDUCT.md`
+  - project collaboration standards and conduct-reporting boundary for a privacy-sensitive medical workflow
+- `package.json`
+  - npm script map for Vite dev/build, lint, app/node type-check, Cloudflare Pages Functions type-check, Supabase Edge Functions type-check, Vitest, and Capacitor mobile sync/open commands
+- `capacitor.config.ts`
+  - Capacitor 8 iOS/Android shell config using app id `com.ghibli1024.fireflyisle`, app name `一页萤屿`, and `dist` as the only web build source
+- `README.en.md`
+  - English project entrypoint mirroring the centered Chinese README surface for GitHub visitors
+- `tsconfig.*.json`
+  - TypeScript boundaries split by runtime: SPA app, Vite node config, Cloudflare Pages Functions, and Supabase Edge Functions
+- `DESIGN.md`
+  - project-level entrypoint for the independent SaaS design review and approval boundary
+- `docs/design/`
+  - `Image-2/` — image-model redesign batches, historical V1–V4 references; the V4 candidates are retired
+  - `stitch/` — Stitch-origin design references and runtime screenshot evidence
+- `docs/products/`
+  - `prd-implementation-status.md` — current PRD implementation status, preserving the implemented / partial / not implemented feature audit
+  - `product-priority-roadmap.md` — current product priority roadmap, separating completed OpenSpec milestones, archived P0/Demo baseline behavior, and next work such as WeChat auth
+  - `archive/` — archived product snapshots: `prd.md`, `spec.md`, `design-system.md`, `stitch-screen-mapping.md`, and `product-goals-2026-05-05.md`; archived `design-system.md` is historical and must not override `DESIGN.md`, and archived goals are not the current execution queue
+- `docs/operations/`
+  - `clinical-workflow-release.md` — migration order, isolated database checks, deployment verification and compatibility boundary for clinical workflows
+  - `capacitor-mobile-shell.md` — local Capacitor build/sync/open runbook, native project checks, platform-sensitive product-flow matrix, and signing-secret boundary
+- `docs/log/`
+  - `index.md` — commit history 总入口
+  - `0001-*.md ~ 0022-*.md` — 每个 git commit 一份历史日志
+  - `0024-426c97c-record-integrity-and-design.md` — integrity, cleanup, independent design and local acceptance evidence
+  - `0023-auth-login-wechat-learning.md` — 认证学习专题复盘，记录邮箱/Google/Supabase/微信登录的原理、数据流、配置边界与排错路径
+  - `0024-*.md` / `0025-*.md` — record-integrity delivery and monochrome design-review acceptance logs
+- `openspec/specs/`
+  - current baseline requirements merged from archived MVP and commit-history changes
+  - `CLAUDE.md` maps each baseline spec file and records that main specs must use `## Purpose` + `## Requirements`
+- `openspec/changes/CLAUDE.md`
+  - active/archive OpenSpec change map; update it when active change directories are created, archived, renamed, or removed
+- `openspec/changes/archive/2026-05-16-add-lab-analytics-page/`
+  - archived lab analytics artifacts for `/app` lab file input, `/analytics/:id`, Supabase lab batch/readings, grouped trends, abnormal summaries, and tumor-marker rise reminders
+- `openspec/changes/archive/2026-05-16-add-clinical-ai-analysis/`
+  - archived P0 artifacts for non-diagnostic AI treatment/lab analysis on `/record/:id`
+- `openspec/changes/archive/2026-05-16-add-secure-record-sharing/`
+  - archived P0 artifacts for `record_shares`, authorization-code hash storage, revocation/expiration, and public read-only `/share/:code`
+- `openspec/changes/archive/2026-05-16-restore-minimal-timeline-table-view/`
+  - archived P0 artifacts for restoring `TimelineTable` as the third `/record/:id` view without replacing dossier or Gantt export behavior
+- `openspec/changes/archive/2026-05-16-make-demo-mode-cover-full-product/`
+  - archived Demo artifacts for public `/demo` full-product showcase routes, page reminders, optional Supabase share-code Demo data, static AI/share previews, and real-workspace blank-state separation
+- `openspec/changes/archive/2026-05-16-add-cross-platform-pwa-foundation/`
+  - archived PWA foundation artifacts for Web App Manifest, install icons, privacy-first service worker caching, offline/weak-network boundaries, mobile safe-area/touch behavior, SPA deep-link fallback, and platform validation expectations
+- `openspec/changes/archive/2026-05-16-add-capacitor-mobile-shell/`
+  - archived Capacitor mobile shell artifacts for the iOS/Android wrapper, fixed app id/name, native platform projects, mobile sync/open scripts, signing-secret boundary, and local native tooling checks
+- `openspec/changes/archive/2026-05-03-add-background-music-toggle/`
+  - archived global background music toggle artifacts defining the app-level controller, shared UI entrypoint and autoplay boundary
+- `openspec/changes/archive/2026-05-03-add-local-background-playlist/`
+  - archived local playlist artifacts defining manifest-backed tracks, persisted selected track, compact previous/next controls and asset authorization boundary
+- `openspec/changes/archive/2026-04-13-mvp-core/`
+  - archived MVP implementation artifacts (proposal/design/specs/tasks)
+- `openspec/changes/archive/2026-04-14-commit-history-log/`
+  - archived docs/log governance artifacts (proposal/design/specs/tasks)
+- `openspec/changes/archive/2026-04-23-unify-theme-system/`
+  - archived theme-system unification artifacts (proposal/design/specs/tasks)
+- `openspec/changes/archive/2026-04-23-refine-login-theme-entry/`
+  - archived login theme-entry refinement artifacts (proposal/design/specs/tasks)
+- `openspec/changes/archive/2026-04-28-separate-workspace-input-record-export/`
+  - archived input/export ownership artifacts separating `/app` input/extraction from `/record/:id` formal PDF/PNG export
+- `openspec/changes/archive/2026-04-29-refine-login-intro-drawer/`
+  - archived login-entry artifacts defining the dual-theme project intro page and CTA-opened unified login overlay
+- `openspec/changes/archive/2026-05-02-integrate-deepseek-api/`
+  - archived LLM provider artifacts defining the Gemini / DeepSeek Edge Function proxy, JSON output mode, provider config and rollback boundary
+- `.github/`
+  - `PULL_REQUEST_TEMPLATE.md` — PR summary, verification, documentation, and Conventional Commits checklist
+  - `workflows/*.yml` — GitHub Actions workflows for verification and explicit Cloudflare Pages deploy
+- `public/`
+  - static assets plus Cloudflare Pages `_headers` / `_redirects` deployment config
+- `ios/`
+  - Capacitor-generated iOS shell project; loads the existing Vite build and keeps Apple signing artifacts out of Git
+- `android/`
+  - Capacitor-generated Android shell project; loads the existing Vite build and keeps keystores/local Gradle artifacts out of Git
+- `wrangler.jsonc`
+  - Cloudflare Pages build config; public Vite vars include Supabase URL/anon key/Edge Function URL, optional public Demo share code, and a retained non-secret `custom:wechat` provider identifier for future WeChat work; server-side vars/bindings expose the WeChat OAuth adapter client id, callback URL, public base URL and short-lived KV namespace
+- `functions/`
+  - Cloudflare Pages Functions; currently contains WeChat OAuth2 adapter prework that can translate Supabase custom provider requests into WeChat Open Platform QR login, while the active login page keeps WeChat as `敬请期待`
+- `scripts/check-clinical-workflows.sh`
+  - `npm run test:database` runs real migrations and behavior checks in a disposable, network-isolated PostgreSQL container with synthetic data
+- `supabase/`
+  - `migrations/*.sql` — schema, RLS, trigger, record sharing, and storage-adjacent infrastructure migrations
+- `src/components/analytics/`
+  - analytics UI module for the lab statistics page, rendering grouped lab trends, chart-equivalent tables, demo lab data, abnormal summaries, tumor-marker rise reminders, and non-diagnostic messaging
+- Global Claude OpenSpec helpers
+  - `~/.claude/skills/openspec-*` and `~/.claude/commands/opsx/*` provide reusable Claude Code workflow helpers
+
+### Current product architecture
+
+- **Frontend:** Vite + React 18 + TypeScript SPA
+- **Styling:** Tailwind CSS v4 + shadcn/ui
+- **Backend/BaaS:** Supabase Auth + PostgreSQL + RLS + Edge Functions
+- **Mobile shell:** Capacitor 8 iOS/Android wrapper around the same `dist` Web build; no separate native product UI or local patient-record truth source
+- **Edge adapter:** Cloudflare Pages Functions host WeChat OAuth2 adapter prework for future Supabase custom provider compatibility; current login UI keeps WeChat deferred
+- **Usage quota:** `consume_usage(event_kind)` (migration `20261002111617_atomic_usage_quota`) serializes each caller/kind, checks both 1-minute and rolling 30-day quotas, then records one approved upstream attempt. `llm-proxy` and OCR share `_shared/usage-limits.ts`; rejected calls return 429, database errors return 503 before upstream. Missing, expired or inactive subscriptions use the free plan. Attempts remain counted if upstream fails. `plans` is client read-only and the unchecked `record_usage` RPC is no longer client-callable. Quota rules live in SQL rather than Edge Function rate-limit env vars; this ledger does not charge payments.
+- **Account substrate:** `profiles` (007) backs `/settings`; `plans` + `subscriptions` (010), `billing-checkout` and `stripe-webhook` retain their env-gated backend contracts. Payment configuration and deployment remain separate from usage-limit enforcement.
+- **Account & privacy:** `/settings` shows identity, display name, locale/theme preferences (degrades to local-only without profiles), JSON data export (`src/lib/account-data-export.ts`, excludes key ciphertext and share-code hashes) and type-to-confirm account deletion (`delete_own_account` RPC, migration 008; every user table cascades from `auth.users`)
+- **Follow-up and symptoms:** `/record/:id/follow-up` and `/record/:id/side-effects` share patient-scoped navigation, recoverable forms and deletion confirmation. Migration `20260912051552_clinical_workflow_integrity.sql` adds owner defaults, patient/treatment-line ownership checks and invoker Dashboard RPCs; date-only values use `calendar-date.ts`.
+- **Side-effect log:** `/record/:id/side-effects` is the patient symptom log (migration `012_side_effects`, owner CRUD RLS, optional treatment-line attribution via `TreatmentLine.id`); it is an auxiliary record — non-diagnostic, linked from the record page toolbar
+- **Model settings:** `/models` is the standalone model configuration page — it renders the declarative model catalog in `src/lib/model-catalog.ts` (protocol aligned with the Codex++ catalog: slug / displayName / inputModalities / priority / visibility; text default `deepseek-v4-flash`, image default `deepseek-v4-image`) and hosts the bring-your-own-key provider panel migrated out of the workspace composer; the composer links to it instead
+- **OCR boundary:** `medical-document-ocr` routes images to the DeepSeek v4 image model by default (`OCR_PROVIDER=deepseek`, `DEEPSEEK_OCR_MODEL=deepseek-v4-image`, chat-completions `image_url` parts); Gemini stays as the `OCR_PROVIDER=gemini` fallback and is the only path accepting PDF input
+- **Dashboard:** `/dashboard` is the authenticated landing route with exact counts (records, lab readings, active shares, 30d AI calls from `usage_events`), the latest record, latest readings per patient/category/item code before abnormal filtering, latest-visit plans including overdue dates, independent section failures and an actionable empty state; `/` redirects there for authenticated users
+- **Observability:** `src/lib/error-reporting.ts` forwards sanitized window errors to `VITE_ERROR_REPORT_URL` (no-op when unset); `supabase/functions/_shared/logger.ts` emits single-line JSON logs on upstream failure, timeout and rate-limit paths
+- **AI boundary:** frontend calls a Supabase Edge Function proxy; system provider keys stay server-side, and user-owned provider keys are saved only through encrypted `llm_provider_settings` rows
+- **Core workflow:** natural-language intake → structured extraction → up to 3 clarification rounds → timeline table render → inline editing → formal record page → AI auxiliary analysis / read-only sharing / PDF/PNG export
+- **Demo workflow:** public `/demo` routes remain directly accessible; the login page no longer exposes a Demo CTA; Demo pages reuse the real record and analytics surfaces with a visible Demo reminder, optional Supabase public share-code record, unified sample patient/lab fallback data, static non-diagnostic AI analysis preview, disabled share preview and client-side export, without creating Supabase records from Demo
+- **Privacy boundary:** first-use privacy gate and `/privacy` page share the same text source in `src/lib/privacy.ts`
+- **Current truth sources:** behavior lives in `openspec/specs/**/*.md`; visual ownership starts at `DESIGN.md`, with the new SaaS board awaiting approval and old references retained only for history; implementation details live in `src/`, `supabase/`, `.github/`, and `public/`; archive change designs are historical rationale, not the primary current-state entrypoint
+
+### Core domain model
+
+The app revolves around a `PatientRecord` with treatment history layers plus an independent lab trend collection:
+
+1. `basicInfo` — demographics and diagnosis summary
+2. `initialOnset` — optional early-stage/initial treatment block
+3. `treatmentLines[]` — ordered advanced-treatment lines
+4. `labResults[]` — optional repeated blood routine, blood biochemistry, and tumor-marker readings, kept independent from treatment lines
+
+Rendering depends on three patient archetypes:
+
+- `non-advanced` — basic info + initial onset only
+- `de-novo-advanced` — basic info + treatment lines only
+- `relapsed-advanced` — basic info + initial onset + treatment lines
+
+Important domain rules from the specs:
+
+- Basic info always renders first.
+- `initialOnset` is shown only when present.
+- `treatmentLines` are ordered by `lineNumber`.
+- `labResults` are grouped by lab indicator and rendered as non-diagnostic trends.
+- Immunohistochemistry and genetic-test data stay attached to each onset/treatment line, not in a shared summary section.
+- Clinically important missing fields (`tumorType`, `stage`, `regimen`) should be visually highlighted for manual completion.
+
+## Document hierarchy
+
+When implementation starts, read these in roughly this order:
+
+1. `README.md` — concise project purpose and current repo baseline
+2. `docs/products/prd-implementation-status.md` — current PRD implementation status and pointers to archived product docs
+3. `DESIGN.md` — current SaaS review entrypoint and the user-approval boundary before frontend visual migration
+4. `docs/products/archive/prd.md` — archived original user/problem framing and scope boundaries, when historical PRD context is needed
+5. `openspec/specs/**/*.md` — current baseline behavior requirements
+6. `src/**`, `supabase/**`, `.github/**`, `public/**` — current implementation reality and runtime boundaries
+7. `openspec/changes/archive/**/design.md` — historical rationale only, when current behavior or past decisions need explanation
+
+## Current architectural direction
+
+The OpenSpec artifacts are aligned on these points:
+
+- MVP keeps a thin `chat(messages, options)` adapter boundary.
+- The LLM proxy supports system DeepSeek fallback plus user-owned Gemini, Claude, OpenAI, GLM, DeepSeek, Kimi, and custom OpenAI-style provider settings through a Supabase Edge Function boundary.
+- The app now provides a user-facing LLM provider settings entry: no saved setting falls back to system DeepSeek, while user-owned preset/custom provider keys are saved through `llm-proxy/settings` with server-side encryption and RLS-backed storage.
+- Data storage uses normalized `patients` + `treatment_lines` + `lab_report_batches` + `lab_results` tables with RLS; `lab_results` remains the single reading truth for web charts and monitoring, while `lab_report_batches` stores upload/OCR/review source facts.
+- Read-only sharing uses `record_shares` with hashed authorization codes, revocation/expiration, active-share RLS, and a public `/share/:code` route that never exposes raw owner user ids.
+- Lab analytics, clinical AI analysis, record sharing, TimelineTable, full-product Demo, and PWA foundation have been archived into baseline specs; future work should create new OpenSpec changes instead of editing archived contracts as active ledgers.
+
+## Stitch note
+
+If future work uses the archived Stitch artifacts in `docs/products/archive/stitch-screen-mapping.md`, treat `screenInstances.label` as the authoritative page name. Do not use `project.title` or `list_screens.title` as the source of truth.
+
+## Working conventions already present
+
+- Use lightweight OpenSpec for new behavior, data/permission contracts and cross-module changes; local fixes need a reproducing check, not a second planning framework. Keep one task ledger. Superpowers is optional, not a project-wide gate. See `docs/products/core-scope.md` for scope and acceptance rules.
+- PR titles and squash-merge commit messages should follow Conventional Commits: `<type>[optional scope]: <description>`.
+- Commit granularity should follow OpenSpec/change boundaries. The repository default is to commit at completed Step boundaries, but if the active change documents a more specific recommended commit map, follow that map.
+- Tasks are execution checklists, not an instruction to create one commit per checkbox.
+- Only commit after the tests relevant to the commit's scope pass.
+- Once code exists, keep repository documentation aligned with structural changes.
+
+## Current integrity and scope boundaries
+
+- `docs/products/core-scope.md` defines the product core and deferred work; `docs/products/product-naming.md` records unselected brand/domain candidates.
+- Record and batch writes are database transactions. `persist_patient_record` checks `expected_owner_id = auth.uid()` and preserves child identity; it has no unsafe legacy write fallback.
+- Public sharing resolves capability and sanitized data in `get_shared_patient_record`; base tables remain owner-only.
+- Field edits use one queue per record/account; locale and theme do not reset it. Workspace model operations are mutually exclusive and stale account results are discarded.
+- `docs/operations/record-integrity-release.md` records local evidence and coordinated release requirements. New design and production deployment are separate acceptance steps.
+
+## Dependency maintenance
+
+The current maintenance contract is [upgrade-dependencies-and-ci-tools](openspec/changes/upgrade-dependencies-and-ci-tools/proposal.md). Root AGENTS.md and touched module AGENTS.md files hold their unique bodies; adjacent CLAUDE.md files contain only @AGENTS.md imports.
