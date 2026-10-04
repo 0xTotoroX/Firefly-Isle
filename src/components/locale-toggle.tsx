@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/components/ui/button，依赖 @/lib/locale 的 useLocale，依赖 @/lib/copy 的切换文案。
  * [OUTPUT]: 对外提供 LocaleToggle 组件。
  * [POS]: components 的全局语言开关，与 ThemeToggle 并列复用，但状态职责独立。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { Languages } from 'lucide-react'
 

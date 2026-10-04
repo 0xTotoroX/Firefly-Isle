@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/background-audio 的全局歌单状态，依赖 @/lib/locale 与 @/lib/copy 的双语文案，依赖 @/lib/utils 的类名合并，依赖 transitions-dev.css 的 control/popover 动效合同。
  * [OUTPUT]: 对外提供 BackgroundMusicToggle 组件，包含紧凑播放开关、悬停播放器桥接层、当前曲目、上一首、下一首与点击压入反馈。
  * [POS]: components 的共享背景音乐控件，被登录页工具区和 authenticated top bar 复用，只表达播放、暂停与拦截状态，不拥有 audio 实例。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useId, useRef, useState } from 'react'
 

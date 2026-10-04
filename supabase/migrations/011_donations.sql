@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 010_billing.sql 的 plans/subscriptions、auth.users 与 owner RLS 模式。
 -- [OUTPUT]: 对外提供 donations 一次性捐赠表；plans 增加 donation 档；订阅表保留但不作为产品主路径。
 -- [POS]: supabase/migrations 的公益捐赠迁移。产品功能全免费，Stripe Checkout 只收一次性捐赠。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 insert into public.plans (id, name, ai_chat_quota, ocr_quota, price_monthly_cents, currency)
 values ('donation', 'Donation', 50, 20, 0, 'usd')

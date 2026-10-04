@@ -1,18 +1,23 @@
 /**
  * [INPUT]: 依赖 @/components/app-shell 的设计复刻壳层，依赖 @/components/workspace 的输入区、追问区与报告预览 feature 组件，依赖 @/lib/auth 的当前会话身份标签，依赖 @/lib/extraction 的提取主链路，依赖 @/lib/record-editing 的自然语言编辑边界，依赖 @/lib/medical-document-ocr 的医学文档 OCR client，依赖 @/lib/patient-record-storage 的落库与最近记录恢复入口，依赖 @/lib/theme 的 useTheme 与 record-edit-queue 的串行字段保存。
- * [OUTPUT]: 对外提供 WorkspacePage 组件与工作区状态补丁 helpers，对应 /app。
+ * [OUTPUT]: 对外提供 WorkspacePage 与状态补丁；/app?patient=<id> 选择患者，化验保存后重读，初次提取持久化失败可独立重试保存。
  * [POS]: routes 的临床工作区 orchestration 层，保留真实用户空白输入态、无病历时禁用病历/统计导航并提示先提取、文本/OCR 文件输入、追问、解析错误恢复、显式新病历提取分流与 inline edit 持久化，保持主题/语言切换前状态，互斥模型修改并丢弃旧账号结果；编排统一 system shell 与 workspace feature 组件。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useDemoSession, useProductPath } from '@/lib/demo-session'
+import { createDemoExtraction, DEMO_INTAKE_TEXT } from '@/lib/demo-fixtures'
+import { DemoModeBanner } from '@/components/system/demo-mode-banner'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
 import { getCopy, copy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
 import { ExtractionComposer } from '@/components/workspace/extraction-composer'
 import { FollowUpPanel } from '@/components/workspace/follow-up-panel'
+import { LabReportImport } from '@/components/workspace/lab-report-import'
 import { ReportPreviewFrame } from '@/components/workspace/report-preview-frame'
 import { MainShell, SectionSurface } from '@/components/system/surfaces'
-import { useAuth } from '@/lib/auth'
+import { useOptionalAuth } from '@/lib/auth'
 import {
   buildFollowUpQuestion,
   extractPatientRecord,
@@ -23,7 +28,7 @@ import {
 import { getMedicalDocumentOcrMessage, recognizeMedicalDocument } from '@/lib/medical-document-ocr'
 import { getOnlineRequiredMessage, isOnlineRequiredError } from '@/lib/network-status'
 import { createRecordEditQueue } from '@/lib/record-edit-queue'
-import { loadLatestPatientRecord, persistPatientRecord } from '@/lib/patient-record-storage'
+import { loadLatestPatientRecord, loadPatientRecordById, persistPatientRecord } from '@/lib/patient-record-storage'
 import { RecordEditParseError, applyPatientRecordEdits, extractPatientRecordEdits } from '@/lib/record-editing'
 import { useTheme } from '@/lib/theme'
 import { shellContentWidthClass, sidebarOffsetClass, topBarOffsetClass } from '@/lib/theme/tokens'
@@ -48,7 +53,7 @@ type ExtractionState = {
   record: PatientRecord | null
   remainingMissing: string[]
   retryAnswer: string | null
-  retryMode: 'initial' | 'follow-up' | 'edit' | null
+  retryMode: 'initial' | 'follow-up' | 'edit' | 'save' | null
 }
 
 type OcrState = {
@@ -137,30 +142,44 @@ function createInitialExtractionState(): ExtractionState {
   }
 }
 
-function useExtractionState() {
+function useExtractionState(patientId: string | null) {
   const editQueueRef = useRef<ReturnType<typeof createRecordEditQueue> | null>(null)
-  const { user } = useAuth()
+  const user = useOptionalAuth()?.user
+  const demoSession = useDemoSession()?.session
   const { locale } = useLocale()
-  const userId = user?.id
+  const userId = demoSession ? 'demo-session' : user?.id
   const localeRef = useRef(locale)
   const operationRef = useRef<symbol | null>(null)
   const generationRef = useRef(0)
+  const createRequestIdRef = useRef<string | undefined>(undefined)
+  const labImportActiveRef = useRef(false)
+  const [labImportActive, setLabImportActive] = useState(false)
+  const onLabActiveChange = useCallback((active: boolean) => {
+    labImportActiveRef.current = active
+    setLabImportActive(active)
+  }, [])
   useEffect(() => { localeRef.current = locale }, [locale])
   const [state, setState] = useState(createInitialExtractionState)
 
   useEffect(() => {
     editQueueRef.current = null
     operationRef.current = null
+    createRequestIdRef.current = undefined
     generationRef.current += 1
+    onLabActiveChange(false)
     const generation = generationRef.current
     setState(createInitialExtractionState())
     if (!userId) return
 
     let active = true
 
-    void loadLatestPatientRecord(userId)
+    void (demoSession ? (patientId ? demoSession.loadRecord(patientId) : Promise.resolve(null)) : patientId ? loadPatientRecordById(patientId) : loadLatestPatientRecord(userId))
       .then((record) => {
-        if (!active || !record || generationRef.current !== generation) {
+        if (!active || generationRef.current !== generation) {
+          return
+        }
+        if (!record) {
+          if (patientId) setState((current) => ({ ...current, error: localeRef.current === 'zh' ? '未找到这位患者的病历，请返回病历页面重试。' : 'Patient record not found. Return to the record page and retry.' }))
           return
         }
 
@@ -192,10 +211,10 @@ function useExtractionState() {
       operationRef.current = null
       generationRef.current += 1
     }
-  }, [userId])
+  }, [userId, patientId, onLabActiveChange, demoSession])
 
   async function runInitialExtraction(inputOverride?: string) {
-    if (editQueueRef.current?.pending || operationRef.current) return
+    if (editQueueRef.current?.pending || operationRef.current || labImportActiveRef.current) return
     editQueueRef.current = null
     const extractionText = inputOverride ?? state.extractionInput
 
@@ -210,6 +229,7 @@ function useExtractionState() {
 
     const operation = Symbol()
     operationRef.current = operation
+    createRequestIdRef.current = crypto.randomUUID()
     generationRef.current += 1
     setState((current) => ({
       ...current,
@@ -230,7 +250,7 @@ function useExtractionState() {
     }))
 
     try {
-      const record = await extractPatientRecord(extractionText)
+      const record = demoSession ? createDemoExtraction() : await extractPatientRecord(extractionText)
       if (operationRef.current !== operation) return
       const missingFields = getMissingCriticalFields(record)
       let persistedRecord = record
@@ -246,7 +266,7 @@ function useExtractionState() {
 
       setState((current) => ({
         ...current,
-        currentQuestion: getNextQuestion(missingFields, 0),
+        currentQuestion: persistenceError ? null : getNextQuestion(missingFields, 0),
         editFeedback: null,
         error: persistenceError,
         followUpAnswers: [],
@@ -254,7 +274,7 @@ function useExtractionState() {
         record: persistedRecord,
         remainingMissing: missingFields,
         retryAnswer: null,
-        retryMode: null,
+        retryMode: persistenceError ? 'save' : null,
       }))
     } catch (error) {
       if (operationRef.current !== operation) return
@@ -271,7 +291,7 @@ function useExtractionState() {
   }
 
   async function runFollowUpExtraction(answer: string) {
-    if (editQueueRef.current?.pending || operationRef.current) return
+    if (editQueueRef.current?.pending || operationRef.current || labImportActiveRef.current || state.retryMode === 'save') return
     editQueueRef.current = null
     if (!answer.trim() || !state.record) {
       return
@@ -292,7 +312,7 @@ function useExtractionState() {
     }))
 
     try {
-      const nextRecord = await extractPatientRecord(answer, previousRecord)
+      const nextRecord = demoSession ? { ...previousRecord, basicInfo: { ...previousRecord.basicInfo, stage: 'II 期（固定示例）' } } : await extractPatientRecord(answer, previousRecord)
       if (operationRef.current !== operation) return
 
       try {
@@ -350,6 +370,25 @@ function useExtractionState() {
   }
 
   async function retryLastAction() {
+    if (state.retryMode === 'save' && state.record) {
+      if (operationRef.current || labImportActiveRef.current) return
+      const operation = Symbol()
+      operationRef.current = operation
+      setState((current) => ({ ...current, isSaving: true, error: null }))
+      try {
+        const record = await persistField(state.record)
+        if (operationRef.current !== operation) return
+        const missing = getMissingCriticalFields(record)
+        editQueueRef.current = null
+        setState((current) => ({ ...current, record, isSaving: false, retryMode: null, remainingMissing: missing, currentQuestion: getNextQuestion(missing, current.followUpAnswers.length) }))
+      } catch (error) {
+        if (operationRef.current !== operation) return
+        setState((current) => ({ ...current, isSaving: false, error: isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : getCopy(copy.workspace.errors.savePatient, locale) }))
+      } finally {
+        if (operationRef.current === operation) operationRef.current = null
+      }
+      return
+    }
     if (state.retryMode === 'edit' && state.retryAnswer && state.record) {
       await runConversationalEdit(state.retryAnswer)
       return
@@ -364,7 +403,7 @@ function useExtractionState() {
   }
 
   async function runConversationalEdit(inputOverride?: string) {
-    if (editQueueRef.current?.pending || operationRef.current) return
+    if (editQueueRef.current?.pending || operationRef.current || labImportActiveRef.current || state.retryMode === 'save') return
     editQueueRef.current = null
     const editCommand = inputOverride ?? state.extractionInput
     const previousRecord = state.record
@@ -399,7 +438,7 @@ function useExtractionState() {
     let nextRecord: PatientRecord
 
     try {
-      nextRecord = applyPatientRecordEdits(previousRecord, await extractPatientRecordEdits(editCommand, previousRecord))
+      nextRecord = demoSession ? { ...previousRecord, clinicalNotes: '固定修改示例：已整理本次复诊资料。未调用模型或分析输入内容。' } : applyPatientRecordEdits(previousRecord, await extractPatientRecordEdits(editCommand, previousRecord))
       if (operationRef.current !== operation) return
     } catch (error) {
       if (operationRef.current !== operation) return
@@ -459,6 +498,7 @@ function useExtractionState() {
   }
 
   async function importMedicalDocument(file: File) {
+    if (editQueueRef.current?.pending || operationRef.current || labImportActiveRef.current || state.retryMode === 'save') return
     const generation = ++generationRef.current
     setState((current) => ({
       ...current,
@@ -471,7 +511,7 @@ function useExtractionState() {
     }))
 
     try {
-      const result = await recognizeMedicalDocument(file)
+      const result = demoSession ? { text: DEMO_INTAKE_TEXT } : await recognizeMedicalDocument(file)
       if (generationRef.current !== generation) return
 
       setState((current) => ({
@@ -523,15 +563,16 @@ function useExtractionState() {
   }
 
   async function persistField(record: PatientRecord) {
+    if (demoSession) return demoSession.saveRecord(record)
     if (!user) {
       throw new Error('Missing authenticated user.')
     }
 
-    return persistPatientRecord(record, user.id)
+    return persistPatientRecord(record, user.id, record.id ? undefined : createRequestIdRef.current)
   }
 
   async function handleFieldCommit(target: PatientFieldTarget, value: string) {
-    if (!state.record || operationRef.current) return
+    if (!state.record || operationRef.current || labImportActiveRef.current || state.retryMode === 'save') return
     const queue = editQueueRef.current ?? createRecordEditQueue(state.record, persistField)
     editQueueRef.current = queue
     setState((current) => ({ ...current, error: null, editFeedback: null, isSaving: true }))
@@ -556,6 +597,16 @@ function useExtractionState() {
     setState((current) => ({ ...current, extractionInput }))
   }
 
+  async function reloadAfterLabSave(id: string) {
+    const generation = generationRef.current
+    const record = await (demoSession ? demoSession.loadRecord(id) : loadPatientRecordById(id))
+    if (generation !== generationRef.current) return
+    if (!record) throw new Error('Saved patient record could not be reloaded.')
+    editQueueRef.current = null
+    const remainingMissing = getMissingCriticalFields(record)
+    setState((current) => ({ ...current, record, remainingMissing, error: null, currentQuestion: getNextQuestion(remainingMissing, current.followUpAnswers.length) }))
+  }
+
   return {
     ...state,
     handleFieldCommit,
@@ -567,10 +618,18 @@ function useExtractionState() {
     runInitialExtraction,
     submitComposerInput,
     setExtractionInput,
+    labImportActive,
+    onLabActiveChange,
+    reloadAfterLabSave,
+    userId,
   }
 }
 
 export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: WorkspacePageProps) {
+  const [searchParams] = useSearchParams()
+  const demo = useDemoSession()
+  const productPath = useProductPath()
+  const patientId = searchParams.get('patient')
   const { locale } = useLocale()
   const { theme } = useTheme()
   const {
@@ -594,18 +653,22 @@ export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLa
     runInitialExtraction,
     submitComposerInput,
     setExtractionInput,
-  } = useExtractionState()
+    labImportActive,
+    onLabActiveChange,
+    reloadAfterLabSave,
+    userId,
+  } = useExtractionState(patientId)
   const displayRecord = record ?? EMPTY_RECORD
 
   return (
     <div className={`${theme === 'light' ? 'ff-light-workspace-bg' : 'bg-[var(--ff-surface-base)] font-[var(--ff-font-ui)]'} min-h-screen text-[var(--ff-text-primary)]`}>
       <ClinicalTopBar theme={theme} title={locale === 'zh' ? '病程整理台' : 'Clinical Course Organizer'} withRail />
       <ArchiveSideNav
-        analyticsHref={record?.id ? `/analytics/${record.id}` : undefined}
+        analyticsHref={record?.id ? `/analytics/${record.id}` : null}
         dark={theme === 'dark'}
         isSigningOut={isSigningOut}
         onSignOut={onSignOut}
-        recordHref={record?.id ? `/record/${record.id}` : undefined}
+        recordHref={record?.id ? `/record/${record.id}` : null}
         userIsAnonymous={userIsAnonymous}
         userLabel={userLabel}
       />
@@ -613,6 +676,7 @@ export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLa
       <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen`} theme={theme}>
         <SectionSurface className="border-0 px-4 pb-2 pt-4 md:px-8 md:pb-3 md:pt-4" theme={theme} tone="base">
           <div className={`${shellContentWidthClass} t-route-reveal space-y-6`}>
+            {demo ? <><DemoModeBanner /><div className="flex flex-wrap items-center gap-3 text-sm"><button className="min-h-[44px] rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 font-semibold" onClick={() => setExtractionInput(DEMO_INTAKE_TEXT)} type="button">{locale === 'zh' ? '填入虚构示例' : 'Use fictional example'}</button><span>{locale === 'zh' ? '提取、追问与口述修改均返回固定示例，可直接编辑字段。' : 'Extraction and conversational edits return fixed examples. Fields remain editable.'}</span></div></> : null}
             <ExtractionComposer
               composerMode={getWorkspaceComposerMode(record)}
               error={error}
@@ -620,6 +684,7 @@ export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLa
               extractionInput={extractionInput}
               isExtracting={isExtracting}
               isSaving={isSaving}
+              isLocked={labImportActive}
               ocrState={ocr}
               onConfirmOcrText={() => void confirmOcrText()}
               onDiscardOcrText={discardOcrText}
@@ -634,8 +699,16 @@ export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLa
             />
 
             {currentQuestion ? (
-              <FollowUpPanel busy={isExtracting || isSaving} currentQuestion={currentQuestion} onSubmit={(value) => void runFollowUpExtraction(value)} theme={theme} />
+              <FollowUpPanel busy={isExtracting || isSaving || labImportActive} currentQuestion={currentQuestion} onSubmit={(value) => void runFollowUpExtraction(value)} theme={theme} />
             ) : null}
+            <LabReportImport
+              disabled={isExtracting || isSaving || ocr.isProcessing || Boolean(ocr.text) || retryMode === 'save'}
+              key={`${userId}:${patientId}:${record?.id}`}
+              onActiveChange={onLabActiveChange}
+              onSaved={reloadAfterLabSave}
+              record={record}
+              theme={theme}
+            />
           </div>
         </SectionSurface>
 
@@ -645,9 +718,10 @@ export function WorkspacePage({ isSigningOut, onSignOut, userIsAnonymous, userLa
               followUpCount={Math.min(MAX_FOLLOW_UP_ROUNDS, followUpAnswers.length)}
               isExtracting={isExtracting}
               isSaving={isSaving}
+              isLocked={labImportActive || retryMode === 'save'}
               onCommitField={handleFieldCommit}
               record={displayRecord}
-              recordDetailsHref={record?.id ? `/record/${record.id}` : undefined}
+              recordDetailsHref={record?.id ? productPath(`/record/${record.id}`) : undefined}
               remainingMissing={remainingMissing}
               setReportRef={() => undefined}
               theme={theme}

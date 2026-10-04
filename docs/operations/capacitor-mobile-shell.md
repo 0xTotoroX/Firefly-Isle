@@ -2,18 +2,18 @@
  * [INPUT]: 依赖 package.json、capacitor.config.ts、ios/、android/、dist/ 与 OpenSpec add-capacitor-mobile-shell 合同。
  * [OUTPUT]: 对外提供 Capacitor iOS/Android 本地壳 build、sync、打开、检查与受限项记录。
  * [POS]: docs/operations 的移动壳运维 runbook，证明本仓库只包装现有 Web app，不声称已完成商店发布。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  -->
 
 # Capacitor Mobile Shell
 
 ## Source Of Truth
 
-- `/Users/Totoro/Desktop/Firefly-Isle/capacitor.config.ts`
-- `/Users/Totoro/Desktop/Firefly-Isle/package.json`
-- `/Users/Totoro/Desktop/Firefly-Isle/ios/`
-- `/Users/Totoro/Desktop/Firefly-Isle/android/`
-- `/Users/Totoro/Desktop/Firefly-Isle/openspec/specs/capacitor-mobile-shell/spec.md`
+- `capacitor.config.ts`
+- `package.json`
+- `ios/`
+- `android/`
+- `openspec/specs/capacitor-mobile-shell/spec.md`
 
 ## 固定边界
 
@@ -27,7 +27,7 @@
 ## 常用命令
 
 ```sh
-cd /Users/Totoro/Desktop/Firefly-Isle
+# 在当前活动项目根目录执行
 npm run mobile:sync
 npm run mobile:open:ios
 npm run mobile:open:android
@@ -36,7 +36,7 @@ npm run mobile:open:android
 单独检查原生工程：
 
 ```sh
-cd /Users/Totoro/Desktop/Firefly-Isle
+# 在当前活动项目根目录执行
 xcodebuild -list -project ios/App/App.xcodeproj
 cd android && ./gradlew tasks
 ```

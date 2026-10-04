@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 Context、hooks 与浏览器 localStorage / documentElement。
  * [OUTPUT]: 对外提供 ThemeProvider、useTheme、Theme 类型与 THEME_STORAGE_KEY 常量。
  * [POS]: lib 的主题状态中心，统一管理 Dark / Light 切换、持久化与 DOM 同步。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   createContext,
@@ -53,16 +53,18 @@ function readStoredAccent() {
   return normalizeAccentHex(window.localStorage.getItem(ACCENT_STORAGE_KEY))
 }
 
-export function ThemeProvider({ children }: PropsWithChildren) {
-  const [theme, setThemeState] = useState<Theme>(readStoredTheme)
-  const [accent, setAccentState] = useState(readStoredAccent)
+export function ThemeProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
+  const [theme, setThemeState] = useState<Theme>(() => persist ? readStoredTheme() : 'dark')
+  const [accent, setAccentState] = useState(() => persist ? readStoredAccent() : defaultAccentHex)
 
   useEffect(() => {
     applyTheme(theme)
     applyAccent(accent, theme)
-    window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-    window.localStorage.setItem(ACCENT_STORAGE_KEY, accent)
-  }, [accent, theme])
+    if (persist) {
+      window.localStorage.setItem(THEME_STORAGE_KEY, theme)
+      window.localStorage.setItem(ACCENT_STORAGE_KEY, accent)
+    }
+  }, [accent, theme, persist])
 
   const setTheme = useCallback((nextTheme: Theme) => {
     setThemeState(nextTheme)

@@ -1,9 +1,7 @@
 <div align="center">
-  <img src="public/logo-island-lighthouse.png" alt="Firefly-Isle logo" width="140" />
-  <h1>Firefly-Isle</h1>
-  <p><strong>One-page oncology treatment timeline and record builder.</strong></p>
-  <p>A clinical record assistant for late-stage cancer treatment planning.</p>
-  <p>Keep it running, make it helpful.</p>
+  <img src="public/logo-island-lighthouse.png" alt="知见" width="140" />
+  <h1>知见</h1>
+  <p><strong>A treatment information management tool for people with cancer and their families.</strong></p>
   <p>
     <a href="README.md">中文</a> |
     English
@@ -16,22 +14,45 @@
   </p>
 </div>
 
+Open `/demo` to try the existing product screens with three fictional patient records. Dashboard, intake, lab review, symptoms, follow-ups, settings and model previews share an in-memory session. Refreshing or resetting restores the examples. Extraction, OCR and AI return labeled fixed examples; Demo never initializes a real account or sends patient content to a service. PDF/PNG export runs in the browser.
+
 ## Product Background
 
-Firefly-Isle comes from a real need shared by cancer patients and their families. Patients with advanced cancer often go through repeated recurrence, disease progression, and multiple treatment lines. When preparing medical records or discussing care across hospitals, information overload can make communication fragmented, while outpatient doctors often have limited time for each patient. This project helps patients and families organize treatment plans and clinical records into a clearer, more portable timeline.
+The product helps people with cancer and their families organize medical records, test results and treatment history, track changes in readings and symptoms, and understand medical information for discussions with clinicians. Record preparation is one part of a broader treatment and follow-up workflow.
+
+Future work includes interpreting genetic test reports and showing relationships between specific variants and signaling pathways, with sources, evidence and uncertainty. This capability is not implemented. The product focuses on information management and understanding; emotional companionship is not a core feature. It does not replace clinical care or promise treatment outcomes.
 
 ## Current local development baseline
 
-The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up navigation, recoverable clinical forms and visit summaries. V3 retains white/black surfaces with eight muted presets and separate button-foreground and clinical-status colors. V4 remains an isolated evaluation surface.
+The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; production still targets Supabase Cloud.
+
+Visual specifications, review boards, prototypes and historical screenshots are now accessible from the root [archive/](archive/README.md). Open Design is a separate local tool. A/B layout selection and production migration await the user's decision; runtime components and theme tokens remain. The Chinese name 知见 is confirmed. Medclear was withdrawn because medclear.com is already registered; a new English name is pending selection. See the [naming decision](docs/products/product-naming.md). The running UI, installed-app names and logo still use the previous brand. Brand migration has not been implemented, and repository and technical identifiers remain unchanged for compatibility. New candidates have preliminary domain checks; trademark and WeChat name availability remain unverified.
+
+See the [17-capability acceptance ledger](docs/products/saas-acceptance.md) for verified behavior and remaining gaps, and the [data model](docs/architecture/data-model.md) for table relationships and RLS. Local checks, cloud development readiness and production readiness are verified separately.
 
 Apply the new database migration before releasing the updated frontend. Local completion does not imply remote deployment. See the [clinical workflow release notes](docs/operations/clinical-workflow-release.md).
+
+## Repository structure
+
+| Boundary | Location and responsibility |
+| --- | --- |
+| Web frontend | `src/`: React routes, components, state, browser service clients and styles; `public/`: runtime assets, PWA and static hosting rules. `src/lib/` contains client code, not a server. |
+| Main backend | `supabase/functions/`: Deno APIs for LLM, OCR and payments; `supabase/migrations/`: PostgreSQL tables, RLS and transactional RPCs; `supabase/tests/`: database checks. Supabase provides Auth and the database. |
+| WeChat adapter | Root `functions/`: Cloudflare Pages Functions OAuth preparation. WeChat login is not yet released. |
+| Operations | `ops/`: self-hosting, backup and restore; `.github/`: CI/CD; `scripts/`: local validation. |
+| Mobile shells | `ios/` and `android/`: Capacitor projects loading the same Web `dist/`, without a separate native product UI. |
+| Contracts and documentation | `openspec/`: behavior, active tasks and historical technical decisions; `docs/`: data model, acceptance, operations and historical documentation pending further cleanup. |
+
+Start at [AGENTS.md](AGENTS.md) for module maps. The existing UI combines local shadcn/Radix primitives with custom application and feature components. The `radix-nova` configuration in `components.json` is not a complete component catalog for the proposed design. Runtime theme code stays in `src/index.css`, `src/lib/accent.ts` and `src/lib/theme/`.
 
 ## Development
 
 ### 1. Install dependencies
 
+Use Node.js 22 and the committed lockfile:
+
 ```bash
-npm install
+npm ci
 ```
 
 ### 2. Configure environment variables
@@ -52,8 +73,8 @@ For the auth path, confirm these settings in Supabase Dashboard / Auth Providers
 
 - Email provider is enabled.
 - Anonymous Sign-In is enabled.
-- Email confirmation is disabled for the current registration flow, because `signUp()` must directly return a session.
-- Site URL points to a valid redirect target. If email verification is re-enabled later, add the current origin to Additional Redirect URLs.
+- Email confirmation may be enabled: signup without a session displays a confirmation-pending state; confirmation-disabled signup signs in immediately. Production email delivery requires working SMTP.
+- Site URL points to the frontend. Additional Redirect URLs must include its `/auth/callback` and `/auth/reset-password` paths for confirmation/OAuth and setting a new password.
 
 For the LLM adapter / Edge Function path, configure:
 
@@ -100,16 +121,19 @@ npm run lint
 npm run type-check
 npm run test
 # Requires Docker and a locally cached postgres:18-alpine image
+docker pull postgres:18-alpine
 npm run test:database
 ```
+
+Database checks initialize every application migration and verify transactions, quota concurrency, table permissions and account deletion with synthetic data. They do not connect to a remote database. Real Auth registration, email and session behavior require separate acceptance.
 
 ### 6. GitHub Actions CI + CD -> Cloudflare Pages
 
 The repository uses two GitHub Actions workflows:
 
 - `.github/workflows/ci.yml`
-  - Runs on `main` pushes and PRs targeting `main`.
-  - Runs `npm run lint`, `npm run type-check`, `npm run test`, and `npm run build`.
+  - Runs on `main` / `codex/**` pushes, PRs targeting `main`, and manual dispatch.
+  - Runs `npm run lint`, `npm run type-check`, `npm run test:database`, `npm run test:coverage`, and `npm run build`.
 - `.github/workflows/cd.yml`
   - Runs only on `v*` tag pushes or manual `workflow_dispatch`.
   - Builds `dist/` and deploys to Cloudflare Pages through `wrangler pages deploy`.
@@ -135,3 +159,9 @@ Disable automatic production / preview deployments from Cloudflare Pages Git int
 ## Self-hosted Supabase
 
 Deployment configuration, backup scripts and session migration preparation are documented in the [self-hosting runbook](docs/operations/supabase-self-hosted.md). Production configuration still targets Supabase Cloud. Before preview or cutover, reconcile the target database and Edge Functions with the current SaaS version.
+
+## Cloud development and domestic launch
+
+The [Codex Cloud runbook](docs/operations/codex-cloud.md) covers installation, startup, fresh-task validation and returning changes through GitHub. Personal local skills and credentials do not automatically follow the repository. Cloud checks do not replace browser, export or device acceptance.
+
+The [domestic launch assessment](docs/products/domestic-launch.md) compares database/frontend hosting, filing requirements, WeChat categories and mini-program options. Web is the first milestone; the mini-program is a separate deliverable. Naming, operating entity, production hosting and payment choices remain open. Publishing a development environment does not deploy the product.

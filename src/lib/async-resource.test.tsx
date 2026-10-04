@@ -3,7 +3,7 @@
  * [INPUT]: React 生命周期、延迟请求、共享 useAsyncResource。
  * [OUTPUT]: 验证输入切换、重载、失败恢复和卸载时的迟到结果隔离。
  * [POS]: 异步资源行为回归；使用真实 hook，不锁定内部实现字符串。
- * [PROTOCOL]: 契约变化时同步 AGENTS.md。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'

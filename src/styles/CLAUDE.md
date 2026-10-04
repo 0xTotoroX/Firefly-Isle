@@ -1,8 +1,0 @@
-# src/styles/
-> L2 | 父级: /src/CLAUDE.md
-
-成员清单
-transitions-dev.css: 正式产品共享动效工具，以短促 transform/opacity 进入、精细指针 hover、克制 press/文字 tab/icon 反馈和统一 reduced-motion 为合同，并独立保留登录滚动叙事 sticky/spacer/视图叠层几何，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-transitions-dev.test.ts: 共享产品动效合同回归测试，验证 V3 motion budget、Button 过渡、路由 reveal/stagger 分离、旧 tab bounce 清除与 reduced-motion 边界，[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
-
-法则: 正式产品动效集中命名，组件只挂语义类；设计评审板不进入产品样式依赖。

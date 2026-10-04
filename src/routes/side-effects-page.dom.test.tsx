@@ -3,7 +3,7 @@
  * [INPUT]: 依赖 happy-dom、@testing-library/react、@testing-library/user-event、@testing-library/jest-dom、vitest 模块 mock 与 ./side-effects-page。
  * [OUTPUT]: 对外提供 SideEffectsPage 的真实渲染行为回归测试。
  * [POS]: routes 的副作用日志页 DOM 测试，约束列表渲染、新增链路（症状+严重程度+日期）、编辑回填与删除刷新。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 

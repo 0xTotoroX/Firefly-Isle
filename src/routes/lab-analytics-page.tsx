@@ -1,10 +1,11 @@
 /**
- * [INPUT]: 依赖 react-router-dom 的 useLocation/useParams，依赖 @/components/app-shell 的 V3 壳层、@/components/system 的 DemoModeBanner、@/components/analytics 的统计界面、demo lab fixture、async-resource 的共享加载基元、./demo-mode.logic 的可选公开分享码 Demo 数据源与 patient-record-storage 的按 id 病历读取。
- * [OUTPUT]: 对外提供 LabAnalyticsPage 组件，对应公开 /demo/analytics 与受保护 /analytics/:id、/analytics/demo，并在 Demo 模式显示提醒。
- * [POS]: routes 的指标管理统计 orchestration 层，负责按 Demo/真实路由 id 读取真实病历或可选 Supabase 公开 Demo 病历，并把 /analytics 收敛为只读指标展示；文件上传入口归 /app 输入区。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [INPUT]: 共享指标统计、患者导航、Demo 内存会话和真实病历读取。
+ * [OUTPUT]: LabAnalyticsPage，读取当前患者指标并提供模式内上传入口。
+ * [POS]: 指标页路由编排；演示与正式页面使用同一展示组件，文件录入归工作区。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import { useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useParams } from 'react-router-dom'
+import { useDemoSession, useProductPath } from '@/lib/demo-session'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
 import { demoLabAnalyticsRecord } from '@/components/analytics/demo-lab-analytics'
@@ -35,24 +36,27 @@ type AnalyticsRecordSource = {
 }
 
 function getAnalyticsLoadError(error: unknown, locale: 'zh' | 'en') {
-  return isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : '无法读取这份病历的指标数据，请稍后重试。'
+  return isOnlineRequiredError(error) ? getOnlineRequiredMessage(locale) : locale === 'zh' ? '无法读取这份病历的指标数据，请稍后重试。' : 'Could not load the lab readings. Please retry.'
 }
 
 export function LabAnalyticsPage({ isSigningOut, onSignOut, userIsAnonymous, userLabel }: LabAnalyticsPageProps) {
   const { id = 'demo' } = useParams()
+  const demoSession = useDemoSession()?.session
+  const productPath = useProductPath()
   const location = useLocation()
   const { locale } = useLocale()
   const { theme } = useTheme()
   const dark = theme === 'dark'
   const publicDemoRoute = location.pathname.startsWith('/demo')
   const demoRoute = publicDemoRoute || id.trim() === 'demo'
+  const initialDemoRecord = demoSession?.getState().records.find((record) => record.id === id) ?? demoLabAnalyticsRecord
   const resource = useAsyncResource<AnalyticsRecordSource>(
     () =>
       demoRoute
-        ? loadDemoPatientRecord().then(({ record }) => ({ found: true, record }))
+        ? (demoSession ? demoSession.loadRecord(id).then((record) => ({ record })) : loadDemoPatientRecord()).then(({ record }) => ({ found: true, record }))
         : loadPatientRecordById(id).then((record) => ({ found: record !== null, record })),
-    [demoRoute, id],
-    demoRoute ? { found: true, record: demoLabAnalyticsRecord } : null,
+    [demoRoute, id, demoSession],
+    demoRoute ? { found: true, record: initialDemoRecord } : null,
   )
 
   const record = resource.data?.record ?? null
@@ -60,10 +64,10 @@ export function LabAnalyticsPage({ isSigningOut, onSignOut, userIsAnonymous, use
   const loadError = resource.error
     ? getAnalyticsLoadError(resource.error, locale)
     : resource.data && !resource.data.found
-      ? '没有找到这份病历的指标数据。'
+      ? (locale === 'zh' ? '没有找到这份病历的指标数据。' : 'Patient record not found.')
       : null
-  const analyticsHref = demoRoute ? (publicDemoRoute ? '/demo/analytics' : '/analytics/demo') : `/analytics/${id}`
-  const recordHref = demoRoute ? (publicDemoRoute ? '/demo/record' : '/record/demo') : `/record/${id}`
+  const analyticsHref = productPath(`/analytics/${id}`)
+  const recordHref = productPath(`/record/${id}`)
 
   return (
     <div className={dark ? 'min-h-screen bg-[var(--ff-surface-base)] text-[var(--ff-text-primary)]' : 'ff-light-record-bg min-h-screen text-[var(--ff-text-primary)]'}>
@@ -79,11 +83,15 @@ export function LabAnalyticsPage({ isSigningOut, onSignOut, userIsAnonymous, use
       />
       <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen px-4 pb-8 md:px-6 md:pb-10`} theme={theme}>
         <div className={`${shellWideContentClass} t-route-reveal mt-5 md:mt-6`}>
-          {demoRoute ? <DemoModeBanner /> : <ClinicalRecordNav active="labs" locale={locale} patientId={id} />}
+          {demoRoute ? <DemoModeBanner /> : null}
+          <ClinicalRecordNav active="labs" locale={locale} patientId={id} />
+          {record ? <Link className="my-3 inline-flex min-h-[44px] items-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold" to={productPath(`/app?patient=${encodeURIComponent(id)}`)}>{locale === 'zh' ? '为当前患者上传化验报告' : 'Upload this patient’s lab report'}</Link> : null}
           <LabAnalyticsDashboard
             isLoading={resource.isLoading}
             labResults={labResults}
             loadError={loadError}
+            onRetry={resource.reload}
+            uploadHref={productPath(`/app?patient=${encodeURIComponent(id)}`)}
             theme={theme}
           />
         </div>

@@ -38,3 +38,9 @@
 24. [426c97c refactor(core): harden record workflows and retire obsolete previews](0024-426c97c-record-integrity-and-design.md)
 25. [238948d docs(design): add monochrome themes and calm page concepts](0025-238948d-monochrome-design-review.md)
 26. [6bd3b94 feat(selfhost): integrate backend migration preparation](0026-6bd3b94-selfhost-integration.md)
+27. [5eb85a7 fix(data): enforce API grants and atomic write boundaries](0027-5eb85a7-data-boundaries.md)
+28. [a4b3191 feat(saas): complete patient workflows and isolated demo](0028-a4b3191-saas-workflows.md)
+29. [2754acd ci: validate codex development branches](0029-2754acd-development-ci.md)
+30. [90e931f fix(pwa): preserve private routes and offline build consistency](0030-90e931f-offline-runtime-validation.md)
+31. [docs(brand): confirm Medclear naming and product positioning](0031-medclear-naming-decision.md) — 随对应提交记录，hash 由该文件的 Git 历史回查
+32. [docs(brand): reopen English naming after domain checks](0032-english-name-domain-recheck.md) — 随对应提交记录，hash 由该文件的 Git 历史回查

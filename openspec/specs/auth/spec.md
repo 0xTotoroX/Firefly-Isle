@@ -21,12 +21,11 @@
 - **AND** 路由 SHALL 通过统一 session 恢复路径进入 `/app`
 - **AND** 系统 SHALL NOT 提示用户查收验证邮件
 
-#### Scenario: 邮箱确认配置未关闭
-- **WHEN** 用户提交注册表单且 Supabase 未返回有效 session
-- **THEN** 系统 SHALL 显示 Supabase 邮箱确认配置错误提示
+#### Scenario: 注册等待邮箱确认
+- **WHEN** 用户提交注册表单且 Supabase 成功返回用户但未返回有效 session
+- **THEN** 系统 SHALL 显示查收确认邮件的成功等待状态，并清除密码字段
 - **AND** 系统 SHALL 保持在未认证入口状态
-- **AND** 系统 SHALL NOT 提示用户查收验证邮件
-- **AND** 系统 SHALL NOT 自动切回登录模式
+- **AND** 系统 SHALL 使用公共 `/auth/callback` 作为确认落点，不要求关闭邮箱确认配置
 
 #### Scenario: 邮箱登录成功
 - **WHEN** 用户输入正确的邮箱和密码
@@ -62,6 +61,17 @@
 - **WHEN** Supabase 拒绝密码重置请求或 redirect URL 配置无效
 - **THEN** 系统 SHALL 显示可读失败反馈
 - **AND** 系统 SHALL NOT 显示后端原始错误或敏感配置值
+
+#### Scenario: 从邮件设置新密码
+- **WHEN** 用户打开有效重置邮件链接
+- **THEN** 系统 SHALL 在独立 `/auth/reset-password` 路由等待回调和会话初始化完成，再显示当前邮箱、新密码与确认字段
+- **AND** 提交 SHALL 调用 Supabase `updateUser({ password })`，成功后清除密码并提供明确反馈
+- **AND** 改密请求 SHALL 绑定该恢复回调取得的凭据，其他标签或窗口切换登录账号不得改变目标身份或被此次恢复流程覆盖
+
+#### Scenario: 重置链接错误优先于旧会话
+- **WHEN** 重置链接无效或初始化失败，但浏览器仍保留其他账户的 session
+- **THEN** 系统 SHALL 显示链接错误而不是提供旧账户的改密表单
+- **AND** 回调的 query 和 fragment 错误、返回的业务错误均 SHALL 可见，不无限等待
 
 ### Requirement: Google OAuth 登录
 系统 SHALL 在 Google provider 配置完成后提供真实 Google OAuth 登录入口。

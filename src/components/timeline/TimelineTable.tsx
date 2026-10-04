@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 useRef/useState，依赖 @/lib/theme 的 Theme，依赖 @/types/patient 的 PatientRecord、PatientFieldTarget、各区块类型与 getPatientArchetype。
  * [OUTPUT]: 对外提供 TimelineTable、BasicInfoBlock、InitialOnsetBlock、TreatmentLineBlock 与 blur 取消提交 helpers，不对用户展示晚期/非晚期分类标签。
  * [POS]: components/timeline 的正式时间线表格渲染器，内部按记录结构组织区块，负责关键缺失字段高亮与行内编辑入口。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useRef, useState } from 'react'
 

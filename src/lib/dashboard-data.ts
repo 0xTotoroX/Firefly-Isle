@@ -1,8 +1,8 @@
 /**
  * [INPUT]: 依赖 @/lib/supabase 的客户端与 hasSupabaseEnv，依赖 network-status 的 OnlineRequiredError，依赖 @/lib/profile-settings 的 ProfileSettingsError。
- * [OUTPUT]: 对外提供 loadDashboardData 与 DashboardData / DashboardAbnormalReading / DashboardLatestRecord 类型。
+ * [OUTPUT]: 对外提供 loadDashboardData 与 DashboardData / DashboardAbnormalReading 类型。
  * [POS]: Dashboard 聚合层：消费 owner RLS 计数与最新状态 RPC，单个分区失败显式标记，不伪装为零或空态。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { ensureBrowserOnline } from '@/lib/network-status'
 import { calendarDaysBetween, localCalendarDate } from '@/lib/calendar-date'
@@ -18,12 +18,6 @@ export type DashboardAbnormalReading = {
   testDate: string | null
   unit: string | null
   value: number
-}
-
-export type DashboardLatestRecord = {
-  id: string
-  tumorType: string | null
-  updatedAt: string | null
 }
 
 export type DashboardSideEffect = {
@@ -46,7 +40,6 @@ export type DashboardData = {
   activeShareCount: number
   aiCallCount30d: number | null
   labReadingCount: number
-  latestRecord: DashboardLatestRecord | null
   nextVisit: DashboardNextVisit | null
   patientCount: number
   recentSideEffects: DashboardSideEffect[]
@@ -65,12 +58,6 @@ async function countRows(count: () => PromiseLike<CountResult>): Promise<number>
   }
 
   return total ?? 0
-}
-
-type PatientRow = {
-  basic_info: { tumorType?: string } | null
-  id: string
-  updated_at: string | null
 }
 
 type LabRow = {
@@ -99,7 +86,7 @@ export async function loadDashboardData(): Promise<DashboardData> {
     throw new ProfileSettingsError('Missing authenticated user for dashboard data.')
   }
 
-  const [patientCount, labReadingCount, activeShareCount, latestRecordResult] = await Promise.all([
+  const [patientCount, labReadingCount, activeShareCount] = await Promise.all([
     countRows(() => supabase.from('patients').select('id', { count: 'exact', head: true })),
     countRows(() => supabase.from('lab_results').select('id', { count: 'exact', head: true })),
     countRows(() =>
@@ -109,26 +96,7 @@ export async function loadDashboardData(): Promise<DashboardData> {
         .is('revoked_at', null)
         .gt('expires_at', new Date().toISOString()),
     ),
-    supabase
-      .from('patients')
-      .select('id, updated_at, basic_info')
-      .order('updated_at', { ascending: false, nullsFirst: false })
-      .limit(1)
-      .maybeSingle<PatientRow>(),
   ])
-
-  if (latestRecordResult.error) {
-    throw new ProfileSettingsError(latestRecordResult.error.message || 'Could not load dashboard data.')
-  }
-
-  const latestRow = latestRecordResult.data
-  const latestRecord: DashboardLatestRecord | null = latestRow
-    ? {
-        id: latestRow.id,
-        tumorType: latestRow.basic_info?.tumorType ?? null,
-        updatedAt: latestRow.updated_at,
-      }
-    : null
 
   const optionalResults = await Promise.allSettled([
     countAiCalls30d(supabase),
@@ -144,7 +112,6 @@ export async function loadDashboardData(): Promise<DashboardData> {
     activeShareCount,
     aiCallCount30d: usage.status === 'fulfilled' ? usage.value : null,
     labReadingCount,
-    latestRecord,
     nextVisit: followUp.status === 'fulfilled' ? followUp.value : null,
     patientCount,
     recentSideEffects: symptoms.status === 'fulfilled' ? symptoms.value : [],

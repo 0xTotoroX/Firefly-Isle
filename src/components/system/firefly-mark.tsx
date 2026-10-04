@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/utils 的 cn 工具，读取 public/logo-island-lighthouse 的透明品牌资产。
  * [OUTPUT]: 对外提供 FireflyMark 组件，渲染一页萤屿“岛屿微光灯塔”品牌 mark。
  * [POS]: components/system 的品牌符号基元，被登录页、展开侧栏与 compact 侧栏复用，确保全站 mark 与 favicon 同源且不再与标题绑定。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { cn } from '@/lib/utils'
 

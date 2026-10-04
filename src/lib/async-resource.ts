@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 useEffect/useState 与调用方注入的 loader。
  * [OUTPUT]: 对外提供 useAsyncResource 与 AsyncResource 类型。
  * [POS]: 共享异步资源；输入/重载变化时在渲染阶段条件重置，effect 仅启动外部请求并隔离迟到结果。
- * [PROTOCOL]: 契约变化时同步 AGENTS.md。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useState } from 'react'
 

@@ -1,7 +1,7 @@
 # Contributing to Firefly-Isle
 
 Thank you for helping improve Firefly-Isle. The project is small, privacy
-sensitive, and spec-led, so changes should be narrow, tested, and documented.
+sensitive, so changes should be narrow, tested, and documented.
 
 ## Development Setup
 
@@ -30,10 +30,21 @@ still keep the repository maps accurate.
 
 ## Spec and Documentation Rules
 
-- Behavior changes start from `openspec/specs/` or a new OpenSpec change.
-- Structural changes must update the nearest `CLAUDE.md`.
-- Source files with module responsibility changes must keep their header
-  contract aligned with the implementation.
+- Use OpenSpec for confirmed feature behavior, permission/data contracts and
+  user-flow changes. Styling, behavior-preserving structural cleanup,
+  documentation and local fixes do not require a full planning workflow.
+- Verify specs against current implementation and acceptance evidence. Older
+  contracts and archived plans do not override the owner's latest direction.
+  Keep one task ledger per change; avoid duplicate planning frameworks.
+- Structural changes must update the nearest `AGENTS.md`.
+- Source files with dependency, export, or responsibility changes must keep
+  their INPUT / OUTPUT / POS header contract aligned with the implementation.
+- `AGENTS.md` is the only project/module instruction file used here. Do not
+  create tool-specific compatibility import files or duplicate map bodies.
+- Read the applicable ancestor maps before editing; update L3, then the
+  affected L2, and L1 only when project structure or conventions change.
+- Generated/third-party files and lockfiles do not need source headers.
+  Read-only checks do not trigger documentation writes.
 - Archived OpenSpec changes are evidence, not the current source of truth.
 
 ## Pull Request Rules

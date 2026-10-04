@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-router-dom 的 Link，依赖 @/components/system/surfaces 的 PanelSurface，依赖 @/lib/copy、locale 与 patient-metrics 文案/指标工具，依赖 PatientRecord 与 PatientFieldTarget 维持 inline edit / export 边界，依赖 transitions-dev.css 的 .t-digit-group、.t-missing-pulse 与 .t-edit-flip 动效合同。
  * [OUTPUT]: 对外提供 ReportPreviewFrame 组件，渲染 Dense Clinical Ledger 风格工作区病历预览、身高体重、诊断日期前置、治疗方案与最新基因/免疫组化摘要、含干净等待空态的横向病程轨、正式档案入口、按需追问进度提示、可编辑临床备注、既往检测历史与验证状态带。
  * [POS]: components/workspace 的报告预览区块，被 workspace-page 组合，是 /app 中病史输入之后的 V3 主表面，把 PatientRecord basicInfo 与 treatmentLines 投影为低噪声临床台账，同时保留 setReportRef 导出捕获点。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -17,6 +17,7 @@ type ReportPreviewFrameProps = {
   followUpCount?: number
   isExtracting: boolean
   isSaving: boolean
+  isLocked?: boolean
   onCommitField: (target: PatientFieldTarget, value: string) => void
   record: PatientRecord
   recordDetailsHref?: string
@@ -463,6 +464,7 @@ export function ReportPreviewFrame({
   followUpCount = 0,
   isExtracting,
   isSaving,
+  isLocked = false,
   onCommitField,
   record,
   recordDetailsHref,
@@ -471,7 +473,7 @@ export function ReportPreviewFrame({
   theme,
 }: ReportPreviewFrameProps) {
   const { locale } = useLocale()
-  const disabled = isExtracting || isSaving
+  const disabled = isExtracting || isSaving || isLocked
   const recordHasData = hasRecordData(record)
   const basicInfo = record.basicInfo
   const lineOne = firstTreatmentLine(record)

@@ -1,8 +1,8 @@
 /**
  * [INPUT]: 依赖 @/lib/lab-dictionary 的分类字典、OCR 候选归一化和参考范围解析，依赖 @/lib/lab-results 的血常规派生指标生成。
- * [OUTPUT]: 对外提供 LabReviewRow、extractLabReportReviewRows、toConfirmedLabReadings、hasBlockingReviewRows 与 buildLabReportDate。
+ * [OUTPUT]: 对外提供 LabReviewRow、OCR 复核行、逐行校验、确认读数与报告日期解析。
  * [POS]: lib 的网页端实验室报告摄入纯逻辑层，把 OCR 文本转成可复核表格行，并在确认后输出可写入 Supabase 的 LabResult。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   findLabIndicator,
@@ -12,6 +12,7 @@ import {
   parseReferenceRange,
 } from '@/lib/lab-dictionary'
 import { buildDerivedBloodRoutineReadings } from '@/lib/lab-results'
+import { isCalendarDate } from '@/lib/calendar-date'
 import type { LabResult, LabResultCategory } from '@/types/patient'
 
 export type LabReviewRow = {
@@ -85,7 +86,15 @@ function createReviewRow(rawText: string, category: LabResultCategory, fallbackD
   const item = matchLabIndicatorInText(category, rawText)
 
   if (!item) {
-    return null
+    // 日期和报告标题不是指标；其他未匹配行留给用户映射或排除。
+    const withoutDate = rawText.replace(/\d{4}[-/.年]\d{1,2}(?:[-/.月]\d{1,2}日?)?/g, '').trim()
+    if (!withoutDate || /^(?:检验日期|检查日期|报告日期|采样日期|日期|姓名|性别|年龄|科室|医院|标本|样本|检验报告|检验项目|项目名称)/.test(withoutDate)) return null
+    return {
+      id: `lab-review-${index}`, include: true, itemCode: '', itemName: rawText,
+      message: '未匹配到内置实验室字典，请选择指标或排除该行。', rawText,
+      referenceHigh: '', referenceLow: '', status: 'needs-review', testDate: fallbackDate,
+      unit: '', value: extractValue(rawText, category),
+    }
   }
 
   const referenceText = extractReferenceText(rawText)
@@ -131,7 +140,7 @@ export function extractLabReportReviewRows(ocrText: string, category: LabResultC
 }
 
 function numberOrUndefined(value: string) {
-  if (!value.trim()) {
+  if (!/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value.trim())) {
     return undefined
   }
 
@@ -139,11 +148,26 @@ function numberOrUndefined(value: string) {
   return Number.isFinite(parsed) ? parsed : undefined
 }
 
-export function hasBlockingReviewRows(rows: LabReviewRow[]) {
-  return rows.some((row) => row.include && (row.status !== 'mapped' || !row.itemCode || numberOrUndefined(row.value) === undefined))
+export type LabReviewIssue = 'indicator' | 'value' | 'date' | 'reference'
+
+export function getLabReviewIssues(row: LabReviewRow, category?: LabResultCategory): LabReviewIssue[] {
+  if (!row.include) return []
+  const issues: LabReviewIssue[] = []
+  if (!row.itemCode || (category && !findLabIndicator(category, row.itemCode))) issues.push('indicator')
+  if (numberOrUndefined(row.value) === undefined) issues.push('value')
+  if (!isCalendarDate(row.testDate)) issues.push('date')
+  const low = numberOrUndefined(row.referenceLow)
+  const high = numberOrUndefined(row.referenceHigh)
+  if ((row.referenceLow.trim() && low === undefined) || (row.referenceHigh.trim() && high === undefined) || (low !== undefined && high !== undefined && low > high)) issues.push('reference')
+  return issues
+}
+
+export function hasBlockingReviewRows(rows: LabReviewRow[], category?: LabResultCategory) {
+  return rows.some((row) => getLabReviewIssues(row, category).length > 0)
 }
 
 export function toConfirmedLabReadings(rows: LabReviewRow[], category: LabResultCategory): LabResult[] {
+  if (hasBlockingReviewRows(rows, category)) throw new Error('Resolve the included lab review rows before saving.')
   const directReadings = rows
     .filter((row) => row.include)
     .flatMap((row) => {
@@ -159,8 +183,8 @@ export function toConfirmedLabReadings(rows: LabReviewRow[], category: LabResult
           category,
           itemCode: item.code,
           itemName: item.name,
-          referenceHigh: numberOrUndefined(row.referenceHigh) ?? item.referenceHigh,
-          referenceLow: numberOrUndefined(row.referenceLow) ?? item.referenceLow,
+          referenceHigh: numberOrUndefined(row.referenceHigh),
+          referenceLow: numberOrUndefined(row.referenceLow),
           source: 'ocr' as const,
           testDate: row.testDate.trim() || undefined,
           unit: row.unit.trim() || item.unit,

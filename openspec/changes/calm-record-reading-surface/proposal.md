@@ -26,5 +26,5 @@ None.
 
 - Shared system UI: `src/components/system/topbar.tsx`, `src/components/system/demo-mode-banner.tsx`.
 - Record composition and presentation: `src/routes/record-page.view.tsx`, `src/components/record/RecordSharePanel.tsx`, `record-dossier.tsx`, `ClinicalAnalysisPanel.tsx`, `LabTrendsTable.tsx`, and copy/tests.
-- Architecture maps: `openspec/changes/CLAUDE.md`, `src/routes/CLAUDE.md`, `src/components/system/CLAUDE.md`, and `src/components/record/CLAUDE.md`.
+- Architecture maps: `openspec/changes/AGENTS.md`, `src/routes/AGENTS.md`, `src/components/system/AGENTS.md`, and `src/components/record/AGENTS.md`.
 - No schema, authentication, RLS, Edge Function, Demo data-source, export implementation, or record mutation contract changes.

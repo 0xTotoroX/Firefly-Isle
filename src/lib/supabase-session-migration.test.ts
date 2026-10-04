@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: 旧会话复制/完成/识别函数与模拟浏览器存储。
+ * [OUTPUT]: 凭据保留、目标会话优先、仅旧 token 迁移和注销后不复活的回归。
+ * [POS]: 后端地址迁移的本地兼容状态测试。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { describe, expect, it } from 'vitest'
 import { completeLegacySupabaseSessionMigration, copyLegacySupabaseSession, isLegacySupabaseSession } from './supabase-session-migration'
 

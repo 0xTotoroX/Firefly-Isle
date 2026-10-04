@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 Supabase auth.users、pgcrypto extension 与 PostgreSQL RLS / trigger 能力。
 -- [OUTPUT]: 对外提供 patients、treatment_lines 表、索引、RLS policy 与 updated_at trigger。
 -- [POS]: supabase/migrations 的初始 schema 迁移，是 PatientRecord 持久化与用户隔离的数据库真相源。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- 建立 patients、treatment_lines、RLS 与 updated_at trigger 的 MVP 初始数据库边界。
 
 create extension if not exists pgcrypto;

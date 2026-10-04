@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 app-shell、copy 字典、auth session 与 billing-checkout Edge Function。
  * [OUTPUT]: 对外提供 DonatePage，对应 /donate。
  * [POS]: routes 的一次性捐赠页。功能全免费，这里只发起 Stripe payment checkout；未配置密钥时展示说明而不假装可支付。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useState } from 'react'
 

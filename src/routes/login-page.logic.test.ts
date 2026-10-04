@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 Supabase auth mock，依赖 ./login-page.logic 的认证动作函数。
  * [OUTPUT]: 对外提供登录、注册、重置密码、匿名登录与 Google OAuth 的行为回归测试。
  * [POS]: routes 的登录逻辑测试文件，约束 /login 容器调用 Supabase Auth 时的参数、反馈文案、模式跳转与 Google OAuth 分支。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it, vi } from 'vitest'
 
@@ -40,6 +40,7 @@ describe('login page auth logic', () => {
       password: 'clinical-key',
     })
     expect(result).toEqual({
+      authenticated: true,
       feedback: { message: '认证成功，正在进入工作区。', tone: 'neutral' },
     })
   })
@@ -62,7 +63,7 @@ describe('login page auth logic', () => {
     })
   })
 
-  it('requires email signup to return a session for direct workspace entry', async () => {
+  it('reports incomplete signup responses without asking to disable email confirmation', async () => {
     const auth = createAuthClient({
       signUp: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
     })
@@ -79,7 +80,7 @@ describe('login page auth logic', () => {
       password: 'clinical-key',
     })
     expect(result).toEqual({
-      feedback: { message: '注册未返回有效会话，请先在 Supabase 关闭邮箱确认后再试。', tone: 'error' },
+      feedback: { message: '暂时无法完成注册，请稍后再试。', tone: 'error' },
     })
   })
 
@@ -96,6 +97,7 @@ describe('login page auth logic', () => {
     })
 
     expect(result).toEqual({
+      authenticated: true,
       clearPassword: true,
       feedback: { message: '注册成功，正在进入工作区。', tone: 'neutral' },
     })
@@ -147,6 +149,7 @@ describe('login page auth logic', () => {
 
     expect(auth.signInAnonymously).toHaveBeenCalledWith()
     expect(result).toEqual({
+      authenticated: true,
       feedback: { message: '匿名会话已建立，正在进入工作区。', tone: 'neutral' },
     })
   })
@@ -180,4 +183,11 @@ describe('login page auth logic', () => {
     })
   })
 
+})
+
+it('accepts a user awaiting email confirmation and uses the public confirmation route', async () => {
+  const auth = createAuthClient({ signUp: vi.fn().mockResolvedValue({ data: { user: { id: 'pending-user' }, session: null }, error: null }) })
+  const result = await submitEmailAuth({ auth, email: 'pending@example.com', password: 'secret-password', mode: 'sign-up', signUpRedirectTo: 'https://firefly.test/auth/callback' })
+  expect(result).toEqual({ clearPassword: true, feedback: { message: '注册请求已提交，请查收确认邮件后登录。', tone: 'success' }, nextMode: 'login' })
+  expect(auth.signUp).toHaveBeenCalledWith({ email: 'pending@example.com', password: 'secret-password', options: { emailRedirectTo: 'https://firefly.test/auth/callback' } })
 })

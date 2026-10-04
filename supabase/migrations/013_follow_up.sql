@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 public.patients / auth.users、PostgreSQL RLS 与既有 owner CRUD 模式。
 -- [OUTPUT]: 对外提供 follow_up_visits 随访就诊记录表（地点/医生/结论/下次安排）与 patients.follow_up_status 随访状态枚举列。
 -- [POS]: supabase/migrations 的随访模块迁移，承载复查计划倒计时、随访记录与显式随访状态三个能力的数据事实。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 create table if not exists public.follow_up_visits (
   id uuid primary key default gen_random_uuid(),

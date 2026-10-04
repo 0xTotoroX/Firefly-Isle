@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 CSSProperties、@/components/app-shell 的 ClinicalTopBar、@/components/system/surfaces 的 MainShell 与 PanelSurface、@/lib/privacy 的共享隐私条款真相源、@/lib/theme 的 useTheme、03 Apple Editorial 标题字体合同与 transitions-dev.css 的 route/stagger/control 动效合同。
  * [OUTPUT]: 对外提供 PrivacyPage 组件，对应 /privacy，并以克制顺序进入呈现隐私条款。
  * [POS]: routes 的独立隐私条款页，消费 V3 topbar、surface、motion 与 typography 语言，并与隐私门控共享同一文案来源。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { CSSProperties } from 'react'
 import { Link } from 'react-router-dom'

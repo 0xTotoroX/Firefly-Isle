@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 Context、hooks，依赖 background-audio-tracks 的本地歌单 manifest，依赖浏览器 Audio 与 localStorage。
  * [OUTPUT]: 对外提供 BackgroundAudioProvider、useBackgroundAudio、背景音状态类型、曲目 API、静态音频路径与可测试控制器。
  * [POS]: lib 的全局背景音乐状态中心，独占单一 audio 实例、歌单曲目、播放/暂停意图、自动播放拦截与当前播放状态。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   createContext,
@@ -309,15 +309,15 @@ function createBrowserAudio(source: string): AudioLike | null {
   return new Audio(source)
 }
 
-export function BackgroundAudioProvider({ children }: PropsWithChildren) {
+export function BackgroundAudioProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
   const controllerRef = useRef<BackgroundAudioController | null>(null)
-  const [snapshot, setSnapshot] = useState<BackgroundAudioSnapshot>(() => getInitialSnapshot(readBrowserStorage()))
+  const [snapshot, setSnapshot] = useState<BackgroundAudioSnapshot>(() => getInitialSnapshot(persist ? readBrowserStorage() : null))
 
   useEffect(() => {
     const controller = createBackgroundAudioController({
       audio: createBrowserAudio(BACKGROUND_AUDIO_SRC),
       onChange: setSnapshot,
-      storage: readBrowserStorage(),
+      storage: persist ? readBrowserStorage() : null,
     })
 
     controllerRef.current = controller
@@ -334,7 +334,7 @@ export function BackgroundAudioProvider({ children }: PropsWithChildren) {
       controller.destroy()
       controllerRef.current = null
     }
-  }, [])
+  }, [persist])
 
   const requestPlayback = useCallback(() => controllerRef.current?.requestPlayback() ?? Promise.resolve(snapshot), [snapshot])
   const pause = useCallback(() => controllerRef.current?.pause() ?? snapshot, [snapshot])

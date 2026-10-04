@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查，依赖隐私文案真相源与 PatientRecord 类型工具。
  * [OUTPUT]: 对外提供隐私内容、患者类型判定、认证路由、公开 Demo 路由、统计路由、分享路由、隐私页动效与背景音 Provider 挂载位置的回归测试。
  * [POS]: lib 的应用级合同测试，约束 App 装配层不丢失隐私、路由守卫、公开 Demo、公开只读分享入口、OAuth 错误、隐私页全站动效与全局背景音生命周期边界。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 
@@ -76,12 +76,12 @@ describe('auth route guard contract', () => {
     expect(source).toContain('<Navigate replace to="/login" />')
   })
 
-  it('keeps /analytics protected and mounted through demo/id statistics routes', () => {
+  it('keeps /analytics protected and sends unselected patients to the dashboard', () => {
     const source = readAppSource()
 
     expect(source).toContain('const LabAnalyticsPage = lazy')
     expect(source).toContain('path="/analytics"')
-    expect(source).toContain('to="/analytics/demo"')
+    expect(source).toContain('to="/dashboard#records"')
     expect(source).toContain('path="/analytics/:id"')
     expect(source).toContain('<LabAnalyticsPage isSigningOut={isSigningOut} onSignOut={signOut} userIsAnonymous={userIsAnonymous} userLabel={userLabel} />')
   })
@@ -90,11 +90,15 @@ describe('auth route guard contract', () => {
     const source = readAppSource()
 
     expect(source).toContain('path="/demo"')
-    expect(source).toContain('to="/demo/record"')
+    expect(source).toContain('to="/demo/dashboard"')
     expect(source).toContain('path="/demo/record"')
     expect(source).toContain('path="/demo/analytics"')
-    expect(source).toContain('<RecordPage userIsAnonymous userLabel="DEMO_MODE" />')
-    expect(source).toContain('<LabAnalyticsPage userIsAnonymous userLabel="DEMO_MODE" />')
+    expect(source).toContain('<DemoSessionProvider><DemoRoutes /></DemoSessionProvider>')
+    expect(source).toContain('path="/demo/record/:id/follow-up"')
+    expect(source).toContain('path="/demo/record/:id/side-effects"')
+    expect(source).toContain('path="/demo/app"')
+    expect(source).toContain('path="/demo/settings"')
+    expect(source).toContain('path="/demo/models"')
     expect(source.indexOf('path="/demo/record"')).toBeLessThan(source.indexOf('path="/app"'))
   })
 
@@ -116,7 +120,7 @@ describe('auth route guard contract', () => {
   it('surfaces root-level OAuth provider errors instead of discarding them during redirect', () => {
     const source = readAppSource()
 
-    expect(source).toContain('const oauthRedirectError = getOAuthCallbackErrorMessage(location.search)')
+    expect(source).toContain('const oauthRedirectError = getOAuthCallbackErrorMessage(`${location.search}${location.hash}`, locale)')
     expect(source).toContain('<LoginPage authError={oauthRedirectError} />')
   })
 
@@ -124,9 +128,9 @@ describe('auth route guard contract', () => {
     const source = readAppSource()
 
     expect(source).toContain('BackgroundAudioProvider')
-    expect(source).toContain('<BackgroundAudioProvider>')
-    expect(source.indexOf('<NetworkStatusBanner />')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider>'))
-    expect(source.indexOf('{children}')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider>'))
-    expect(source.indexOf('<BackgroundAudioProvider>')).toBeLessThan(source.indexOf('<AppContent />'))
+    expect(source).toContain('<BackgroundAudioProvider persist={persist}>')
+    expect(source.indexOf('<NetworkStatusBanner />')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider persist={persist}>'))
+    expect(source.indexOf('{children}')).toBeGreaterThan(source.indexOf('<BackgroundAudioProvider persist={persist}>'))
+    expect(source.indexOf('<BackgroundAudioProvider persist={persist}>')).toBeLessThan(source.indexOf('<AppContent />'))
   })
 })

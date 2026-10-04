@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 Supabase auth.users、PostgreSQL RLS 与 supabase/migrations 既有 owner RLS / updated_at trigger 模式。
 -- [OUTPUT]: 对外提供 profiles 表、locale 约束、updated_at trigger、所有者 RLS policy 与新用户自动建档 security definer 触发器。
 -- [POS]: supabase/migrations 的账户档案迁移，为 SaaS 账户设置提供 display_name / locale 偏好的数据库事实。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 create table if not exists public.profiles (
   user_id uuid primary key references auth.users (id) on delete cascade,

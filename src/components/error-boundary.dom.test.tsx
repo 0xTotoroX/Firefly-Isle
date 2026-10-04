@@ -3,7 +3,7 @@
  * [INPUT]: 依赖 happy-dom 环境、@testing-library/react 的渲染与查询、@testing-library/jest-dom 的匹配器与 ./error-boundary。
  * [OUTPUT]: 对外提供 ErrorBoundary 的真实渲染行为回归测试。
  * [POS]: components 的错误边界 DOM 测试，验证子树渲染崩溃时降级 UI 可见、重载按钮触发整页刷新、正常子树不受影响。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 

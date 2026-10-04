@@ -2,13 +2,12 @@
  * [INPUT]: 依赖 react 的 RefObject，依赖 @/components/record 的 dossier/AI 分析/分享展示、demo-record 的默认病例、record-copy 的 labels、@/components/timeline 的 TimelineTable/TreatmentGanttView、PatientRecord 字段编辑目标、./record-page.logic 的 RecordLoadState 与 transitions-dev.css 的 tab/record view 动效合同。
  * [OUTPUT]: 对外提供 RecordPageContent、RecordViewMode、RecordExportState 与 RecordSaveState，并统一档案/极简表格/Gantt 文字标签切换、轻量编辑入口、次级分享 disclosure、AI 分析入口和字段保存状态展示。
  * [POS]: routes 的档案详情内容组合层，隔离 dossier/table/gantt 视图切换、分享面板、AI 分析面板、轻量编辑工具条、字段提交入口与 crossfade 入场，让 record-page.tsx 保持路由、副作用和 Supabase 持久化编排。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { RefObject } from 'react'
 import { ClinicalRecordNav } from '@/components/record/clinical-record-nav'
 
 import type { ClinicalAnalysisPanelState } from '@/components/record/ClinicalAnalysisPanel'
-import { demoTreatmentGanttSupplementNotes } from '@/components/record/demo-record'
 import { labels } from '@/components/record/record-copy'
 import { RecordSharePanel, type RecordSharePanelState } from '@/components/record/RecordSharePanel'
 import { RecordDossier, RecordUnavailableDossier } from '@/components/record/record-dossier'
@@ -217,7 +216,7 @@ export function RecordPageContent({
   ) : null
   const controlsNode = ganttRecord ? (
     <>
-    {!demoRoute && ganttRecord.id ? <ClinicalRecordNav active="record" locale={locale} patientId={ganttRecord.id} /> : null}
+    {ganttRecord.id ? <ClinicalRecordNav active="record" locale={locale} patientId={ganttRecord.id} /> : null}
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       {switchNode}
       <div className="flex items-center gap-3">
@@ -239,7 +238,6 @@ export function RecordPageContent({
             onCommitField={onCommitField}
             onCommitRange={onCommitRange}
             record={ganttRecord}
-            supplementNotes={demoRoute ? demoTreatmentGanttSupplementNotes : undefined}
           />
         </div>
       </>

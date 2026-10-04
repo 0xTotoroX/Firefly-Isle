@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查，依赖 react-dom/server 的静态渲染，依赖 MemoryRouter、ThemeProvider、LocaleProvider、BackgroundAudioProvider、LoginPageView 与 ClinicalTopBar。
  * [OUTPUT]: 对外提供背景音乐简洁歌单入口的可访问语义、窄屏可用顶栏、顶栏直接播放/暂停、悬停播放器与桥接区域回归测试。
  * [POS]: components 的背景音乐 UI 合同测试，约束登录页工具区与已登录壳层共用同一个音乐开关、窄屏可用顶栏、当前曲目、上一首/下一首入口、暂停文案、紧凑顶栏直接切换、hover 弹层触发与按钮到弹层的连续 hover 区域。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 

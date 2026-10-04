@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 describe/it/expect，依赖 PatientRecord 与 ./treatment-gantt 的 buildTreatmentGanttProjection。
  * [OUTPUT]: 对外提供治疗方案甘特数据归一化回归测试。
  * [POS]: components/timeline 的纯逻辑测试，约束初发 BL、治疗线 L 标记、排序、PFS、间隔、时间轴比例与开放当前线判定。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'
 

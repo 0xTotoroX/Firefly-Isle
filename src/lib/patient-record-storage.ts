@@ -1,8 +1,8 @@
 /**
  * [INPUT]: 依赖 @/lib/supabase 的客户端入口与 @/types/patient 的 PatientRecord/TreatmentLine/LabReportBatch/LabResult 数据模型。
- * [OUTPUT]: 对外提供 loadPatientRecordById、loadLatestPatientRecord、persistPatientRecord 与 lab batch/result row/payload 映射工具，并校验传入 patient id 的归属；旧 schema 仅在读取时降级，写入必须使用新 RPC。
- * [POS]: lib 的患者记录持久化边界，统一 routes、workspace 对患者及子记录的读取映射和原子写入，使用单事务 RPC 核对发起账号并保留已归属子记录身份。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [OUTPUT]: 对外提供病历摘要分页、单份/最新病历读取、persistPatientRecord 与 lab row/payload 映射工具；旧 schema 仅在读取时降级，写入必须使用新 RPC。
+ * [POS]: lib 的患者记录持久化边界，单事务 RPC 核对发起账号、保留子记录身份；新草稿由调用方保持创建 UUID，重试复用。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { getSupabaseClient } from '@/lib/supabase'
 import { ensureBrowserOnline } from '@/lib/network-status'
@@ -291,9 +291,48 @@ export async function loadLatestPatientRecord(userId: string) {
   return patient ? loadPatientChildren(patient) : null
 }
 
-export async function persistPatientRecord(record: PatientRecord, expectedOwnerId: string): Promise<PatientRecord> {
+export type PatientRecordSummary = {
+  id: string
+  name: string | null
+  tumorType: string | null
+  updatedAt: string
+}
+
+export type PatientRecordCursor = { createdAt: string; id: string }
+export type PatientRecordSummaryPage = { records: PatientRecordSummary[]; nextCursor: PatientRecordCursor | null }
+
+type PatientSummaryRow = { id: string; name: string | null; tumor_type: string | null; created_at: string; updated_at: string }
+
+export async function loadPatientRecordSummaries(expectedOwnerId: string, cursor: PatientRecordCursor | null = null): Promise<PatientRecordSummaryPage> {
   ensureBrowserOnline()
-  const { data, error } = await getSupabaseClient().rpc('persist_patient_record', { record, expected_owner_id: expectedOwnerId })
+  const supabase = getSupabaseClient()
+  const { data: authData, error: authError } = await supabase.auth.getUser()
+  if (authError || authData.user?.id !== expectedOwnerId) throw authError ?? new Error('Account changed while loading records.')
+  // Creation order is stable while clinical edits update updated_at. The ID is
+  // the tie breaker, so identical timestamps and deletions do not skip records.
+  let query = supabase.from('patients')
+    .select('id, name:basic_info->>name, tumor_type:basic_info->>tumorType, created_at, updated_at', { count: 'exact' })
+    .eq('user_id', expectedOwnerId)
+    .order('created_at', { ascending: false }).order('id', { ascending: false }).limit(10)
+  if (cursor) query = query.or(`created_at.lt.${cursor.createdAt},and(created_at.eq.${cursor.createdAt},id.lt.${cursor.id})`)
+  const { data, count, error } = await query
+  if (error) throw error
+  const rows = (data ?? []) as unknown as PatientSummaryRow[]
+  const last = rows.at(-1)
+  return {
+    records: rows.map((row) => ({ id: row.id, name: row.name, tumorType: row.tumor_type, updatedAt: row.updated_at })),
+    // Count the remaining filtered rows, including when the server caps below 10.
+    nextCursor: last && (count === null || count > rows.length) ? { createdAt: last.created_at, id: last.id } : null,
+  }
+}
+
+export async function persistPatientRecord(record: PatientRecord, expectedOwnerId: string, createRequestId?: string): Promise<PatientRecord> {
+  ensureBrowserOnline()
+  const { data, error } = await getSupabaseClient().rpc('persist_patient_record', {
+    record,
+    expected_owner_id: expectedOwnerId,
+    ...(!record.id && createRequestId ? { create_request_id: createRequestId } : {}),
+  })
   if (error) throw error
   if (!data?.id) throw new Error('Patient record was not saved.')
   return data as PatientRecord

@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: Supabase 客户端装配、浏览器存储与 mock 迁移函数。
+ * [OUTPUT]: 云端会话保留、迁移前记录和存储不可用回退的回归。
+ * [POS]: 客户端初始化兼容协议测试，不连接生产项目。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 /** Client initialization with isolated browser storage; no network or DOM required. */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -59,4 +65,11 @@ describe('Supabase client migration wiring', () => {
     expect(mock.createClient).toHaveBeenCalledOnce()
     expect(() => client.completeSupabaseSessionMigration(token('https://supabase.ghibli1024.com'))).not.toThrow()
   })
+})
+
+it.each(['/auth/callback', '/auth/reset-password', '/login', '/'])('assigns exactly one URL exchange owner for %s', async (pathname) => {
+  Object.assign(window, { location: { pathname } })
+  const client = await import('./supabase')
+  client.getSupabaseClient()
+  expect(mock.createClient).toHaveBeenCalledWith(expect.any(String), expect.any(String), expect.objectContaining({ auth: expect.objectContaining({ flowType: 'pkce', detectSessionInUrl: !pathname.startsWith('/auth/') }) }))
 })

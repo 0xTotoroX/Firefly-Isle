@@ -1,10 +1,11 @@
 /**
  * [INPUT]: 依赖 react 的表单状态 hooks，依赖 @/components/login-page-view 的展示层，依赖 ./login-page.logic 的认证动作，依赖 @/lib/theme、@/lib/locale、copy 字典与 @/lib/supabase 的认证边界。
  * [OUTPUT]: 对外提供 LoginPage 组件，对应 /login。
- * [POS]: routes 的登录页容器，管理邮箱登录、注册、重置密码、手机/微信占位、Google OAuth、匿名进入与主题切换，不承载大段设计复刻 markup。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [POS]: routes 的登录页容器；本次认证成功后替换错误/重置入口进入 Dashboard，旧会话与待确认注册不触发导航。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type FormEvent, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import {
   type AuthMethod,
@@ -43,10 +44,11 @@ function unexpectedFeedback(mode: AuthMode, locale: 'zh' | 'en'): AuthFeedback {
 }
 
 export function LoginPage({ authError = null }: { authError?: string | null }) {
+  const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const { locale } = useLocale()
   const [authMethod, setAuthMethod] = useState<AuthMethod>('email')
-  const [mode, setMode] = useState<AuthMode>('login')
+  const [mode, setMode] = useState<AuthMode>(() => typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('mode') === 'password-reset' ? 'password-reset' : 'login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [feedback, setFeedback] = useState<AuthFeedback | null>(null)
@@ -55,6 +57,11 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
   const getAuthClient = (): LoginAuthClient => getSupabaseClient().auth as unknown as LoginAuthClient
 
   const applyAuthResult = (result: AuthActionResult) => {
+    if (result.authenticated) {
+      setPassword('')
+      navigate('/dashboard', { replace: true })
+      return
+    }
     if (result.clearPassword) {
       setPassword('')
     }
@@ -94,7 +101,8 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
           locale,
           mode,
           password,
-          passwordResetRedirectTo: getAuthRedirectTo('/login'),
+          passwordResetRedirectTo: getAuthRedirectTo('/auth/reset-password'),
+          signUpRedirectTo: getAuthRedirectTo('/auth/callback'),
         }),
       )
     } catch {

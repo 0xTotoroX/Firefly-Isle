@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest、./shared 的微信 OAuth2 adapter 纯逻辑与内存 KV。
  * [OUTPUT]: 对外提供 adapter 授权跳转、token 交换、userinfo 与错误路径回归测试。
  * [POS]: functions/api/auth/wechat 的协议测试，确保 Cloudflare Pages Functions 与 Supabase custom provider 的契约稳定。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 import { describe, expect, it, vi } from 'vitest'

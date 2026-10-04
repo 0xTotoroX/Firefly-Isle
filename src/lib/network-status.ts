@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react hooks 与浏览器 navigator online/offline 事件。
  * [OUTPUT]: 对外提供 OnlineRequiredError、在线状态 hook、离线检测与中英文在线依赖提示。
  * [POS]: src/lib 的网络状态边界，让 PWA 离线壳只表达真实连接状态，不让认证、OCR、AI、保存、分享或统计读取伪成功。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useState } from 'react'
 

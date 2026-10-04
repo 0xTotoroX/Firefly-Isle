@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 2026-05-05 时点 docs/products/product-priority-roadmap.md 的 14 项产品路线图快照。
  * [OUTPUT]: 对外提供历史 Goal Forge 草案、候选 done_when、执行边界与验证回路归档。
  * [POS]: docs/products/archive 的历史计划证据，不再作为当前产品执行入口。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  -->
 
 # 产品 Goal 草案集（2026-05-05 归档）

@@ -1,4 +1,10 @@
 <!doctype html>
+<!--
+ [INPUT]: React main.tsx、公开静态资源及本地主题/强调色偏好。
+ [OUTPUT]: SPA 挂载入口、PWA metadata 与首屏主题初始化。
+ [POS]: 根目录浏览器文档；内联主题脚本与 public/_headers 的 CSP hash 配套。
+ [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+-->
 <html lang="zh-CN" class="dark">
   <head>
     <meta charset="UTF-8" />
@@ -15,10 +21,6 @@
     <link rel="icon" href="/logo-island-lighthouse.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-    />
     <script>
       try {
         const theme = window.localStorage.getItem('firefly-theme') === 'light' ? 'light' : 'dark'

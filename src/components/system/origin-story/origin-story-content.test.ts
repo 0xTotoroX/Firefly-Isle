@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 与 origin-story-content 的公开原帖内容合同。
  * [OUTPUT]: 对外验证创作初衷完整呈现用户指定的公开故事，并将唯一规范来源地址作为正文末尾纯文本。
  * [POS]: origin-story 内容源的回归测试，避免再次把公开原帖错误压缩成无关泛化摘要或引入非公开材料。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'
 

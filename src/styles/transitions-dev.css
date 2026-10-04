@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 src/index.css 导入与全局 CSS 变量，承载 Transitions.dev 可移植动效工具。
  * [OUTPUT]: 对外提供 badge、dropdown、panel、popover、route reveal、stagger、control press、accordion、文字 tab switch、record view、timeline rail、gantt grow、selection pulse、edit flip、audio popover、resize、icon/text swap、modal、page 与 digit 动效类。
  * [POS]: src/styles 的共享动效合同，被组件以 t-* class 组合复用，避免业务组件内联 keyframes。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  *
  * Source: https://transitions.dev/
  */

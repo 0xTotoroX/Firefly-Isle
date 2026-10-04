@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 CSSProperties 类型、@/lib/locale 的 Locale 与 @/lib/utils 的 cn。
  * [OUTPUT]: 对外提供 FireflyBrandWordmark 组件，统一紧凑侧栏水平字标、登录页艺术字标、萤字微光、渐隐横线、登录页收敛尺寸与可选副标题。
  * [POS]: src/components/system 的品牌字标基元，被 sidebar-nav 与 login-entry-view 复用，保证内页工具栏与登录页品牌设计同源但按场景分化字体重心。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type CSSProperties } from 'react'
 

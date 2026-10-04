@@ -8,7 +8,6 @@
     "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlya2pibHB6bWNscWVreGJleGxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4Mzg4NjMsImV4cCI6MjA5MTQxNDg2M30.M0RMr2hWYM6SjlXR6RRs752bg7KFOBY1Pat9Y0-ZchQ",
     "VITE_SUPABASE_EDGE_FUNCTION_URL": "https://irkjblpzmclqekxbexll.functions.supabase.co",
     "VITE_SUPABASE_WECHAT_PROVIDER": "custom:wechat",
-    "VITE_DEMO_RECORD_SHARE_CODE": "",
     "SUPABASE_AUTH_CALLBACK_URL": "https://irkjblpzmclqekxbexll.supabase.co/auth/v1/callback",
     "WECHAT_OAUTH_CLIENT_ID": "firefly-isle-wechat",
     "WECHAT_OAUTH_PUBLIC_BASE_URL": "https://firefly.ghibli1024.com"

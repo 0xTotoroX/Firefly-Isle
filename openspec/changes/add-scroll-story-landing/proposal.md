@@ -32,10 +32,10 @@
 
 ## Impact
 
-- 受影响前端组件：`src/components/login/login-entry-view.tsx`（入口编排层从单屏改为叙事容器）、`src/components/login/CLAUDE.md`、新增叙事章节与 ScrollTrigger 编排模块。
+- 受影响前端组件：`src/components/login/login-entry-view.tsx`（入口编排层从单屏改为叙事容器）、`src/components/login/AGENTS.md`、新增叙事章节与 ScrollTrigger 编排模块。
 - 受影响依赖：新增 `gsap`（当前未安装，`package.json` 中仅有 `three` 与 `threejs-components`）。
 - 受影响样式：`src/styles/transitions-dev.css` 的 reduced-motion 收敛清单需覆盖新增叙事类。
 - 受影响测试：`src/components/login-page-view.test.tsx` 中锁 Demo CTA 的断言需改为锁"不存在 Demo CTA"；新增章节顺序与 reduced-motion 契约测试。
 - 受影响规格：`openspec/specs/app-shell/spec.md`、`openspec/specs/demo-mode/spec.md`、`openspec/specs/theme-system/spec.md` 的登录页与 Demo 入口条款。
-- 受影响文档：`DESIGN.md` / `docs/design/Image-2/V3/DESIGN.md` 的登录页视觉契约、`openspec/changes/CLAUDE.md` 变更地图、`src/components/**/CLAUDE.md` 架构头部。
+- 受影响文档：`DESIGN.md` / `docs/design/Image-2/V3/DESIGN.md` 的登录页视觉契约、`openspec/changes/AGENTS.md` 变更地图、`src/components/**/AGENTS.md` 架构头部。
 - 不受影响：Supabase 认证语义、`/app`、`/record/:id`、`/analytics/:id`、导出、分享、AI 分析、Capacitor 移动壳与 PWA 契约。

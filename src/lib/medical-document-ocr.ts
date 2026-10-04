@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/supabase 的 Edge Function env 与当前 Supabase session。
  * [OUTPUT]: 对外提供 MedicalDocumentOcrError、recognizeMedicalDocument 与 getMedicalDocumentOcrMessage。
  * [POS]: src/lib 的医学文档 OCR 前端协议边界，负责文件校验、base64 编码、JWT 透传与错误归一。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { getSupabaseClient, hasSupabaseEnv, hasSupabaseFunctionEnv, supabaseEdgeFunctionUrl } from '@/lib/supabase'
 import type { Locale } from '@/lib/locale'

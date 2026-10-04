@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查、react-dom/server 的静态渲染、LocaleProvider 与 ./TimelineTable 的 blur 取消提交 helpers。
  * [OUTPUT]: 对外提供 TimelineTable Escape 取消不提交行为、主题 class 分支去噪与患者类型标签不外露的回归测试。
  * [POS]: components/timeline 的主表格测试，约束输入框取消语义、CSS 变量驱动的主题边界与正式时间线头部信息边界，和 TimelineTable.tsx 同步演化。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { renderToStaticMarkup } from 'react-dom/server'

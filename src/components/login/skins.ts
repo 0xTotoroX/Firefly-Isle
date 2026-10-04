@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/theme 的 Theme 类型与 public/login 的双主题认证场景资产路径。
  * [OUTPUT]: 对外提供登录页入口与认证卡的 skin token、场景图片常量。
  * [POS]: components/login 的视觉材料表，被入口页、AuthCard 与 AuthOverlay 读取，不承载 JSX。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { Theme } from '@/lib/theme'
 

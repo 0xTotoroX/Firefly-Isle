@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 Deno console。
  * [OUTPUT]: 对外提供 createFunctionLogger 与 FunctionLogger / LogLevel 类型。
  * [POS]: supabase/functions 的共享可观测性边界，把静默失败路径变成单行结构化 JSON 日志；调用方 SHALL NOT 把密钥或敏感负载放进 meta。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 export type LogLevel = 'error' | 'info' | 'warn'

@@ -1,8 +1,8 @@
 /**
- * [INPUT]: 依赖 Web Crypto 的 HMAC-SHA256、Stripe webhook 事件结构、注入的 runtime fetch 与 Supabase REST 写路径。
+ * [INPUT]: Web Crypto HMAC-SHA256、Stripe Checkout 事件、注入 fetch 与 record_donation_payment RPC。
  * [OUTPUT]: 对外提供 createStripeWebhookHandler、RuntimeEnv、verifyStripeSignature 与 StripeWebhookEvent 类型。
- * [POS]: supabase/functions/stripe-webhook 的可测试核心，验证签名后把 customer.subscription 事件落到 subscriptions 表（按 user_id upsert 幂等）；无服务端密钥时 fail-closed 返回 BILLING_DISABLED。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [POS]: 原文验签后校验一次性捐赠的付款事实；数据库按 Checkout Session 原子合并状态并保留注销后的解除关联，无配置时关闭。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300
@@ -104,30 +104,39 @@ function mapDonationRow(event: StripeWebhookEvent): Record<string, unknown> | nu
   const object = event.data?.object
   const sessionId = object?.id
   const userId = object?.client_reference_id || object?.metadata?.user_id
-  const amountCents = object?.amount_total ?? Number(object?.metadata?.amount_cents)
-
-  if (!sessionId || !Number.isInteger(amountCents) || amountCents <= 0) {
+  const amountCents = object?.amount_total
+  const currency = object?.currency
+  const paymentIntent = object?.payment_intent
+  if (object?.mode !== 'payment' || typeof sessionId !== 'string' || !/^cs_[A-Za-z0-9_]+$/.test(sessionId)
+    || typeof amountCents !== 'number' || !Number.isSafeInteger(amountCents) || amountCents <= 0 || amountCents > 2_147_483_647
+    || typeof currency !== 'string' || !/^[a-z]{3}$/.test(currency)
+    || (paymentIntent != null && (typeof paymentIntent !== 'string' || !/^pi_[A-Za-z0-9_]+$/.test(paymentIntent)))
+    || (userId != null && (typeof userId !== 'string' || !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(userId)))
+    || (object.client_reference_id && object.metadata?.user_id && object.client_reference_id !== object.metadata.user_id)) {
     return null
   }
-
+  let status: 'pending' | 'paid' | 'failed'
+  if (event.type === 'checkout.session.async_payment_failed' && object.payment_status === 'unpaid') status = 'failed'
+  else if (event.type !== 'checkout.session.async_payment_failed' && object.payment_status === 'paid') status = 'paid'
+  else if (event.type === 'checkout.session.completed' && object.payment_status === 'unpaid') status = 'pending'
+  else return null
   return {
-    amount_cents: amountCents,
-    currency: object?.currency ?? 'usd',
-    status: object?.payment_status === 'paid' || object?.status === 'complete' ? 'paid' : 'pending',
-    stripe_checkout_session_id: sessionId,
-    stripe_payment_intent_id: object?.payment_intent ?? null,
-    user_id: userId ?? null,
+    p_amount_cents: amountCents,
+    p_currency: currency,
+    p_status: status,
+    p_checkout_session_id: sessionId,
+    p_payment_intent_id: paymentIntent ?? null,
+    p_user_id: userId ?? null,
   }
 }
 
-async function upsertDonation(row: Record<string, unknown>, config: { serviceKey: string; supabaseUrl: string }, runtimeFetch: RuntimeFetch): Promise<boolean> {
+async function recordDonation(row: Record<string, unknown>, config: { serviceKey: string; supabaseUrl: string }, runtimeFetch: RuntimeFetch): Promise<boolean> {
   try {
-    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/donations?on_conflict=stripe_checkout_session_id`, {
+    const response = await runtimeFetch(`${config.supabaseUrl}/rest/v1/rpc/record_donation_payment`, {
       body: JSON.stringify(row),
       headers: {
         Authorization: `Bearer ${config.serviceKey}`,
         'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates',
         apikey: config.serviceKey,
       },
       method: 'POST',
@@ -175,20 +184,27 @@ export function createStripeWebhookHandler(options: { env: RuntimeEnv; fetch?: R
       return jsonResponse(400, errorBody('InvalidRequestError', 'Request body must be valid JSON.'))
     }
 
-    if (event.type !== 'checkout.session.completed' && event.type !== 'checkout.session.async_payment_succeeded') {
+    if (!event || typeof event !== 'object' || Array.isArray(event)) {
+      return jsonResponse(400, errorBody('InvalidRequestError', 'Request body must be an event object.'))
+    }
+
+    if (!['checkout.session.completed', 'checkout.session.async_payment_succeeded', 'checkout.session.async_payment_failed'].includes(event.type ?? '')) {
       return jsonResponse(200, { received: true, ignored: event.type ?? null })
+    }
+    if (event.data?.object?.mode && event.data.object.mode !== 'payment') {
+      return jsonResponse(200, { received: true, ignored: event.type })
     }
 
     const row = mapDonationRow(event)
 
     if (!row) {
-      return jsonResponse(400, errorBody('UnhandledEventError', 'Checkout session is missing an amount or session id.'))
+      return jsonResponse(400, errorBody('UnhandledEventError', 'Checkout session has invalid donation payment facts.'))
     }
 
-    const persisted = await upsertDonation(row, { serviceKey, supabaseUrl }, runtimeFetch)
+    const persisted = await recordDonation(row, { serviceKey, supabaseUrl }, runtimeFetch)
 
     if (!persisted) {
-      return jsonResponse(502, errorBody('ConfigurationError', 'Could not persist the subscription change.'))
+      return jsonResponse(502, errorBody('ConfigurationError', 'Could not persist the donation payment.'))
     }
 
     return jsonResponse(200, { received: true })

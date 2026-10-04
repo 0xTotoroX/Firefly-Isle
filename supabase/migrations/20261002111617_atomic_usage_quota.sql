@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 auth.users、usage_events、plans 与 subscriptions。
 -- [OUTPUT]: consume_usage 在同一事务中检查短时/30天额度并记录获准的上游尝试。
 -- [POS]: 配额唯一写入边界；规则由数据库控制，客户端不能提交用户ID或额度。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 alter table public.plans enable row level security;
 create policy plans_select on public.plans for select to authenticated using (true);

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/types/patient 的 PatientRecord 结构真相源。
  * [OUTPUT]: 对外提供 PATIENT_RECORD_SCHEMA 与 buildExtractionPrompt。
  * [POS]: src/lib 的提取提示词边界，用一句式 JSON 字段合同约束 LLM 输出，避免长 schema 或多消息 prompt 触发上游失败。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { PatientRecord } from '@/types/patient'
 

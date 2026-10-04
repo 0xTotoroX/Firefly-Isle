@@ -3,7 +3,7 @@
  * [INPUT]: 真实 RecordPageContent、虚构病历、Testing Library 与 MemoryRouter。
  * [OUTPUT]: 病历页签键盘导航、患者链接和默认折叠分享的行为合同。
  * [POS]: routes 的记录阅读导航回归，不调用存储或创建分享。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 import { render, screen } from '@testing-library/react'
@@ -48,6 +48,7 @@ it('supports End and arrow keys while preserving focus on the selected tab', asy
 it('keeps patient-scoped links and sharing collapsed above the dossier', () => {
   const { container } = render(<Page />)
   expect(screen.getByRole('navigation', { name: '当前病历导航' })).toBeVisible()
+  expect(screen.getByRole('link', { name: '返回工作台' })).toHaveAttribute('href', '/app?patient=p1')
   expect(screen.getByTestId('record-follow-up-link')).toHaveAttribute('href', '/record/p1/follow-up')
   expect(container.querySelector('details')).not.toHaveAttribute('open')
   expect(screen.getByText('展开分享设置')).toBeVisible()

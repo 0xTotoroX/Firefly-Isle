@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/components/system 的 topbar、masthead、sidebar 导出，承载占位素材常量供页面复用。
  * [OUTPUT]: 对外提供 ClinicalTopBar、DarkTopBar、ArchiveSideNav、LightMasthead 与设计复刻所需的占位图常量。
  * [POS]: components 的薄壳层导出文件，负责复用 V3 可变侧栏与 system shell 并暴露页面所需占位素材，不再承载主题结构实现细节。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export { ArchiveSideNav, AVATAR_PLACEHOLDER } from '@/components/system/sidebar-nav'
 export { LightMasthead } from '@/components/system/masthead'

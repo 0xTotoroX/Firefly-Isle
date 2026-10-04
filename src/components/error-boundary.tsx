@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 Component 错误捕获生命周期、copy.errorBoundary 文案与当前 document 语言标记。
  * [OUTPUT]: 对外提供 ErrorBoundary 组件。
  * [POS]: components 的全局渲染崩溃护栏，捕获子树渲染错误并给出可恢复降级 UI；禁止消费 Theme/Locale 上下文，保证崩溃发生在 Provider 层时护栏自身仍可渲染。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { Component, type ErrorInfo, type ReactNode } from 'react'
 

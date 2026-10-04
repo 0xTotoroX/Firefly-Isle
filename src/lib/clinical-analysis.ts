@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/llm 的 chat/json_object 能力，依赖 @/types/patient 的 PatientRecord/LabResult 数据模型。
  * [OUTPUT]: 对外提供 ClinicalAnalysisResult、ClinicalAnalysisParseError、buildClinicalAnalysisMessages、parseClinicalAnalysisResponse 与 analyzePatientRecord。
  * [POS]: src/lib 的临床辅助分析边界，把 PatientRecord/labResults 压缩为非诊断 prompt，并把 LLM JSON 输出校验为 UI 可展示结构。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { chat, type Message } from '@/lib/llm'
 import type { LabResult, PatientRecord, TreatmentLine } from '@/types/patient'

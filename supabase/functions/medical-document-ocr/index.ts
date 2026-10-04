@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 Deno runtime env 与 ./handler 的 createMedicalDocumentOcrHandler。
  * [OUTPUT]: 启动 medical-document-ocr Supabase Edge Function。
  * [POS]: supabase/functions/medical-document-ocr 的 Deno 壳层，仅负责把运行时 env 交给可测试 handler。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createMedicalDocumentOcrHandler } from './handler.ts'
 

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的断言与 mock，依赖 background-audio 的控制器、偏好读取、曲目清单与存储 key。
  * [OUTPUT]: 对外提供背景音乐控制器与本地歌单状态机回归测试。
  * [POS]: src/lib 的背景音乐行为合同测试，约束 Nagisa / Merry 双曲歌单默认值、曲目持久化、循环切歌、ended 前进、播放/暂停意图刷新恢复、自动播放拦截与不可用状态。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it, vi } from 'vitest'
 

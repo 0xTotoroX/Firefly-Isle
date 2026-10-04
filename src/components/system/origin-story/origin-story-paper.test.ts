@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react、react-dom/server、vitest 与 OriginStoryPaper 的纯 DOM 阅读弹层。
  * [OUTPUT]: 对外验证 V3 token、普通正文、纯文本来源、可见关闭按钮与无 Canvas/WebGL 的展示合同。
  * [POS]: components/system/origin-story 的阅读弹层回归测试，防止重新引入独立羊皮纸材质、隐藏关闭控件或尾段粗体。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createElement, createRef } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'

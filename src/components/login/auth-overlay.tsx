@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的弹层生命周期 hooks、AuthCard、auth-copy、登录认证卡 skin 与 transitions-dev.css 的 modal/popover 动效合同。
  * [OUTPUT]: 对外提供 AuthOverlay 组件，负责统一登录弹层、弹出/关闭动画、Esc 关闭与背景点击关闭。
  * [POS]: components/login 的弹层容器，只编排 AuthCard 与 modal/popover 动效，不承载表单字段实现。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 

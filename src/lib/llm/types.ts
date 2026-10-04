@@ -2,7 +2,7 @@
  * [INPUT]: 无运行时依赖，只定义前端 LLM adapter 的公共消息、参数与错误类型。
  * [OUTPUT]: 对外提供 Message、ChatProvider、ChatResponseFormat、ChatOptions、ChatErrorName、ChatError 与 ChatResult 类型。
  * [POS]: src/lib/llm 的类型边界文件，被 chat 封装与上层业务共同消费。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export type Message = {
   role: 'system' | 'user' | 'assistant'

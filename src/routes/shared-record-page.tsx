@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react/useRef、react-router-dom 的 useParams、RecordDossier 只读展示、record-sharing 的授权码加载器、async-resource 的共享加载基元、locale/theme 与 system surface。
  * [OUTPUT]: 对外提供 SharedRecordPage 组件，对应 /share/:code，渲染单份 PatientRecord 只读分享与过期/撤销/不可用反馈。
  * [POS]: routes 的公开只读分享页，只消费授权码换回的单份记录，不挂载编辑、保存、导出或 AI 分析动作。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useRef } from 'react'
 import { useParams } from 'react-router-dom'

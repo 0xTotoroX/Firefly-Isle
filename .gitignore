@@ -7,9 +7,12 @@ work/
 .wrangler/
 coverage/
 output/
+# Local archive payloads; keep the archive index and maintenance map in Git.
+/archive/backups/
+/archive/design-kit/
+/archive/legacy-projects/
 /*.png
 /*-snapshot.md
-docs/design/Image-2/V4/.qa-*.png
 .env.local
 .env.*.local
 .dev.vars

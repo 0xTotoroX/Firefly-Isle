@@ -2,7 +2,7 @@
 [INPUT]: 依赖 OpenSpec change add-cross-platform-pwa-foundation、public/manifest.webmanifest、public/sw.js、public/_headers、public/_redirects 与当前 Cloudflare Pages 发布链路。
 [OUTPUT]: 提供 PWA foundation 发布前手动验证矩阵、缓存隐私检查与回滚步骤。
 [POS]: docs/operations 的 PWA 跨平台验证 runbook，服务 Web-first 安装体验与后续 Capacitor 壳层前置验收。
-[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+[PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -->
 
 # Firefly-Isle PWA 验证矩阵
@@ -20,7 +20,17 @@
 | Android Chrome | 安装应用 | manifest、Demo、上传、分享复制、弱网反馈 | 待验 |
 | Android installed PWA | 已安装图标启动 | 深链路、统计页、记录页、离线壳 | 待验 |
 
-## 2. 本地自动预检记录
+## 2. 2026-10-03 真实部署回归
+
+Cloudflare 独立预览已实际发布，正式主站未切换。`212f9097` 预览在现有 Chrome 中关闭普通 HTTP 缓存后断网，首次未访问的 Demo 病历仍能从 Cache Storage 加载，且显示需要联网的提示。访问合成 `/auth/callback?code=...` 与 `/share/...` 后遍历全部缓存键和 `Response.url`，78 项中没有合成凭据。旧的仅检查 key/关键词的验收不足以证明响应元信息安全。
+
+最终 `7c26b26f` 构建另经两版本验收：A 控制旧标签，带不同资源名和页面标题的 B 测试构建 `6ee41bb4` 安装等待；新标签继续使用 A，关闭 HTTP 缓存并断网后仍可打开此前未访问的病历，图标字体可用。关闭所有 A 标签后，新标签使用 B 脚本且只剩 B 缓存。B 仅为受控更新测试产物，交付预览恢复正式构建。
+
+`vite.config.ts` 使用 [Workbox getManifest](https://developer.chrome.com/docs/workbox/modules/workbox-build) 从实际构建生成 HTML、JS/CSS/woff、manifest 与图标清单，内容及 worker 源码共同决定版本；固定 URL 的安装请求强制刷新 HTTP 缓存。初次安装完成后接管；更新不强制 `skipWaiting`，待旧版本标签关闭后激活、清理旧缓存。旧 worker 始终返回同版本的规范 HTML 壳，避免新版 HTML 与旧懒加载资源混用。后台业务数据、含查询参数的静态请求和路由导航元信息均不预缓存。图标沿用 Material Symbols，以 Fontsource 本地字体随构建发布，避免断网时显示图标英文名称。
+
+固定导出布局规则已移至应用 CSS。在实际返回严格 CSP 的 `b09037f2` 预览中触发 PDF 导出，按钮完成且浏览器未记录 CSP 拒绝；Chrome 下载事件未返回文件路径，因此本轮远端 PDF 文件落盘/逐页检查仍未确认。此前本地 2 页与 3 页 PDF 的证据只代表对应本地构建。
+
+2026-05-17 本地预检（历史记录）：
 
 2026-05-17 使用 production build + Vite preview + Playwright Chromium 完成预检：
 
@@ -62,7 +72,8 @@
 
 - 允许出现：`/`、`/assets/*`、`/manifest.webmanifest`、`/icons/*`、`/login/*`、公开品牌图标。
 - 不得出现：患者姓名、授权码、`patients`、`treatment_lines`、`lab_results`、`record_shares`、Supabase Auth 响应、`llm-proxy` 响应、`medical-document-ocr` 响应、`/api/auth/wechat/*` 响应。
-- 新版本部署后刷新，旧 `firefly-pwa-*` cache 应被清理或替换。
+- 同时检查缓存键、匹配响应的 `url` 与正文；改成 `/` 键不能抹掉 `Response.clone()` 的原始地址。
+- 新版本应先完成资源安装；关闭旧版本的所有标签后重新进入，确认新版激活且旧 `firefly-pwa-*` cache 被清理。
 
 ## 6. 回滚
 

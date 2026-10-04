@@ -1,10 +1,11 @@
 /**
  * [INPUT]: 依赖 react 状态/ref/指针键盘事件、lucide-react 图标、@/components/system/surfaces、@/lib/lab-results 趋势工具、@/lib/lab-dictionary 分类字典与 PatientRecord/LabResult。
- * [OUTPUT]: 对外提供 LabAnalyticsDashboard 组件。
+ * [OUTPUT]: 对外提供 LabAnalyticsDashboard，区分加载、失败和真实空态，并提供读取重试及化验上传链接。
  * [POS]: components/analytics 的指标管理统计界面，负责只读图表、全局状态文字切换、可搜索/可滚动分类指标索引、监测表回选指标、肿瘤连续上涨提醒联动高亮、表格日期与图表点双向定位、可拖动横向滑动趋势图、时间点密度切换、SVG 图表导出、等价表格、demo 展示与非诊断监测面板展示；文件上传入口留在 /app 输入区。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type KeyboardEvent, type PointerEvent, useMemo, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { AlertCircle, CheckCircle2, Download, TrendingUp } from 'lucide-react'
 
 import { PanelSurface, SectionSurface } from '@/components/system/surfaces'
@@ -39,6 +40,8 @@ type LabAnalyticsDashboardProps = {
   isLoading?: boolean
   labResults: LabResult[]
   loadError?: string | null
+  onRetry?: () => void
+  uploadHref?: string
   theme: Theme
 }
 
@@ -46,6 +49,8 @@ export function LabAnalyticsDashboard({
   isLoading = false,
   labResults,
   loadError = null,
+  onRetry,
+  uploadHref = '/app',
   theme,
 }: LabAnalyticsDashboardProps) {
   const [activeCategory, setActiveCategory] = useState<LabResultCategory>('blood-routine')
@@ -337,6 +342,13 @@ export function LabAnalyticsDashboard({
     URL.revokeObjectURL(url)
   }
 
+  if (isLoading) {
+    return <PanelSurface className="p-5 text-sm" theme={theme}><p role="status">正在读取指标数据…</p></PanelSurface>
+  }
+  if (loadError) {
+    return <PanelSurface className="p-5 text-sm" theme={theme} tone="warning"><p role="alert">{loadError}</p>{onRetry ? <button className="mt-3 min-h-[44px] rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 font-semibold" onClick={onRetry} type="button">重试读取指标</button> : null}</PanelSurface>
+  }
+
   return (
     <div className="flex min-h-0 flex-col gap-4" data-testid="lab-analytics-dashboard">
       <div className="flex min-h-7 flex-col gap-2 text-sm font-semibold text-[var(--ff-text-secondary)] md:flex-row md:items-center md:justify-between">
@@ -373,16 +385,11 @@ export function LabAnalyticsDashboard({
         <SummaryCard Icon={CheckCircle2} index="03" label="覆盖指标 / 缺参考" tone="safe" value={`${coveredCount} / ${missingReferenceCount}`} />
       </div>
 
-      {loadError ? (
-        <PanelSurface className="p-5 text-sm font-semibold text-[var(--ff-accent-warning)]" theme={theme} tone="warning">
-          {loadError}
-        </PanelSurface>
-      ) : null}
-
       {!hasData ? (
         <PanelSurface className="p-8 text-center" theme={theme} tone="panel">
           <div className="font-[var(--ff-font-display)] text-2xl font-black tracking-normal">暂无已保存指标</div>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-[var(--ff-text-secondary)]">请回到 /app 输入区上传病历、血常规、血生化或肿瘤标志物图片/PDF；本页只读取已保存到网页端的指标数据。没有真实输入时，请使用 /demo/analytics 查看演示统计。</p>
+          <Link className="mt-4 inline-flex min-h-[44px] items-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold" to={uploadHref}>上传化验报告</Link>
         </PanelSurface>
       ) : (
         <div className="grid gap-4">

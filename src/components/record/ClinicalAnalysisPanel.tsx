@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/clinical-analysis 的 ClinicalAnalysisResult，依赖 @/lib/locale 的 Locale。
  * [OUTPUT]: 对外提供 ClinicalAnalysisPanel 组件，以平面章节渲染 AI 辅助分析入口、加载态、失败态、结果分区与非诊断免责声明。
  * [POS]: components/record 的 AI 分析展示层，由 record-page.view 注入状态和动作，不直接调用 LLM 或读取 Supabase；保留真实能力边界但不使用认证式 AI 装饰。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { ClinicalAnalysisResult } from '@/lib/clinical-analysis'
 import type { Locale } from '@/lib/locale'
@@ -100,6 +100,7 @@ export function ClinicalAnalysisPanel({
         </div>
         <button
           className='t-control-press w-fit border-b border-[var(--ff-border-default)] pb-0.5 text-sm font-semibold text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-text-primary)] disabled:cursor-not-allowed disabled:opacity-50'
+          data-html2canvas-ignore
           disabled={disabled || state.isLoading || !onAnalyze}
           onClick={onAnalyze}
           type='button'

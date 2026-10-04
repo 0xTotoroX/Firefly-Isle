@@ -1,13 +1,13 @@
 <!--
 [INPUT]: 依赖 /supabase/migrations/001_init.sql、/.env.local.example、/src/lib/supabase.ts、/supabase/functions/llm-proxy 与 OpenSpec 中已完成的 Supabase / LLM 事实。
-[OUTPUT]: 提供 Firefly-Isle 的 Supabase 从零配置、Auth 无邮箱确认、db push、bucket、storage policy、LLM proxy、术语与常见错误手册。
+[OUTPUT]: 提供 Firefly-Isle 的 Supabase 配置参考、邮件确认/密码恢复、db push、bucket、storage policy、LLM proxy、术语与常见错误手册；历史部署事实需现场复核。
 [POS]: docs/operations/supabase 的主 runbook，供下次重新配置项目时直接照做。
-[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+[PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -->
 
 # Firefly-Isle Supabase 操作手册
 
-这份手册只做一件事：下次从零恢复 Supabase 配置时，不靠记忆，按顺序把项目拉回可用状态。
+这份手册保留早期 Supabase 配置步骤。下列区域、project_ref、已落库状态是历史记录，不能当作当前部署证据；正式目标按 `../record-integrity-release.md` 和 `../../products/saas-acceptance.md` 重新核对，全部当前迁移以仓库 `supabase/migrations/` 为准。
 
 ## 0. 当前项目事实
 
@@ -17,7 +17,7 @@
   - `VITE_SUPABASE_URL`
   - `VITE_SUPABASE_ANON_KEY`
   - `VITE_SUPABASE_EDGE_FUNCTION_URL`
-- 已落库迁移：`/Users/Totoro/Desktop/Firefly-Isle/supabase/migrations/001_init.sql`
+- 已落库迁移：`supabase/migrations/001_init.sql`
 - 已创建 Storage bucket：`patient-assets`
 - 已验证完成的阶段：OpenSpec `3.1 ~ 3.7`
 - 当前已实现的 5.x 代码边界：
@@ -29,11 +29,11 @@
 
 真相源文件：
 
-- `/Users/Totoro/Desktop/Firefly-Isle/supabase/migrations/001_init.sql`
-- `/Users/Totoro/Desktop/Firefly-Isle/.env.local.example`
-- `/Users/Totoro/Desktop/Firefly-Isle/src/lib/supabase.ts`
-- `/Users/Totoro/Desktop/Firefly-Isle/openspec/changes/mvp-core/tasks.md`
-- `/Users/Totoro/Desktop/Firefly-Isle/openspec/changes/mvp-core/design.md`
+- `supabase/migrations/001_init.sql`
+- `.env.local.example`
+- `src/lib/supabase.ts`
+- `openspec/changes/archive/2026-04-13-mvp-core/tasks.md`
+- `openspec/changes/archive/2026-04-13-mvp-core/design.md`
 
 ## 1. 从零创建 Supabase 项目
 
@@ -57,9 +57,9 @@
 因此在 Dashboard 的 Auth 配置里至少检查：
 
 - Email provider 可用
-- Email 的 Confirm email / 邮箱确认已关闭；当前前端注册按钮是“创建账户并登录”，要求 `signUp()` 直接返回 session
+- Email 的 Confirm email 可开启或关闭；开启时注册后等待用户确认邮件，关闭时直接恢复 session。正式邮件需要可用 SMTP，不以本地 Mailpit 成功推断外部邮箱已可投递
 - Anonymous Sign-In 已开启；如果前端匿名入口返回 422，优先回到这里核对是否被关闭
-- Site URL 至少指向一个有效回跳地址；如果后续重新启用验证邮件或显式传入 `emailRedirectTo`，再把当前 origin 加入 Additional Redirect URLs
+- Site URL 指向当前前端，Additional Redirect URLs 包含该前端的 `/auth/callback` 与 `/auth/reset-password`；本地对应 `http://127.0.0.1:5173` 下的两个路径。确认与重置链接在同一浏览器完成 PKCE；失效链接应显示错误，不因浏览器有旧账号会话而允许改密
 
 说明：匿名登录不是“无身份”。Supabase 会为匿名用户创建真实 uid，所以后面的 `auth.uid()` RLS 和 Storage policy 仍然成立。
 

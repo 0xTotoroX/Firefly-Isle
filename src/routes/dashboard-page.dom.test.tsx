@@ -3,14 +3,14 @@
  * [INPUT]: 依赖 happy-dom 环境、@testing-library/react、@testing-library/user-event、@testing-library/jest-dom、vitest 模块 mock 与 ./dashboard-page。
  * [OUTPUT]: 对外提供 DashboardPage 的真实渲染行为回归测试。
  * [POS]: routes 的总览页 DOM 测试，约束精确数字渲染、最近病历与异常读数链接、空态可执行动作与加载失败反馈。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 
-import { render, screen } from '@testing-library/react'
+import { act, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BackgroundAudioProvider } from '@/lib/background-audio'
 import { copy, getCopy } from '@/lib/copy'
@@ -20,6 +20,10 @@ import { ThemeProvider } from '@/lib/theme'
 import { DashboardPage } from './dashboard-page'
 
 const loadDashboardData = vi.fn()
+const loadRecords = vi.fn()
+let userId = 'owner-a'
+vi.mock('@/lib/auth', () => ({ useOptionalAuth: () => ({ user: { id: userId } }) }))
+vi.mock('@/lib/patient-record-storage', () => ({ loadPatientRecordSummaries: (...args: unknown[]) => loadRecords(...args) }))
 
 vi.mock('@/lib/dashboard-data', () => ({
   loadDashboardData: (...args: unknown[]) => loadDashboardData(...args),
@@ -67,9 +71,18 @@ const fullData = {
   activeShareCount: 1,
   aiCallCount30d: 7,
   labReadingCount: 12,
-  latestRecord: { id: 'p1', tumorType: '乳腺癌', updatedAt: '2026-08-02T10:00:00Z' },
   patientCount: 3,
 }
+
+const firstPage = { records: [{ id: 'p1', name: '合成甲', tumorType: '乳腺癌', updatedAt: '2026-08-02T10:00:00Z' }], nextCursor: null }
+const cursor = { createdAt: '2026-08-02T10:00:00Z', id: 'p1' }
+const laterPage = { records: [{ id: 'p2', name: '合成乙', tumorType: '另一病种', updatedAt: '2026-08-01T10:00:00Z' }], nextCursor: null }
+beforeEach(() => {
+  vi.clearAllMocks()
+  userId = 'owner-a'
+  loadDashboardData.mockResolvedValue(fullData)
+  loadRecords.mockResolvedValue(firstPage)
+})
 
 describe('DashboardPage', () => {
   it('renders exact counts, the latest record link and abnormal readings', async () => {
@@ -91,7 +104,7 @@ describe('DashboardPage', () => {
 
     const analyticsLinks = screen.getAllByRole('link', { name: getCopy(copy.dashboard.viewAnalytics, 'zh') })
 
-    expect(analyticsLinks).toHaveLength(2)
+    expect(analyticsLinks).toHaveLength(3)
 
     for (const link of analyticsLinks) {
       expect(link).toHaveAttribute('href', '/analytics/p1')
@@ -99,7 +112,8 @@ describe('DashboardPage', () => {
   })
 
   it('offers an actionable empty state for accounts without records', async () => {
-    loadDashboardData.mockResolvedValue({ ...fullData, patientCount: 0, latestRecord: null, abnormalReadings: [], recentSideEffects: [], nextVisit: null })
+    loadRecords.mockResolvedValue({ records: [], nextCursor: null })
+    loadDashboardData.mockResolvedValue({ ...fullData, patientCount: 0, abnormalReadings: [], recentSideEffects: [], nextVisit: null })
     renderDashboard()
 
     expect(await screen.findByRole('link', { name: getCopy(copy.dashboard.emptyAction, 'zh') })).toHaveAttribute('href', '/app')
@@ -128,4 +142,61 @@ it.each([[-2, '已逾期 · 2 天'], [0, '今天复查']])('distinguishes the ca
   loadDashboardData.mockResolvedValue({ ...fullData, nextVisit: { ...fullData.nextVisit, daysUntil } })
   renderDashboard()
   expect(await screen.findByTestId('dashboard-next-visit')).toHaveTextContent(label)
+})
+
+it('keeps navigation available without a selected patient', async () => {
+  renderDashboard()
+  expect(await screen.findByRole('link', { name: '病历' })).toHaveAttribute('href', '/dashboard#records')
+  expect(screen.getByRole('link', { name: '统计' })).toHaveAttribute('href', '/dashboard#records')
+  expect(screen.queryByText('先提取')).not.toBeInTheDocument()
+})
+
+it('loads later records with all links scoped to the selected patient', async () => {
+  loadRecords.mockResolvedValueOnce({ ...firstPage, nextCursor: cursor }).mockResolvedValueOnce(laterPage)
+  renderDashboard()
+  await userEvent.click(await screen.findByRole('button', { name: '加载更多病历' }))
+  expect(await screen.findByText('合成乙')).toBeVisible()
+  const actions = within(screen.getByRole('navigation', { name: '合成乙' }))
+  expect(actions.getByRole('link', { name: '查看病历' })).toHaveAttribute('href', '/record/p2')
+  expect(actions.getByRole('link', { name: '查看指标' })).toHaveAttribute('href', '/analytics/p2')
+  expect(actions.getByRole('link', { name: '继续录入' })).toHaveAttribute('href', '/app?patient=p2')
+  expect(screen.getByText('合成甲')).toBeVisible()
+  expect(screen.queryByRole('button', { name: '加载更多病历' })).not.toBeInTheDocument()
+  expect(loadRecords).toHaveBeenNthCalledWith(2, 'owner-a', cursor)
+})
+
+it('retains loaded rows and retries the failed page without restarting pagination', async () => {
+  loadRecords.mockResolvedValueOnce({ ...firstPage, nextCursor: cursor }).mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(laterPage)
+  renderDashboard()
+  await userEvent.click(await screen.findByRole('button', { name: '加载更多病历' }))
+  expect(await screen.findByText('更多病历暂时无法读取，已加载的病历仍可使用。')).toBeVisible()
+  expect(screen.getByText('合成甲')).toBeVisible()
+  expect(screen.getByText('恶心')).toBeVisible()
+  await userEvent.click(screen.getByRole('button', { name: '重新读取病历' }))
+  expect(await screen.findByText('合成乙')).toBeVisible()
+  expect(loadRecords).toHaveBeenNthCalledWith(3, 'owner-a', cursor)
+  expect(screen.getAllByText('合成甲')).toHaveLength(1)
+})
+
+it('keeps the clinical dashboard usable when the first record page fails', async () => {
+  loadRecords.mockRejectedValueOnce(new Error('offline')).mockResolvedValueOnce(firstPage)
+  renderDashboard()
+  expect(await screen.findByText('病历读取失败，请重试。')).toBeVisible()
+  expect(screen.getByText('恶心')).toBeVisible()
+  expect(screen.queryByText('从第一份病历开始')).not.toBeInTheDocument()
+  await userEvent.click(screen.getByRole('button', { name: '重新读取病历' }))
+  expect(await screen.findByText('合成甲')).toBeVisible()
+})
+
+it('discards a previous account page that completes after switching accounts', async () => {
+  let finishOld!: (value: typeof firstPage) => void
+  loadRecords.mockReturnValueOnce(new Promise((resolve) => { finishOld = resolve })).mockResolvedValueOnce(laterPage)
+  const rendered = renderDashboard()
+  await screen.findByText('恶心')
+  userId = 'owner-b'
+  rendered.rerender(<ThemeProvider><LocaleProvider><MemoryRouter><BackgroundAudioProvider><DashboardPage /></BackgroundAudioProvider></MemoryRouter></LocaleProvider></ThemeProvider>)
+  expect(await screen.findByText('合成乙')).toBeVisible()
+  await act(async () => finishOld(firstPage))
+  expect(screen.queryByText('合成甲')).not.toBeInTheDocument()
+  expect(loadRecords).toHaveBeenNthCalledWith(2, 'owner-b', null)
 })

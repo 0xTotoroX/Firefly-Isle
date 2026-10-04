@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 Context、hooks 与浏览器 localStorage/documentElement。
  * [OUTPUT]: 对外提供 LocaleProvider、useLocale、Locale 类型、LOCALE_STORAGE_KEY 常量与文档语言同步工具。
  * [POS]: lib 的语言状态中心，统一管理 zh / en 切换、持久化、HTML lang/data-locale 与语言真相源消费入口。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   createContext,
@@ -51,8 +51,8 @@ function readStoredLocale(): Locale {
   return window.localStorage.getItem(LOCALE_STORAGE_KEY) === 'en' ? 'en' : 'zh'
 }
 
-export function LocaleProvider({ children }: PropsWithChildren) {
-  const [locale, setLocaleState] = useState<Locale>(readStoredLocale)
+export function LocaleProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
+  const [locale, setLocaleState] = useState<Locale>(() => persist ? readStoredLocale() : 'zh')
 
   useEffect(() => {
     syncDocumentLocale(locale)
@@ -60,16 +60,16 @@ export function LocaleProvider({ children }: PropsWithChildren) {
 
   const setLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale)
-    window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
-  }, [])
+    if (persist) window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
+  }, [persist])
 
   const toggleLocale = useCallback(() => {
     setLocaleState((currentLocale) => {
       const nextLocale = currentLocale === 'zh' ? 'en' : 'zh'
-      window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
+      if (persist) window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
       return nextLocale
     })
-  }, [])
+  }, [persist])
 
   const value = useMemo(
     () => ({ locale, setLocale, toggleLocale }),

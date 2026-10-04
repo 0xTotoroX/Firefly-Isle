@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 Supabase migration SQL。
  * [OUTPUT]: 对外提供 usage_events 用量台账迁移的合同测试。
  * [POS]: supabase/migrations 的配额 contract 测试，约束 kind 枚举、owner 只读 RLS 与 record_usage RPC 的鉴权边界。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

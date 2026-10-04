@@ -1,3 +1,7 @@
+-- [INPUT]: 既有患者、治疗线、化验批次/读数、分享表与 Supabase 身份。
+-- [OUTPUT]: 病历/化验事务 RPC、稳定子记录身份、脱敏分享 RPC 和撤销权限。
+-- [POS]: 完整性追加迁移；后续幂等创建迁移扩展保存协议，不使用逐表写入兜底。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- Atomic record/batch writes and capability-based sharing. Deploy before the new client.
 -- Database identity comes from auth.uid(); all nested identifiers are patient scoped.
 

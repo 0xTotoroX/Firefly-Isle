@@ -3,7 +3,7 @@
  * [INPUT]: 真实 App/BrowserRouter、合成登录状态与页面探针。
  * [OUTPUT]: 验证 Router 7 的账户守卫、患者参数、公开分享与认证回调。
  * [POS]: 路由升级行为回归；不连接账户、模型或真实病历。
- * [PROTOCOL]: 契约变化时同步 AGENTS.md。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { cleanup, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'

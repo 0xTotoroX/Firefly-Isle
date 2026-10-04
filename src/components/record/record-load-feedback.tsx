@@ -2,7 +2,7 @@
  * [INPUT]: 加载/失败状态、重试动作与当前 locale。
  * [OUTPUT]: 病历辅助页面共用的加载和失败恢复提示。
  * [POS]: 区分读取失败与无记录，避免页面在未知病历上继续写入。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'

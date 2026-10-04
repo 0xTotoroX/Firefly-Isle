@@ -2,8 +2,9 @@
  * [INPUT]: 依赖 react 的本地表单状态、@/lib/locale 的语言状态、@/lib/llm/provider-settings 的设置 API 与 DeepSeek 连通性测试、system ActionSurface 与 transitions-dev.css 的 accordion/control/tab 动效合同。
  * [OUTPUT]: 对外提供 LlmProviderSettingsPanel 组件与字段显隐纯函数，渲染整块可点击收起的系统内置 deepseek-v4-flash、API 自提供、自定义设置与 DeepSeek 服务测试入口。
  * [POS]: components/workspace 的 provider 设置区块，被 ExtractionComposer 嵌入，负责紧凑头部展开、按模式展开字段、测试系统模型连通性与保存动作但不参与正式 chat 请求。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
+import { useDemoSession } from '@/lib/demo-session'
 import { useEffect, useState } from 'react'
 
 import { ActionSurface } from '@/components/system/surfaces'
@@ -45,17 +46,19 @@ export function getLlmProviderVisibleFields(mode: LlmProviderMode) {
 
 export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProviderSettingsPanelProps) {
   const { locale } = useLocale()
+  const demoSession = useDemoSession()?.session
   const [expanded, setExpanded] = useState(false)
-  const [mode, setMode] = useState<LlmProviderMode>('system')
-  const [provider, setProvider] = useState<Exclude<LlmProviderId, 'custom_openai'>>('openai')
+  const [mode, setMode] = useState<LlmProviderMode>(() => demoSession?.getState().modelPreview.mode ?? 'system')
+  const [provider, setProvider] = useState<Exclude<LlmProviderId, 'custom_openai'>>(() => demoSession?.getState().modelPreview.provider ?? 'openai')
   const [apiKey, setApiKey] = useState('')
-  const [baseUrl, setBaseUrl] = useState('')
-  const [model, setModel] = useState('')
+  const [baseUrl, setBaseUrl] = useState(() => demoSession?.getState().modelPreview.baseUrl ?? '')
+  const [model, setModel] = useState(() => demoSession?.getState().modelPreview.model ?? '')
   const [message, setMessage] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
 
   useEffect(() => {
+    if (demoSession) return
     let active = true
 
     void getLlmProviderSetting()
@@ -78,9 +81,14 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
     return () => {
       active = false
     }
-  }, [])
+  }, [demoSession])
+
+  useEffect(() => {
+    demoSession?.setModelPreview({ mode, provider, baseUrl, model })
+  }, [demoSession, mode, provider, baseUrl, model])
 
   async function saveSetting() {
+    if (demoSession) { setMessage(locale === 'zh' ? '仅演示预览，未保存密钥或服务配置。' : 'Preview only. No keys or service configuration were saved.'); return }
     setSaving(true)
     setMessage(null)
 
@@ -112,6 +120,7 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
   }
 
   async function testProviderConnection() {
+    if (demoSession) { setMessage(locale === 'zh' ? '演示不连接模型服务。' : 'Demo does not connect to model services.'); return }
     setTesting(true)
     setMessage(null)
 
@@ -159,7 +168,7 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
   const providerLabel = presetProviders.find((option) => option.value === provider)?.label ?? provider
   const selectedModeLabel = mode === 'system' ? copy.system : mode === 'custom' ? copy.custom : `${copy.preset} · ${providerLabel}`
   const toggleLabel = expanded ? copy.collapse : copy.expand
-  const visibleFields = getLlmProviderVisibleFields(mode)
+  const visibleFields = getLlmProviderVisibleFields(mode).filter((field) => !demoSession || field !== 'apiKey')
   const fieldControls: Record<LlmProviderField, JSX.Element> = {
     apiKey: (
       <label className="grid gap-1 text-xs font-semibold text-[var(--ff-text-muted)]">
@@ -247,6 +256,7 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
           </button>
 
           <div aria-hidden={!expanded} className="t-accordion grid gap-4 px-3 pb-3 sm:px-4" hidden={!expanded} id="llm-provider-settings-body">
+            {demoSession ? <p className="text-sm text-[var(--ff-text-secondary)]">{locale === 'zh' ? '仅供预览：不读取真实配置，不提供密钥输入，也不连接模型服务。' : 'Preview only: no account configuration, key entry, or model connections.'}</p> : null}
             <div className="t-tab-switch grid gap-2 text-sm text-[var(--ff-text-secondary)] md:grid-cols-3">
               <label className="flex min-h-11 items-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3">
                 <input checked={mode === 'system'} disabled={disabled || saving} name="llm-provider-mode" onChange={() => setMode('system')} type="radio" />
@@ -274,7 +284,7 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
                 <button
                   className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
                   data-llm-provider-test="true"
-                  disabled={disabled || saving || testing}
+                  disabled={Boolean(demoSession) || disabled || saving || testing}
                   onClick={() => void testProviderConnection()}
                   type="button"
                 >
@@ -282,7 +292,7 @@ export function LlmProviderSettingsPanel({ disabled = false, theme }: LlmProvide
                 </button>
                 <button
                   className="t-control-press inline-flex h-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
-                  disabled={disabled || saving || testing}
+                  disabled={Boolean(demoSession) || disabled || saving || testing}
                   onClick={() => void saveSetting()}
                   type="button"
                 >

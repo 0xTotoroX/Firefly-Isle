@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/copy 的登录文案真相源与 components/login/types 的认证模式类型。
  * [OUTPUT]: 对外提供 getAuthModeCopy 与 AuthModeCopy，用于邮箱、手机与重置密码模式的认证卡文案。
  * [POS]: components/login 的认证文案选择器，隔离 AuthCard JSX 与模式分支文案。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { copy, getCopy } from '@/lib/copy'
 

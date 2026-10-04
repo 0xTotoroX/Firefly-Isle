@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 模块 mock、@/lib/supabase 的 mock 边界与 ./dashboard-data。
  * [OUTPUT]: 对外提供 Dashboard 数据聚合的回归测试。
  * [POS]: lib 的 Dashboard 测试，约束真实计数聚合、异常读数按指标去重、usage_events 缺表降级与未登录拒绝。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -107,7 +107,6 @@ describe('loadDashboardData', () => {
     expect(data.labReadingCount).toBe(12)
     expect(data.activeShareCount).toBe(1)
     expect(data.aiCallCount30d).toBe(7)
-    expect(data.latestRecord).toMatchObject({ id: 'p1', tumorType: '乳腺癌' })
     expect(data.abnormalReadings).toHaveLength(2)
     expect(data.abnormalReadings[0]).toMatchObject({ itemName: 'CA15-3', status: 'high', value: 40 })
     expect(data.abnormalReadings[1]).toMatchObject({ itemName: '白细胞', status: 'low' })

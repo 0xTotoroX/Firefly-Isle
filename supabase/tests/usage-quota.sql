@@ -1,3 +1,7 @@
+-- [INPUT]: consume_usage 原子 RPC、套餐/订阅及合成用量台账。
+-- [OUTPUT]: 套餐选择、分钟与滚动月额度、拒绝计数和权限的 SQL 断言。
+-- [POS]: 隔离数据库配额回归；真实竞争由调用脚本的独立连接验证。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- Real PostgreSQL behavior checks; fixtures never leave this transaction.
 begin;
 create function pg_temp.assert_quota(actual jsonb, expected_allowed boolean, expected_reason text)

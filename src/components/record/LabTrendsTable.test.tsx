@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-dom/server 的静态渲染、vitest 断言、PatientRecord 与 ./LabTrendsTable。
  * [OUTPUT]: 对外提供实验室趋势表渲染、空态与持续异常高亮回归测试。
  * [POS]: components/record 的展示测试，约束 /record/:id lab trends 呈现为辅助趋势信息而非诊断输出。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'

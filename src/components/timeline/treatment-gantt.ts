@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/locale 的 Locale、@/lib/timeline-duration 的共享日期/PFS 工具与 @/types/patient 的 PatientRecord/TreatmentLine/字段编辑目标领域结构。
  * [OUTPUT]: 对外提供 TreatmentGanttProjection、TreatmentGanttRow 与 buildTreatmentGanttProjection，包含可保存字段目标。
  * [POS]: components/timeline 的甘特图纯数据投影层，把初发与治疗线日期归一为可测试、可字段级编辑的 BL/Ln 标记、PFS、bar、gap、axis 与开放当前线状态。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { Locale } from '@/lib/locale'
 import {

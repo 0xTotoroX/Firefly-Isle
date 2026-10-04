@@ -1,8 +1,8 @@
 <!--
- * [INPUT]: 依赖 2026-09-02 全仓审计（前端 src/ 与后端 supabase/functions/.github 三方盘点）、docs/products/product-priority-roadmap.md、openspec/specs/ baseline、CLAUDE.md 架构现状，以及 2026-09-02 用户指令（SaaS 专业化、可测试性、CI/CD 完善、设计语言与登录界面优化、计费接入）。
+ * [INPUT]: 依赖 2026-09-02 全仓审计（前端 src/ 与后端 supabase/functions/.github 三方盘点）、docs/products/product-priority-roadmap.md、openspec/specs/ baseline、AGENTS.md 架构现状，以及 2026-09-02 用户指令（SaaS 专业化、可测试性、CI/CD 完善、设计语言与登录界面优化、计费接入）。
  * [OUTPUT]: 对外提供 SaaS 专业化重构的分阶段计划：每阶段目标、任务、验证命令、commit 切分与回滚边界，并列出必须由产品负责人决策的事项。
- * [POS]: docs/products 的本轮重构执行真相源，连接产品路线图与 OpenSpec change 切分；执行期间所有 commit 必须能对应回本计划的某个阶段。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [POS]: docs/products 的历史 SaaS 专业化阶段记录；当前 17 项交付状态及执行边界以 saas-acceptance.md 和活动 OpenSpec 合同为准。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  -->
 
 # SaaS 专业化重构计划（refactor/saas-professionalization）

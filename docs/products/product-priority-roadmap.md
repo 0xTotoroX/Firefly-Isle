@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 docs/products/prd-implementation-status.md 的 v1.4.0+P0+Demo+PWA+Capacitor 工作树实现盘点，依赖 openspec/specs/ 的 baseline 行为，并参考 openspec/changes/archive/2026-05-16-* 的 P0/Demo/PWA/Capacitor 归档证据。
  * [OUTPUT]: 对外提供当前 P0 落地状态、下一阶段产品能力优先级、排序理由与推荐 OpenSpec 切分。
  * [POS]: docs/products 的产品路线图排序文件，区别于 PRD 实现状态盘点，负责回答“P0 已推进到哪、下一步先做什么”。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  -->
 
 # 产品优先级路线图
@@ -55,7 +55,7 @@
 
 4. Demo 覆盖完整产品功能
    - 状态：已新增登录页 `查看 Demo` 与公开 `/demo` 入口，Demo 病历和 Demo 统计复用同一患者与 `labResults`，每个 Demo 页面显示模式提醒，并展示 AI 分析预览、分享预览、TimelineTable、Gantt 与导出入口。
-   - 边界：真实登录或匿名用户的 `/app` 仍为空白工作区；Demo 可配置 `VITE_DEMO_RECORD_SHARE_CODE` 通过只读授权码读取 Supabase 演示病历，但不默认创建患者、实验室读数或 record_shares，也不调用真实 LLM；分享码缺失、失效或读回数据不完整时使用本地完整 fixture。
+   - 边界：真实登录或匿名用户没有病历时 `/app` 保持空白；Demo 使用三种虚构 fixture 和独立内存状态，不读取真实 session/分享码/账户偏好，不调用真实模型、OCR、支付、注销或密钥服务。演示内客户端导航保留修改，刷新或重置恢复。
    - Change：`make-demo-mode-cover-full-product`
 
 ## P1 重要但不抢主链路

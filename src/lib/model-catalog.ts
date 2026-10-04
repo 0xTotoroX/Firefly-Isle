@@ -2,7 +2,7 @@
  * [INPUT]: 无运行时外部依赖；目录协议字段对齐 Codex++ 模型目录（slug / display_name / description / input_modalities / priority / visibility）。
  * [OUTPUT]: 对外提供 modelCatalog、defaultTextModel、defaultImageModel 与 ModelCatalogEntry 类型。
  * [POS]: src/lib 的模型目录真相源，按「声明式目录 + 模态标注」协议收敛文字/图像默认模型；模型配置页与 OCR/LLM 边界都从这里读默认值，禁止在组件层散落模型名字面量。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 export type ModelModality = 'image' | 'text'

@@ -2,8 +2,10 @@
  * [INPUT]: 依赖 react-router-dom 的 Link/useParams，依赖 app-shell 的 V3 壳层与 surfaces，依赖 patient-record-storage 的病历读取（取治疗线）、side-effect-storage 的 CRUD、async-resource 加载基元、copy 字典、locale/theme 与 theme tokens。
  * [OUTPUT]: 对外提供 SideEffectsPage，对应 /record/:id/side-effects。
  * [POS]: 患者症状与复诊摘要；依赖变化时在渲染阶段条件清除摘要，保留日期相交与失败恢复规则。
- * [PROTOCOL]: 契约变化时同步 AGENTS.md。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
+import { useDemoSession } from '@/lib/demo-session'
+import { DemoModeBanner } from '@/components/system/demo-mode-banner'
 import { useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
@@ -110,10 +112,11 @@ export function SideEffectsPage(props: SideEffectsPageProps) {
 function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIsAnonymous, userLabel }: SideEffectsPageProps & { patientId: string }) {
   const { locale } = useLocale()
   const { theme } = useTheme()
+  const demo = useDemoSession()
   const dark = theme === 'dark'
-  const recordResource = useAsyncResource(() => loadPatientRecordById(id), [id])
-  const effectsResource = useAsyncResource(() => loadSideEffects(id), [id])
-  const visitsResource = useAsyncResource(() => loadFollowUpVisits(id), [id])
+  const recordResource = useAsyncResource(() => (demo ? demo.session.loadRecord : loadPatientRecordById)(id), [id])
+  const effectsResource = useAsyncResource(() => (demo ? demo.session.loadSymptoms : loadSideEffects)(id), [id])
+  const visitsResource = useAsyncResource(() => (demo ? demo.session.loadVisits : loadFollowUpVisits)(id), [id])
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [symptom, setSymptom] = useState('')
@@ -126,7 +129,7 @@ function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIs
   const [saving, setSaving] = useState(false)
   const [feedback, setFeedback] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [customSymptoms, setCustomSymptoms] = useState<string[]>(() => readCustomSymptoms())
+  const [customSymptoms, setCustomSymptoms] = useState<string[]>(() => demo ? demo.state.customSymptoms : readCustomSymptoms())
   const [summaryFrom, setSummaryFrom] = useState(() => calendarDateOffset(-30))
   const [summaryTo, setSummaryTo] = useState(() => localCalendarDate())
   const [summaryText, setSummaryText] = useState('')
@@ -153,8 +156,13 @@ function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIs
   )
 
   function rememberCurrentSymptom() {
-    rememberCustomSymptom(symptom, presetLabels)
-    setCustomSymptoms(readCustomSymptoms())
+    if (demo) {
+      if (!presetLabels.has(symptom)) demo.session.rememberSymptom(symptom)
+      setCustomSymptoms(demo.session.getState().customSymptoms)
+    } else {
+      rememberCustomSymptom(symptom, presetLabels)
+      setCustomSymptoms(readCustomSymptoms())
+    }
   }
   const lineLabel = (targetId: string) => {
     const line = lines.find((entry) => entry.id === targetId)
@@ -217,9 +225,9 @@ function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIs
 
     try {
       if (editingId) {
-        await updateSideEffect(editingId, input)
+        await (demo ? demo.session.updateSymptom : updateSideEffect)(editingId, input)
       } else {
-        await createSideEffect(id, input)
+        await (demo ? demo.session.createSymptom : createSideEffect)(id, input)
       }
 
       rememberCurrentSymptom()
@@ -237,7 +245,7 @@ function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIs
     if (saving) throw new Error('Another operation is pending.')
     setSaving(true)
     try {
-      await deleteSideEffect(entryId)
+      await (demo ? demo.session.deleteSymptom : deleteSideEffect)(entryId)
       if (editingId === entryId) resetForm()
       setFeedback(getCopy(copy.clinicalWorkflow.deleted, locale))
       effectsResource.reload()
@@ -315,6 +323,7 @@ function SideEffectsPatientPage({ patientId: id, isSigningOut, onSignOut, userIs
           </div>
           <p className="mt-3 text-sm leading-6 text-[var(--ff-text-secondary)]">{getCopy(copy.sideEffects.description, locale)}</p>
 
+          {demo ? <DemoModeBanner /> : null}
           <ClinicalRecordNav locale={locale} active="symptoms" patientId={id} />
           {!ready ? <RecordLoadFeedback isLoading={loading} message={getCopy(recordResource.error || !recordResource.data ? copy.clinicalWorkflow.recordUnavailable : copy.sideEffects.loadFailedFeedback, locale)} onRetry={() => { recordResource.reload(); effectsResource.reload() }} /> : <>
           <form className="mt-6 rounded-[var(--ff-radius-lg)] bg-[var(--ff-surface-panel)] p-4 sm:p-6" noValidate onSubmit={(event) => { event.preventDefault(); void handleSave() }}>

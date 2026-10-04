@@ -1,8 +1,8 @@
 /**
  * [INPUT]: 依赖 vitest、node:crypto 的 HMAC、./handler 与注入 fetch mock。
  * [OUTPUT]: 对外提供 billing-checkout 的开关门控、鉴权与请求构造回归测试。
- * [POS]: supabase/functions/billing-checkout 的测试文件，约束未配置时 fail-closed、checkout 请求携带用户身份与订阅 metadata。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [POS]: supabase/functions/billing-checkout 的测试文件，约束未配置时 fail-closed、一次性 Checkout 请求携带用户身份、金额与捐赠 metadata。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it, vi } from 'vitest'
 

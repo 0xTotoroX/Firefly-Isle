@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 Supabase 迁移，依赖 vitest mock Supabase 与 patient-record-storage，依赖 ./record-sharing 的授权码/share 边界。
  * [OUTPUT]: 对外提供 record_shares 迁移/RLS/RPC 合同、授权码 hash、所有权校验、创建/撤销/读取分享状态回归测试。
  * [POS]: lib 的分享边界测试，证明授权码不明文入库、非 owner 不创建分享、撤销/过期/错误码不返回记录且 active share 只加载单份 PatientRecord。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'

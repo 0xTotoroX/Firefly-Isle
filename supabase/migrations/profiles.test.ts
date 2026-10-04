@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 Supabase migration SQL。
  * [OUTPUT]: 对外提供 profiles 迁移、locale 约束、RLS 与自动建档触发器的合同测试。
  * [POS]: supabase/migrations 的 schema contract 测试，防止 profiles 越权 policy、locale 枚举或自动建档触发器漂移。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

@@ -1,9 +1,7 @@
 <div align="center">
-  <img src="public/logo-island-lighthouse.png" alt="Firefly-Isle logo" width="140" />
-  <h1>Firefly-Isle</h1>
-  <p><strong>一页萤屿，晚期癌症患者治疗方案管理助手。</strong></p>
-  <p>One-page oncology treatment timeline and record builder.</p>
-  <p>Keep it running, make it helpful.</p>
+  <img src="public/logo-island-lighthouse.png" alt="知见" width="140" />
+  <h1>知见</h1>
+  <p><strong>面向肿瘤患者与家属的专业治疗信息管理工具。</strong></p>
   <p>
     中文 |
     <a href="README.en.md">English</a>
@@ -16,22 +14,45 @@
   </p>
 </div>
 
+公开体验入口为 `/demo`（登录后的侧栏也有“体验演示”）。演示覆盖总览、三种虚构病历、录入与化验核对、症状、随访、设置和模型预览；页面共用内存状态，刷新或“重置演示”后恢复。提取、识别与 AI 只返回标注的固定示例，演示不读取或写入真实账户，PDF/PNG 导出在浏览器内完成。
+
 ## 项目背景
 
-本项目源于癌症患者及其家属的真实需求。晚期癌症患者由于频繁复发和疾病进展，往往需要经历多线治疗。在整理病历和治疗信息的过程中，患者及家属常因信息过载而感到无助；而在异地就医或门诊沟通中，由于患者数量众多，医生能够分配给单个患者的沟通时间有限，难以进行充分、系统的交流。因此，本项目旨在帮助患者更好地进行治疗方案与病历信息的管理。
+知见帮助肿瘤患者与家属整理分散的病历、检查结果和治疗记录，跟踪指标与症状变化，理解相关医学信息，为就医沟通提供清楚、可核查的资料。产品覆盖治疗与随访过程，病历整理是其中一项功能。
+
+后续计划增加基因检测报告解读，展示具体变异与信号通路的关联，并说明依据和不确定性；该能力尚未实现。产品以专业信息管理和理解支持为主，不以情绪陪伴为核心功能，不替代医生诊疗或承诺治疗效果。
 
 ## 当前本地开发基线
 
-当前实现包含 Dashboard、病历/指标/症状/随访导航、可恢复的症状与随访表单和复诊摘要。V3 保持纯白/纯黑背景与八种低饱和强调色，按钮文字和临床状态色分别处理。V4 仍是隔离评估页。
+当前实现包含 Dashboard、病历/指标/症状/随访、可恢复表单、复诊摘要、模型设置、账户管理与配额。代码已统一到本仓库，旧自托管实验中的有效准备工作已整合；生产配置仍连接 Supabase Cloud。
+
+视觉设计规范、评审板、原型及历史截图现集中保存在根 [archive/](archive/README.md)，可在项目内查阅；Open Design 是项目外的本地工具。A/B 页面方案与正式布局迁移仍等待用户选择，现有运行组件和主题 token 继续保留。中文名称已定为“知见”；Medclear 因同名 .com 已注册而撤回，英文待选，见 [命名与定位](docs/products/product-naming.md)。当前界面、应用显示名和图标仍沿用旧品牌，品牌迁移尚未实施；仓库与技术标识保留兼容。新英文候选已有域名初查；商标及微信名称尚未核验。
+
+当前交付范围和真实缺口见 [17 项功能验收表](docs/products/saas-acceptance.md)，数据关系与逐表权限见 [数据模型](docs/architecture/data-model.md)。本地检查、云端开发和生产可用分别验收。
 
 新增数据库迁移必须在发布新版前端前应用；本地完成不代表远端已部署。迁移顺序与验证方法见 [临床工作流发布说明](docs/operations/clinical-workflow-release.md)。
+
+## 项目结构
+
+| 边界 | 目录与职责 |
+| --- | --- |
+| Web 前端 | `src/`：React 路由、组件、状态、浏览器服务客户端与样式；`public/`：运行资产、PWA 与托管静态配置。`src/lib/` 不是服务端。 |
+| 主要后端 | `supabase/functions/`：Deno LLM、OCR、支付等函数；`supabase/migrations/`：PostgreSQL 表、RLS、事务 RPC；`supabase/tests/`：数据库验证。Auth 与数据库由 Supabase 提供。 |
+| 微信适配 | 根目录 `functions/`：Cloudflare Pages Functions OAuth 桥接预研，微信登录尚未正式开放。 |
+| 运行与发布 | `ops/`：自托管、备份与恢复；`.github/`：CI/CD；`scripts/`：验证脚本。 |
+| 移动端壳 | `ios/`、`android/`：Capacitor 工程，加载同一个 Web `dist/`，没有独立原生产品 UI。 |
+| 开发合同与说明 | `openspec/`：行为规范、活动任务与历史技术决策；`docs/`：数据模型、验收、运维及尚未进一步清理的历史说明。 |
+
+目录职责和维护规则从 [AGENTS.md](AGENTS.md) 进入。当前 UI 使用本地 shadcn/Radix 基元与自研壳层/业务组件；`components.json` 的 `radix-nova` 配置不是完整的新设计系统组件清单。运行时主题在 `src/index.css`、`src/lib/accent.ts` 和 `src/lib/theme/`。
 
 ## 开发启动
 
 ### 1. 安装依赖
 
+使用 Node.js 22 和仓库锁文件：
+
 ```bash
-npm install
+npm ci
 ```
 
 ### 2. 配置环境变量
@@ -47,14 +68,13 @@ cp .env.local.example .env.local
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
 - `VITE_SUPABASE_EDGE_FUNCTION_URL`
-- `VITE_DEMO_RECORD_SHARE_CODE`（可选；填入公开只读分享授权码后，`/demo/*` 优先从 Supabase 读取演示病历；缺失、过期、撤销、不可用或数据不完整时回退本地完整 Demo fixture）
 
 如果要跑认证主链路，还需要在 Supabase Dashboard 的 Auth Providers / URL Configuration 里确认：
 
 - Email provider 已启用
 - Anonymous Sign-In 已启用（否则“无需登录，直接使用匿名会话”会返回 422）
-- Email 的 Confirm email / 邮箱确认已关闭；当前注册流程要求 `signUp()` 直接返回 session，才能“创建账户并登录”
-- Site URL 指向有效回跳地址；如果后续重新启用验证邮件或显式传入 `emailRedirectTo`，再把当前 origin 加入 Additional Redirect URLs
+- Email 确认可开启：注册成功但无 session 时显示待确认；关闭确认时直接登录。正式邮件投递需配置可用 SMTP
+- Site URL 指向当前前端；Additional Redirect URLs 包含该前端的 `/auth/callback` 与 `/auth/reset-password`，分别用于确认邮件/OAuth 和设置新密码
 
 如果要跑 LLM adapter / Edge Function，还需要在 Supabase 项目里配置：
 
@@ -101,19 +121,23 @@ npm run lint
 npm run type-check
 npm run test
 # Requires Docker and a locally cached postgres:18-alpine image
+docker pull postgres:18-alpine
 npm run test:database
 ```
+
+数据库检查从零执行全部应用迁移，再验证事务、配额竞争、逐表权限和注销去向；只使用合成数据，不连接远端。它使用最小 Auth 替身，真实注册、邮件与会话仍需另外验收。
 
 ### 6. GitHub Actions CI + CD -> Cloudflare Pages
 
 仓库现已按职责拆分为两条 GitHub Actions workflow：
 
 - `.github/workflows/ci.yml`
-  - 在 `main` push 与目标为 `main` 的 PR（`opened` / `synchronize` / `reopened`）时执行
+  - 在 `main` / `codex/**` 分支 push、指向 `main` 的 PR 或手动运行时执行
   - 依次运行：
     - `npm run lint`
     - `npm run type-check`
-    - `npm run test`
+    - `npm run test:database`
+    - `npm run test:coverage`
     - `npm run build`
 - `.github/workflows/cd.yml`
   - 仅在 `v*` tag push 或手动 `workflow_dispatch` 时执行
@@ -133,10 +157,16 @@ Cloudflare Pages 继续作为托管目标，保留：
 - Node.js: `22`
 - SPA fallback: `public/_redirects`
 
-GitHub Actions 的构建期 `VITE_SUPABASE_*` 值统一从已提交的 `wrangler.jsonc > vars` 读取，不再要求在 GitHub 仓库重复配置一份 secrets / variables。公开 Demo 若要使用 Supabase 演示病历，需要同时在 `wrangler.jsonc > vars.VITE_DEMO_RECORD_SHARE_CODE` 填入可公开的只读分享码；留空时前端使用本地完整 fixture。
+GitHub Actions 的构建期 `VITE_SUPABASE_*` 值统一从已提交的 `wrangler.jsonc > vars` 读取，不再要求在 GitHub 仓库重复配置一份 secrets / variables。公开 Demo 始终使用本地虚构资料，无需配置分享码，也不初始化真实账户。
 
 Cloudflare Pages 的 Git 分支自动生产 / 自动预览部署应关闭，避免与 GitHub Actions 发布链路形成双真相。
 
 ## 自建 Supabase
 
 部署配置、备份脚本和会话迁移准备见 [自建后端手册](docs/operations/supabase-self-hosted.md)。当前生产配置仍连接 Supabase Cloud；代码整合不代表已完成数据切换。自建预览与正式切换都需要先核对当前 SaaS 的数据库迁移和函数版本。
+
+## 云端开发与国内上线
+
+[Codex Cloud 手册](docs/operations/codex-cloud.md)记录环境安装、启动、独立任务验收与成果回到 GitHub 的方式。本机个人 Skills 和凭据不随仓库自动同步；云端检查不代替本地浏览器和导出验收。
+
+[国内上线评估](docs/products/domestic-launch.md)区分 Supabase Cloud、自托管和前端托管选择，以及备案、微信主体/类目与小程序技术路线。Web 是第一里程碑；小程序单独交付。域名、运营主体、正式托管和支付方案尚未选定，不因开发环境发布自动切换产品生产服务。

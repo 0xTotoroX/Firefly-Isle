@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 LLM mock，依赖 ./extraction 的 extractPatientRecord 与 getExtractionFailureMessage。
  * [OUTPUT]: 对外提供结构化提取对 LLM JSON 输出模式、模型 id 清洗、密集病史末尾人口学信息补全、紧凑提示词合同、上游失败降级重试、Gemini 兜底、错误文案分流与日期归一化的回归测试。
  * [POS]: src/lib 的提取协议测试，确保病历结构化链路优先要求模型返回 JSON 对象、避免长 TypeScript schema/多消息提示词、接住上游 502、清除未持久化 id、补回模型漏掉的姓名/性别/年龄/身高/体重、区分 Auth/限流/超时/上游失败与中文/点号日期。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

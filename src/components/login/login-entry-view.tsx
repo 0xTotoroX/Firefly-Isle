@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 CSSProperties/ref/state、BackgroundMusicToggle、FireflyMark/Wordmark、LoginTraceMap、LoginStorySections、useScrollStoryMotion、AuthOverlay、locale/copy 与隐私摘要文案。
  * [OUTPUT]: 对外提供 V3LoginView，编排八章纵向滚动叙事、首尾同源登录 CTA、单一认证弹层、首屏工具区与仅在 reduced-motion 下禁用的长生命周期液体背景。
  * [POS]: components/login 的登录入口编排层，被 login-page-view facade 消费；只持有一次认证状态，不侵入认证业务语义。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useRef, useState, type CSSProperties } from 'react'
 

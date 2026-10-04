@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/lab-results 的 buildLabTrendRows，依赖 @/lib/locale 的 Locale 与 @/types/patient 的 PatientRecord。
  * [OUTPUT]: 对外提供 LabTrendsTable 组件。
  * [POS]: components/record 的实验室趋势展示层，为 /record/:id dossier 增加非诊断性趋势辅助信息。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { buildLabTrendRows, type LabTrendStatus } from '@/lib/lab-results'
 import type { Locale } from '@/lib/locale'

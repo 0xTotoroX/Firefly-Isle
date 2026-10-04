@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查，依赖 ./auth 的 AuthProvider 实现。
  * [OUTPUT]: 对外提供 Supabase session 恢复、认证广播、订阅清理与 signOut 边界的回归测试。
  * [POS]: lib 的认证基础设施测试文件，约束 AuthProvider 继续以 Supabase 为单一会话真相源，不在页面层复制 session 状态机。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

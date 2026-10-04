@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: consumeUsage、Vitest 与注入 fetch/响应。
+ * [OUTPUT]: 原子 RPC 参数、获准/拒绝、非法响应和网络失败的回归。
+ * [POS]: 模型/OCR 共享配额协议测试，不调用真实上游。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { describe, expect, it, vi } from 'vitest'
 import { consumeUsage } from './usage-limits.ts'
 

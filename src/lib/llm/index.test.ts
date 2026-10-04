@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 Supabase session 与 fetch mock，依赖 ./index 的 chat 请求封装。
  * [OUTPUT]: 对外提供 LLM adapter 请求协议回归测试，约束 provider/model/responseFormat 透传。
  * [POS]: src/lib/llm 的前端协议测试，确保调用方仍只通过 chat 边界访问模型代理。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

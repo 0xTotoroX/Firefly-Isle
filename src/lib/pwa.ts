@@ -2,7 +2,7 @@
  * [INPUT]: 依赖浏览器 location、navigator.serviceWorker 与 Vite 环境标记。
  * [OUTPUT]: 对外提供 PWA service worker 注册入口、注册条件判断与敏感请求缓存判定 helper。
  * [POS]: src/lib 的 PWA 边界，集中 installed Web app 的外层能力判断，确保 service worker 只在安全生产环境注册且不缓存医疗动态数据。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 export const FIREFLY_SERVICE_WORKER_PATH = '/sw.js'

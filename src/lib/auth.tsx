@@ -1,8 +1,8 @@
 /**
  * [INPUT]: 依赖 react 的 Context、hooks，依赖 @supabase/supabase-js 的 Session/User，依赖 @/lib/supabase 的客户端入口、@/lib/locale 的界面语言与 copy 字典的认证反馈文案。
- * [OUTPUT]: 对外提供 AuthProvider 与 useAuth；在路由就绪前完成 URL callback、会话恢复及自建后端旧 JWT 换取。
+ * [OUTPUT]: 对外提供 AuthProvider、useAuth 与允许独立 Demo 空身份的 useOptionalAuth；在路由就绪前完成 URL callback、会话恢复及自建后端旧 JWT 换取。
  * [POS]: 认证状态中心；缺配置就绪状态由初始化决定，effect 仅恢复和订阅真实会话。
- * [PROTOCOL]: 契约变化时同步 AGENTS.md。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   createContext,
@@ -170,3 +170,5 @@ export function useAuth() {
 
   return context
 }
+
+export function useOptionalAuth() { return useContext(AuthContext) }

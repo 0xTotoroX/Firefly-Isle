@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: saveLabReportBatch、LabResult 及注入的 Supabase RPC mock。
+ * [OUTPUT]: 重复批次信息、单 RPC 身份读回和事务失败传播的协议回归。
+ * [POS]: 化验原子保存客户端测试；真实事务由数据库检查验证。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { LabResult } from '@/types/patient'
 const mocks = vi.hoisted(() => ({ rpc: vi.fn(), from: vi.fn() }))

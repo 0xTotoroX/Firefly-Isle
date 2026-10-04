@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 patients、treatment_lines、lab_results、side_effects、follow_up_visits 与 auth.uid()。
 -- [OUTPUT]: 症状/随访 owner 默认值及患者归属 RLS、写入校验、最新指标/随访 invoker RPC。
 -- [POS]: 追加迁移，保护既有有效数据；NOT VALID 约束不重写历史数据，但约束后续写入。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 alter table public.side_effects alter column user_id set default auth.uid();
 alter table public.follow_up_visits alter column user_id set default auth.uid();

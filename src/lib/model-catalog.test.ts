@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest、node:fs 的页面装配源码检查与 ./model-catalog。
  * [OUTPUT]: 对外提供模型目录协议与页面装配的回归测试。
  * [POS]: lib 的模型目录测试，约束目录协议字段完整、文字/图像默认模型绑定 deepseek v4 族、目录页消费共享真相源而非字面量。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

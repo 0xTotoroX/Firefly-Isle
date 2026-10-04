@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/llm 的 chat 边界、@/types/patient 的 PatientRecord 与 PatientFieldTarget。
  * [OUTPUT]: 对外提供 RecordEditParseError、buildRecordEditPrompt、parsePatientRecordEditResponse、extractPatientRecordEdits、applyPatientRecordEdit 与 applyPatientRecordEdits。
  * [POS]: lib 的自然语言病历编辑边界，把 LLM 输出限制为字段级 patch，并复用逐格编辑的字段归一化语义，允许姓名、临床备注、身高体重等字段共用同一编辑路径。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { chat } from '@/lib/llm'
 import type { Message } from '@/lib/llm/types'

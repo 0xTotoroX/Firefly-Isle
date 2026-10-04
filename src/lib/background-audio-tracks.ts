@@ -2,7 +2,7 @@
  * [INPUT]: 依赖用户提供的 Nagisa / Merry Christmas Mr. Lawrence 本地授权音频与 Apple Music 来源链接。
  * [OUTPUT]: 对外提供 BackgroundAudioTrack 类型、BACKGROUND_AUDIO_TRACKS 清单与曲目查找函数。
  * [POS]: src/lib 的背景歌单 manifest，给 background-audio 控制器提供唯一曲目真相源。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export type BackgroundAudioTrack = {
   album?: string

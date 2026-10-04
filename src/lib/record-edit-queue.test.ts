@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: createRecordEditQueue、PatientRecord 和延迟/失败的 save 函数。
+ * [OUTPUT]: 串行 patch、成功返回值合并及失败后继续的行为回归。
+ * [POS]: 字段编辑队列的状态测试，与页面生命周期回归配合。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { describe, expect, it, vi } from 'vitest'
 import { createRecordEditQueue } from './record-edit-queue'
 import type { PatientRecord } from '@/types/patient'

@@ -1,0 +1,5 @@
+project_id = "firefly-isle"
+
+# Stripe sends its own signature; the handler verifies the raw request body.
+[functions.stripe-webhook]
+verify_jwt = false

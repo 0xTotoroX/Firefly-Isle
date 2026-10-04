@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: mergePatientRecord/normalizePatientRecord 和带合成身份的患者资料。
+ * [OUTPUT]: 可信持久化身份保留、模型身份清洗及读数合并的回归。
+ * [POS]: 提取/追问进入持久化前的身份边界测试。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { describe, expect, it } from 'vitest'
 import { mergePatientRecord, normalizePatientRecord } from './extraction'
 import type { PatientRecord } from '@/types/patient'

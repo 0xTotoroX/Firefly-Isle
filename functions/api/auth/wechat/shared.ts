@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 Web Crypto、Fetch API 与 Cloudflare KV 兼容接口完成微信 OAuth2 协议桥接。
  * [OUTPUT]: 对外提供 Wechat OAuth adapter 的授权、回调、token、userinfo 处理函数与测试辅助类型。
  * [POS]: functions/api/auth/wechat 的核心协议层，被四个 Pages Function endpoint 共享。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 type KvPutOptions = {

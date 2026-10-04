@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 describe/it/expect，依赖 ./patient 的 getPatientArchetype 与 PatientRecord。
  * [OUTPUT]: 对外提供 PatientRecord archetype 判定的回归测试集。
  * [POS]: types 的最小领域测试文件，给 CI 提供稳定的 archetype 基线校验。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'
 

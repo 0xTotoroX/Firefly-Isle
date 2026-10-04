@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-dom/server 的静态渲染，依赖 LocaleProvider，依赖 workspace 的 ExtractionComposer 与 ReportPreviewFrame。
  * [OUTPUT]: 对外提供已有病历编辑/新病历提取分流、工作台姓名/性别/年龄/身高/体重展示、BMI/患者类型标签隐藏、Dense Clinical Ledger 预览、诊断日期前置、紧凑治疗时间线、最新检测摘要与预览提示条显隐回归测试。
  * [POS]: routes 的工作区局部合同测试，承接 workspace-page.test.tsx 的人口学指标、模式分流、ledger 预览和预览提示条断言，保持主测试文件不越过 800 行结构门禁。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter } from 'react-router-dom'

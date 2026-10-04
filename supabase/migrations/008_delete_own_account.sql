@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 Supabase auth.users、public 各业务表对 auth.users 的 on delete cascade、PostgreSQL security definer RPC 能力。
 -- [OUTPUT]: 对外提供 delete_own_account() security definer RPC，让用户在不引入 service role key 的前提下自服务删除账户并级联清理全部数据。
 -- [POS]: supabase/migrations 的隐私合规迁移，为 /settings 的账户删除动作提供数据库事实。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 -- patients / treatment_lines / lab_results / lab_report_batches / llm_provider_settings /
 -- record_shares / profiles 全部经 auth.users 外键 on delete cascade 清理；

@@ -1,0 +1,514 @@
+{
+  "created_at": "2026-10-04T19:49:47.093505+08:00",
+  "bundles": [
+    {
+      "path": "backups/project-materials-20261004-192752.tar.gz",
+      "files": 141,
+      "bytes": 50185952,
+      "sha256": "27650d5b42a6a3a5ffcd7f3a06c1c0f7940efbab49cdbc90274fb42a4543454c"
+    },
+    {
+      "path": "backups/project-cleanup-20261004-194124.tar.gz",
+      "files": 1451,
+      "bytes": 99094804,
+      "sha256": "a687a1dd0950e12a5284d3552832f5e9118babe164dda3701a8d7d27108f7dfa"
+    }
+  ],
+  "browsable_design_files": [
+    {
+      "path": "design-kit/DESIGN.md",
+      "sha256": "8783a180f6047474a6c8ce41ad9e4b4049dac98a6e46e5ea890f671c769fbabb"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/01-login-dark.png",
+      "sha256": "709cc9624bc9bd24a1442824785bb13b0892836e8dd0fa32697a9d21fedef8ed"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/02-login-light.png",
+      "sha256": "5d216d3140cd8495e32d1764d10c8affa235e6e2ffb9fafbd8c79c5a0050be94"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/03-app-dark.png",
+      "sha256": "99c2dc943eff9eb5f766db9feed3b38f01cfdd72832434b98c65efa4694d03bd"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/04-app-light.png",
+      "sha256": "64692fc92cfbe4e5ef4241b63f2e1d714c6a62810835d83da83ab8727a093907"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/05-record-dark.png",
+      "sha256": "a0f5aa3ba93efea492dbd93019b94665087bce121373d84f5d5f638916e98c7b"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/06-record-light.png",
+      "sha256": "8ac9c97f2bcd5d80ccfb1b7319423e8b9398d615db1095bdaddb467972e949fa"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/07-component-strip.png",
+      "sha256": "22f3be47a4791c9835c3395d2f53c797eedbc74b8728f9186287456e3a85b6c7"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/brief.md",
+      "sha256": "4f960a1a1061e86fcba5167de701d5bc2dfe6367096bad4fadae14dafc717398"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/prompts/01-login-dark.prompt.txt",
+      "sha256": "86bd27e0fa39c3bbfd0917e537961ad51ad0faabf7241481252e1c81cadccfa9"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/prompts/02-login-light.prompt.txt",
+      "sha256": "a88eb17db1dabdb081c76fdcd82eb307f9c172cdb3b271d4ca7f4fc8e00bbd9b"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/prompts/03-app-dark.prompt.txt",
+      "sha256": "d5baf6568d2a96c91f307880fdaca750626bf485920cac79a670158d614c1ffd"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/prompts/04-app-light.prompt.txt",
+      "sha256": "b8159ac0582983e5a4e5e279925639e7a902096eef5524ce76d8781474c89624"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/prompts/05-record-dark.prompt.txt",
+      "sha256": "f558c74f4c9c515ea40c1641055026850057c901c511ca0bec27de37a2d44f9d"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/prompts/06-record-light.prompt.txt",
+      "sha256": "edcdbae79ec1c7bcd883460bfe241621745b4b7488e40b06b0d2ee1d46c1cdbe"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/prompts/07-component-strip.prompt.txt",
+      "sha256": "273ae395bf6fe5fbc002c4cf7160925ee4119a5f5434d049d9114bad408f0392"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/qa-checklist.md",
+      "sha256": "a2800130c9c6b081a3bb37195fbfe22557ef1724e61145e169939e8a5cd36eb0"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V1/run-cli.md",
+      "sha256": "9f66cbe8aee1bb3dcdf057a481ba5489a0a96cb03159090a7f96119b01178c9f"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/01-login-dark.png",
+      "sha256": "e8c29315956c4e9aee137b5f723a23125f82235743d27d6553eafcfa830deb88"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/02-login-light.png",
+      "sha256": "e4aa1e26eac7452dc225f779ad352a0b5514240bab62c71463b9dcb406410888"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/03-app-dark.png",
+      "sha256": "a0d3e09ff972b3b67b63e9fc94757a701988cae31ea9c103745d2c4f2e4c18dc"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/04-app-light.png",
+      "sha256": "f198ce19851ecd06517f9e88cca713c4ff43efd7d1a2a3e2695f91fb47d83a63"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/05-record-dark.png",
+      "sha256": "d598ad330d64ef0fa6d1d582c8489b9722233b4d45eacda7133e11f3ef5a93cf"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/06-record-light.png",
+      "sha256": "8f2e546d7122a71de5ab9f946e22235a228dbe83de68e103b0e35c48a338b7f4"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/07-component-strip.png",
+      "sha256": "7a9bf461f7954e21d6bc8400b3a07c1966c6acf0a7b144b2af57059a06369cb3"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/brief.md",
+      "sha256": "294334e86d67226970889f013f90b36de54156aa3f960099b139ab159bf3ce57"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V2/v3-detail-brief.md",
+      "sha256": "0bdf385dec40732fa2c868ce49bfeebc80d48b47fa5d7e25f2f07de177a166ad"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/01-login-dark.png",
+      "sha256": "a39a1cca8a0b2be7aacece4fbf82b530ce2d618ef4efc95f9a8546554db3ea84"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/02-login-light.png",
+      "sha256": "881cd62b21416b43096237f1fc903381329fb28b89cd550c0d993c0fa113fd4d"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/03-app-dark-new.png",
+      "sha256": "8512062bba8a272bf93a5a185de992ad7fb62326ee8755b983a565c28aa958a2"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/03-app-dark.png",
+      "sha256": "344b4314eab4528fa003e8e7acc6c97e7495c81fb599bc08e36b508adcdd44b6"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/04-app-light.png",
+      "sha256": "5b2c01c64affbf39626dd4d7263fadd1faf968499f905608f3d03af3f07743da"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/05-record-dark.png",
+      "sha256": "24c900cf190e7c1e2b9b7abd5f99dceae983595a32c8395ae10084f9e357809b"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/06-record-light.png",
+      "sha256": "2dc22ab34436e991270132b01f775f94ac242e12806d0c5b97c16b9f4e6fe998"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/07-component-strip.png",
+      "sha256": "954962f8b36215c4ef60aca3a6f7eaea92490ce220b8557799f7f7c11d3bbd05"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/DESIGN.md",
+      "sha256": "4cb3959289aefc37b01221a3a7c595f8b553a0ea4f06f1edd4bb292a4569cfa2"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V3/brief.md",
+      "sha256": "5e05118ce307dc7941cef48e46d8d1d86260226561f9bc7b3c35d635abd9bc2a"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1280-A-dark.png",
+      "sha256": "d314b175c769b309d9246eb17252e889e8c03ebb11cfaf0c55a576e1fb36270e"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1280-A-light.png",
+      "sha256": "ed3abf1e5031a1ee27a279c015e9abf75ecac0e1521d5d0d733b1f2d19c3c01a"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1280-B-dark.png",
+      "sha256": "fb3da1675806d4593726dbdcb52ae964dfdc59f2b26b0adf401e455e2ba45837"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1280-B-light.png",
+      "sha256": "989b647f1cd0a79b64d0a0dbe8d7b8b377b5757bcc6e7155531ffc9a61074175"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1280-C-dark.png",
+      "sha256": "3b3808b9c59d187c0eec1d6152e808ebbed8e6fea3c8776592e18f027d676428"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1280-C-light.png",
+      "sha256": "08ab0b0935dbd29eb9dbe69ce6e88eba15adffbfb5d5da6fae2992459c8243fb"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1440-A-dark.png",
+      "sha256": "3bcd191be6fb07153cb5af5bf7cf75c2867b334376b6c41fd9f812e486fb5a03"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1440-A-light.png",
+      "sha256": "17fdd7ccd849c7bb105cfa527d8b23fe69d4786704202e0c72729e6f3b70c622"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1440-B-dark.png",
+      "sha256": "25048cd9568ad495f03ef3492bdb30b49aad5124a54c63eb6c091e5824ac117a"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1440-B-light.png",
+      "sha256": "debe77b9172fcd751348fd79934b2ebef05cd13457610d1d1cf683b11d08cea6"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1440-C-dark.png",
+      "sha256": "60cdf2354ae8b84e5f5f433531547bc8dcbad567dce7c57a9a03d227df0b4f99"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-1440-C-light.png",
+      "sha256": "07d0c94efdc092280e12b455be727c1db72a09c06494f62f417ee509ec41eda3"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-390-A-dark.png",
+      "sha256": "3fabedeb3ca687abfec37588020ed939ae4d028b000213903475972db1ae0fa6"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-390-A-light.png",
+      "sha256": "b421080fdb2d6e5c3b92ac6c5a9a5a4f68fe7abfec4b2ee122bb1d2cfa0ca8d5"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-390-B-dark.png",
+      "sha256": "9e010fb99c5ae98afe1ba4a3d42cc697b5158bfcefdd4f4d697fe44a15b45f29"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-390-B-light.png",
+      "sha256": "c862b4a2f181c70b9a9ae69f33d5e30d656cdeb2cbd39e2be953178bf62954b2"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-390-C-dark.png",
+      "sha256": "679efa2cd23fa74ed56510cc2d7a3c4bb06b0aa7b7d497323f87b666279e5b7e"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-390-C-light.png",
+      "sha256": "81a402228a6a7e7d80c6385899339cd58dc3487e75ad646d2d8f474b046f88c1"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-cdp-scale-half.png",
+      "sha256": "5da6c3275d7ce423284181254fef87b1ae873a960d430acb6ea2b1879376860f"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-cdp-viewport.png",
+      "sha256": "b66b0147e5747e972c1ff4dc921ac583900371a9afe5e9d0007a39ddd1e94723"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-clinical-calm-light.png",
+      "sha256": "c279c82a436997209fd55252d77a100fe6ff0a42f8835d5a0fc75ad329277171"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-contact-1280.png",
+      "sha256": "b6f1d01c38ae30c9164ae493c51ba92e8bd17efe20cfe016ab0d893f5a9855ad"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-contact-1440.png",
+      "sha256": "4e57896c3f2d5b63f8d7afe265974c153ba699904f164ff5c7a15685bf34646f"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-contact-390.png",
+      "sha256": "f32d414d0daed58e44b166b977aa62a9e3e9f153ca8d7ca98e864296d2565d36"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/.qa-top-1440.png",
+      "sha256": "fad5cd2ff25c44cc07d8f652abaf851e8c1edecd32acdf473492e815c84f6568"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/01-clinical-calm-light.png",
+      "sha256": "17fdd7ccd849c7bb105cfa527d8b23fe69d4786704202e0c72729e6f3b70c622"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/02-firefly-glass-dark.png",
+      "sha256": "25048cd9568ad495f03ef3492bdb30b49aad5124a54c63eb6c091e5824ac117a"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/03-living-archive-light.png",
+      "sha256": "07d0c94efdc092280e12b455be727c1db72a09c06494f62f417ee509ec41eda3"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/04-design-preview-mobile.png",
+      "sha256": "b421080fdb2d6e5c3b92ac6c5a9a5a4f68fe7abfec4b2ee122bb1d2cfa0ca8d5"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/DESIGN.md",
+      "sha256": "25261a7443391200c7fb82f8f475a158f7cf27d713fa95b747cdd8e2eaeab249"
+    },
+    {
+      "path": "design-kit/docs/design/Image-2/V4/brief.md",
+      "sha256": "db842b251192471a60b248d1b7f302300164728e3c6f8375203adc2a2f544e11"
+    },
+    {
+      "path": "design-kit/docs/design/figma-sync.md",
+      "sha256": "cd01aa3145029ed71ba9f39619baae6967c53fdae22acd7087a46abefa57a6ce"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/DESIGN-SYSTEM.md",
+      "sha256": "7d0ae110d68e5698a9024c6af595f7ff84a16578cfeac9062a4e113b91efda21"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/colors.jpg",
+      "sha256": "9ebae5844d0d5c183c6d2b48fc93684db67f43b0737bb2beeeb6bc7c9d8faea7"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/01-quiet-workspace.png",
+      "sha256": "71f44e3df28c371d895e7a76fba603c38b9f6e8a265c6dc3be31228c67a08697"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/02-editorial-journal.png",
+      "sha256": "f4eeeb595cd760640ff9de545a8a79a343d5a4366ccb3bf1aaf80dc544c8b9ee"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/03-three-pane-desk.png",
+      "sha256": "d143f0aa1ec87d7b109e3bf48d0b840d31d5528072f3471e59df6547f848e92f"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/04-soft-native.png",
+      "sha256": "057cec16e813d94c2d3d3532b9065c6122a181a16a1d975a51d1e23bb4110ba8"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/05-calm-home.png",
+      "sha256": "de9802378daa825d87a4324330479bc0678831d8c4542e973aa6e9dd062a3f59"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/06-calm-intake.png",
+      "sha256": "81db044faa57f18431dfaf083209e275c7263e092f7ff91d1aa6b16d58e3b5d9"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/07-calm-record.png",
+      "sha256": "463f640d248e61469c26a5b4db1d5a120c126950831fce098a806f1bfc0a9e59"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/index.html",
+      "sha256": "1d4a34cc183182d844880b6812ba9ea0df109ee97003978adcf46e2d03994c8f"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/preview.jpg",
+      "sha256": "e81b7074b5f456359539e9f75e141267cc88e18030a90825a4ee370ca008d96f"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/concepts/prompts.json",
+      "sha256": "9e52db52ab6817484723e6fca9317c1698d9a720dda22d410147551fc4767c2a"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/index.html",
+      "sha256": "6224d334f57c87bfe68290b51eb9ff050edd2f084a9b8f3d11b4952f03e6719a"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/overview-dark.jpg",
+      "sha256": "9a52af07f68858afda8d9741dae4bb6f2fddbf35cf00ce50f183fdc207169394"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/overview.jpg",
+      "sha256": "b9262772e71757f8fa1fedac50676f29837e3920ecf8caa751b21a3ee24c6a6a"
+    },
+    {
+      "path": "design-kit/docs/design/saas-review/tokens.json",
+      "sha256": "05ae4aff288576fb68601e50b7b65706201b637d893cc9e333cbe077752c0865"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/dark/_1/code.html",
+      "sha256": "b27e0187308bffb1365a3ef0f3dd58b44ce86457db9ea34177b75b5f4e1054ee"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/dark/_1/screen.png",
+      "sha256": "cafaab2981e92b983162588ef13b953bdf24375ac585fe364b8091c6be27095a"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/dark/_2/code.html",
+      "sha256": "99b2ff47d14b0a5f378c18a2038af3aaa469cd06a4dd9761ee9a6984b6f44e8f"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/dark/_2/screen.png",
+      "sha256": "c5d32bc9d4196b7556f4b1554cf62e57682b93c7959b15485ba954e94f7698b1"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/dark/_3/code.html",
+      "sha256": "58263e2b956c0b8022e3e97d178724bcc042745758a743c8ddd0786f761c3871"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/dark/_3/screen.png",
+      "sha256": "6a2077363d00192935882be6dd4a87492b074d50d31a09a95705784f08d36ada"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/dark/firefly_precision/DESIGN.md",
+      "sha256": "c38c29c5eefd4be56f0aacf1b64602242097fd2fc3cb54d1849f18f4b9e879b2"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/light/_1/code.html",
+      "sha256": "4669a07b0d52d68902a8de87d2e3b7f2800b6ec09b7e4284c856588a2b92e988"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/light/_1/screen.png",
+      "sha256": "6f988a36e2cc7490619858f97349d11ed9e89e43eb768a7922b8df90dc26b6b8"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/light/_2/code.html",
+      "sha256": "88a9f4d2ba357594cd6306c5293b64131f1d2faa1e9865cba410de2d4950dea1"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/light/_2/screen.png",
+      "sha256": "f067a7a98d99629e9eedcbaae7e8780fe83a936fb2537d3968631652d7065d7b"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/light/_3/code.html",
+      "sha256": "a749c3cc644dbf5ae26484bfcdb38b9e2d42c73114a7e07ba067a79514f5edc7"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/light/_3/screen.png",
+      "sha256": "63dd809fa803d9ca99d0e10e213ad3fb4a47077a2b2e9483d057d6da49ff0170"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/light/ink_archive/DESIGN.md",
+      "sha256": "f5b80693b87c0c230d17028114940eeb2b0251a40e20d5447cdbd7ca46f59095"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-25/app-dark-full.png",
+      "sha256": "c6e2627e7ab15d81839f7dea212d515a0bf53ab77c5a28b8f8a7c4e9c2453d83"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-25/app-light-full.png",
+      "sha256": "b01c3998429dc2532ce34e40ae8e362412f112a6498d0201840c98c550d52958"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-25/login-dark-full.png",
+      "sha256": "62d047ced11c33446911061cab67a49d3599a4deff74199ca4417d7c4cd296e6"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-25/login-light-full.png",
+      "sha256": "bc3017f18f05337ffc5d6acc4a15a2903468190f44c40c952dd00d08a1c59c5d"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-25/record-dark-full.png",
+      "sha256": "7ddca5c189764a3f8b895e71144357c37ca3833e149133f3e844aa5f34dddfcf"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-25/record-light-full.png",
+      "sha256": "b617c77fed2e2820c7ad1b5c50e0565efc08ca50d7f127bbf5c43a2d7f260742"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/firefly-login-backdrop-desktop-final.png",
+      "sha256": "e44f2b58be3bcfa762a47bccb434206cc072be001f757087b2757e26a088452b"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/firefly-login-desktop-expanded-fixed.png",
+      "sha256": "4ce635c1744338fd26aaeae1953d58a778ba3f875b4c1e55db5ab0c2a99ab7ff"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/firefly-login-mobile.png",
+      "sha256": "719d3452659e5d44ada1c5c7faa80add3c54d946a5e4395a38da398a2b6e4abb"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-a-implemented.png",
+      "sha256": "d10a9bf4e30cb380b2999443c252a21b9e47526a5863dae28fe733d08cb9ea11"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-beacon-gate-ready.png",
+      "sha256": "8d279fa9354cea2a3b3fa124e2e2a4c76b30b9ffb9e0631dc1f87f0466badbdc"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-form-reordered-beacon-mark-ready-full.png",
+      "sha256": "d2235aa3faaa78bc67764582d64682e3c6d1cc37b13d99dbe3c5a268759a058e"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-live-accepted.png",
+      "sha256": "362121b1cf154efdce4757fd697fdf3d2aeb447c3bf5652d57b536e7074847cd"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-responsive-1024-v3.png",
+      "sha256": "0702d73ba193c22cad773424de88c3083cd95098dc3d645aa31cf176f2b4a1b3"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-responsive-1280-final.png",
+      "sha256": "c1bd14fef414f5282447246275ff0c59b45c3594bdd57b432f139916433cb2b6"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-responsive-2048-final.png",
+      "sha256": "fe19fb7db83416cc20fb6c932b36e48b9d554b7ea8333acaf1b56c21041f318f"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-submit-beacon-clean-full.png",
+      "sha256": "68746c2eb7f313bbd5f006e4c0f2ec107b3b6c006f54725f26f53c0805ce147b"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-transparent-icons-after-gate.png",
+      "sha256": "6bd8eb223396ddaf08e915b255ef7d6e397889e3a04fee0d7ddd94b477f3de42"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-v3-backdrop-dark-final.png",
+      "sha256": "9bb567f1df30367367d373866136c22a52ed67a874db1895872c90b955ef5701"
+    },
+    {
+      "path": "design-kit/docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/login-v3-backdrop-light-final.png",
+      "sha256": "26f98406e3d189056922f10e51c9155298d2cff32b4ed95fbd7bc198dcb9e368"
+    },
+    {
+      "path": "design-kit/docs/products/archive/design-system.md",
+      "sha256": "19fe5c097c84c9c5abf21b0548256c9e5b838c4d3de0caa23bfd95d3598e8bd4"
+    },
+    {
+      "path": "design-kit/docs/products/archive/stitch-screen-mapping.md",
+      "sha256": "b0c72e4e62c2891adf2cea3d38e5f8e775994819b36f1ce05274f93dbccd0a27"
+    }
+  ],
+  "historical_instruction_files": "preserved only inside backup bundles, not installed as active files",
+  "excluded_credentials": "not copied or modified",
+  "legacy_project": {
+    "path": "legacy-projects/Firefly-Isle-desktop-20261004-195835",
+    "manifest": "legacy-projects/Firefly-Isle-desktop-20261004-195835.manifest.json",
+    "head": "1db72ac3faa6ea00013618c18d47b0cf2bf1dca7",
+    "branch": "codex/login-liquid-refraction",
+    "entries_preserved": 35601,
+    "untracked_entries_preserved": 27,
+    "historical_instruction_snapshots": 95
+  }
+}

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/types/patient 的 LabResult 与 LabResultCategory 领域类型，吸收 update-followup-data skill 的三类实验室行映射。
  * [OUTPUT]: 对外提供 LAB_INDICATORS、LAB_CATEGORY_LABELS、findLabIndicator、parseReferenceRange、normalizeLabCandidate 与稳定实验室项目字典。
  * [POS]: lib 的实验室字典与 OCR 候选归一化边界，把本地 Excel 行号知识翻译成网页端 itemCode/itemName/unit/reference 的应用事实。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { LabResult, LabResultCategory } from '@/types/patient'
 

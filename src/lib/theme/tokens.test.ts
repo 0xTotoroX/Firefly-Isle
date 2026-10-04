@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 src/main.tsx、src/index.css 与页面/组件/共享品牌字标源码，依赖 vitest，依赖 ./tokens 的 V3 主题合同。
  * [OUTPUT]: 对外提供主题 token、CSS 全局约束、边缘钉住顶栏、localized typography 与 latin 子集自托管字体加载回归测试。
  * [POS]: src/lib/theme 的测试文件，阻止 action 色、light 侧栏 shell 归属、紧凑响应式侧栏、边缘钉住顶栏、宽幅 shell、圆角合同与 locale 驱动字体系统回退到旧双主题漂移。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 /// <reference types="node" />
 
