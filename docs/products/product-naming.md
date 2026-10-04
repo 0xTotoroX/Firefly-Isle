@@ -26,7 +26,7 @@
 
 ## 确认与实施边界
 
-本地 Web 已适配品牌字标、介绍、浏览器/PWA 展示和下载名称；运行时名称集中在 `src/lib/brand.ts`。原灯塔图标暂时保留，新候选图标未确认。Stripe 托管支付页产品名和原生壳显示名未变，真机、签名与发布独立验收。账号 JSON 的 `firefly-isle.account-export` 格式、浏览器存储键、PWA identity/缓存前缀、仓库目录、包名、bundle ID、OAuth 与部署标识保留原值；修改显示名不迁移或重置数据。
+本地 Web 已适配品牌字标、介绍、浏览器/PWA 展示和下载名称；运行时名称集中在 `src/lib/brand.ts`。原灯塔图标暂时保留，新候选图标未确认。本地 Checkout 请求的商品名称已改为 MyOncode donation，原生壳源配置显示名已改为知见；真机、签名、函数部署与发布独立验收。Stripe 远端商户名称、账单描述及已有支付对象未读取或修改。账号 JSON 的 `firefly-isle.account-export` 格式、浏览器存储键、PWA identity/缓存前缀、仓库目录、包名、bundle ID、OAuth 与部署标识保留原值；修改显示名不迁移或重置数据。
 
 尚未完成“知见 / MyOncode”的商标与微信名称核验，也没有注册或购买域名。普通注册状态与网络同名初筛不能证明名称独占或商标可用。
 

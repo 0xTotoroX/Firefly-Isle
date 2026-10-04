@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 node:fs、node:path、vitest、package.json、capacitor.config.ts、ios/ 与 android/ 平台工程文件。
+ * [INPUT]: 依赖 node:fs、node:path、vitest、./brand、package.json、capacitor.config.ts、ios/ 与 android/ 平台工程文件。
  * [OUTPUT]: 对外提供 Capacitor 移动壳配置、脚本、原生 app id/name 与 signing ignore 边界合同测试。
  * [POS]: src/lib 的移动壳架构测试，确保 iOS/Android 只包装 dist Web build，不漂移到 dev server 或第二套产品壳。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
@@ -9,8 +9,10 @@ import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
+import { brand } from './brand'
+
 const APP_ID = 'com.ghibli1024.fireflyisle'
-const APP_NAME = '一页萤屿'
+const APP_NAME = brand.name.zh
 const CAPACITOR_VERSION = '8.5.2'
 
 function readProjectFile(path: string) {
@@ -49,9 +51,13 @@ describe('Capacitor mobile shell contract', () => {
 
   it('keeps native project identifiers aligned with the shared app id and name', () => {
     expect(readProjectFile('ios/App/App.xcodeproj/project.pbxproj')).toContain(`PRODUCT_BUNDLE_IDENTIFIER = ${APP_ID};`)
-    expect(readProjectFile('ios/App/App/Info.plist')).toContain(`<string>${APP_NAME}</string>`)
+    expect(readProjectFile('ios/App/App/Info.plist')).toMatch(new RegExp(`<key>CFBundleDisplayName</key>\\s*<string>${APP_NAME}</string>`))
     expect(readProjectFile('android/app/build.gradle')).toContain(`applicationId "${APP_ID}"`)
-    expect(readProjectFile('android/app/src/main/res/values/strings.xml')).toContain(`<string name="app_name">${APP_NAME}</string>`)
+    const androidStrings = readProjectFile('android/app/src/main/res/values/strings.xml')
+    expect(androidStrings).toContain(`<string name="app_name">${APP_NAME}</string>`)
+    expect(androidStrings).toContain(`<string name="title_activity_main">${APP_NAME}</string>`)
+    expect(androidStrings).toContain(`<string name="package_name">${APP_ID}</string>`)
+    expect(androidStrings).toContain(`<string name="custom_url_scheme">${APP_ID}</string>`)
     expect(readProjectFile('android/app/src/androidTest/java/com/ghibli1024/fireflyisle/ExampleInstrumentedTest.java')).toContain(APP_ID)
   })
 

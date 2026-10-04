@@ -32,7 +32,7 @@ Dashboard、症状日志和随访已形成患者内导航；本轮修复 owner �
 - `/analytics/:id` 统计页面：已实现侧栏真实入口、血常规 / 血生化 / 肿瘤标志物分组、指标列表、网页端折线图、等价数据表、最近异常汇总和非诊断提示。
 - 公开 Demo 模式：`/demo` 使用正式页面覆盖总览、三种完全虚构病历、录入/追问/编辑、化验队列核对、症状、随访、设置与模型预览；跨页面共享内存 CRUD，刷新或明确重置恢复。提取/OCR/AI 为标注的固定示例，分享/支付/注销/密钥不执行真实操作；PDF/PNG 本地导出。Demo 不创建或恢复 Supabase session，不读取公开分享码或真实账户偏好。
 - PWA foundation：已实现 Web App Manifest、PWA 图标、移动 metadata、隐私优先 service worker、离线状态提示、safe-area 基础适配、SPA 深链路 fallback 与 PWA 验证矩阵；只缓存 app shell / 静态资产，不缓存患者数据、授权码、Supabase 私有响应、OCR 或 LLM 响应。
-- Capacitor iOS / Android 本地壳：已实现 Capacitor 8 配置、固定 app id `com.ghibli1024.fireflyisle`、应用名 `一页萤屿`、iOS/Android 平台工程、mobile sync/open scripts、签名秘密忽略边界与本地操作文档；它只包装现有 `dist` Web build，不代表 App Store、TestFlight、Google Play 或生产签名发布完成。
+- Capacitor iOS / Android 本地壳：已实现 Capacitor 8 配置、固定 app id `com.ghibli1024.fireflyisle`、本地源配置应用名 `知见`、iOS/Android 平台工程、mobile sync/open scripts、签名秘密忽略边界与本地操作文档；它只包装现有 `dist` Web build，不代表 App Store、TestFlight、Google Play 或生产签名发布完成。
 - `/analytics/demo` 演示统计页：已保留为受保护统计 fallback；无真实输入时推荐使用公开 `/demo/analytics` 查看演示统计。
 - `/app` 文件输入：已实现病历 / 检验报告图片或 PDF 上传与 OCR 文本确认，统计页本身不再承载上传表单。
 - 肿瘤标志物监测提醒：已实现连续两段上涨超过 20% 的项目扫描与网页端提醒，提示语限定为趋势提醒，不输出诊断、进展结论、用药或治疗建议。

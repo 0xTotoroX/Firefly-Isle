@@ -18,7 +18,7 @@
 ## 固定边界
 
 - app id: `com.ghibli1024.fireflyisle`
-- app name: `一页萤屿`
+- app name: `知见`（Capacitor、iOS 显示名与 Android 两个标题字符串保持一致）
 - webDir: `dist`
 - 同步顺序: `npm run build` -> `npx cap sync`
 - 业务实现仍在 Vite/React/Supabase；iOS/Android 目录只承载原生壳和平台工程。
@@ -55,6 +55,8 @@ cd android && ./gradlew tasks
 | Android 真机 | USB 调试安装运行 | 交付前记录通过或受限原因 |
 
 ## 当前本机检查记录
+
+2026-10-04：本地源配置显示名已适配为知见，app id、bundle ID、包名与 URL scheme 保持不变。本次未运行 native sync/build；忽略目录中的 `ios/App/App/capacitor.config.json` 和 `android/app/src/main/assets/capacitor.config.json` 仍是此前同步产物，应在下次 build/sync 时重新生成，不手工维护或提交。显示名源文件更新不代表已安装应用或商店页面更新。
 
 2026-05-17:
 

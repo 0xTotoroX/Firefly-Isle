@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">一页萤屿</string>
-    <string name="title_activity_main">一页萤屿</string>
+    <string name="app_name">知见</string>
+    <string name="title_activity_main">知见</string>
     <string name="package_name">com.ghibli1024.fireflyisle</string>
     <string name="custom_url_scheme">com.ghibli1024.fireflyisle</string>
 </resources>

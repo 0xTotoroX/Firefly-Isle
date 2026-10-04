@@ -124,7 +124,7 @@ export function createBillingCheckoutHandler(options: { env: RuntimeEnv; fetch?:
 
     const body = new URLSearchParams({
       'line_items[0][price_data][currency]': 'usd',
-      'line_items[0][price_data][product_data][name]': 'Firefly Isle donation',
+      'line_items[0][price_data][product_data][name]': 'MyOncode donation',
       'line_items[0][price_data][unit_amount]': String(amountCents),
       'line_items[0][quantity]': '1',
       mode: 'payment',

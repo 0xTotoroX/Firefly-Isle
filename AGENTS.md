@@ -42,7 +42,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | tsconfig.cloudflare-functions.json · tsconfig.supabase-functions.json | 两种边缘函数运行时的独立类型边界 |
 | eslint.config.js · components.json | ESLint 规则及 archive/ 排除边界，与 shadcn/ui 配置 |
 | index.html | SPA 挂载页、主题初始化、PWA metadata；内联脚本与 CSP hash 配套 |
-| capacitor.config.ts | 固定 app id/name，dist 为原生 Web 构建来源；签名资料不入 Git |
+| capacitor.config.ts | 保留稳定 app id、显示名知见，dist 为原生 Web 构建来源；签名资料不入 Git |
 | wrangler.jsonc | Cloudflare 构建与公开环境接口，微信 KV/回调预研；不在本轮切换生产配置 |
 | .env.local.example · .dev.vars.example · .gitignore | 非敏感配置模板与本机凭据/产物忽略边界 |
 | README.md · README.en.md | 中英文项目说明与前后端目录入口 |

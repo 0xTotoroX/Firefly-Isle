@@ -1,11 +1,12 @@
 /**
- * [INPUT]: 依赖 vitest、node:crypto 的 HMAC、./handler 与注入 fetch mock。
+ * [INPUT]: 依赖 vitest、共享品牌名称、./handler 与注入 fetch mock。
  * [OUTPUT]: 对外提供 billing-checkout 的开关门控、鉴权与请求构造回归测试。
  * [POS]: supabase/functions/billing-checkout 的测试文件，约束未配置时 fail-closed、一次性 Checkout 请求携带用户身份、金额与捐赠 metadata。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it, vi } from 'vitest'
 
+import { brand } from '../../../src/lib/brand'
 import { createBillingCheckoutHandler, type RuntimeEnv } from './handler'
 
 function createEnv(overrides: Record<string, string | undefined> = {}): RuntimeEnv {
@@ -93,7 +94,13 @@ describe('billing-checkout handler', () => {
     expect(params.get('submit_type')).toBe('donate')
     expect(params.get('client_reference_id')).toBe('auth-user')
     expect(params.get('metadata[user_id]')).toBe('auth-user')
+    expect(params.get('line_items[0][price_data][product_data][name]')).toBe(`${brand.name.en} donation`)
     expect(params.get('line_items[0][price_data][unit_amount]')).toBe('1500')
+    expect(params.get('line_items[0][price_data][currency]')).toBe('usd')
+    expect(params.get('line_items[0][quantity]')).toBe('1')
+    expect(params.get('metadata[amount_cents]')).toBe('1500')
+    expect(params.get('success_url')).toBe('https://firefly.test/success')
+    expect(params.get('cancel_url')).toBe('https://firefly.test/cancel')
     expect(params.get('customer_email')).toBe('rider@firefly.test')
     expect(stripeCall?.body).not.toContain('sk_test_key')
   })

@@ -57,7 +57,7 @@
 | --- | --- | --- |
 | 代码治理 | 稳定治疗线 ID、事务保存、化验编辑持久化、分享、配额与主题状态修复已整合；本轮进一步补审核队列、创建幂等、多病历入口、完整导出与诊断脱敏 | 本地 93 文件/669 项全量测试、覆盖率、lint、完整类型和构建通过；最终纯白尾页修复另有 11 项导出回归、类型/lint/build 通过。构建仍有既有大文件包提示 |
 | 新设计 | 六部分规范、黑白八色与多套生图页面已交付 | 用户选布局，迁移全部正式页面，桌面/窄屏和真实状态验收 |
-| 命名与域名 | 用户确认知见 / MyOncode；本地 Web 字标、简介、页面/PWA 名称及下载名已适配，技术标识保留兼容 | 域名实时复核与购买、商标/微信名、最终图标、原生显示名及发布另验；历史候选的价格和状态不代表当前可用 |
+| 命名与域名 | 用户确认知见 / MyOncode；本地 Web 字标、简介、页面/PWA 名称、下载名、原生壳显示名及 Checkout 商品名已适配，技术标识保留兼容 | 域名实时复核与购买、商标/微信名、最终图标、原生真机及函数部署/发布另验；历史候选的价格和状态不代表当前可用 |
 | 数据模型与权限 | 19 个 SQL 迁移已从零执行；最小 GRANT、逐表 RLS、并发保存/配额、捐赠状态和注销检查通过；完整本地 Supabase Auth/PostgREST 验证了真实注册、13 表读取与临床读写；关系及权限见 `docs/architecture/data-model.md` | 旧 17 份迁移升级到 19 份已验证数据与旧 RPC 调用兼容；生产环境未执行 |
 | 国内上线 | 自托管准备、恢复脚本、Cloudflare 发布配置已有 | 主体/地区/入口/支付选择，备案与微信类目核验，当前生产数据和函数版本检查 |
 | 工作流评估 | 保留轻量 OpenSpec 行为合同，复用现有 React/Radix/Supabase；无需额外 Superpowers 执行层 | 本轮新要求与验收证据同步；不以流程数量代替测试 |
@@ -108,6 +108,14 @@ Node.js 22.23.3 / npm 10.9.9 的干净 npm ci、lint、所有 TypeScript 边界�
 | 自动检查 | Node.js 22；`npm test -- --maxWorkers=2`：102 文件 / 723 项通过；type-check（app/node/两种 Functions）、lint、build 通过。低并行避免本机并发验证时首次 lazy import 超过测试默认等待；未放宽行为断言。 |
 | 浏览器 | 实际 React 登录/密码恢复弹层、中英文标题、明暗主题、Dashboard、输入/OCR 固定示例和确认提取、病历章节/阶段跳转、指标分类切换通过。390px 输入/病历/指标无文档横向溢出，章节 sticky top=68px。 |
 | 导出 | 真实 Demo 病历 PDF/PNG 下载成功；PDF 为 2 页 A4，已检查第一页，保留可读正文并排除章节操作。输出及检查日志在本地忽略目录 `output/myoncode-brand-validation/`，不入 Git。 |
-| 兼容 | 存储键、账号 JSON format、PWA identity/缓存前缀、内联 CSP hash、后端/原生/部署配置及依赖锁文件未变。补充跨格式品牌一致和实际 CSP hash 回归。 |
+| 兼容 | 存储键、账号 JSON format、PWA identity/缓存前缀、内联 CSP hash、稳定后端/原生标识、部署配置及依赖锁文件未变；本地原生显示名和 Checkout 商品名称补齐见下文。补充跨格式品牌一致和实际 CSP hash 回归。 |
 
-本轮浏览器病例和提取使用完全虚构 Demo，不证明生产接口可用。现有匿名会话访问 /login 会回总览，登录展示通过已有 password-reset 入口检查并切回登录模式；没有提交凭据、发送邮件或注销会话。此前 Supabase 401 问题未由本轮修改；大分包警告仍在。A/B 完整布局、候选图标、原生与 Stripe 托管支付页显示名、域名核验/购买及部署保持单独验收。未向 Open Design 或外部模型发送资料。
+本轮浏览器病例和提取使用完全虚构 Demo，不证明生产接口可用。现有匿名会话访问 /login 会回总览，登录展示通过已有 password-reset 入口检查并切回登录模式；没有提交凭据、发送邮件或注销会话。此前 Supabase 401 问题未由本轮修改；大分包警告仍在。A/B 完整布局、候选图标、原生真机/签名、支付函数部署、域名核验/购买及发布保持单独验收。未向 Open Design 或外部模型发送资料。
+
+
+### 本地原生与 Checkout 显示名补充（2026-10-04）
+
+- Capacitor `appName`、iOS `CFBundleDisplayName`、Android `app_name` / `title_activity_main` 已统一为知见。稳定 app id、bundle ID、包名、URL scheme 与签名配置未改。
+- `billing-checkout/handler.ts` 的 Checkout 商品名称已改为 `MyOncode donation`；金额、币种、用户关联、metadata、成功/取消 URL、鉴权与开关行为未改。没有读取或修改 Stripe 商户名称、账单描述及已有远端支付对象。
+- 3 个相关测试文件的 11 项测试、完整 app/node/Cloudflare/Supabase 类型检查、受影响文件 lint、iOS plist 与 Android XML/标题资源引用检查通过。支付验证使用注入 fetch，不创建真实 Checkout。
+- 本次未运行原生 sync/build、真机、签名或函数部署。两份 Git 忽略的原生 `capacitor.config.json` 是此前同步产物，下次 build/sync 再生成；源码显示名完成不代表已安装应用、商店页或线上支付页已经更新。
