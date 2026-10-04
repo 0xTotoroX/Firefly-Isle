@@ -1,10 +1,9 @@
 /**
- * [INPUT]: 依赖 node:fs 的源码合同检查、react-dom/server 的静态渲染、LocaleProvider 与 ./TimelineTable 的 blur 取消提交 helpers。
- * [OUTPUT]: 对外提供 TimelineTable Escape 取消不提交行为、主题 class 分支去噪与患者类型标签不外露的回归测试。
+ * [INPUT]: 依赖 react-dom/server 的静态渲染、LocaleProvider 与 ./TimelineTable 的 blur 取消提交 helpers。
+ * [OUTPUT]: 对外提供 TimelineTable Escape 取消不提交行为、主题变量、长内容与治疗顺序与患者类型标签不外露的回归测试。
  * [POS]: components/timeline 的主表格测试，约束输入框取消语义、CSS 变量驱动的主题边界与正式时间线头部信息边界，和 TimelineTable.tsx 同步演化。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import { readFileSync } from 'node:fs'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 
@@ -13,10 +12,6 @@ import type { PatientRecord } from '@/types/patient'
 
 import { consumeCanceledBlur, markNextBlurAsCanceled } from './TimelineTable'
 import { TimelineTable } from './TimelineTable'
-
-function readTimelineTableSource() {
-  return readFileSync(new URL('./TimelineTable.tsx', import.meta.url), 'utf8')
-}
 
 describe('TimelineTable inline editing contract', () => {
   it('consumes exactly one blur commit after Escape cancels editing', () => {
@@ -31,13 +26,30 @@ describe('TimelineTable inline editing contract', () => {
     expect(consumeCanceledBlur(guard)).toBe(false)
   })
 
-  it('keeps identical dark/light class branches out of CSS-variable helpers', () => {
-    const source = readTimelineTableSource()
+  it('keeps long clinical text intact and orders treatment lines without decorative metadata', () => {
+    const longGeneticResult = `示例基因检测：${'EGFR_EXON19_'.repeat(30)}\n完整报告备注`;
+    const markup = renderToStaticMarkup(
+      <LocaleProvider persist={false}>
+        <TimelineTable record={{
+          initialOnset: { treatment: '示例初次治疗', immunohistochemistry: '初次免疫组化结果' },
+          treatmentLines: [
+            { lineNumber: 2, regimen: '示例后续方案', geneticTest: longGeneticResult },
+            { lineNumber: 1, regimen: '示例首线方案' },
+          ],
+        }} theme="light" />
+      </LocaleProvider>,
+    )
 
-    expect(source).toContain('function getShellClass() {')
-    expect(source).toContain('function getSectionClass() {')
-    expect(source).toContain('function getCellClass(critical: boolean, filled: boolean) {')
-    expect(source).not.toContain("return theme === 'dark'\n    ? 'rounded-[var(--ff-radius-md)] border")
+    expect(markup).toContain(longGeneticResult)
+    expect(markup.indexOf('示例初次治疗')).toBeLessThan(markup.indexOf('示例首线方案'))
+    expect(markup.indexOf('示例首线方案')).toBeLessThan(markup.indexOf('示例后续方案'))
+    expect(markup).toContain('初次免疫组化结果')
+    expect(markup).toContain('[overflow-wrap:anywhere]')
+    expect(markup).toContain('whitespace-pre-wrap')
+    expect(markup).toContain('var(--ff-timeline-text-body)')
+    expect(markup).not.toContain('INITIAL_ONSET')
+    expect(markup).not.toContain('LINE_01')
+    expect(markup).not.toMatch(/text-\[(?:9|10|11)px\]|truncate|line-clamp/)
   })
 
   it('does not expose advanced or non-advanced patient category labels in the table header', () => {

@@ -7,7 +7,7 @@
 import { Link } from 'react-router-dom'
 import { copy, getCopy } from '@/lib/copy'
 import type { Locale } from '@/lib/locale'
-import type { PatientRecordSummary } from '@/lib/patient-record-storage'
+import type { PatientRecordSummary } from '@/lib/records/patient-record-storage'
 
 export type PatientRecordListItem = PatientRecordSummary & {
   recordHref: string

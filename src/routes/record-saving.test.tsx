@@ -15,8 +15,8 @@ vi.mock('@/lib/locale', () => ({ useLocale: () => ({ locale: mocks.locale }) }))
 vi.mock('@/lib/theme', () => ({ useTheme: () => ({ theme: 'dark' }) }))
 vi.mock('@/components/app-shell', () => ({ ArchiveSideNav: () => null, ClinicalTopBar: () => null }))
 vi.mock('@/components/system/surfaces', () => ({ MainShell: ({ children }: { children: ReactNode }) => <div>{children}</div> }))
-vi.mock('@/lib/patient-record-storage', () => ({ persistPatientRecord: mocks.save }))
-vi.mock('@/lib/record-sharing', () => ({ listRecordShares: vi.fn(async () => []), createRecordShare: vi.fn(), revokeRecordShare: vi.fn() }))
+vi.mock('@/lib/records/patient-record-storage', () => ({ persistPatientRecord: mocks.save }))
+vi.mock('@/lib/records/record-sharing', () => ({ listRecordShares: vi.fn(async () => []), createRecordShare: vi.fn(), revokeRecordShare: vi.fn() }))
 vi.mock('./record-page.logic', async () => ({ ...await vi.importActual('./record-page.logic'), loadPatientRecordById: mocks.load }))
 vi.mock('./record-page.view', () => ({ RecordPageContent: (props: ComponentProps<typeof import('./record-page.view').RecordPageContent>) => <>
   <output aria-label="record">{JSON.stringify(props.activeRecordLoadState.record)}</output>

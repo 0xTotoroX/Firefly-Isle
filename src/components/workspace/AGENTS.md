@@ -8,8 +8,10 @@ extraction-composer.tsx: 工作区输入与主操作区，收口文本输入、�
 follow-up-panel.tsx: 追问输入和提交；处理期间禁用重复请求，失败由工作台提供原答重试。
 llm-provider-settings-panel.tsx: 由 /models 承载的 BYOK 配置面板；保存、脱敏读取、系统恢复与连接测试通过 settings client，Demo 只保存非敏感预览状态。
 llm-provider-settings-panel.test.ts: 模型设置字段显隐合同测试，约束系统内置无第二行、API 自提供显示 Provider/API Key/模型名、自定义显示 Base URL/API Key/模型名且 URL 在前，并渲染 DeepSeek 服务测试入口
-report-preview-frame.tsx: V3 工作区病历预览主表面，内联渲染正式档案入口、按需追问进度提示、Dense Clinical Ledger 基本信息台账、诊断日期前置、治疗方案与最新基因/免疫组化摘要、由 initialOnset/treatmentLines 投影的横向病程轨及干净等待空态、可编辑临床备注、既往检测历史、验证状态与编辑翻出动效，并保留 setReportRef 导出捕获点
+report-preview-frame.tsx: 平面草稿预览，组合基本信息、完整治疗经过、分阶段检测、备注与真实缺失提示；保留正式病历入口及 setReportRef。
+report-preview-field.tsx: 字段阅读/编辑和保存/取消；处理期间锁住输入和提交。
+report-preview-field.dom.test.tsx: 字段提交、取消和异步锁定行为回归。
 
-法则: feature 层承载页面业务结构块；/app 做输入、提取、模型设置与草稿预览，正式导出属于 /record/:id。
+法则: feature 层承载页面业务结构块；/app 做输入、提取与草稿预览；模型设置归 /models，正式导出属于 /record/:id。
 
 [PROTOCOL]: 结构或契约事实变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md，已加载且未变化的内容不重读。

@@ -10,7 +10,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({ load: vi.fn() }))
-vi.mock('@/lib/patient-record-storage', () => ({ loadPatientRecordById: mocks.load }))
+vi.mock('@/lib/records/patient-record-storage', () => ({ loadPatientRecordById: mocks.load }))
 vi.mock('@/lib/locale', () => ({ useLocale: () => ({ locale: 'zh' }) }))
 vi.mock('@/lib/theme', () => ({ useTheme: () => ({ theme: 'light' }) }))
 vi.mock('@/components/app-shell', () => ({ ArchiveSideNav: () => null, ClinicalTopBar: () => null }))

@@ -1,10 +1,10 @@
 /**
- * [INPUT]: 依赖 lucide-free 的普通 JSX、@/lib/lab-results 的 LabTrendStatus 与 cn 类名合并工具。
+ * [INPUT]: 依赖 lucide-free 的普通 JSX、@/lib/labs/lab-results 的 LabTrendStatus 与 cn 类名合并工具。
  * [OUTPUT]: 对外提供实验室统计页共用数值格式化、状态文案、StatusLabel 与 RiseRatioLabel。
  * [POS]: components/analytics 的展示格式层，被统计主面板与趋势图共享，避免状态文案和数值格式散落在大组件里。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import type { LabTrendStatus } from '@/lib/lab-results'
+import type { LabTrendStatus } from '@/lib/labs/lab-results'
 import { cn } from '@/lib/utils'
 
 export const statusText: Record<LabTrendStatus, string> = {

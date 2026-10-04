@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react 的 Context、hooks 与浏览器 localStorage / documentElement。
  * [OUTPUT]: 对外提供 ThemeProvider、useTheme、Theme 类型与 THEME_STORAGE_KEY 常量。
- * [POS]: lib 的主题状态中心，统一管理 Dark / Light 切换、持久化与 DOM 同步。
+ * [POS]: lib 的主题状态中心，统一管理 Dark / Light 切换、可选持久化与 DOM 同步；存储拒绝或写满时保留内存偏好。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
@@ -35,7 +35,11 @@ function readStoredTheme(): Theme {
     return 'dark'
   }
 
-  return window.localStorage.getItem(THEME_STORAGE_KEY) === 'light' ? 'light' : 'dark'
+  try {
+    return window.localStorage.getItem(THEME_STORAGE_KEY) === 'light' ? 'light' : 'dark'
+  } catch {
+    return 'dark'
+  }
 }
 
 function applyTheme(theme: Theme) {
@@ -50,7 +54,11 @@ function readStoredAccent() {
     return defaultAccentHex
   }
 
-  return normalizeAccentHex(window.localStorage.getItem(ACCENT_STORAGE_KEY))
+  try {
+    return normalizeAccentHex(window.localStorage.getItem(ACCENT_STORAGE_KEY))
+  } catch {
+    return defaultAccentHex
+  }
 }
 
 export function ThemeProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
@@ -61,8 +69,12 @@ export function ThemeProvider({ children, persist = true }: PropsWithChildren<{ 
     applyTheme(theme)
     applyAccent(accent, theme)
     if (persist) {
-      window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-      window.localStorage.setItem(ACCENT_STORAGE_KEY, accent)
+      try {
+        window.localStorage.setItem(THEME_STORAGE_KEY, theme)
+        window.localStorage.setItem(ACCENT_STORAGE_KEY, accent)
+      } catch {
+        // Preferences still apply in this tab when storage is unavailable.
+      }
     }
   }, [accent, theme, persist])
 

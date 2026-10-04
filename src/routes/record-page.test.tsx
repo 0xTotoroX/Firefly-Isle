@@ -508,7 +508,7 @@ describe('RecordPage responsive dossier shell', () => {
     expect(markup).toContain('data-timeline-rail-date="2025-03-08-2026-02-10"')
     expect(markup).toContain('data-timeline-rail-date="2026-02-10-2026-06-30"')
     expect(markup).toContain('data-timeline-rail-date="2026-07-15-至今"')
-    expect(markup).toContain('md:grid-cols-[56px_12rem_minmax(0,1fr)]')
+    expect(markup).toContain('aria-label="病历章节"')
     expect(markup).toContain('data-timeline-mobile-pfs="PFS=进行中"')
     expect(markup).toContain('示例初始报告')
     expect(markup).toContain('示例方案 E（虚构）')

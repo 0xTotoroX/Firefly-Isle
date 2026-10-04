@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react-dom/server 静态渲染、vitest 断言与 LabAnalyticsDashboard 纯展示组件。
  * [OUTPUT]: 对外提供统计页摘要、分类指标、图表编辑开关、趋势图点位热区、连续上涨段高亮、趋势图时间点/全局状态文字显示、趋势图等价表格、公开 Demo 空态引导和非诊断文案回归测试。
- * [POS]: components/analytics 的界面合同测试，约束选定深色临床控制塔布局在无浏览器交互时也保留核心信息结构、公开 /demo/analytics 引导与肿瘤标志物提醒联动标识。
+ * [POS]: components/analytics 的界面合同测试，约束指标选择、趋势与监测布局在无浏览器交互时也保留核心信息结构、空态上传引导与肿瘤标志物提醒联动标识。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { MemoryRouter } from 'react-router-dom'
@@ -41,7 +41,7 @@ function countMatches(markup: string, pattern: string) {
 }
 
 describe('LabAnalyticsDashboard', () => {
-  it('renders the clinical control-tower analytics structure', () => {
+  it('renders the analytics summary, selector, chart and monitoring structure', () => {
     const markup = renderDashboard()
 
     expect(markup).toContain('指标管理')
@@ -58,12 +58,12 @@ describe('LabAnalyticsDashboard', () => {
     expect(markup).toContain('选择全局状态显示方式')
     expect(markup).toContain('状态文字显示：显示')
     expect(markup).toContain('状态文字显示：隐藏')
-    expect(markup).toContain('aria-label="状态文字显示：隐藏" aria-pressed="true"')
+    expect(markup).toContain('aria-label="状态文字显示：显示" aria-pressed="true"')
     expect(markup).not.toContain('选择状态显示方式')
     expect(markup).toContain('时间点：')
     expect(markup).toContain('时间点显示：显示')
     expect(markup).toContain('时间点显示：隐藏')
-    expect(markup).toContain('今年')
+    expect(markup).toContain('2026 年')
     expect(markup).toContain('全部')
     expect(markup).toContain('趋势图可横向滑动')
     expect(markup).toContain('data-scroll-hint="true"')
@@ -72,8 +72,6 @@ describe('LabAnalyticsDashboard', () => {
     expect(markup).not.toContain('开启编辑')
     expect(markup).not.toContain('完成编辑')
     expect(markup).toContain('repeat(auto-fit,minmax(min(100%,18rem),1fr))')
-    expect(markup).toContain('grid-cols-[auto_minmax(0,1fr)]')
-    expect(markup).toContain('whitespace-nowrap')
     expect(markup).not.toContain('flex items-center justify-between gap-4')
     expect(markup).not.toContain('演示数据')
     expect(markup).not.toContain('当前病历：张某某 ·')
@@ -156,8 +154,8 @@ describe('LabAnalyticsDashboard', () => {
   it('keeps analytics read-only and points upload work back to /app', () => {
     const markup = renderDashboard({ labResults: [] })
 
-    expect(markup).toContain('请回到 /app 输入区上传病历、血常规、血生化或肿瘤标志物图片/PDF')
-    expect(markup).toContain('/demo/analytics')
+    expect(markup).toContain('请在工作台上传血常规、血生化或肿瘤标志物报告')
+    expect(markup).toContain('href="/app"')
     expect(markup).not.toContain('type="file"')
     expect(markup).not.toContain('上传实验室报告')
   })
@@ -166,7 +164,7 @@ describe('LabAnalyticsDashboard', () => {
     const markup = renderDashboard({ labResults: [] })
 
     expect(markup).toContain('暂无已保存指标')
-    expect(markup).toContain('本页只读取已保存到网页端的指标数据')
+    expect(markup).toContain('复核并保存后，可在这里查看指标变化')
     expect(markup).not.toContain('实验室')
     expect(markup).not.toContain('CA15-3')
   })

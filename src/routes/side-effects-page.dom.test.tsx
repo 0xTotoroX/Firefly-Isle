@@ -25,7 +25,7 @@ const createSideEffect = vi.fn()
 const updateSideEffect = vi.fn()
 const deleteSideEffect = vi.fn()
 
-vi.mock('@/lib/patient-record-storage', () => ({
+vi.mock('@/lib/records/patient-record-storage', () => ({
   loadPatientRecordById: (...args: unknown[]) => loadPatientRecordById(...args),
 }))
 

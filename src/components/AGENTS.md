@@ -2,7 +2,7 @@
 > L2 | 父级: [AGENTS.md](../AGENTS.md)
 
 成员清单
-app-shell.tsx: Dark/Light 共享壳层入口，导出 V3 顶部状态条、可变侧栏、匿名/非匿名会话身份展示、主题切换、认证出口与占位素材
+app-shell.tsx: 共享壳层入口，只导出 ClinicalTopBar 与 ArchiveSideNav；不再保留旧头部兼容组件和占位素材
 analytics/: 实验室趋势统计展示组件目录，承载全产品 Demo 指标/AI 预览数据、分类指标索引、折线图、等价表格与监测面板；上传入口归 /app 输入区
 background-music-toggle.tsx: 全局背景音乐共享控件，消费 BackgroundAudioProvider 状态并以可访问标签表达播放、暂停、拦截、不可用、当前曲目、上一首/下一首、control press、紧凑顶栏直接切换、hover 播放器弹层与按钮到弹层桥接层
 background-music-toggle.test.tsx: 背景音乐控制入口回归测试，约束登录页工具区与 authenticated top bar 共用同一音乐开关、曲目标题、切歌语义、暂停文案、紧凑顶栏直接切换、hover 弹层触发与桥接层合同

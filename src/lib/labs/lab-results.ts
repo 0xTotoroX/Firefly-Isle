@@ -1,10 +1,10 @@
 /**
- * [INPUT]: 依赖 @/types/patient 的 LabResult 领域模型与 @/lib/lab-dictionary 的项目字典/参考范围。
+ * [INPUT]: 依赖 @/types/patient 的 LabResult 领域模型与 @/lib/labs/lab-dictionary 的项目字典/参考范围。
  * [OUTPUT]: 对外提供 DEFAULT_LAB_REFERENCE_RANGES、LabTrendRow、buildLabTrendRows、buildDerivedBloodRoutineReadings、buildLabChartSeries、summarizeLatestAbnormalByCategory 与 detectTumorMarkerContinuousRise。
- * [POS]: lib 的实验室趋势纯逻辑边界，集中参考范围、异常分类、血常规派生、图表序列、最近异常与肿瘤标志物连续上涨提示，不承载 UI。
+ * [POS]: lib/labs 的实验室趋势纯逻辑边界，集中参考范围、异常分类、血常规派生、图表序列、最近异常与肿瘤标志物连续上涨提示，不承载 UI。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import { findLabIndicator, getReferenceRangeForIndicator, type ReferenceRange } from '@/lib/lab-dictionary'
+import { findLabIndicator, getReferenceRangeForIndicator, type ReferenceRange } from '@/lib/labs/lab-dictionary'
 import type { LabResult, LabResultCategory } from '@/types/patient'
 
 export type LabTrendStatus = 'normal' | 'high' | 'low' | 'persistent-high' | 'reference-missing'

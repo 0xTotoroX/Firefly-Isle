@@ -16,7 +16,7 @@ import { ThemeProvider } from '@/lib/theme'
 import { FollowUpPage } from './follow-up-page'
 
 const storage = vi.hoisted(() => ({ loadPatientRecordById: vi.fn(), loadFollowUpVisits: vi.fn(), createFollowUpVisit: vi.fn(), updateFollowUpVisit: vi.fn(), deleteFollowUpVisit: vi.fn(), setFollowUpStatus: vi.fn() }))
-vi.mock('@/lib/patient-record-storage', () => ({ loadPatientRecordById: storage.loadPatientRecordById }))
+vi.mock('@/lib/records/patient-record-storage', () => ({ loadPatientRecordById: storage.loadPatientRecordById }))
 vi.mock('@/lib/follow-up-storage', () => storage)
 const localState = new Map<string, string>()
 const localStorageMock = { getItem: (key: string) => localState.get(key) ?? null, setItem: (key: string, value: string) => { localState.set(key, value) }, removeItem: (key: string) => { localState.delete(key) }, clear: () => localState.clear() }

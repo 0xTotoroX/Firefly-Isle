@@ -550,7 +550,6 @@ export const copy = {
       clinicalNotes: text('临床备注', 'Clinical Notes'),
       missingFields: text('仍待补充：', 'Still missing: '),
       completed: text('关键临床字段已补齐，可进入下一阶段渲染。', 'Critical clinical fields are complete and ready for the next stage.'),
-      verifiedBy: text('AI 助手已校验', 'Verified by AI Agent'),
       followUpsUsed: text('已使用追问轮次：', 'Follow-ups used: '),
       footerBrand: text('墨迹与档案', 'Ink & Archive'),
       footerProtocol: text('协议：临床 ALPHA-01 // 无未匹配数据', 'Protocol: Clinical ALPHA-01 // No unmatched data'),

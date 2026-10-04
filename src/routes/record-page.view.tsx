@@ -112,7 +112,7 @@ function RecordEditToolbar({
         aria-label={isChartEditing ? activeLabel : inactiveLabel}
         aria-pressed={isChartEditing}
         className={[
-          't-control-press border-b pb-0.5 text-sm font-semibold',
+          't-control-press min-h-11 rounded border px-3 text-sm font-semibold',
           isChartEditing
             ? 'border-[var(--ff-accent-primary)] text-[var(--ff-accent-text)]'
             : 'border-[var(--ff-border-default)] text-[var(--ff-text-secondary)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-text-primary)]',
@@ -260,7 +260,7 @@ export function RecordPageContent({
     )
   }
 
-  if (demoRoute) {
+  if (ganttRecord) {
     return (
       <>
         {controlsNode}
@@ -285,44 +285,9 @@ export function RecordPageContent({
             locale={locale}
             onCommitField={onCommitField}
             onCommitRange={onCommitRange}
-            onClinicalAnalyze={undefined}
+            onClinicalAnalyze={demoRoute ? undefined : onClinicalAnalyze}
             onExport={onExport}
-            record={demoRecord}
-            recordRef={recordRef}
-          />
-        </div>
-      </>
-    )
-  }
-
-  if (activeRecordLoadState.record) {
-    return (
-      <>
-        {controlsNode}
-        {shareState && onCreateShare && onCopyShareUrl && onRevokeShare ? (
-          <RecordSharePanel
-            locale={locale}
-            onCopyCreatedUrl={onCopyShareUrl}
-            onCreateShare={onCreateShare}
-            onRevokeShare={onRevokeShare}
-            previewNotice={sharePreviewNotice}
-            state={shareState}
-          />
-        ) : null}
-        <div className="t-record-view" data-active-page="dossier">
-          <RecordDossier
-            clinicalAnalysisState={clinicalAnalysisState}
-            exportError={exportState.error}
-            exportFormat={exportState.format}
-            isEditable={isChartEditing}
-            isExportDisabled={false}
-            isExporting={exportState.isExporting}
-            locale={locale}
-            onCommitField={onCommitField}
-            onCommitRange={onCommitRange}
-            onClinicalAnalyze={onClinicalAnalyze}
-            onExport={onExport}
-            record={activeRecordLoadState.record}
+            record={ganttRecord}
             recordRef={recordRef}
           />
         </div>

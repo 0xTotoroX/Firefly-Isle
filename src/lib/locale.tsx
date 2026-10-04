@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react 的 Context、hooks 与浏览器 localStorage/documentElement。
  * [OUTPUT]: 对外提供 LocaleProvider、useLocale、Locale 类型、LOCALE_STORAGE_KEY 常量与文档语言同步工具。
- * [POS]: lib 的语言状态中心，统一管理 zh / en 切换、持久化、HTML lang/data-locale 与语言真相源消费入口。
+ * [POS]: lib 的语言状态中心，统一管理 zh / en 切换、持久化、HTML lang/data-locale 与语言真相源消费入口；存储失败不阻断当前标签的语言切换。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
@@ -48,7 +48,19 @@ function readStoredLocale(): Locale {
     return 'zh'
   }
 
-  return window.localStorage.getItem(LOCALE_STORAGE_KEY) === 'en' ? 'en' : 'zh'
+  try {
+    return window.localStorage.getItem(LOCALE_STORAGE_KEY) === 'en' ? 'en' : 'zh'
+  } catch {
+    return 'zh'
+  }
+}
+
+function writeStoredLocale(locale: Locale) {
+  try {
+    window.localStorage.setItem(LOCALE_STORAGE_KEY, locale)
+  } catch {
+    // Locale is an optional preference; the current tab keeps its selected language.
+  }
 }
 
 export function LocaleProvider({ children, persist = true }: PropsWithChildren<{ persist?: boolean }>) {
@@ -60,13 +72,13 @@ export function LocaleProvider({ children, persist = true }: PropsWithChildren<{
 
   const setLocale = useCallback((nextLocale: Locale) => {
     setLocaleState(nextLocale)
-    if (persist) window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
+    if (persist) writeStoredLocale(nextLocale)
   }, [persist])
 
   const toggleLocale = useCallback(() => {
     setLocaleState((currentLocale) => {
       const nextLocale = currentLocale === 'zh' ? 'en' : 'zh'
-      if (persist) window.localStorage.setItem(LOCALE_STORAGE_KEY, nextLocale)
+      if (persist) writeStoredLocale(nextLocale)
       return nextLocale
     })
   }, [persist])

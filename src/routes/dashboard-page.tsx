@@ -14,7 +14,7 @@ import { MainShell } from '@/components/system/surfaces'
 import { DemoModeBanner } from '@/components/system/demo-mode-banner'
 import { getDemoDashboard, useDemoSession, useProductPath } from '@/lib/demo-session'
 import { useOptionalAuth } from '@/lib/auth'
-import { loadPatientRecordSummaries, type PatientRecordCursor, type PatientRecordSummary } from '@/lib/patient-record-storage'
+import { loadPatientRecordSummaries, type PatientRecordCursor, type PatientRecordSummary } from '@/lib/records/patient-record-storage'
 import { useAsyncResource } from '@/lib/async-resource'
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
@@ -22,8 +22,6 @@ import { useTheme } from '@/lib/theme'
 import { shellWideContentClass, sidebarOffsetClass, topBarOffsetClass } from '@/lib/theme/tokens'
 import { loadDashboardData, type DashboardData } from '@/lib/dashboard-data'
 
-const STAT_EYEBROW_CLASS =
-  'font-[var(--ff-font-mono)] text-[10px] uppercase tracking-[0.3em] text-[var(--ff-text-muted)]'
 function DashboardStat({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 rounded-[var(--ff-radius-md)] bg-[var(--ff-surface-inset)] p-4 sm:p-5">
@@ -82,9 +80,9 @@ function DashboardClinicalSections({ data, onRetry }: { data: DashboardData; onR
             <ul className="mt-4 space-y-2">
               {data.abnormalReadings.map((reading) => (
                 <li className="flex flex-wrap items-center justify-between gap-2" key={reading.itemId}>
-                  <div className="flex min-w-0 items-center gap-2">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <span
-                      className={`inline-flex items-center rounded-[var(--ff-radius-sm)] border px-1.5 py-0.5 font-[var(--ff-font-mono)] text-[10px] font-bold uppercase ${
+                      className={`inline-flex items-center rounded-[var(--ff-radius-sm)] border px-1.5 py-0.5 font-[var(--ff-font-mono)] text-sm font-semibold ${
                         reading.status === 'high'
                           ? 'border-[color-mix(in_srgb,var(--ff-critical)_46%,transparent)] text-[var(--ff-critical)]'
                           : 'border-[color-mix(in_srgb,var(--ff-low)_46%,transparent)] text-[var(--ff-low)]'
@@ -92,16 +90,16 @@ function DashboardClinicalSections({ data, onRetry }: { data: DashboardData; onR
                     >
                       {reading.status === 'high' ? getCopy(copy.dashboard.highLabel, locale) : getCopy(copy.dashboard.lowLabel, locale)}
                     </span>
-                    <span className="truncate text-sm font-bold text-[var(--ff-text-primary)]">{reading.itemName}</span>
+                    <span className="min-w-0 break-words text-base font-semibold [overflow-wrap:anywhere] text-[var(--ff-text-primary)]">{reading.itemName}</span>
                   </div>
-                  <div className="flex items-center gap-3 font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-secondary)]">
+                  <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-[var(--ff-text-secondary)]">
                     <span>
                       {reading.value}
                       {reading.unit ? ` ${reading.unit}` : ''}
                     </span>
-                    {reading.reference ? <span className="text-[var(--ff-text-muted)]">ref {reading.reference}</span> : null}
+                    {reading.reference ? <span className="text-[var(--ff-text-muted)]">{locale === 'zh' ? '参考范围' : 'Reference'} {reading.reference}</span> : null}
                     <Link
-                      className="font-semibold text-[var(--ff-accent-text)] hover:underline"
+                      className="inline-flex min-h-11 items-center font-semibold text-[var(--ff-accent-text)] hover:underline"
                       to={productPath(`/analytics/${reading.patientId}`)}
                     >
                       {getCopy(copy.dashboard.viewAnalytics, locale)}
@@ -131,9 +129,9 @@ function DashboardClinicalSections({ data, onRetry }: { data: DashboardData; onR
             <ul className="mt-4 space-y-2">
               {data.recentSideEffects.map((entry) => (
                 <li className="flex flex-wrap items-center justify-between gap-2" key={entry.id}>
-                  <div className="flex min-w-0 items-center gap-2">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
                     <span
-                      className={`inline-flex items-center rounded-[var(--ff-radius-sm)] border px-1.5 py-0.5 font-[var(--ff-font-mono)] text-[10px] font-bold uppercase ${
+                      className={`inline-flex items-center rounded-[var(--ff-radius-sm)] border px-1.5 py-0.5 font-[var(--ff-font-mono)] text-sm font-semibold ${
                         entry.severity === 'severe'
                           ? 'border-[color-mix(in_srgb,var(--ff-critical)_46%,transparent)] text-[var(--ff-critical)]'
                           : entry.severity === 'moderate'
@@ -147,15 +145,15 @@ function DashboardClinicalSections({ data, onRetry }: { data: DashboardData; onR
                           ? getCopy(copy.sideEffects.severityModerate, locale)
                           : getCopy(copy.sideEffects.severityMild, locale)}
                     </span>
-                    <span className="truncate text-sm font-bold text-[var(--ff-text-primary)]">{entry.symptom}</span>
+                    <span className="min-w-0 break-words text-base font-semibold [overflow-wrap:anywhere] text-[var(--ff-text-primary)]">{entry.symptom}</span>
                     {entry.overdue ? (
-                      <span className="inline-flex items-center rounded-[var(--ff-radius-sm)] border border-[color-mix(in_srgb,var(--ff-critical)_46%,transparent)] px-1.5 py-0.5 font-[var(--ff-font-mono)] text-[10px] font-bold text-[var(--ff-critical)]">
+                      <span className="inline-flex items-center rounded-[var(--ff-radius-sm)] border border-[color-mix(in_srgb,var(--ff-critical)_46%,transparent)] px-1.5 py-0.5 font-[var(--ff-font-mono)] text-sm font-bold text-[var(--ff-critical)]">
                         {getCopy(copy.sideEffects.overdueBadge, locale)}
                       </span>
-                    ) : entry.ongoing ? <span className="font-[var(--ff-font-mono)] text-[10px] text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.ongoing, locale)}</span> : null}
+                    ) : entry.ongoing ? <span className="font-[var(--ff-font-mono)] text-sm text-[var(--ff-text-muted)]">{getCopy(copy.sideEffects.ongoing, locale)}</span> : null}
                   </div>
                   <Link
-                    className="font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-muted)] hover:text-[var(--ff-accent-text)]"
+                    className="inline-flex min-h-11 items-center text-sm text-[var(--ff-text-muted)] hover:text-[var(--ff-accent-text)]"
                     to={productPath(`/record/${entry.patientId}/side-effects`)}
                   >
                     {getCopy(copy.sideEffects.openFromRecord, locale)}
@@ -279,7 +277,6 @@ export function DashboardPage({ isSigningOut, onSignOut, userIsAnonymous, userLa
       />
       <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen px-4 pb-8 md:px-6 md:pb-10`} theme={theme}>
         <div className={`${shellWideContentClass} t-route-reveal mt-5 md:mt-6`}>
-          <div className={STAT_EYEBROW_CLASS}>{getCopy(copy.dashboard.eyebrow, locale)}</div>
           <h1 className="mt-1 font-[var(--ff-font-display)] text-3xl font-black tracking-tight">{getCopy(copy.dashboard.title, locale)}</h1>
           {demo ? <DemoDashboardContent /> : <DashboardPageContent key={user?.id} userId={user?.id ?? ''} />}
         </div>

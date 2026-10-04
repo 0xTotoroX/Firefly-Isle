@@ -434,7 +434,7 @@ describe('WorkspacePage report shell', () => {
     expect(markup).not.toContain('56 岁')
     expect(markup).not.toContain('>女<')
     expect(markup).toContain('等待病程节点')
-    expect(markup).toContain('>待</div>')
+    expect(markup).not.toContain('>待</div>')
     expect(markup).not.toContain('>草稿</span>')
     expect(markup).not.toContain('border-dotted')
   })
@@ -737,7 +737,8 @@ describe('WorkspacePage report shell', () => {
     const markup = renderWorkspace('light')
 
     expect(markup).toContain('Clinical Notes')
-    expect(markup).toContain('Verified by AI Agent')
+    expect(markup).not.toContain('Verified by AI Agent')
+    expect(markup).toContain('Missing information:')
     expect(markup).not.toContain('仍待补充：')
   })
 
@@ -746,8 +747,9 @@ describe('WorkspacePage report shell', () => {
     const markup = renderWorkspace('light')
 
     expect(markup).toContain('临床备注')
-    expect(markup).toContain('AI 验证状态')
-    expect(markup).toContain('未开始验证')
+    expect(markup).not.toContain('AI 验证状态')
+    expect(markup).not.toContain('未开始验证')
+    expect(markup).toContain('待补充：')
     expect(markup).not.toContain('Clinical Notes')
   })
 

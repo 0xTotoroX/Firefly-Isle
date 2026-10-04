@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的 disclosure 状态，依赖 @/lib/record-sharing 的 RecordShare 类型与 @/lib/locale 的 Locale。
+ * [INPUT]: 依赖 react 的 disclosure 状态，依赖 @/lib/records/record-sharing 的 RecordShare 类型与 @/lib/locale 的 Locale。
  * [OUTPUT]: 对外提供 RecordSharePanel 组件和 RecordSharePanelState，以次级 disclosure 渲染创建、复制、查看、撤销、Demo 预览禁用态与过期/撤销状态。
  * [POS]: components/record 的分享管理展示层，由 record-page.tsx 注入真实分享状态或 Demo 预览状态和动作，不直接读取 Supabase；所有病历默认折叠，按需展开分享动作。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
@@ -7,7 +7,7 @@
 import { useState } from 'react'
 
 import type { Locale } from '@/lib/locale'
-import type { RecordShare } from '@/lib/record-sharing'
+import type { RecordShare } from '@/lib/records/record-sharing'
 
 export type RecordSharePanelState = {
   createdUrl: string | null

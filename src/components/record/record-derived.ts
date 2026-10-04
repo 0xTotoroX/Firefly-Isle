@@ -1,11 +1,11 @@
 /**
- * [INPUT]: 依赖 @/types/patient 的 PatientRecord/PatientFieldTarget/PatientRangeTarget、@/lib/patient-metrics 的体格指标格式化、record-timeline-time 的 rail 时间段/PFS facade 与 components/record/types 的展示类型。
+ * [INPUT]: 依赖 @/types/patient 的 PatientRecord/PatientFieldTarget/PatientRangeTarget、@/lib/records/patient-metrics 的体格指标格式化、record-timeline-time 的 rail 时间段/PFS facade 与 components/record/types 的展示类型。
  * [OUTPUT]: 对外提供真实 PatientRecord 到含字段保存 target 的 summary metrics 与 BL/Ln 标记/补充资料/逐线 rail 时间段/每线 PFS 归一的紧凑 timeline entries 派生函数。
  * [POS]: components/record 的展示数据转换层，使 dossier JSX 不直接理解 PatientRecord 内部结构，并统一真实记录的中文治疗线别、BMI、多段基因/免疫证据、字段保存 target、日期范围 target、每线 PFS 与详情格式，避免把基础信息重复塞入时间线。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { Locale } from '@/lib/locale'
-import { formatBmi, formatHeight, formatWeight } from '@/lib/patient-metrics'
+import { formatBmi, formatHeight, formatWeight } from '@/lib/records/patient-metrics'
 import type { PatientFieldTarget, PatientRangeTarget, PatientRecord, TreatmentLine } from '@/types/patient'
 
 import type { EvidenceItem, Metric, TimelineEntry } from './types'

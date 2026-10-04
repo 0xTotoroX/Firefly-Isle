@@ -18,7 +18,7 @@ import {
   getFailedOcrImportPatch,
   getFollowUpPersistenceFailurePatch,
   getWorkspaceComposerMode,
-} from './workspace-page'
+} from '@/lib/workspace/state'
 
 describe('WorkspacePage metrics and record mode contracts', () => {
   it('makes existing-record input mode explicit and exposes a separate new-record extraction action', () => {

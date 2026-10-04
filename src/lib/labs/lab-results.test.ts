@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 vitest 的 describe/it/expect，依赖 ./lab-results 的实验室指标趋势分类、派生指标、图表序列和监测汇总工具。
  * [OUTPUT]: 对外提供实验室指标正常值、单次异常、连续异常、缺日期、缺参考范围、CBC 派生、最近异常、图表序列与肿瘤标志物上涨检测回归测试。
- * [POS]: lib 的纯逻辑测试，约束 lab trends 的医学提示边界不产生诊断结论。
+ * [POS]: lib/labs 的纯逻辑测试，约束 lab trends 的医学提示边界不产生诊断结论。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'

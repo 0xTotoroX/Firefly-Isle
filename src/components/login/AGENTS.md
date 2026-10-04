@@ -5,7 +5,7 @@
 types.ts: 登录展示层类型边界，定义 AuthMode、AuthMethod、AuthFeedback、LoginPageViewProps 与内部 V3LoginProps
 skins.ts: 登录入口与认证卡视觉材料表，集中主题 token、背景资产和场景图片路径
 auth-copy.ts: 认证模式文案选择器，从共享 copy 真相源派生登录、注册、重置密码标题与动作文案
-auth-card.tsx: 认证卡主体，渲染带 control/tab/accordion/popover 动效的邮箱/手机 tabs、Google、微信占位、匿名会话、隐私入口与反馈态，不触碰 Supabase
+auth-card.tsx: 认证卡展示邮箱、Google、匿名会话、隐私入口与反馈态；未接入的手机/微信控件不渲染，不触碰 Supabase
 auth-overlay.tsx: 统一登录弹层容器，编排 AuthCard、modal/popover 弹出关闭动画、Esc 关闭和背景点击关闭
 login-entry-view.tsx: 登录页入口编排层，渲染八章纵向叙事、首尾同源登录 CTA、唯一 AuthOverlay、route/stagger 首屏节奏、响应式全局工具区与仅在 reduced-motion 下禁用的长生命周期液体背景；不提供 Demo CTA
 login-story-sections.tsx: hero 后七章叙事内容层，按问题、录入、时间线、三视图、实验室趋势、隐私边界、收束 CTA 顺序呈现已实现能力，并用 CSS sticky + sibling spacer 承载三视图几何

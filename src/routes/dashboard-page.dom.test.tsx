@@ -23,7 +23,7 @@ const loadDashboardData = vi.fn()
 const loadRecords = vi.fn()
 let userId = 'owner-a'
 vi.mock('@/lib/auth', () => ({ useOptionalAuth: () => ({ user: { id: userId } }) }))
-vi.mock('@/lib/patient-record-storage', () => ({ loadPatientRecordSummaries: (...args: unknown[]) => loadRecords(...args) }))
+vi.mock('@/lib/records/patient-record-storage', () => ({ loadPatientRecordSummaries: (...args: unknown[]) => loadRecords(...args) }))
 
 vi.mock('@/lib/dashboard-data', () => ({
   loadDashboardData: (...args: unknown[]) => loadDashboardData(...args),

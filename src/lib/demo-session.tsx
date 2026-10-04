@@ -12,7 +12,7 @@ import type { FollowUpVisit, FollowUpVisitInput } from '@/lib/follow-up-storage'
 import type { SideEffectInput, SideEffectRecord } from '@/lib/side-effect-storage'
 import type { LlmProviderId } from '@/lib/llm/provider-settings'
 import type { UserProfileView } from '@/lib/profile-settings'
-import type { saveLabReportBatch } from '@/lib/lab-report-storage'
+import type { saveLabReportBatch } from '@/lib/labs/lab-report-storage'
 import type { FollowUpStatus, PatientRecord } from '@/types/patient'
 
 type DemoModelPreview = { mode: 'system' | 'preset' | 'custom'; provider: Exclude<LlmProviderId, 'custom_openai'>; model: string; baseUrl: string }

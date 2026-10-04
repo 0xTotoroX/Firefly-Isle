@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 @/lib/supabase 的客户端入口与 @/types/patient 的 PatientRecord/TreatmentLine/LabReportBatch/LabResult 数据模型。
  * [OUTPUT]: 对外提供病历摘要分页、单份/最新病历读取、persistPatientRecord 与 lab row/payload 映射工具；旧 schema 仅在读取时降级，写入必须使用新 RPC。
- * [POS]: lib 的患者记录持久化边界，单事务 RPC 核对发起账号、保留子记录身份；新草稿由调用方保持创建 UUID，重试复用。
+ * [POS]: lib/records 的患者记录持久化边界，单事务 RPC 核对发起账号、保留子记录身份；新草稿由调用方保持创建 UUID，重试复用。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { getSupabaseClient } from '@/lib/supabase'

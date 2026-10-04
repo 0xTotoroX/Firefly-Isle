@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 const mocks = vi.hoisted(() => ({ ocr: vi.fn(), save: vi.fn() }))
 vi.mock('@/lib/locale', () => ({ useLocale: () => ({ locale: 'zh' }) }))
 vi.mock('@/lib/medical-document-ocr', () => ({ recognizeMedicalDocument: mocks.ocr, getMedicalDocumentOcrMessage: () => '识别失败' }))
-vi.mock('@/lib/lab-report-storage', () => ({ saveLabReportBatch: mocks.save }))
+vi.mock('@/lib/labs/lab-report-storage', () => ({ saveLabReportBatch: mocks.save }))
 import { LabReportImport } from './lab-report-import'
 
 const patient = { id: 'patient-a', basicInfo: { name: '合成患者甲' }, treatmentLines: [] }

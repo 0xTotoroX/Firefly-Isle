@@ -190,7 +190,7 @@ function CompactTreatmentRows({
                         <strong className="font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-primary)] [overflow-wrap:anywhere]">
                           <EditableGanttText ariaLabel={`编辑${row.marker}时间段`} isEditable={isEditable} onCommitRange={onCommitRange} rangeTarget={row.rangeTarget}>{row.rangeLabel}</EditableGanttText>
                         </strong>
-                        <span className="rounded-[var(--ff-radius-full)] border border-[var(--ff-border-muted)] px-2 py-0.5 text-[11px] font-bold text-[var(--ff-text-muted)]">
+                        <span className="rounded-[var(--ff-radius-full)] border border-[var(--ff-border-muted)] px-2 py-0.5 text-xs font-bold text-[var(--ff-text-muted)]">
                           <EditableGanttText ariaLabel={`编辑${row.marker} PFS`} isEditable={false}>{row.pfsLabel}</EditableGanttText>
                         </span>
             </div>
@@ -322,7 +322,7 @@ export function TreatmentGanttView({
                         <strong className="font-[var(--ff-font-mono)] text-xs text-[var(--ff-text-primary)] [overflow-wrap:anywhere]">
                           <EditableGanttText ariaLabel={`编辑${row.marker}时间段`} isEditable={isEditable} onCommitRange={onCommitRange} rangeTarget={row.rangeTarget}>{row.rangeLabel}</EditableGanttText>
                         </strong>
-                        <span className="rounded-[var(--ff-radius-full)] border border-[var(--ff-border-muted)] px-2 py-0.5 text-[11px] font-bold text-[var(--ff-text-muted)]">
+                        <span className="rounded-[var(--ff-radius-full)] border border-[var(--ff-border-muted)] px-2 py-0.5 text-xs font-bold text-[var(--ff-text-muted)]">
                           <EditableGanttText ariaLabel={`编辑${row.marker} PFS`} isEditable={false}>{row.pfsLabel}</EditableGanttText>
                         </span>
                       </div>
@@ -364,7 +364,7 @@ export function TreatmentGanttView({
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[78px] overflow-hidden">
                   {projection.events.map((event) => (
                     <i className="absolute bottom-0 top-0 w-px bg-[color-mix(in_srgb,var(--ff-accent-primary)_26%,transparent)]" key={`${event.label}-${event.leftPercent}`} style={{ left: `${event.leftPercent}%` }}>
-                      <b className="absolute left-[-11px] top-0 grid h-[22px] w-[22px] place-items-center rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-primary)] font-[var(--ff-font-mono)] text-[10px] text-[var(--ff-accent-foreground)]">
+                      <b className="absolute left-[-11px] top-0 grid h-[22px] w-[22px] place-items-center rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-primary)] font-[var(--ff-font-mono)] text-xs text-[var(--ff-accent-foreground)]">
                         <EditableGanttText ariaLabel={`编辑${event.label}事件标记`} isEditable={false}>{event.label}</EditableGanttText>
                       </b>
                     </i>
@@ -384,7 +384,7 @@ export function TreatmentGanttView({
                         {row.bar ? (
                           <i
                             className={[
-                              't-gantt-grow absolute top-[9px] z-[3] grid h-6 min-w-4 place-items-center rounded-[var(--ff-radius-md)] border font-[var(--ff-font-mono)] text-[11px] font-black',
+                              't-gantt-grow absolute top-[9px] z-[3] grid h-6 min-w-4 place-items-center rounded-[var(--ff-radius-md)] border font-[var(--ff-font-mono)] text-xs font-black',
                               row.isBaseline ? 'border-[var(--ff-border-muted)] bg-[color-mix(in_srgb,var(--ff-text-primary)_32%,transparent)] text-[var(--ff-text-primary)]' : 'border-[var(--ff-accent-strong)] bg-[var(--ff-accent-primary)] text-[var(--ff-accent-foreground)]',
                             ].join(' ')}
                             data-current={row.isCurrent ? 'true' : 'false'}

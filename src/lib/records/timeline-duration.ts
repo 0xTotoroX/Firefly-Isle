@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 @/lib/locale 的 Locale 类型，消费病例时间线中的原始日期文本。
  * [OUTPUT]: 对外提供日期清理/解析、含 ongoing 终点的时间段标签、PFS 文案与治疗持续状态工具。
- * [POS]: src/lib 的病程时间纯逻辑，被 record 档案 rail 与 treatment Gantt 投影共享，避免两个视图重复发明时间段与 PFS 口径。
+ * [POS]: lib/records 的病程时间纯逻辑，被 record 档案 rail 与 treatment Gantt 投影共享，避免两个视图重复发明时间段与 PFS 口径。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { Locale } from '@/lib/locale'

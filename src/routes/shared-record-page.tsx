@@ -13,7 +13,7 @@ import { MainShell } from '@/components/system/surfaces'
 import { useAsyncResource } from '@/lib/async-resource'
 import { useLocale } from '@/lib/locale'
 import { getOnlineRequiredMessage, isOnlineRequiredError } from '@/lib/network-status'
-import { loadSharedPatientRecordByCode, type SharedRecordStatus } from '@/lib/record-sharing'
+import { loadSharedPatientRecordByCode, type SharedRecordStatus } from '@/lib/records/record-sharing'
 import { useTheme } from '@/lib/theme'
 import { shellWideContentClass, topBarOffsetClass } from '@/lib/theme/tokens'
 

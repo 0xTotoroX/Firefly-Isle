@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 vitest 断言，依赖 ./lab-report-ingestion 的 OCR 文本复核行构建、确认读数输出和阻塞复核判断。
  * [OUTPUT]: 对外提供网页端实验室报告摄入纯逻辑回归测试，覆盖 OCR candidate 复核、保存前修正、未解析行与 CBC 派生 payload。
- * [POS]: lib 的实验室报告摄入测试，确保网页端上传路径不依赖本地 Excel 且保存前必须形成可复核结构。
+ * [POS]: lib/labs 的实验室报告摄入测试，确保网页端上传路径不依赖本地 Excel 且保存前必须形成可复核结构。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'

@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 vitest 断言，依赖 ./lab-dictionary 的实验室指标字典、参考范围解析与 OCR 候选归一化。
  * [OUTPUT]: 对外提供血常规、血生化、肿瘤标志物字典映射和参考范围解析回归测试。
- * [POS]: lib 的实验室字典测试，约束本地 update-followup-data 行映射被稳定翻译为网页端 itemCode 事实。
+ * [POS]: lib/labs 的实验室字典测试，约束本地 update-followup-data 行映射被稳定翻译为网页端 itemCode 事实。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'

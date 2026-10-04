@@ -1,12 +1,12 @@
 /**
- * [INPUT]: 依赖 react 的键盘/鼠标事件类型、@/lib/lab-results 的 LabChartPoint 与 lab-analytics-format 的格式化工具，接收父级拖动状态与连续上涨日期用于避免拖动结束误选点并标出重点趋势段。
+ * [INPUT]: 依赖 react 的键盘/鼠标事件类型、@/lib/labs/lab-results 的 LabChartPoint 与 lab-analytics-format 的格式化工具，接收父级拖动状态与连续上涨日期用于避免拖动结束误选点并标出重点趋势段。
  * [OUTPUT]: 对外提供 LabTrendChart、TimeLabelDisplay 与 timeLabelDisplayOptions。
  * [POS]: components/analytics 的趋势图渲染层，承接横向 SVG 折线、参考范围、点位选择、连续上涨段高亮与时间标签密度控制，让 Dashboard 只负责状态编排。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type KeyboardEvent, type MouseEvent } from 'react'
 
-import type { LabChartPoint } from '@/lib/lab-results'
+import type { LabChartPoint } from '@/lib/labs/lab-results'
 
 import { formatNumber, formatStatusLabel, formatValue } from './lab-analytics-format'
 
@@ -35,7 +35,8 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
   const min = Math.min(...values)
   const max = Math.max(...values)
   const span = max - min || 1
-  const chartLeft = 46
+  const ticks = Array.from({ length: 5 }, (_, index) => max - (index * span) / 4)
+  const chartLeft = Math.max(56, ...ticks.map((tick) => formatNumber(tick).length * 8 + 16))
   const chartRight = Math.max(690, chartLeft + Math.max(points.length - 1, 1) * 86)
   const chartTop = 34
   const chartBottom = 284
@@ -61,7 +62,6 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
   const highlightedPoints = highlightedCoordinates.map(({ x, y }) => `${x},${y}`).join(' ')
   const highlightedLabelX = highlightedCoordinates.length > 0 ? (highlightedCoordinates[0].x + highlightedCoordinates[highlightedCoordinates.length - 1].x) / 2 : chartLeft
   const highlightedLabelY = highlightedCoordinates.length > 0 ? Math.max(chartTop + 18, Math.min(...highlightedCoordinates.map(({ y }) => y)) - 18) : chartTop
-  const ticks = Array.from({ length: 5 }, (_, index) => max - (index * span) / 4)
   const latestPoint = points[points.length - 1]
   const selectedPoint = (selectedDate ? points.find((point) => point.date === selectedDate) : null) ?? latestPoint
   const selectedPointIndex = Math.max(0, points.findIndex((point) => point.date === selectedPoint.date))
@@ -104,8 +104,8 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
     <div className="relative" style={{ height: svgHeight, minWidth: '100%', width: svgWidth }}>
       <svg
         aria-hidden="true"
-        className="pointer-events-none sticky left-0 top-0 z-10 block w-[46px]"
-        style={{ height: svgHeight, marginBottom: -svgHeight }}
+        className="pointer-events-none sticky left-0 top-0 z-10 block"
+        style={{ height: svgHeight, marginBottom: -svgHeight, width: chartLeft }}
         viewBox={`0 0 ${chartLeft} ${svgHeight}`}
       >
         <rect fill="var(--ff-surface-inset)" height={svgHeight} width={chartLeft} x="0" y="0" />
@@ -120,7 +120,7 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
           const y = yForValue(tick)
 
           return (
-            <text fill="var(--ff-text-muted)" fontSize="11" key={tick} textAnchor="end" x={chartLeft - 10} y={y + 4}>
+            <text fill="var(--ff-text-muted)" fontSize="13" key={tick} textAnchor="end" x={chartLeft - 10} y={y + 4}>
               {formatNumber(tick)}
             </text>
           )
@@ -155,7 +155,7 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
           return (
             <g key={tick}>
               <line stroke="var(--ff-border-default)" strokeOpacity="0.55" x1={chartLeft} x2={chartRight} y1={y} y2={y} />
-              <text data-export-axis-label="true" display="none" fill="var(--ff-text-muted)" fontSize="11" textAnchor="end" x={chartLeft - 10} y={y + 4}>
+              <text data-export-axis-label="true" display="none" fill="var(--ff-text-muted)" fontSize="13" textAnchor="end" x={chartLeft - 10} y={y + 4}>
                 {formatNumber(tick)}
               </text>
             </g>
@@ -168,7 +168,7 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
             <polyline fill="none" points={highlightedPoints} stroke="var(--ff-critical)" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.22" strokeWidth="12" />
             <polyline fill="none" points={highlightedPoints} stroke="var(--ff-critical)" strokeDasharray="8 6" strokeLinecap="round" strokeLinejoin="round" strokeWidth="4" />
             <rect fill="color-mix(in srgb, var(--ff-critical) 16%, var(--ff-surface-inset))" height="22" rx="11" stroke="color-mix(in srgb, var(--ff-critical) 62%, transparent)" width="86" x={highlightedLabelX - 43} y={highlightedLabelY - 16} />
-            <text fill="var(--ff-critical)" fontSize="11" fontWeight="800" textAnchor="middle" x={highlightedLabelX} y={highlightedLabelY - 1}>
+            <text fill="var(--ff-critical)" fontSize="13" fontWeight="800" textAnchor="middle" x={highlightedLabelX} y={highlightedLabelY - 1}>
               连续上涨段
             </text>
             {highlightedCoordinates.map(({ point, x, y }) => (
@@ -197,12 +197,12 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
               <rect fill="transparent" height="46" rx="8" width="68" x={x - 34} y={Math.max(chartTop, valueLabelY - 24)} />
               <circle aria-label={`${point.date} ${formatValue(point.value, point.unit)} ${formatStatusLabel(point.status)}`} cx={x} cy={y} fill="var(--ff-accent-primary)" r="5" />
               {!isSelected ? (
-                <text fill="var(--ff-accent-primary)" fontSize="11" fontWeight="700" textAnchor="middle" x={x} y={valueLabelY}>
+                <text fill="var(--ff-accent-primary)" fontSize="13" fontWeight="700" textAnchor="middle" x={x} y={valueLabelY}>
                   {formatNumber(point.value)}
                 </text>
               ) : null}
               {shouldShowDateLabel() ? (
-                <text fill="var(--ff-text-muted)" fontSize="10" pointerEvents="none" textAnchor="middle" x={x} y={dateLabelY}>
+                <text fill="var(--ff-text-muted)" fontSize="12" pointerEvents="none" textAnchor="middle" x={x} y={dateLabelY}>
                   {point.date.slice(5)}
                 </text>
               ) : null}
@@ -227,10 +227,10 @@ export function LabTrendChart({ highlightedDates = [], onSelectDate, points, sel
         {referenceLow !== undefined && referenceHigh !== undefined ? (
           <g>
             <line stroke="var(--ff-border-default)" x1={chartRight + 16} x2={chartRight + 16} y1={yForValue(referenceHigh)} y2={yForValue(referenceLow)} />
-            <text fill="var(--ff-text-secondary)" fontSize="11" x={chartRight + 24} y={(yForValue(referenceHigh) + yForValue(referenceLow)) / 2 - 5}>
+            <text fill="var(--ff-text-secondary)" fontSize="13" x={chartRight + 24} y={(yForValue(referenceHigh) + yForValue(referenceLow)) / 2 - 5}>
               参考范围
             </text>
-            <text fill="var(--ff-text-secondary)" fontSize="11" x={chartRight + 24} y={(yForValue(referenceHigh) + yForValue(referenceLow)) / 2 + 12}>
+            <text fill="var(--ff-text-secondary)" fontSize="13" x={chartRight + 24} y={(yForValue(referenceHigh) + yForValue(referenceLow)) / 2 + 12}>
               {formatNumber(referenceLow)} - {formatNumber(referenceHigh)}
             </text>
           </g>

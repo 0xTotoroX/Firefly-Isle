@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 react 的 ReactNode、react-router-dom 的 Link、登录 skin/token、auth-copy、隐私页路径、本地化文案与 transitions-dev.css 的 control/tab/accordion/popover 动效合同。
- * [OUTPUT]: 对外提供 AuthCard 与 AuthCardProps，渲染带反馈动效的邮箱/手机登录、Google、微信占位、匿名会话与隐私入口。
+ * [OUTPUT]: 对外提供 AuthCard 与 AuthCardProps，渲染带反馈动效的邮箱登录、Google、匿名会话与隐私入口。
  * [POS]: components/login 的认证卡主体，被 AuthOverlay 消费，不触碰 Supabase 认证状态机。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
@@ -13,7 +13,7 @@ import type { Theme } from '@/lib/theme'
 
 import { getAuthModeCopy } from './auth-copy'
 import { authCardSkins, lightAuthScene, nightIslandAuthScene } from './skins'
-import type { AuthFeedback, AuthMethod, V3LoginProps } from './types'
+import type { AuthFeedback, V3LoginProps } from './types'
 
 function feedbackClass(feedback: AuthFeedback, theme: Theme) {
   if (feedback.tone === 'error') {
@@ -98,33 +98,6 @@ function SocialButton({
   )
 }
 
-export function WeChatComingSoonPanel({ locale, theme }: { locale: 'zh' | 'en'; theme: Theme }) {
-  const skin = authCardSkins[theme]
-  const shellClass =
-    theme === 'dark'
-      ? 'border-[#353b3b] bg-[rgba(255,255,255,0.025)] text-[#d9d1c4]/74 shadow-[inset_0_0_18px_rgba(255,255,255,0.012)]'
-      : 'border-[#d1dfe0] bg-white/58 text-[#334844]/72 shadow-[0_10px_20px_rgba(98,124,129,0.06)]'
-  const comingSoonClass = theme === 'dark' ? 'text-white/44' : 'text-[#7b8f8c]'
-
-  return (
-    <div
-      aria-label={locale === 'zh' ? '微信敬请期待' : 'WeChat coming soon'}
-      className={`t-control-press flex h-12 min-w-0 flex-1 cursor-default items-center justify-center gap-2.5 rounded-[10px] border px-3 text-sm font-semibold ${shellClass}`}
-      data-testid="login-wechat-coming-soon"
-    >
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center">
-        <WeChatGlyph />
-      </span>
-      <span className="flex min-w-0 items-baseline gap-1.5 leading-none">
-        <span className={`text-sm font-semibold ${skin.socialLabel}`}>{getCopy(copy.login.auth.wechat, locale)}</span>
-        <span className={`text-[11px] font-bold ${comingSoonClass}`}>
-          {locale === 'zh' ? '敬请期待' : 'Coming soon'}
-        </span>
-      </span>
-    </div>
-  )
-}
-
 function GoogleBrandGlyph() {
   return (
     <svg aria-hidden="true" className="h-4 w-4" viewBox="0 0 24 24">
@@ -145,58 +118,6 @@ function GoogleBrandGlyph() {
         fill="#EA4335"
       />
     </svg>
-  )
-}
-
-function WeChatGlyph() {
-  return (
-    <svg aria-hidden="true" className="h-6 w-6" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" fill="#07C160" r="11" />
-      <path
-        d="M9.1 8.1c-2.45 0-4.43 1.55-4.43 3.46 0 1.1.66 2.07 1.68 2.7l-.39 1.16 1.42-.69c.53.18 1.12.29 1.72.29 2.45 0 4.43-1.55 4.43-3.46S11.55 8.1 9.1 8.1Zm-1.46 2.77a.47.47 0 1 1 0-.94.47.47 0 0 1 0 .94Zm2.9 0a.47.47 0 1 1 0-.94.47.47 0 0 1 0 .94Z"
-        fill="#fff"
-      />
-      <path
-        d="M15.17 11.26c2.1 0 3.8 1.33 3.8 2.96 0 .94-.56 1.77-1.43 2.31l.34 1-1.22-.59c-.46.16-.96.24-1.49.24-2.1 0-3.8-1.33-3.8-2.96 0-1.64 1.7-2.96 3.8-2.96Zm-1.25 2.37a.4.4 0 1 0 0-.8.4.4 0 0 0 0 .8Zm2.49 0a.4.4 0 1 0 0-.8.4.4 0 0 0 0 .8Z"
-        fill="#fff"
-      />
-    </svg>
-  )
-}
-
-export function AuthMethodTabs({
-  authMethod,
-  locale,
-  onAuthMethodChange,
-  theme,
-}: {
-  authMethod: AuthMethod
-  locale: 'zh' | 'en'
-  onAuthMethodChange: (method: AuthMethod) => void
-  theme: Theme
-}) {
-  const options: Array<{ label: string; method: AuthMethod }> = [
-    { label: locale === 'zh' ? '邮箱' : 'Email', method: 'email' },
-    { label: locale === 'zh' ? '手机' : 'Phone', method: 'phone' },
-  ]
-  const shellClass = theme === 'dark' ? 'border-white/10 bg-white/[0.035]' : 'border-[#d5e2e3] bg-[#eef6f6]'
-  const activeClass = theme === 'dark' ? 'bg-white/10 text-white' : 'bg-white text-[#172522] shadow-[0_6px_18px_rgba(98,124,129,0.12)]'
-  const inactiveClass = theme === 'dark' ? 'text-white/50 hover:text-white/82' : 'text-[#6b7d7a] hover:text-[#172522]'
-
-  return (
-    <div className={`t-tab-switch grid grid-cols-2 rounded-[12px] border p-1 ${shellClass}`} data-testid="login-auth-method-tabs">
-      {options.map((option) => (
-        <button
-          aria-pressed={authMethod === option.method}
-          className={`t-control-press min-h-[38px] rounded-[9px] text-sm font-bold transition-colors ${authMethod === option.method ? activeClass : inactiveClass}`}
-          key={option.method}
-          onClick={() => onAuthMethodChange(option.method)}
-          type="button"
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
   )
 }
 
@@ -227,26 +148,6 @@ function CredentialField({
         {children}
         {trailing}
       </div>
-    </div>
-  )
-}
-
-export function PhoneComingSoonPanel({ locale, theme }: { locale: 'zh' | 'en'; theme: Theme }) {
-  const skin = authCardSkins[theme]
-
-  return (
-    <div
-      className={`t-accordion rounded-[14px] border px-4 py-5 text-center ${theme === 'dark' ? 'border-white/10 bg-white/[0.035]' : 'border-[#d5e2e3] bg-[#f8fbfb]'}`}
-      data-testid="login-phone-coming-soon"
-    >
-      <div className={`text-lg font-black ${skin.socialLabel}`}>
-        {locale === 'zh' ? '敬请期待' : 'Coming soon'}
-      </div>
-      <p className={`mt-2 text-sm font-semibold leading-6 ${skin.modeHint}`}>
-        {locale === 'zh'
-          ? '手机验证码会在完成短信服务与防刷策略后开放。现在请先使用 Google 或邮箱。'
-          : 'Phone codes will open after SMS delivery and abuse protection are configured. Use Google or email for now.'}
-      </p>
     </div>
   )
 }
