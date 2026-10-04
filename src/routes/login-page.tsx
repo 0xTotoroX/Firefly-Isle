@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的表单状态 hooks，依赖 @/components/login-page-view 的展示层，依赖 ./login-page.logic 的认证动作，依赖 @/lib/theme、@/lib/locale、copy 字典与 @/lib/supabase 的认证边界。
  * [OUTPUT]: 对外提供 LoginPage 组件，对应 /login。
  * [POS]: routes 的登录页容器；本次认证成功后替换错误/重置入口进入 Dashboard，旧会话与待确认注册不触发导航。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'

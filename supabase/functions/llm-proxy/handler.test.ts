@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 fetch mock，依赖 ./handler.ts 的 createLlmProxyHandler。
  * [OUTPUT]: 对外提供 llm-proxy provider 选择、用户 provider/model 设置、系统 DeepSeek 测试、Gemini 密钥转发与错误映射测试。
  * [POS]: supabase/functions/llm-proxy 的协议测试，替代本机缺失 Deno 时的最近本地验证层。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it, vi } from 'vitest'
 

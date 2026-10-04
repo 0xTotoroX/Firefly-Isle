@@ -2,7 +2,7 @@
  * [INPUT]: 演示会话、语言与主题状态。
  * [OUTPUT]: 统一演示说明、重置与明确退出入口。
  * [POS]: 所有 Demo 页面共用的会话提示，不接触真实账户。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { DEMO_DISCLOSURE } from '@/lib/demo-fixtures'
 import { useDemoSession } from '@/lib/demo-session'

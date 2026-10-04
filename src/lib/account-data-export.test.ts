@@ -3,7 +3,7 @@
  * [INPUT]: 真实 Supabase 查询构造器、合成分页/RLS 服务端与认证事件。
  * [OUTPUT]: 全表导出、服务端行数限制、身份连续性、下载及隐私投影的行为回归。
  * [POS]: 仅在内存中响应请求，不连接外部 Supabase。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createClient, type AuthChangeEvent, type Session } from '@supabase/supabase-js'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'

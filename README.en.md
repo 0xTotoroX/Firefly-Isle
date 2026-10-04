@@ -26,11 +26,24 @@ Future work includes interpreting genetic test reports and showing relationships
 
 The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; production still targets Supabase Cloud.
 
-The new black/white, eight-accent specification is linked from [DESIGN.md](DESIGN.md); production layout migration awaits the user's selection. The old V4 preview code has been removed, while historical images remain. The Chinese name 知见 is confirmed. Medclear was withdrawn because medclear.com is already registered; a new English name is pending selection. See the [naming decision](docs/products/product-naming.md). The running UI, installed-app names and logo still use the previous brand. Brand migration has not been implemented, and repository and technical identifiers remain unchanged for compatibility. New candidates have preliminary domain checks; trademark and WeChat name availability remain unverified.
+Visual specifications, review boards, prototypes and historical screenshots are now accessible from the root [archive/](archive/README.md). Open Design is a separate local tool. A/B layout selection and production migration await the user's decision; runtime components and theme tokens remain. The Chinese name 知见 is confirmed. Medclear was withdrawn because medclear.com is already registered; a new English name is pending selection. See the [naming decision](docs/products/product-naming.md). The running UI, installed-app names and logo still use the previous brand. Brand migration has not been implemented, and repository and technical identifiers remain unchanged for compatibility. New candidates have preliminary domain checks; trademark and WeChat name availability remain unverified.
 
 See the [17-capability acceptance ledger](docs/products/saas-acceptance.md) for verified behavior and remaining gaps, and the [data model](docs/architecture/data-model.md) for table relationships and RLS. Local checks, cloud development readiness and production readiness are verified separately.
 
 Apply the new database migration before releasing the updated frontend. Local completion does not imply remote deployment. See the [clinical workflow release notes](docs/operations/clinical-workflow-release.md).
+
+## Repository structure
+
+| Boundary | Location and responsibility |
+| --- | --- |
+| Web frontend | `src/`: React routes, components, state, browser service clients and styles; `public/`: runtime assets, PWA and static hosting rules. `src/lib/` contains client code, not a server. |
+| Main backend | `supabase/functions/`: Deno APIs for LLM, OCR and payments; `supabase/migrations/`: PostgreSQL tables, RLS and transactional RPCs; `supabase/tests/`: database checks. Supabase provides Auth and the database. |
+| WeChat adapter | Root `functions/`: Cloudflare Pages Functions OAuth preparation. WeChat login is not yet released. |
+| Operations | `ops/`: self-hosting, backup and restore; `.github/`: CI/CD; `scripts/`: local validation. |
+| Mobile shells | `ios/` and `android/`: Capacitor projects loading the same Web `dist/`, without a separate native product UI. |
+| Contracts and documentation | `openspec/`: behavior, active tasks and historical technical decisions; `docs/`: data model, acceptance, operations and historical documentation pending further cleanup. |
+
+Start at [AGENTS.md](AGENTS.md) for module maps. The existing UI combines local shadcn/Radix primitives with custom application and feature components. The `radix-nova` configuration in `components.json` is not a complete component catalog for the proposed design. Runtime theme code stays in `src/index.css`, `src/lib/accent.ts` and `src/lib/theme/`.
 
 ## Development
 

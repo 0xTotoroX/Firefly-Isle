@@ -2,7 +2,7 @@
  * [INPUT]: 病历/随访存储、日历日期工具、共享病历导航/删除确认、V3 壳层与双语 copy。
  * [OUTPUT]: FollowUpPage，提供患者隔离的随访状态、可恢复表单和就诊记录列表。
  * [POS]: /record/:id/follow-up 的前端编排；读取失败不伪装为空态，保存成功后重新读取。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession } from '@/lib/demo-session'
 import { DemoModeBanner } from '@/components/system/demo-mode-banner'

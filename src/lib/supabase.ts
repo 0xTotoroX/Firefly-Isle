@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @supabase/supabase-js 的 createClient，依赖 Vite 注入的 Supabase 环境变量。
  * [OUTPUT]: Supabase 客户端、环境边界和自建后端会话迁移状态；Auth 使用 PKCE URL 回调恢复。
  * [POS]: lib 的 BaaS 边界入口，把客户端初始化与环境变量读取锁在一处。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 import {

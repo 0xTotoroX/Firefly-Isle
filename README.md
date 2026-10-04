@@ -26,11 +26,24 @@
 
 当前实现包含 Dashboard、病历/指标/症状/随访、可恢复表单、复诊摘要、模型设置、账户管理与配额。代码已统一到本仓库，旧自托管实验中的有效准备工作已整合；生产配置仍连接 Supabase Cloud。
 
-新黑白双主题与八种强调色的规范见 [设计入口](DESIGN.md)，正式布局迁移等待用户选择。旧 V4 预览代码已移除，历史图片保留作证据。中文名称已定为“知见”；Medclear 因同名 .com 已注册而撤回，英文待选，见 [命名与定位](docs/products/product-naming.md)。当前界面、应用显示名和图标仍沿用旧品牌，品牌迁移尚未实施；仓库与技术标识保留兼容。新英文候选已有域名初查；商标及微信名称尚未核验。
+视觉设计规范、评审板、原型及历史截图现集中保存在根 [archive/](archive/README.md)，可在项目内查阅；Open Design 是项目外的本地工具。A/B 页面方案与正式布局迁移仍等待用户选择，现有运行组件和主题 token 继续保留。中文名称已定为“知见”；Medclear 因同名 .com 已注册而撤回，英文待选，见 [命名与定位](docs/products/product-naming.md)。当前界面、应用显示名和图标仍沿用旧品牌，品牌迁移尚未实施；仓库与技术标识保留兼容。新英文候选已有域名初查；商标及微信名称尚未核验。
 
 当前交付范围和真实缺口见 [17 项功能验收表](docs/products/saas-acceptance.md)，数据关系与逐表权限见 [数据模型](docs/architecture/data-model.md)。本地检查、云端开发和生产可用分别验收。
 
 新增数据库迁移必须在发布新版前端前应用；本地完成不代表远端已部署。迁移顺序与验证方法见 [临床工作流发布说明](docs/operations/clinical-workflow-release.md)。
+
+## 项目结构
+
+| 边界 | 目录与职责 |
+| --- | --- |
+| Web 前端 | `src/`：React 路由、组件、状态、浏览器服务客户端与样式；`public/`：运行资产、PWA 与托管静态配置。`src/lib/` 不是服务端。 |
+| 主要后端 | `supabase/functions/`：Deno LLM、OCR、支付等函数；`supabase/migrations/`：PostgreSQL 表、RLS、事务 RPC；`supabase/tests/`：数据库验证。Auth 与数据库由 Supabase 提供。 |
+| 微信适配 | 根目录 `functions/`：Cloudflare Pages Functions OAuth 桥接预研，微信登录尚未正式开放。 |
+| 运行与发布 | `ops/`：自托管、备份与恢复；`.github/`：CI/CD；`scripts/`：验证脚本。 |
+| 移动端壳 | `ios/`、`android/`：Capacitor 工程，加载同一个 Web `dist/`，没有独立原生产品 UI。 |
+| 开发合同与说明 | `openspec/`：行为规范、活动任务与历史技术决策；`docs/`：数据模型、验收、运维及尚未进一步清理的历史说明。 |
+
+目录职责和维护规则从 [AGENTS.md](AGENTS.md) 进入。当前 UI 使用本地 shadcn/Radix 基元与自研壳层/业务组件；`components.json` 的 `radix-nova` 配置不是完整的新设计系统组件清单。运行时主题在 `src/index.css`、`src/lib/accent.ts` 和 `src/lib/theme/`。
 
 ## 开发启动
 

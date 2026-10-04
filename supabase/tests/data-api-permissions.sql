@@ -1,3 +1,7 @@
+-- [INPUT]: 全部业务迁移与最小 Auth 替身的真实数据库对象授权。
+-- [OUTPUT]: 表/列/RPC 权限及实际应用操作的 SQL 断言。
+-- [POS]: 隔离数据库脚本扩大测试角色授权前的首项检查；不以 SQL 文本代替可调用权限。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- Run immediately after migrations, before the test runner broadens table grants.
 -- This checks real privileges and usable application writes, not migration text.
 begin;

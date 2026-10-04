@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/network-status 的在线状态 hook 与 locale。
  * [OUTPUT]: 对外提供 NetworkStatusBanner。
  * [POS]: src/components/system 的 PWA 网络状态提示条，固定在安全区内，只在离线时提示需要重新连接。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useLocale } from '@/lib/locale'
 import { getOnlineRequiredMessage, useBrowserOnlineStatus } from '@/lib/network-status'

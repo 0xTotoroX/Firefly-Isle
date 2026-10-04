@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 effect/ref/external-store hooks、登录页根节点与 hero 节点、当前 Locale/Theme，以及客户端动态加载的 gsap/ScrollTrigger。
  * [OUTPUT]: 对外提供 useScrollStoryMotion，管理 reduced-motion、章节 scrub、CSS sticky 进度、refresh、卸载清理与首屏 WebGL 活跃状态。
  * [POS]: components/login 的客户端动效边界；模块求值与静态渲染阶段不加载、不注册 GSAP 运行时。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useRef, useState, useSyncExternalStore, type RefObject } from 'react'
 

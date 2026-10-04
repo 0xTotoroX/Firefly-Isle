@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 Fetch API、Supabase JWT 校验端点、PostgREST、Web Crypto 与 provider-adapters。
  * [OUTPUT]: 对外提供 createLlmProxyHandler、RuntimeEnv 与 llm-proxy 统一 HTTP 协议，支持用户 provider 设置与显式系统 provider 测试。
  * [POS]: supabase/functions/llm-proxy 的可测试核心，把鉴权、设置加密持久化、provider/model 选择与错误协议收敛在一处。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   DEFAULT_CLAUDE_MODEL,

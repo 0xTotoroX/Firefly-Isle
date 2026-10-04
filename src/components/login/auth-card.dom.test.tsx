@@ -3,7 +3,7 @@
  * [INPUT]: 依赖 happy-dom 环境、@testing-library/react、@testing-library/user-event、@testing-library/jest-dom、react-router-dom 的 MemoryRouter 与 ./auth-card。
  * [OUTPUT]: 对外提供 AuthCard 展示层的真实渲染行为回归测试。
  * [POS]: components/login 的认证卡 DOM 测试，验证受控输入回调、表单提交回调、提交禁用态、反馈块渲染与重置模式切换入口。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 

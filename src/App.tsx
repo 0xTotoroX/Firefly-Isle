@@ -2,7 +2,7 @@
  * [INPUT]: React/Router、共享页面、账户认证 Provider、Demo 内存会话、主题/语言/背景音和隐私门控。
  * [OUTPUT]: App，提供公开演示和认证账户的独立运行边界。
  * [POS]: 路由装配入口；Demo 不挂载认证，使用会话内偏好，真实页面保持原认证/隐私/错误护栏。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { lazy, Suspense, type ReactNode, useMemo } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams, Link } from 'react-router-dom'

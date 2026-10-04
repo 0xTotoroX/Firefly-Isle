@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/components/login-page-view 的 AuthMode/AuthFeedback 类型，依赖 Supabase Auth 方法的结构化子集。
  * [OUTPUT]: 对外提供 submitEmailAuth、startAnonymousAuth、startGoogleAuth、getAuthRedirectTo 与 LoginAuthClient 类型。
  * [POS]: routes 的登录页动作层，区分本次认证成功、邮箱确认等待与 OAuth 跳转，供容器安全决定导航。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { AuthFeedback, AuthMode } from '@/components/login-page-view'
 import { copy, getCopy } from '@/lib/copy'

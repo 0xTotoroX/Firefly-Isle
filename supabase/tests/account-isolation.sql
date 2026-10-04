@@ -1,7 +1,7 @@
 -- [INPUT]: 空库中的全部业务迁移、最小 auth 替身与三个合成账号。
 -- [OUTPUT]: 全表 RLS、自动建档、匿名账号隔离及注销数据去向的真实 SQL 行为断言。
 -- [POS]: 隔离数据库检查入口；只验证应用数据库，不代替 GoTrue/邮件/会话的端到端验收。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 begin;
 
 -- Use the owner UUID as each fixture's primary key to check every table directly,

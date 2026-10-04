@@ -2,7 +2,7 @@
  * [INPUT]: React Context、完全虚构的 fixtures 与现有领域类型。
  * [OUTPUT]: DemoSessionProvider、useDemoSession、useProductPath 和可测试内存会话。
  * [POS]: 演示唯一数据源；跨页面保留 CRUD，不访问存储、认证或远程服务。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createContext, useContext, useMemo, useState, type PropsWithChildren } from 'react'
 import { calendarDaysBetween, localCalendarDate } from '@/lib/calendar-date'

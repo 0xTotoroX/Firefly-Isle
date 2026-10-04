@@ -2,7 +2,7 @@
  * [INPUT]: 当前症状/随访客户端与模拟 Supabase 请求边界。
  * [OUTPUT]: 必填 owner、编辑关联保持、零行写入与日期校验回归。
  * [POS]: 记录存储的可观察请求契约，数据库行为另由 test:database 验证。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

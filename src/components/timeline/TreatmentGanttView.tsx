@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 CSSProperties/ref/pointer 键盘事件、@/lib/locale 的 Locale、@/types/patient 的 PatientRecord 与字段保存目标、./treatment-gantt 的治疗方案甘特投影与 transitions-dev.css 的 stagger/gantt grow 动效合同。
  * [OUTPUT]: 对外提供 TreatmentGanttView 组件，窄屏渲染纵向治疗卡片，桌面渲染左右固定、中间时间轴可独立拖动且使用 BL/Ln 标记的可字段级保存治疗方案甘特图。
  * [POS]: components/timeline 的甘特图展示层，只把 PatientRecord 与展示层补充文案投影为响应式治疗方案视图，可按页面级编辑模式提交字段级保存但不拥有导出行为。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type CSSProperties, type KeyboardEvent, type PointerEvent, useRef, useState } from 'react'
 

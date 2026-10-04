@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 Context、hooks，依赖 @supabase/supabase-js 的 Session/User，依赖 @/lib/supabase 的客户端入口、@/lib/locale 的界面语言与 copy 字典的认证反馈文案。
  * [OUTPUT]: 对外提供 AuthProvider 与 useAuth；在路由就绪前完成 URL callback、会话恢复及自建后端旧 JWT 换取。
  * [POS]: lib 的认证状态中心，统一管理 session 恢复、认证状态广播与登出动作。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   createContext,

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-router-dom 的 Link/useParams，依赖 app-shell 的 V3 壳层与 surfaces，依赖 patient-record-storage 的病历读取（取治疗线）、side-effect-storage 的 CRUD、async-resource 加载基元、copy 字典、locale/theme 与 theme tokens。
  * [OUTPUT]: 对外提供 SideEffectsPage，对应 /record/:id/side-effects。
  * [POS]: 患者隔离的症状日志与复诊摘要；范围按症状持续期相交计算，读取失败可重试、删除需确认。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession } from '@/lib/demo-session'
 import { DemoModeBanner } from '@/components/system/demo-mode-banner'

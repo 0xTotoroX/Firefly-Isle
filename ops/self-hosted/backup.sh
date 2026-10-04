@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# [INPUT]: 自托管 Docker/PostgreSQL、/opt/firefly-supabase 运行文件及 root 文件/锁权限。
+# [OUTPUT]: 受限权限的数据库/角色/运行文件备份及 SHA256SUMS，按完成标记清理过期备份。
+# [POS]: 自托管备份操作脚本；备份含敏感数据，不入 Git，运行条件见自托管手册。
+# [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 # Root-only database + runtime backup. SQL dumps contain private data and must never be committed.
 set -euo pipefail
 umask 077

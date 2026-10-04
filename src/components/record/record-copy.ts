@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/locale 的 Locale 类型、demo-record 的默认病例、record-derived 的多段检查证据摘要、record-line-labels 的中文线别、record-timeline-time 的 rail 时间段/PFS facade、PatientFieldTarget 与 components/record/types 的展示类型。
  * [OUTPUT]: 对外提供无装饰性认证状态的 record labels、含癌种/体格指标占位/多段检查证据的 demo summaryMetrics 与带字段保存 target 的 BL/Ln 标记/补充资料/逐线 rail 时间段/每线 PFS 归一演示时间线文案。
  * [POS]: components/record 的静态文案模块，被 RecordDossier 和路由错误态复用；默认病例原始数据留在 demo-record，本文只做文案、字段 target 与 timeline 组装，并复用真实记录的检查证据聚合规则。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { Locale } from '@/lib/locale'
 import type { PatientFieldTarget, TreatmentLine } from '@/types/patient'

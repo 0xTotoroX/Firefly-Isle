@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 Fetch RequestInit 结构与各 LLM provider 的 REST 请求协议。
  * [OUTPUT]: 对外提供 provider id、preset registry、请求构造、响应文本提取与错误映射工具。
  * [POS]: supabase/functions/llm-proxy 的 provider 适配层，被 handler.ts 调用以避免代理核心膨胀。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export const DEFAULT_DEEPSEEK_MODEL = 'deepseek-v4-flash'
 export const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash'

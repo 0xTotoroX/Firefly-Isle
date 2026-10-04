@@ -2,7 +2,7 @@
 [INPUT]: 依赖 README、docs/operations/supabase/README.md、当前 MVP 导出链路与 OpenSpec 11.4 / 11.5 要求。
 [OUTPUT]: 提供 Firefly-Isle 上线前浏览器导出验收与 Supabase 安全/可用性复核清单。
 [POS]: docs/operations 的发布检查 runbook，给 Commit 11 和正式发布前手动复核使用。
-[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+[PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -->
 
 # Firefly-Isle 发布前检查清单

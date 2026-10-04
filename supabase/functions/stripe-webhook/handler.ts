@@ -2,7 +2,7 @@
  * [INPUT]: Web Crypto HMAC-SHA256、Stripe Checkout 事件、注入 fetch 与 record_donation_payment RPC。
  * [OUTPUT]: 对外提供 createStripeWebhookHandler、RuntimeEnv、verifyStripeSignature 与 StripeWebhookEvent 类型。
  * [POS]: 原文验签后校验一次性捐赠的付款事实；数据库按 Checkout Session 原子合并状态并保留注销后的解除关联，无配置时关闭。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 const SIGNATURE_TOLERANCE_SECONDS = 300

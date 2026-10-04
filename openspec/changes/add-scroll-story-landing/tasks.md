@@ -35,9 +35,9 @@
 
 ## 5. 文档与架构同步
 
-- [x] 5.1 更新 `src/components/login/CLAUDE.md` 与新增模块 GEB 头部
+- [x] 5.1 更新 `src/components/login/AGENTS.md` 与新增模块 GEB 头部
 - [x] 5.2 更新 `DESIGN.md` / `docs/design/Image-2/V3/DESIGN.md` 的登录页视觉契约
-- [x] 5.3 更新 `openspec/changes/CLAUDE.md` 变更地图
+- [x] 5.3 更新 `openspec/changes/AGENTS.md` 变更地图
 - [x] 5.4 更新 `src/styles/transitions-dev.css` reduced-motion 收敛清单覆盖新增叙事类
 
 ## 6. 验证

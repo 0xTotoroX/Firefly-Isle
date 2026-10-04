@@ -2,7 +2,7 @@
  * [INPUT]: Radix AlertDialog、删除动作与双语 copy。
  * [OUTPUT]: 有明确确认、焦点管理、请求锁和原位错误的删除按钮。
  * [POS]: 症状/随访条目的共用删除交互，只有确认后才调用存储。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { AlertDialog } from 'radix-ui'
 import { useState } from 'react'

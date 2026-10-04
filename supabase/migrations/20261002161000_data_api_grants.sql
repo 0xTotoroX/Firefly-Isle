@@ -1,3 +1,7 @@
+-- [INPUT]: 既有业务表/RPC、anon/authenticated/service_role 及 owner RLS。
+-- [OUTPUT]: 显式 schema、表、列和函数的最小 Data API GRANT/REVOKE。
+-- [POS]: 数据暴露权限迁移；区分对象授权与行级隔离，服务端捐赠记账不向客户端开放。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- Explicit Data API exposure, including projects with auto_expose_new_tables=false.
 -- RLS remains the row boundary; table grants are restricted to the operations used.
 grant usage on schema public to anon, authenticated;

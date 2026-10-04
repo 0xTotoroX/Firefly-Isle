@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 effect/id/ref，依赖 threejs-components 的 liquid1 WebGL 背景，消费登录页背景图片 URL、材质参数与画布后处理滤镜。
  * [OUTPUT]: 对外提供 LiquidEffectAnimation 组件，在浏览器端把图片加载进液体扰动与色差折射画布。
  * [POS]: components/ui 的视觉基元，被登录背景层消费；只负责鼠标/触摸水波折射，不承载业务文案或认证交互。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useId, useRef } from 'react'
 import type { LiquidBackgroundApp } from 'threejs-components/build/backgrounds/liquid1.min.js'

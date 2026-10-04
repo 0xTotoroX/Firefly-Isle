@@ -1,6 +1,8 @@
 ## Purpose
 
 定义 Firefly-Isle 的 Dark / Light 主题来源、token 合同、surface 语义、主题切换行为与登录页主题噪声边界。
+
+资料位置说明：V3 设计与截图现归档于根 archive/design-kit/，下文原路径为历史来源标识，不是仓库内运行依赖或必读文件。当前实现对应 src/index.css、src/lib/accent.ts、src/lib/theme/ 与 src/components/system/；资料归档不改变已有主题合同，A/B 新布局仍待用户确认。
 ## Requirements
 ### Requirement: 主题实现必须来源于设计系统
 系统 SHALL 将 `docs/design/Image-2/V3/DESIGN.md` 与同目录 V3 截图作为当前视觉系统真源，并将运行时主题实现收敛为统一的设计系统 token、surface contract 与系统组件；旧 `docs/design/dark/*`、`docs/design/light/*` 与 Stitch 设计来源仅作为历史证据，不得覆盖 V3。

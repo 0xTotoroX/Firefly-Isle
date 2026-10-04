@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 Effect、ref 与本地文字切换状态，依赖 @/components/system/surfaces 的 ActionSurface 与 PanelSurface，依赖 react-router-dom 的 Link 指向 /models，依赖 @/lib/copy 的工作区文案真相源与外部传入的工作区提取/OCR/编辑模式状态，依赖 transitions-dev.css 的 .t-icon-swap、.t-text-swap、.t-control-press 与 .t-popover 动效合同。
  * [OUTPUT]: 对外提供 ExtractionComposer，保留病历文本/OCR 输入、模型设置、编辑/新建分流，并支持独立重试保存和化验审核期间锁定。
  * [POS]: components/workspace 的输入与主操作区块，被 workspace-page 组合，负责把 /app 收敛为病史输入、病历/检验报告文件上传、模型设置、医学文档 OCR 与结构化提取工作台。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession, useProductPath } from '@/lib/demo-session'
 import { useEffect, useRef, useState } from 'react'

@@ -8,10 +8,15 @@
 The system SHALL provide a user-facing provider setting that chooses either system default DeepSeek or a user-owned LLM provider.
 
 #### Scenario: Compact provider panel
-- **WHEN** the user opens the `/app` workspace
+- **WHEN** the user opens the authenticated `/models` page
 - **THEN** the provider setting SHALL render as a compact expandable panel
 - **AND** the compact state SHALL show the current provider mode without occupying the full form height
 - **AND** the compact header area SHALL toggle expand/collapse as one click target with an unframed arrow indicator
+
+#### Scenario: Workspace links to model settings
+- **WHEN** the user needs to configure a provider from the `/app` workspace
+- **THEN** the composer SHALL provide a link to `/models`
+- **AND** provider configuration SHALL remain on that standalone page rather than occupying the intake composer
 
 #### Scenario: System default selection
 - **WHEN** the user selects the system default option

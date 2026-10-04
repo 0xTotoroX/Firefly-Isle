@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的单一顶栏弹层状态、hover 延迟关闭与复制反馈计时器，依赖 @/components/background-music-toggle 的共享背景音乐开关，依赖 @/components/system/origin-story/origin-story-paper 的创作初衷纸页，依赖 @/components/system/surfaces 的 TopBarShell，依赖 @/lib/theme/tokens 的可变侧栏边缘钉住、标题截断与高度合同。
  * [OUTPUT]: 对外提供 ClinicalTopBar 与 DarkTopBar 组件，并在邮件联系弹窗内提供公开联系邮箱点击复制。
  * [POS]: src/components/system 的共享顶部工具条，统一 dark/light 页面名、背景音乐直接开关、创作初衷入口、邮件 hover 联系弹窗与邮箱复制反馈，并通过单一 overlay 状态避免弹层互相叠加。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useRef, useState } from 'react'
 

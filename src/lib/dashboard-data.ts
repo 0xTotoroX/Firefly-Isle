@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/supabase 的客户端与 hasSupabaseEnv，依赖 network-status 的 OnlineRequiredError，依赖 @/lib/profile-settings 的 ProfileSettingsError。
  * [OUTPUT]: 对外提供 loadDashboardData 与 DashboardData / DashboardAbnormalReading 类型。
  * [POS]: Dashboard 聚合层：消费 owner RLS 计数与最新状态 RPC，单个分区失败显式标记，不伪装为零或空态。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { ensureBrowserOnline } from '@/lib/network-status'
 import { calendarDaysBetween, localCalendarDate } from '@/lib/calendar-date'

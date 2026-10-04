@@ -12,8 +12,9 @@
 
 ## Documentation
 
-- [ ] OpenSpec specs or change artifacts updated, if behavior changed
-- [ ] Nearest `CLAUDE.md` updated, if files, folders, or responsibilities changed
+- [ ] OpenSpec updated for feature, permission/data or user-flow changes; styling and behavior-preserving cleanup may be marked not applicable
+- [ ] Nearest `AGENTS.md` updated, if files, folders, or responsibilities changed
+- [ ] Source INPUT / OUTPUT / POS contracts updated, if dependencies, exports, or responsibilities changed
 - [ ] Security or privacy notes updated, if auth, RLS, exports, provider keys, or patient-record flows changed
 
 ## Commit / PR Title

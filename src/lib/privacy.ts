@@ -2,7 +2,7 @@
  * [INPUT]: 无运行时外部依赖，只承载隐私文案、独立隐私页路由与本地确认 key。
  * [OUTPUT]: 对外提供隐私页 href、隐私门控存储 key、摘要文案与条目列表。
  * [POS]: lib 的隐私真相源，为首次门控与独立隐私页提供同一份文本基础。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export const PRIVACY_PAGE_HREF = '/privacy'
 

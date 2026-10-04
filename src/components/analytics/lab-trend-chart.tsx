@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的键盘/鼠标事件类型、@/lib/lab-results 的 LabChartPoint 与 lab-analytics-format 的格式化工具，接收父级拖动状态与连续上涨日期用于避免拖动结束误选点并标出重点趋势段。
  * [OUTPUT]: 对外提供 LabTrendChart、TimeLabelDisplay 与 timeLabelDisplayOptions。
  * [POS]: components/analytics 的趋势图渲染层，承接横向 SVG 折线、参考范围、点位选择、连续上涨段高亮与时间标签密度控制，让 Dashboard 只负责状态编排。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type KeyboardEvent, type MouseEvent } from 'react'
 

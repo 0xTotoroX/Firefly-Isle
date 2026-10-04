@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest、node:crypto 的 HMAC-SHA256、./handler 与注入 fetch mock。
  * [OUTPUT]: 原始正文签名、付款状态与单 RPC 协议的回归；并发/重放由真实 SQL 检查。
  * [POS]: 只使用合成 Checkout 与注入 fetch；无配置关闭、非捐赠忽略、无付款事实拒绝。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createHmac } from 'node:crypto'
 import { describe, expect, it, vi } from 'vitest'

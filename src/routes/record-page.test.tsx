@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查，依赖 react-dom/server 的静态渲染，依赖 react-router-dom 的 MemoryRouter，依赖 vitest 的模块 mock，依赖 BackgroundAudioProvider、./record-page、./record-page.view 与 ./record-page.logic。
  * [OUTPUT]: 对外提供病例详情页平面阅读层、响应式版心、公开 Demo 完整产品预览、Demo 模式提醒、dossier/极简表格/Gantt 文字页签切换、当前病历编辑工具条、字段级保存状态、日期范围 patch、默认病例逐线档案、页头去重、癌种概要、人口学/体格指标/多段检查证据概要、BL/L 标记、时间线 rail 逐线时间段/每线 PFS、编号/标题/补充资料去重、全站动效与导出职责回归测试。
  * [POS]: routes 的病例详情测试文件，约束 /record/:id 与 /demo/record 使用 V3 宽幅 shell 合同而不是旧 980px 固定画布，承接背景音 topbar、Demo banner、TimelineTable/Gantt 备用视图、Demo AI/分享/指标预览、默认病例档案内容、字段级 Supabase 保存边界、页头/时间线不重复摘要、年龄/性别/身高/体重/BMI/基因与免疫组化证据、档案/表格/Gantt 动效、BL/L1/L2 标记与 PDF/PNG 导出入口。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { createRef } from 'react'

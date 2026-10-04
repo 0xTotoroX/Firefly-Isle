@@ -2,7 +2,7 @@
  * [INPUT]: react 状态与现有档案/统计/分享展示、Demo 内存会话、真实持久化和字段编辑队列。
  * [OUTPUT]: RecordPage，复用正式病历编辑和导出；Demo 读写内存并展示固定 AI/分享预览。
  * [POS]: 病历页路由编排，真实与演示数据只在服务边界分流。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useRef, useState } from 'react'
 import { useDemoSession, useProductPath } from '@/lib/demo-session'

@@ -1,4 +1,10 @@
 /** @vitest-environment happy-dom */
+/**
+ * [INPUT]: updateRecoveredPassword、恢复凭据快照及延迟 Auth mock。
+ * [OUTPUT]: 切账号后改密仍绑定恢复 owner、身份不匹配与凭据缺失拒绝的回归。
+ * [POS]: 恢复身份隔离测试，不向真实 Auth 服务修改密码。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { updateRecoveredPassword } from './password-recovery'
 

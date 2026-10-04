@@ -2,7 +2,7 @@
  * [INPUT]: 无运行时外部依赖，承载 Firefly-Isle 主题 token 真相源。
  * [OUTPUT]: 对外提供 themeNames、ThemeName、themeTokens、紧凑默认侧栏几何常量、边缘钉住顶栏、shell 内容宽度合同与过渡类常量。
  * [POS]: src/lib/theme 的 token 定义文件，统一 dark/light 的颜色、surface、文字、边框、状态、紧凑响应式侧栏、边缘钉住顶栏与宽幅内容几何合同。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { clinicalColors, defaultAccentHex, deriveAccentStops } from '@/lib/accent'
 

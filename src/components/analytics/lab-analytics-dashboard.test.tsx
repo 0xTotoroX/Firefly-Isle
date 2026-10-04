@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-dom/server 静态渲染、vitest 断言与 LabAnalyticsDashboard 纯展示组件。
  * [OUTPUT]: 对外提供统计页摘要、分类指标、图表编辑开关、趋势图点位热区、连续上涨段高亮、趋势图时间点/全局状态文字显示、趋势图等价表格、公开 Demo 空态引导和非诊断文案回归测试。
  * [POS]: components/analytics 的界面合同测试，约束选定深色临床控制塔布局在无浏览器交互时也保留核心信息结构、公开 /demo/analytics 引导与肿瘤标志物提醒联动标识。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { MemoryRouter } from 'react-router-dom'
 import { renderToStaticMarkup } from 'react-dom/server'

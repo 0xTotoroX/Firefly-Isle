@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查。
  * [OUTPUT]: 对外提供 ErrorBoundary 崩溃护栏的结构回归测试。
  * [POS]: components 的错误边界合同测试，约束边界不消费 Theme/Locale 上下文、始终提供整页重载恢复路径，并保持双语文案走 copy 字典。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

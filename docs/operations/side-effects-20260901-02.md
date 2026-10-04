@@ -2,7 +2,7 @@
 [INPUT]: 依赖 2026-09-01 ~ 2026-09-02 SaaS 重构会话的执行日志、Supabase Management API 只读核对（2026-09-05 复核）、docs/operations/supabase/README.md 与 ops/firefly-isle-supabase-inactive-restore.md runbook。
 [OUTPUT]: 对外提供本次会话在代码仓库之外产生的全部副作用清单：控制面、数据库 schema、数据行、本机残留与密钥暴露面；并标注可逆性与清理路径。
 [POS]: docs/operations 的会话副作用真相源，供下次接手的人区分「代码 commit」与「外部状态变更」，避免把暂停/恢复/迁移的历史误当成当前事实。
-[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+[PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -->
 
 # 会话副作用记录 · 2026-09-01 ~ 09-02（SaaS 专业化重构）

@@ -1,3 +1,7 @@
+-- [INPUT]: 患者事务保存、调用者身份及稳定创建请求 UUID。
+-- [OUTPUT]: 扩展 persist_patient_record 的幂等创建协议，并保留旧两参数调用。
+-- [POS]: 病历创建响应丢失时的重试边界，保留已保存内容/子记录身份并拒绝跨账号访问。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- A draft supplies one creation UUID and keeps it for retries until saved/reset.
 -- The UUID becomes the patient ID; existing record.id still means owner-only update.
 -- Replace the signature instead of overloading it: PostgREST can resolve both old

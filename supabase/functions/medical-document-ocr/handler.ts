@@ -1,8 +1,8 @@
 /**
- * [INPUT]: 依赖 Fetch API、Supabase JWT 校验端点与 Gemini document/image REST API。
+ * [INPUT]: 依赖 Fetch API、Supabase JWT、原子配额、DeepSeek 图像及 Gemini document/image API。
  * [OUTPUT]: 对外提供 createMedicalDocumentOcrHandler、RuntimeEnv 与 medical-document-ocr HTTP 协议。
  * [POS]: supabase/functions/medical-document-ocr 的可测试核心，把鉴权、文件校验、Gemini OCR 请求与错误映射收敛在一处。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createFunctionLogger } from '../_shared/logger.ts'
 import { consumeUsage } from '../_shared/usage-limits.ts'

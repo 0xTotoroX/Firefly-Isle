@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 lucide-react 图标类型、lab-results 的 TumorMarkerRiseAlert、patient 的 LabResultCategory、lab-analytics-format 的数值格式化与 cn 类名合并工具。
  * [OUTPUT]: 对外提供统计页常量、SummaryCard、LabTimelineDragHint 与 formatAlertWindow。
  * [POS]: components/analytics 的小型展示部件层，把 dashboard 中可复用的控制台卡片、拖动提示和固定常量抽离，保持主界面只负责状态编排。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { LucideIcon } from 'lucide-react'
 

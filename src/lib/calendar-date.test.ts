@@ -2,7 +2,7 @@
  * [INPUT]: calendar-date 的本地日历函数。
  * [OUTPUT]: 清晨日期、闰日、跨月与夏令时边界的回归。
  * [POS]: 日期型业务的共享行为测试。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'
 import { calendarDateOffset, calendarDaysBetween, isCalendarDate, localCalendarDate } from './calendar-date'

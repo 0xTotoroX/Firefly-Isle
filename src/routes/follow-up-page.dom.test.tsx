@@ -3,7 +3,7 @@
  * [INPUT]: Testing Library、真实 FollowUpPage 与存储边界 mock。
  * [OUTPUT]: 随访表单恢复、日期校验、删除确认、状态修改与患者隔离回归。
  * [POS]: routes 的随访交互合同，数据库权限另由 test:database 验证。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'

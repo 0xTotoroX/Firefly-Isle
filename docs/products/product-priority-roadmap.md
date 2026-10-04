@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 docs/products/prd-implementation-status.md 的 v1.4.0+P0+Demo+PWA+Capacitor 工作树实现盘点，依赖 openspec/specs/ 的 baseline 行为，并参考 openspec/changes/archive/2026-05-16-* 的 P0/Demo/PWA/Capacitor 归档证据。
  * [OUTPUT]: 对外提供当前 P0 落地状态、下一阶段产品能力优先级、排序理由与推荐 OpenSpec 切分。
  * [POS]: docs/products 的产品路线图排序文件，区别于 PRD 实现状态盘点，负责回答“P0 已推进到哪、下一步先做什么”。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  -->
 
 # 产品优先级路线图

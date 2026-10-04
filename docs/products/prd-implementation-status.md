@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 docs/products/archive/prd.md、openspec/specs/、src/、supabase/、functions/、public/、ios/、android/、v1.4.0 发布基线，以及 openspec/changes/archive/2026-05-16-* 的 P0/Demo/PWA/Capacitor 归档证据。
  * [OUTPUT]: 对外提供 PRD 功能的已实现、部分实现、未实现与额外能力盘点。
  * [POS]: docs/products 的当前产品状态真相源，连接历史 PRD 快照、baseline specs 与运行时代码现实。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  -->
 
 # PRD 实现状态盘点

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 013_follow_up.sql。
  * [OUTPUT]: 对外提供随访模块 schema 合同测试。
  * [POS]: supabase/migrations 的随访 contract 测试，约束随访记录 owner 四权 RLS、文本长度护栏、患者状态枚举与列的可重复应用。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

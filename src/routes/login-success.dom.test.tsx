@@ -3,7 +3,7 @@
  * [INPUT]: 真实 LoginPage/AuthCallbackPage 与 MemoryRouter，展示层和 Auth SDK mock。
  * [OUTPUT]: 验证本次认证成功离开错误/重置入口，等待确认与旧会话不绕过回调错误。
  * [POS]: routes 的登录恢复集成回归，覆盖路由替换与认证动作结果的接线。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { LoginPageViewProps } from '@/components/login-page-view'
 import { act, fireEvent, render, screen } from '@testing-library/react'

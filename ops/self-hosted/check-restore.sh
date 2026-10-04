@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# [INPUT]: 备份 archive 参数、自托管 PostgreSQL 容器和 pg_restore。
+# [OUTPUT]: 一次性测试库的 auth/public/storage 恢复、计数核验与清理。
+# [POS]: 自托管恢复验证脚本；只删除本次成功创建的测试库，不能当作生产回滚命令。
+# [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 # Restore one archive into a disposable database, validate counts, then remove only that test database.
 set -euo pipefail
 archive_path="${1:?Usage: check-restore.sh /var/backups/firefly/<timestamp>/database.dump}"

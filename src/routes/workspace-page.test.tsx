@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-dom/server 的静态渲染，依赖 react-router-dom 的 MemoryRouter，依赖 vitest 的模块 mock，依赖 BackgroundAudioProvider、patient-record-storage 与 ./workspace-page。
  * [OUTPUT]: 对外提供工作区报告预览、输入 composer、侧栏壳层、空工作区导航边界、职责边界、患者记录持久化、Transitions.dev 动效、模型设置整块收起态与 locale 回归测试。
  * [POS]: routes 的工作区测试文件，约束 /app 报告区复刻病历预览主表面、真实治疗线预览、真实空白态禁用病历/统计入口而不跳公开 Demo、无正式导出入口、textarea 输入工具行、提取/追问/缺失数字/全站动效、背景音 topbar 依赖、模型设置紧凑整块展开入口、创作初衷纸页入口、邮件 hover 联系弹窗与邮箱点击复制入口、中英艺术字标、无装饰性状态卡侧栏、主题/语言顺序、active 细左标与低强度行面导航、紧凑默认侧栏弹出态、隐藏态左缘渐进拉出与拖拽到隐藏。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { renderToStaticMarkup } from 'react-dom/server'

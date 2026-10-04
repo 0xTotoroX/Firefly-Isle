@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 patient-metrics 的身高、体重与 BMI 纯格式化工具。
  * [OUTPUT]: 对外提供患者体格指标显示合同回归测试。
  * [POS]: lib 的患者指标测试，约束工作台和病历页共享同一 BMI 计算与缺失值格式。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'
 

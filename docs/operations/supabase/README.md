@@ -2,12 +2,12 @@
 [INPUT]: 依赖 /supabase/migrations/001_init.sql、/.env.local.example、/src/lib/supabase.ts、/supabase/functions/llm-proxy 与 OpenSpec 中已完成的 Supabase / LLM 事实。
 [OUTPUT]: 提供 Firefly-Isle 的 Supabase 配置参考、邮件确认/密码恢复、db push、bucket、storage policy、LLM proxy、术语与常见错误手册；历史部署事实需现场复核。
 [POS]: docs/operations/supabase 的主 runbook，供下次重新配置项目时直接照做。
-[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+[PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -->
 
 # Firefly-Isle Supabase 操作手册
 
-这份手册保留早期 Supabase 配置步骤。下列区域、project_ref、已落库状态和旧绝对路径是历史记录，不能当作当前部署证据；正式目标按 `../record-integrity-release.md` 和 `../../products/saas-acceptance.md` 重新核对，全部当前迁移以仓库 `supabase/migrations/` 为准。
+这份手册保留早期 Supabase 配置步骤。下列区域、project_ref、已落库状态是历史记录，不能当作当前部署证据；正式目标按 `../record-integrity-release.md` 和 `../../products/saas-acceptance.md` 重新核对，全部当前迁移以仓库 `supabase/migrations/` 为准。
 
 ## 0. 当前项目事实
 
@@ -17,7 +17,7 @@
   - `VITE_SUPABASE_URL`
   - `VITE_SUPABASE_ANON_KEY`
   - `VITE_SUPABASE_EDGE_FUNCTION_URL`
-- 已落库迁移：`/Users/Totoro/Desktop/Firefly-Isle/supabase/migrations/001_init.sql`
+- 已落库迁移：`supabase/migrations/001_init.sql`
 - 已创建 Storage bucket：`patient-assets`
 - 已验证完成的阶段：OpenSpec `3.1 ~ 3.7`
 - 当前已实现的 5.x 代码边界：
@@ -29,11 +29,11 @@
 
 真相源文件：
 
-- `/Users/Totoro/Desktop/Firefly-Isle/supabase/migrations/001_init.sql`
-- `/Users/Totoro/Desktop/Firefly-Isle/.env.local.example`
-- `/Users/Totoro/Desktop/Firefly-Isle/src/lib/supabase.ts`
-- `/Users/Totoro/Desktop/Firefly-Isle/openspec/changes/mvp-core/tasks.md`
-- `/Users/Totoro/Desktop/Firefly-Isle/openspec/changes/mvp-core/design.md`
+- `supabase/migrations/001_init.sql`
+- `.env.local.example`
+- `src/lib/supabase.ts`
+- `openspec/changes/archive/2026-04-13-mvp-core/tasks.md`
+- `openspec/changes/archive/2026-04-13-mvp-core/design.md`
 
 ## 1. 从零创建 Supabase 项目
 

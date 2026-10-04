@@ -3,7 +3,7 @@
  * [INPUT]: happy-dom、全局错误事件、注入的异步 sender 与 JSON/Sentry 配置。
  * [OUTPUT]: 诊断类别白名单、路由脱敏、传输格式、发送失败隔离和监听清理回归。
  * [POS]: 不发送真实诊断数据；合成病历文本、密钥与授权码必须不出现在任何请求体中。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { initErrorReporting, reportError } from './error-reporting'

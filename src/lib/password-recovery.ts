@@ -2,7 +2,7 @@
  * [INPUT]: 恢复链接换取的凭据快照、Supabase AuthClient 与公开后端配置。
  * [OUTPUT]: updateRecoveredPassword，用隔离的内存会话更新恢复账号的密码。
  * [POS]: 改密身份边界；不读取或覆盖共享登录存储，避免其他标签切换账号后写入错误身份。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { AuthClient } from '@supabase/supabase-js'
 import { supabaseEnv } from '@/lib/supabase'

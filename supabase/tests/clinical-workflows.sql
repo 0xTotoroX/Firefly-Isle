@@ -1,7 +1,7 @@
 -- [INPUT]: 隔离 PostgreSQL 中的真实迁移、两个合成账号和三份合成病历。
 -- [OUTPUT]: owner CRUD、跨患者拒绝、日期约束、最新指标和随访 RPC 的行为断言。
 -- [POS]: scripts/check-clinical-workflows.sh 专用数据库回归；全部测试在事务中回滚。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 begin;
 insert into auth.users (id) values ('10000000-0000-4000-8000-000000000001'), ('10000000-0000-4000-8000-000000000002');
 insert into public.patients (id, user_id) values

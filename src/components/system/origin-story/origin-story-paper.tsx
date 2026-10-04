@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的弹层生命周期、lucide-react 的关闭图标、顶部生命故事按钮 anchor 与 origin-story-content 的公开内容源。
  * [OUTPUT]: 对外提供 OriginStoryPaper 组件，以 V3 Clinical Archive Console token 渲染暗亮同构的创作初衷阅读弹层，支持可见关闭按钮、Esc、遮罩点击、焦点约束、滚动锁定与焦点恢复。
  * [POS]: src/components/system/origin-story 的阅读入口层；只编排公开内容与系统级 dialog 交互，不创建独立材质、Canvas 或 WebGL 上下文。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useRef, type RefObject } from 'react'
 

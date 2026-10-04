@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs、node:path、vitest、public manifest/sw/header/redirect 文件与 ./pwa。
  * [OUTPUT]: 对外提供 PWA 安装元数据、service worker 注册条件与隐私缓存边界合同测试。
  * [POS]: src/lib 的 PWA 合同测试，确保 manifest 可安装、生产安全上下文才注册 SW、动态医疗 API 不进入 Cache Storage。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'

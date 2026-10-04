@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/components/app-shell 的设计复刻壳层，依赖 @/components/workspace 的输入区、追问区与报告预览 feature 组件，依赖 @/lib/auth 的当前会话身份标签，依赖 @/lib/extraction 的提取主链路，依赖 @/lib/record-editing 的自然语言编辑边界，依赖 @/lib/medical-document-ocr 的医学文档 OCR client，依赖 @/lib/patient-record-storage 的落库与最近记录恢复入口，依赖 @/lib/theme 的 useTheme 与 record-edit-queue 的串行字段保存。
  * [OUTPUT]: 对外提供 WorkspacePage 与状态补丁；/app?patient=<id> 选择患者，化验保存后重读，初次提取持久化失败可独立重试保存。
  * [POS]: routes 的临床工作区 orchestration 层，保留真实用户空白输入态、无病历时禁用病历/统计导航并提示先提取、文本/OCR 文件输入、追问、解析错误恢复、显式新病历提取分流与 inline edit 持久化，保持主题/语言切换前状态，互斥模型修改并丢弃旧账号结果；编排统一 system shell 与 workspace feature 组件。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession, useProductPath } from '@/lib/demo-session'
 import { createDemoExtraction, DEMO_INTAKE_TEXT } from '@/lib/demo-fixtures'

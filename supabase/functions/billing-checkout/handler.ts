@@ -1,8 +1,8 @@
 /**
  * [INPUT]: 依赖 Fetch API、注入的 runtime fetch、Supabase JWT 校验结构与 Stripe REST API。
  * [OUTPUT]: 对外提供 createBillingCheckoutHandler、RuntimeEnv 与 billing-checkout HTTP 协议。
- * [POS]: supabase/functions/billing-checkout 的可测试核心，为登录用户创建 Stripe Checkout Session；无 STRIPE_SECRET_KEY / STRIPE_PRICE_ID 时 fail-closed 返回 BILLING_DISABLED。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [POS]: supabase/functions/billing-checkout 的可测试核心，为登录用户创建一次性捐赠 Checkout；无 STRIPE_SECRET_KEY 或成功/取消地址时返回 BILLING_DISABLED。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 const corsHeaders = {

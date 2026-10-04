@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 Supabase session 与 fetch mock，依赖 provider-settings client 的设置请求封装。
  * [OUTPUT]: 对外提供 LLM provider settings 前端协议测试，约束 provider/model 保存、读取、重置、系统 DeepSeek 绕过测试与明文 key 不回读。
  * [POS]: src/lib/llm 的 provider 设置客户端测试，确保浏览器只通过 Edge Function 保存密钥与模型名。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

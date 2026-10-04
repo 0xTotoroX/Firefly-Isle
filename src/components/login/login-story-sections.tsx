@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 ReactNode、登录页 Locale/Theme、同源登录 CTA 节点与 openspec/specs 已实现能力文案。
  * [OUTPUT]: 对外提供 LoginStorySections，渲染 hero 之后七章纵向叙事、CSS sticky + spacer 三视图和静态产品示意。
  * [POS]: components/login 的叙事内容层，由 login-entry-view 编排，不持有认证状态、不创建 WebGL 上下文。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { ReactNode } from 'react'
 

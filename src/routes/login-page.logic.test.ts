@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 Supabase auth mock，依赖 ./login-page.logic 的认证动作函数。
  * [OUTPUT]: 对外提供登录、注册、重置密码、匿名登录与 Google OAuth 的行为回归测试。
  * [POS]: routes 的登录逻辑测试文件，约束 /login 容器调用 Supabase Auth 时的参数、反馈文案、模式跳转与 Google OAuth 分支。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it, vi } from 'vitest'
 

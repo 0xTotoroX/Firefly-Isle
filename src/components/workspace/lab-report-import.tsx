@@ -2,7 +2,7 @@
  * [INPUT]: 现有化验识别、审核和批次保存边界，以及 Demo 固定示例和内存会话。
  * [OUTPUT]: LabReportImport，多文件队列逐份核对、保存、重试和重复批次确认。
  * [POS]: 工作区化验录入；真实文件走服务，演示只加载固定文本并保存到内存。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession, useProductPath } from '@/lib/demo-session'
 import { useEffect, useRef, useState } from 'react'

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 CSSProperties/RefObject/useRef、react-router-dom 的 Link、PatientRecord、ClinicalAnalysisPanel、LabTrendsTable、record-copy、record-derived、record 展示类型与 transitions-dev.css 的 stagger/control/timeline rail 动效合同。
  * [OUTPUT]: 对外提供 RecordDossier 与 RecordUnavailableDossier 两个病例详情展示组件，以平面文档层级渲染概要证据、实验室趋势、AI 辅助分析、治疗时间线、临床备注、导出和编辑能力，返回录入时保留当前患者。
  * [POS]: components/record 的主阅读层，承载宽幅病历正文、definition-grid 概要、左侧时间段 rail、移动卡内 PFS、必要警示与交互边界；不再用装饰性卡片、系统认证或固定更新时间制造层级。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useProductPath } from '@/lib/demo-session'
 import { useRef, type CSSProperties, type RefObject } from 'react'

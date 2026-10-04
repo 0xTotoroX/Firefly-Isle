@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 Effect 与 useState，依赖 @/components/system/surfaces 的 PanelSurface 承载追问容器，依赖 03 Apple Editorial 标题字体合同，依赖 transitions-dev.css 的 .t-panel-slide 动效合同。
  * [OUTPUT]: 对外提供 FollowUpPanel 组件，渲染追问文案、补充输入与提交动作。
  * [POS]: components/workspace 的追问补充区块，被 workspace-page 组合，用于把 follow-up 展示层从 route 移出。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useEffect, useState } from 'react'
 

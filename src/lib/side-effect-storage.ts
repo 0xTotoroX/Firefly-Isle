@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/supabase 的客户端与 hasSupabaseEnv，依赖 network-status 的在线守卫。
  * [OUTPUT]: 对外提供 loadSideEffects、createSideEffect、updateSideEffect、deleteSideEffect 与 SideEffectRecord / SideEffectSeverity / SideEffectInput 类型。
  * [POS]: 症状 owner CRUD，校验日期/症状并显式提交用户归属，写后确认目标行，读取失败交给页面恢复。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { ensureBrowserOnline } from '@/lib/network-status'
 import { isCalendarDate } from '@/lib/calendar-date'

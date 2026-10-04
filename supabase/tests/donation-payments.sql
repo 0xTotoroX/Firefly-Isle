@@ -1,7 +1,7 @@
 -- [INPUT]: 全部业务迁移、合成账号及 service_role；无 Stripe 或外部网络调用。
 -- [OUTPUT]: 捐赠状态、重复事件、不可变付款事实、RPC 权限与注销重放的真实 SQL 断言。
 -- [POS]: 事务内回滚；独立连接的竞争由 check-clinical-workflows.sh 补充。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 begin;
 insert into auth.users (id) values
   ('d0000000-0000-4000-8000-000000000001'),

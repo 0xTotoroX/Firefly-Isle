@@ -2,6 +2,7 @@
  * [INPUT]: Browser storage and the configured Supabase URL.
  * [OUTPUT]: Preserves cloud sessions during the VPS endpoint change and detects tokens requiring refresh.
  * [POS]: One-time compatibility boundary for the original Firefly Supabase project.
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 const LEGACY_ORIGIN = 'https://irkjblpzmclqekxbexll.supabase.co'
 const LEGACY_STORAGE_KEY = 'sb-irkjblpzmclqekxbexll-auth-token'

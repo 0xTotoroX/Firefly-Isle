@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: createDemoSession/getDemoDashboard、虚构患者和领域类型。
+ * [OUTPUT]: 三种模型、跨读取者编辑、症状/随访、化验替换和重置回归。
+ * [POS]: 演示唯一内存状态的行为测试，不读真实账户或服务。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { describe, expect, it } from 'vitest'
 import { createDemoSession, getDemoDashboard } from './demo-session'
 import { getPatientArchetype } from '@/types/patient'

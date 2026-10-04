@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 DOM 的 textarea 回退路径与 navigator.clipboard 异步 API。
  * [OUTPUT]: 对外提供 writeClipboardText。
  * [POS]: lib 的剪贴板边界，旧 execCommand 路径优先、异步 API 兜底，供顶栏联系邮箱与复诊摘要复制共用。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export async function writeClipboardText(text: string) {
   const textarea = document.createElement('textarea')

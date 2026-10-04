@@ -2,7 +2,7 @@
  * [INPUT]: 当前 patientId、页面类型、双语 copy 与 React Router Link。
  * [OUTPUT]: 病历/指标/症状/随访的上下文导航。
  * [POS]: 当前病历的共享入口，不提供 Demo 到真实患者的隐式跳转。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { Link } from 'react-router-dom'
 import { useProductPath } from '@/lib/demo-session'

@@ -2,7 +2,7 @@
  * [INPUT]: 不依赖运行时模块，只保存用户指定的公开 YouTube 帖子内容、来源归属与访问地址。
  * [OUTPUT]: 对外提供标题、副标题、公开故事段落、正文末尾来源地址、正文拼接与页脚文案。
  * [POS]: components/system/origin-story 的单一公开内容源，被 V3 临床档案阅读弹层与内容合同测试共同消费。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export const originStoryTitle = '为什么做一页萤屿'
 export const originStorySubtitle = '生命'

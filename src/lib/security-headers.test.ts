@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的部署头合同检查。
  * [OUTPUT]: 对外提供 public/_headers 安全响应头的回归测试。
  * [POS]: lib 的安全头合同测试，约束 CSP 只允许自身脚本（内联主题引导按 hash 白名单）、Supabase 网络域、自托管字体与 Google 头像域，并保持 HSTS 与点击劫持防护存在。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

@@ -2,7 +2,7 @@
  * [INPUT]: 不依赖运行时框架，仅承载患者领域模型、编辑目标与判定逻辑。
  * [OUTPUT]: 对外提供 PatientRecord、TreatmentLine、InitialOnset、BasicInfo、LabReportBatch、LabResult、PatientArchetype、PatientFieldTarget、PatientRangeTarget 与 getPatientArchetype，包含姓名、临床备注与实验室批次字段。
  * [POS]: types 的核心领域模型文件，为提取、渲染、编辑与持久化共享同一份患者结构真相源。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export interface BasicInfo {
   name?: string

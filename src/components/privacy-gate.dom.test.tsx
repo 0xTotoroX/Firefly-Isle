@@ -3,7 +3,7 @@
  * [INPUT]: 依赖 happy-dom 环境、@testing-library/react、@testing-library/user-event、@testing-library/jest-dom、@/lib/privacy 的存储 key、react-router-dom 的 MemoryRouter 与 ./privacy-gate。
  * [OUTPUT]: 对外提供 PrivacyGate 阻塞与放行行为的真实渲染回归测试。
  * [POS]: components 的隐私门控 DOM 测试，验证未同意时渲染遮罩、同意动作持久化到 localStorage、隐私页路径绕过门控。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 

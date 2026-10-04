@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 fetch mock，依赖 ./handler.ts 的 createMedicalDocumentOcrHandler。
  * [OUTPUT]: 对外提供 medical-document-ocr Edge Function 协议测试。
  * [POS]: supabase/functions/medical-document-ocr 的 handler 测试，约束 Gemini image/PDF 请求、错误映射、缺 key 与 secret 不泄露。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it, vi } from 'vitest'
 

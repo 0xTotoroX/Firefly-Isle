@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 011_donations.sql。
  * [OUTPUT]: 对外提供一次性捐赠表合同测试。
  * [POS]: supabase/migrations 的捐赠 contract 测试，约束正金额、状态枚举、owner 只读与 donation plan 种子行。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

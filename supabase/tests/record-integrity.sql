@@ -1,3 +1,7 @@
+-- [INPUT]: 病历/化验事务及分享 RPC、合成数据与 owner/跨账号角色。
+-- [OUTPUT]: 事务回滚、归属、子记录身份和分享能力边界的 SQL 行为断言。
+-- [POS]: 仅在隔离数据库执行的完整性回归，不请求或修改远端数据。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- Synthetic data only. Exercise real functions and role boundaries, not SQL text.
 begin;
 insert into auth.users(id) values ('10000000-0000-4000-8000-000000000011'), ('10000000-0000-4000-8000-000000000012');

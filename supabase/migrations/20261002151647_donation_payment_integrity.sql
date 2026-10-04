@@ -1,7 +1,7 @@
 -- [INPUT]: donations、auth.users 与已在 Edge Function 完成验签/付款状态校验的 Checkout 事实。
 -- [OUTPUT]: 仅 service_role 可调用的 record_donation_payment；按 session 原子合并，付款/退款不降级，注销后不恢复关联。
 -- [POS]: 一次性捐赠记账边界；不发起支付、不授予订阅权益、不处理退款事件。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 create or replace function public.record_donation_payment(
   p_checkout_session_id text,
   p_payment_intent_id text,

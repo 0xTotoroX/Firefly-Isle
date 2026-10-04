@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 public.patients 所有权边界、public.lab_results 读数表、PostgreSQL RLS 与 updated_at trigger 能力。
 -- [OUTPUT]: 对外提供 lab_report_batches 表，并为 lab_results 增加 batch_id、is_derived、derivation_method 扩展列与索引。
 -- [POS]: supabase/migrations 的网页端实验室报告批次迁移，让一次上传/复核事实与多条实验室读数保持可审计关联。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- 将网页端实验室报告摄入拆成批次事实和读数事实，避免把报告级信息复制到每条指标里。
 
 create table if not exists public.lab_report_batches (

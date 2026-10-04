@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-dom/server、vitest、LocaleProvider 与 llm-provider-settings-panel 的字段可见性纯函数。
  * [OUTPUT]: 对外提供模型设置三种模式的第二行字段显隐、顺序与 DeepSeek 连通性测试入口回归测试。
  * [POS]: components/workspace 的 provider 设置 UI 合同测试，约束系统内置、API 自提供与自定义模式的字段边界。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'

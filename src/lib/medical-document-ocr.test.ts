@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 Supabase session 与 fetch mock，依赖 ./medical-document-ocr 的 OCR 请求封装。
  * [OUTPUT]: 对外提供医学文档 OCR 前端协议回归测试。
  * [POS]: src/lib 的 OCR client 测试，约束图片/PDF 上传、错误映射、空文本处理与浏览器不泄露 provider key。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 Supabase consume_usage 原子 RPC 与注入的 runtime fetch。
  * [OUTPUT]: 对外提供 consumeUsage；区分获准、额度拒绝与服务不可用。
  * [POS]: 模型/OCR 共用的配额边界，数据库故障或响应不合法时停止调用上游。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 export type UsageRuntimeFetch = (input: string | URL, init?: RequestInit) => Promise<Response>
 

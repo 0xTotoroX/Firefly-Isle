@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 React Router、V3 壳层、认证状态、dashboard-data 聚合数据、patient-record-storage 摘要分页与纯展示 PatientRecordList。
  * [OUTPUT]: 对外提供 DashboardPage 组件，对应 /dashboard。
  * [POS]: 登录后总览，展示真实计数、我的病历与临床摘要；列表独立分页、失败可重试并隔离账号切换后的迟到响应。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'

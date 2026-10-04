@@ -2,7 +2,7 @@
  * [INPUT]: 调用方提供的病历摘要、目标链接、分页状态与操作，依赖 locale/copy 和 React Router Link。
  * [OUTPUT]: PatientRecordList，显示姓名、病种、更新时间与病历/指标/录入入口。
  * [POS]: 可注入真实或 Demo 数据的纯展示列表；不读取身份、Supabase 或全量病历正文。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { Link } from 'react-router-dom'
 import { copy, getCopy } from '@/lib/copy'

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs、node:path、vitest、package.json、capacitor.config.ts、ios/ 与 android/ 平台工程文件。
  * [OUTPUT]: 对外提供 Capacitor 移动壳配置、脚本、原生 app id/name 与 signing ignore 边界合同测试。
  * [POS]: src/lib 的移动壳架构测试，确保 iOS/Android 只包装 dist Web build，不漂移到 dev server 或第二套产品壳。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'

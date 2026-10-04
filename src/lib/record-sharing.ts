@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 Web Crypto、@/lib/supabase 的客户端入口、PatientRecord 类型。
  * [OUTPUT]: 对外提供授权码生成/hash、分享创建/列表/撤销、分享链接生成与 loadSharedPatientRecordByCode。
  * [POS]: lib 的病历分享边界，隔离 record_shares RPC/CRUD、授权码一次性明文展示和只读 PatientRecord 访问状态。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { ensureBrowserOnline } from '@/lib/network-status'
 import { getSupabaseClient } from '@/lib/supabase'

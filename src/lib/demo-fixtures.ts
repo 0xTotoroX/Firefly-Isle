@@ -2,7 +2,7 @@
  * [INPUT]: PatientRecord 与随访、症状类型。
  * [OUTPUT]: 完全虚构的三种病历、化验、随访和症状示例。
  * [POS]: 公开演示的固定起始数据，不含真实患者资料。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { FollowUpVisit } from '@/lib/follow-up-storage'
 import type { SideEffectRecord } from '@/lib/side-effect-storage'

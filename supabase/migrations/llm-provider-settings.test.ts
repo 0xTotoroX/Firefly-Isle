@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 Supabase migration SQL。
  * [OUTPUT]: 对外提供 llm_provider_settings 迁移、provider/model 约束、RLS 与密钥字段合同测试。
  * [POS]: supabase/migrations 的 schema contract 测试，防止 provider key 明文列、model 约束或越权 policy 漂移。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

@@ -2,7 +2,7 @@
  * [INPUT]: 无运行时外部依赖。
  * [OUTPUT]: 对外提供强调色预设、校验、派生停档与 DOM 应用函数。
  * [POS]: lib 的单强调色真相源。换色只改 --ff-accent，strong/soft 由它派生；临床语义色不跟强调色走。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 
 export const ACCENT_STORAGE_KEY = 'firefly-accent'

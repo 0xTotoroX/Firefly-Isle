@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 public.patients / public.treatment_lines、auth.users、PostgreSQL RLS 与既有 owner CRUD 模式。
 -- [OUTPUT]: 对外提供 side_effects 患者副作用记录表：按病历/治疗线归因、严重程度枚举、日期顺序约束、owner 全权 RLS 与 updated_at trigger。
 -- [POS]: supabase/migrations 的症状日志迁移，让患者能把治疗过程中的不适反应用结构化字段留存，作为病历的辅助证据。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 create table if not exists public.side_effects (
   id uuid primary key default gen_random_uuid(),

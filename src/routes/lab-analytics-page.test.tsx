@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react-dom/server 静态渲染、react-router-dom MemoryRouter、vitest、BackgroundAudioProvider、LocaleProvider 与 ./lab-analytics-page。
  * [OUTPUT]: 对外提供 Demo 指标页模式提醒、Demo 内闭环导航与完整指标数据的回归测试。
  * [POS]: routes 的指标页 orchestration 测试，确保 /demo/analytics 不是匿名空态，而是带 Demo 提醒的公开全产品统计视图。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { renderToStaticMarkup } from 'react-dom/server'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'

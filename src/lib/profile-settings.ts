@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/supabase 的客户端与 hasSupabaseEnv，依赖 @/lib/locale 的 Locale 类型与 network-status 的离线判定。
  * [OUTPUT]: 对外提供 getUserProfile、saveUserProfile API 与 UserProfileView / ProfileSettingsError 类型。
  * [POS]: profiles 认证读写；导出可指定预期账号，缺少可选 profiles 表时读取降级为 null，其他错误继续传播。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { isOnlineRequiredError } from '@/lib/network-status'
 import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'

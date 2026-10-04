@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查。
  * [OUTPUT]: 对外提供 useAsyncResource 竞态守卫与重载语义的结构回归测试。
  * [POS]: lib 的异步资源基元合同测试，约束 effect 携带 active 守卫与清理、deps 变化时重置 loading、reload 通过 nonce 触发。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

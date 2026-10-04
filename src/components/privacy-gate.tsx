@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的 PropsWithChildren、useEffect、useState，依赖 react-router-dom 的 Link、useLocation，依赖 @/lib/privacy 的隐私文案、独立隐私页路由与 localStorage key，依赖 @/lib/theme 的 useTheme 与 @/lib/locale 的 useLocale、copy 字典的门控文案。
  * [OUTPUT]: 对外提供 PrivacyGate 组件。
  * [POS]: components 的全局隐私门控层，在用户本地确认前阻塞整个应用入口，保证窄视口可滚动确认，并为独立隐私页放行访问。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type PropsWithChildren, useEffect, useState } from 'react'
 

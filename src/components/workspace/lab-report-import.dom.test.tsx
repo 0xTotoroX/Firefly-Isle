@@ -1,4 +1,10 @@
 /** @vitest-environment happy-dom */
+/**
+ * [INPUT]: React 测试库、LabReportImport、内存 Router 和注入 OCR/保存 mock。
+ * [OUTPUT]: 未知指标复核、重复确认、失败保留草稿和保存后读回重试的 DOM 回归。
+ * [POS]: 患者范围的化验审核交互测试；只用合成资料和 mock 服务。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'

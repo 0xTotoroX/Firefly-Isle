@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 Supabase auth.users、PostgreSQL RLS 与 supabase/migrations 既有 owner RLS 模式。
 -- [OUTPUT]: 对外提供 plans 价格档表（含 free/pro 种子行）、subscriptions 订阅表（每用户唯一、状态约束、owner 只读 RLS）。
 -- [POS]: supabase/migrations 的计费基座迁移，让 Stripe webhook 与权益消费点共享同一订阅事实源；支付通道上线前所有用户隐式为 free。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 
 create table if not exists public.plans (
   id text primary key,

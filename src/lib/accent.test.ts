@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 ./accent 的预设、校验与派生停档。
  * [OUTPUT]: 对外提供单强调色切换合同测试。
  * [POS]: lib 的强调色测试，约束苹果彩虹预设、非法值回退默认橙、strong/soft 由同一色源派生。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'
 

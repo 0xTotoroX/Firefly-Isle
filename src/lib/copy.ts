@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/locale 的 Locale 类型，承载 app shell、background audio、login、workspace、record 的本地化文案字典。
  * [OUTPUT]: 对外提供 copy 字典、getCopy 与按 locale 取值的辅助类型。
  * [POS]: lib 的文案真相源，集中管理页面可见文本、顶栏邮件复制反馈、背景音乐播放/暂停/拦截语义、OCR/编辑/新病历动作、BMI 标签、病程资料空态与重试按钮文案，禁止组件继续内联双语字符串。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { Locale } from '@/lib/locale'
 

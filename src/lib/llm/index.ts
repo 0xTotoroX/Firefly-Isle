@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/auth 的当前 Supabase session，依赖 @/lib/supabase 的 Edge Function env 边界，依赖 ./types。
  * [OUTPUT]: 对外提供 chat(messages, options) 与相关类型导出。
  * [POS]: src/lib/llm 的统一前端调用入口，把 JWT 透传、请求协议与错误映射锁在一处。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { getSupabaseClient, hasSupabaseEnv, hasSupabaseFunctionEnv, supabaseEdgeFunctionUrl } from '@/lib/supabase'
 import { isBrowserOffline } from '@/lib/network-status'

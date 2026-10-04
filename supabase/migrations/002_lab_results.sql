@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 public.patients 所有权边界、PostgreSQL RLS 与 numeric/text 基础类型。
 -- [OUTPUT]: 对外提供 lab_results 表、趋势查询索引、级联删除与基于 patients.user_id 的 RLS policy。
 -- [POS]: supabase/migrations 的实验室指标扩展迁移，让 PatientRecord 的 labResults 拥有独立数据库事实。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- 建立实验室指标读数的独立存储与所有者隔离边界。
 
 create table if not exists public.lab_results (

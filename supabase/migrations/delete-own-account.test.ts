@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 Supabase migration SQL。
  * [OUTPUT]: 对外提供 delete_own_account RPC 的安全合同测试。
  * [POS]: supabase/migrations 的隐私合规 contract 测试，约束自删账户 RPC 必须校验 auth.uid、级联依赖外键 cascade，且只授权 authenticated。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'

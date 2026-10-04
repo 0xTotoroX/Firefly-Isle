@@ -2,7 +2,7 @@
  * [INPUT]: window 错误事件、VITE_ERROR_REPORT_URL 与注入的 sender。
  * [OUTPUT]: initErrorReporting、reportError 与 sentryEnvelopeUrlFromDsn。
  * [POS]: 错误报告只含已知类别、固定路由、来源与时间；不采集任意正文、堆栈或身份。支持 JSON/Sentry，发送失败不再上报。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 type ErrorReportPayload = {
   location: string

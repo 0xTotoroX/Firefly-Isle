@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 的源码合同检查，依赖 react-dom/server 的静态渲染，依赖 react-router-dom 的 MemoryRouter，依赖 BackgroundAudioProvider 与 ./login-page-view 的 LoginPageView。
  * [OUTPUT]: 对外提供登录页八章叙事、单一认证弹层、SSR 安全 ScrollTrigger、reduced-motion、Transitions.dev 与单一 WebGL 背景合同的回归测试。
  * [POS]: components 的登录页主题测试，约束 V3 入口页不混入工作区导航与旧伪技术装饰，锁住首屏节奏、八章顺序、首尾同源登录 CTA、无 Demo 入口、双主题、认证模式、CSS sticky + spacer、动效生命周期与液体折射边界。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { renderToStaticMarkup } from 'react-dom/server'

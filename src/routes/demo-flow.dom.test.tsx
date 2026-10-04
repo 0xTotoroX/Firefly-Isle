@@ -1,4 +1,10 @@
 /** @vitest-environment happy-dom */
+/**
+ * [INPUT]: 真实 App 装配、React 测试库、虚构 Demo 会话与 Supabase spy。
+ * [OUTPUT]: 模式内导航/CRUD/偏好、会话重置和零真实服务调用的 DOM 回归。
+ * [POS]: 完整演示与真实账户隔离的跨页面行为测试。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { fireEvent, render, screen, waitFor, cleanup } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from '@/App'

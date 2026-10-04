@@ -2,6 +2,7 @@
 # [INPUT]: Docker 和已缓存的 postgres:18-alpine；仅在无网络临时容器内运行。
 # [OUTPUT]: 全部迁移与最小 API 授权、账户隔离/注销、临床数据、分享及创建/配额/捐赠并发回归结果。
 # [POS]: 可重复的隔离数据库测试入口，不读取 Supabase 配置或远端凭据。
+# [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 set -euo pipefail
 task_root=$(cd "$(dirname "$0")/.." && pwd)
 task_container="firefly-db-test-$$"

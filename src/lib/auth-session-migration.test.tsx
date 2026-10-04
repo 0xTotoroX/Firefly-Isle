@@ -3,6 +3,7 @@
  * [INPUT]: AuthProvider、延迟的 Supabase 认证响应与会话事件。
  * [OUTPUT]: 验证旧凭据换取期间的路由门控、失败反馈、云端兼容和退出。
  * [POS]: 认证迁移的可观察行为测试，不请求远端服务。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import type { Session } from '@supabase/supabase-js'
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'

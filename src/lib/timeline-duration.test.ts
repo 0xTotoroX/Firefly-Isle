@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 vitest 的 describe/it/expect 与 timeline-duration 的病程时间纯逻辑。
  * [OUTPUT]: 对外提供共享时间段、PFS 与持续状态工具的回归测试。
  * [POS]: src/lib 的病程时间合同测试，确保 record 档案 rail 与 treatment Gantt 使用同一日期/PFS 口径。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { describe, expect, it } from 'vitest'
 

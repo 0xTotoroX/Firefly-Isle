@@ -2,7 +2,7 @@
 [INPUT]: 依赖 OpenSpec change add-cross-platform-pwa-foundation、public/manifest.webmanifest、public/sw.js、public/_headers、public/_redirects 与当前 Cloudflare Pages 发布链路。
 [OUTPUT]: 提供 PWA foundation 发布前手动验证矩阵、缓存隐私检查与回滚步骤。
 [POS]: docs/operations 的 PWA 跨平台验证 runbook，服务 Web-first 安装体验与后续 Capacitor 壳层前置验收。
-[PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+[PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -->
 
 # Firefly-Isle PWA 验证矩阵

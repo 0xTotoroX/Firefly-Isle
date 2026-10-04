@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 node:fs 读取 Supabase 迁移，依赖 vitest 断言，依赖 ./patient-record-storage 的 PatientRecord 持久化映射工具。
  * [OUTPUT]: 对外提供病历摘要分页、lab_results/lab_report_batches 迁移/RLS 合同、row 映射、字段保存、旧 schema 降级与创建 UUID 重试测试。
  * [POS]: lib 的数据边界测试，约束患者记录读取/落库、持久化 id 所有权校验、可选 clinical_notes/lab_results 迁移缺口降级、字段级编辑 payload 与实验室指标 RLS 不分叉。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'

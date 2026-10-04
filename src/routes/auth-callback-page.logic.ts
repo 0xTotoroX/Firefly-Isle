@@ -2,7 +2,7 @@
  * [INPUT]: Supabase Auth 的 code exchange/session 方法与回调 URL。
  * [OUTPUT]: 统一 query/fragment 错误、一次性 code 兑换与显式终态；重置密码可要求本次 code 产生会话。
  * [POS]: 两个公共认证回调的共享动作层；SDK 在这些路由关闭自动 URL 兑换，避免重复消费 code。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { copy, getCopy } from '@/lib/copy'
 import type { Locale } from '@/lib/locale'

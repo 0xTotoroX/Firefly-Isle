@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 html2canvas-pro 捕获正式病历 DOM，依赖 jsPDF 生成 A4 portrait PDF，依赖浏览器 Blob / URL 下载能力。
  * [OUTPUT]: 对外提供 exportElementAsPdf 与 exportElementAsPng，生成有安全边距的白色文档，按正文块和文字行分页压缩 PDF，并省略纯空白尾页。
  * [POS]: lib 的跨页面导出边界；复用病历 DOM，在截图克隆中隔离应用布局、隐藏操作，保留现代颜色与完整正文。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import html2canvas from 'html2canvas-pro'
 import { defaultAccentHex, deriveAccentStops } from '@/lib/accent'

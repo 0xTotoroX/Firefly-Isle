@@ -1,4 +1,10 @@
 /** @vitest-environment happy-dom */
+/**
+ * [INPUT]: RecordPage、Router、React 测试库及延迟/失败的病历保存 mock。
+ * [OUTPUT]: 连续保存、失败恢复、语言切换和迟到患者响应隔离的 DOM 回归。
+ * [POS]: 病历编排与字段队列的真实 React 生命周期测试。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import type { ComponentProps, ReactNode } from 'react'
 import { Link, MemoryRouter, Route, Routes } from 'react-router-dom'

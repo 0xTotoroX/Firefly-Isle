@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/supabase 的 Supabase session 与 Edge Function URL，依赖 ./types 的 ChatError。
  * [OUTPUT]: 对外提供 LLM provider 设置读取、保存、重置、系统 DeepSeek 连通性测试 API 与公开设置类型，preset/custom 均保存模型名但不回读明文 key。
  * [POS]: src/lib/llm 的 provider 设置客户端，只负责浏览器到 llm-proxy/settings 与 llm-proxy test chat 的认证请求协议。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { getSupabaseClient, hasSupabaseEnv, hasSupabaseFunctionEnv, supabaseEdgeFunctionUrl } from '@/lib/supabase'
 import { isBrowserOffline } from '@/lib/network-status'

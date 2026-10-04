@@ -1,7 +1,7 @@
 -- [INPUT]: 依赖 public.patients、public.treatment_lines、public.lab_results、Supabase anon/authenticated roles、PostgreSQL RLS 与 security definer RPC 能力。
 -- [OUTPUT]: 对外提供 record_shares 表、授权码 hash 查询函数、只读分享 RLS policy 与所有者管理 policy。
 -- [POS]: supabase/migrations 的病历分享迁移，让单份 PatientRecord 能通过可撤销、可过期的授权码只读共享。
--- [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- 分享只保存授权码 hash；公开访问只拿到经函数验证后的 patient_id，病历数据仍由 RLS 限定为 active share。
 
 create table if not exists public.record_shares (

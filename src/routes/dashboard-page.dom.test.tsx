@@ -3,7 +3,7 @@
  * [INPUT]: 依赖 happy-dom 环境、@testing-library/react、@testing-library/user-event、@testing-library/jest-dom、vitest 模块 mock 与 ./dashboard-page。
  * [OUTPUT]: 对外提供 DashboardPage 的真实渲染行为回归测试。
  * [POS]: routes 的总览页 DOM 测试，约束精确数字渲染、最近病历与异常读数链接、空态可执行动作与加载失败反馈。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import '@testing-library/jest-dom/vitest'
 

@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 的状态，依赖 react-router-dom 的 useLocation，依赖 @/components/app-shell 的 V3 壳层、@/components/system 的 surfaces，依赖 useAuth 的 session 真相源、useLocale/useTheme 的本地偏好 setter、async-resource 的档案加载基元、profile-settings 的档案读写、copy 字典与 theme tokens。
  * [OUTPUT]: 对外提供 SettingsPage 组件，对应 /settings。
  * [POS]: routes 的账户设置 orchestration 层，负责账户身份展示、显示名称/界面语言/外观主题的读写，档案服务缺失时降级为本地偏好并明示。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession } from '@/lib/demo-session'
 import { DemoModeBanner } from '@/components/system/demo-mode-banner'

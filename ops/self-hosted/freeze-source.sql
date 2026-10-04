@@ -1,3 +1,7 @@
+-- [INPUT]: 已获批切换窗口中的旧 PostgreSQL 数据库及 public/auth/storage 表。
+-- [OUTPUT]: firefly_cutover 拒绝写入函数及语句级触发器，恢复方式为删除该专用 schema。
+-- [POS]: 自托管切换前旧库停写步骤，见 docs/operations/supabase-self-hosted.md；文件检查不授权执行。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- Run only at the approved cutover window, on the OLD cloud database as postgres.
 -- Export after this transaction commits. Recovery: DROP SCHEMA firefly_cutover CASCADE;
 BEGIN;

@@ -1,4 +1,10 @@
 /** @vitest-environment happy-dom */
+/**
+ * [INPUT]: WorkspacePage、React 测试库、Router 及 OCR/提取/保存 mock。
+ * [OUTPUT]: 主题/语言、草稿、追问互斥、只重试保存及迟到账号结果的回归。
+ * [POS]: 工作台状态稳定性与患者范围化验读回的生命周期测试。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import type { ComponentProps, ReactNode } from 'react'
 import { MemoryRouter } from 'react-router-dom'

@@ -6,7 +6,7 @@
 
 - 仓库：`0xTotoroX/Firefly-Isle`。环境初始基线来自已经整合的 `main`，任务从明确的 Git 分支/提交开始；任务报告记录 `git rev-parse HEAD`、分支和工作树状态。
 - Runtime：Node.js 22、npm lockfile；安装 `npm ci`。原生 iOS/Android 构建留在具有对应 SDK 的独立环境，Web 检查不要求安装 Xcode。
-- 仓库根 `AGENTS.md -> CLAUDE.md` 是相对链接，随 Git 同步；本机全局指令与个人 Skills 不会自动同步。云端任务按仓库文档执行，不依赖 `/Users/Totoro/` 路径。
+- 仓库根与各模块只保留 `AGENTS.md` 地图正文，随 Git 同步；不再维护其他工具的兼容导入文件。本机全局指令与个人 Skills 不会自动同步。云端任务按仓库文档执行，不依赖 `/Users/Totoro/` 路径。
 - Grok CLI 是本机可选研究工具，不是构建依赖；不要复制本机登录凭据到环境镜像。云端可使用已授权的联网检索和 GitHub 原始来源替代，并记录来源。
 - 无需新增 Superpowers 执行层；保留 OpenSpec 的产品合同与任务清单。编写代码、检查及审查按明确任务拆分，避免让多个任务同时往同一分支推送。
 

@@ -1,4 +1,10 @@
 /** @vitest-environment happy-dom */
+/**
+ * [INPUT]: LabAnalyticsPage、React 测试库、Router 与病历读取 mock。
+ * [OUTPUT]: 加载/失败/空态互斥、同患者重试和上传上下文的 DOM 回归。
+ * [POS]: 指标路由恢复与患者范围导航的交互测试。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'

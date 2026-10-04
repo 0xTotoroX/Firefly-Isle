@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 react 状态/ref/指针键盘事件、lucide-react 图标、@/components/system/surfaces、@/lib/lab-results 趋势工具、@/lib/lab-dictionary 分类字典与 PatientRecord/LabResult。
  * [OUTPUT]: 对外提供 LabAnalyticsDashboard，区分加载、失败和真实空态，并提供读取重试及化验上传链接。
  * [POS]: components/analytics 的指标管理统计界面，负责只读图表、全局状态文字切换、可搜索/可滚动分类指标索引、监测表回选指标、肿瘤连续上涨提醒联动高亮、表格日期与图表点双向定位、可拖动横向滑动趋势图、时间点密度切换、SVG 图表导出、等价表格、demo 展示与非诊断监测面板展示；文件上传入口留在 /app 输入区。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type KeyboardEvent, type PointerEvent, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'

@@ -1,4 +1,10 @@
 /** @vitest-environment happy-dom */
+/**
+ * [INPUT]: StrictMode、React 测试库、Router、回调/重置页及 Auth mock。
+ * [OUTPUT]: 回调错误与终态、恢复凭据和重置表单的 DOM 回归。
+ * [POS]: 公开认证路由生命周期测试，只使用合成凭据和 mock 服务。
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
+ */
 import { StrictMode } from 'react'
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'

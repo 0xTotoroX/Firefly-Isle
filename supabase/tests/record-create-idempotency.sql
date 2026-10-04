@@ -1,3 +1,7 @@
+-- [INPUT]: 幂等创建迁移、合成账号/病历和 owner 身份。
+-- [OUTPUT]: 创建重试、子记录身份、后续编辑、旧调用及事务回滚的真实 SQL 断言。
+-- [POS]: 隔离数据库回归；并发创建由 scripts/check-clinical-workflows.sh 的独立连接补充。
+-- [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
 -- Creation retries preserve the complete committed record and its child IDs.
 begin;
 insert into auth.users(id) values

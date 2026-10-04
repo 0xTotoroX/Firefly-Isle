@@ -2,7 +2,7 @@
  * [INPUT]: 共享指标统计、患者导航、Demo 内存会话和真实病历读取。
  * [OUTPUT]: LabAnalyticsPage，读取当前患者指标并提供模式内上传入口。
  * [POS]: 指标页路由编排；演示与正式页面使用同一展示组件，文件录入归工作区。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { useDemoSession, useProductPath } from '@/lib/demo-session'

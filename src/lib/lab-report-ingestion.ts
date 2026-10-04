@@ -2,7 +2,7 @@
  * [INPUT]: 依赖 @/lib/lab-dictionary 的分类字典、OCR 候选归一化和参考范围解析，依赖 @/lib/lab-results 的血常规派生指标生成。
  * [OUTPUT]: 对外提供 LabReviewRow、OCR 复核行、逐行校验、确认读数与报告日期解析。
  * [POS]: lib 的网页端实验室报告摄入纯逻辑层，把 OCR 文本转成可复核表格行，并在确认后输出可写入 Supabase 的 LabResult。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import {
   findLabIndicator,
