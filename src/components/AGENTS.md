@@ -13,9 +13,7 @@ privacy-gate.tsx: 首次使用隐私门控层，负责 localStorage 确认状态
 record/: 病例详情展示层内部模块，收敛 dossier 展示、文案、demo 数据、真实病历派生数据与展示类型
 system/: 设计系统壳层、品牌 mark、Demo 模式提醒、PWA 网络状态提示与 surface 基元目录，统一 sidebar、top bar、panel、邮件 hover 联系弹窗与 section 结构语义
 timeline/: 时间线表格与甘特图组件目录，收敛 TimelineTable、基本信息区块、初发区块、治疗线区块渲染与 treatmentLines 甘特投影
-theme-toggle.tsx: 全局主题切换入口，供壳层头部复用且只负责 theme 状态
-locale-toggle.tsx: 全局语言切换入口，与 ThemeToggle 并列复用但只负责 locale 状态
-ui/: 本地 shadcn/Radix Button 与独立 WebGL 背景封装；不是完整 shadcn 组件库，来源配置见根 components.json
+ui/: 独立 WebGL 背景封装；未使用的旧 Button 已移除，shadcn 仅保留生成配置。
 workspace/: 临床工作区 feature 组件目录，统一输入区、追问补充区与报告预览骨架
 
 error-boundary.dom.test.tsx: components 的错误边界 DOM 测试，验证子树渲染崩溃时降级 UI 可见、重载按钮触发整页刷新、正常子树不受影响。

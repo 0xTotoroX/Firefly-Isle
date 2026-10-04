@@ -12,7 +12,7 @@ lab-monitor-panels.tsx: 最近异常与肿瘤连续上涨提醒表，键盘/点�
 lab-analytics-controls.tsx: 分类顺序、默认指标与范围、滚动行样式、摘要卡和可读拖动提示。
 lab-analytics-format.tsx: 状态文案、数值/比例格式化、状态标签与上涨比例标签。
 lab-trend-chart.tsx: 横向 SVG 趋势图，按数值宽度冻结 Y 轴、参考范围、点选择、连续上涨高亮、拖动误选抑制和时间标签。
-demo-lab-analytics.ts: 统一虚构 fixture 的化验/病历兼容导出和明确标注的固定 AI 预览。
+demo-lab-analytics.ts: 统一虚构 fixture 的默认病历导出和明确标注的固定 AI 预览。
 lab-analytics-dashboard.test.tsx: 摘要、趋势/等价表格、监测、真实空态与非诊断文案展示合同。
 lab-analytics-interactions.test.tsx: 真实 React 交互回归，覆盖监测回选、分类清除高亮、搜索、日期定位、实际年份范围、拖动误选保护和患者上传链接。
 lab-chart-export.test.ts: 导出独立 SVG 的连续上涨状态色、坐标轴恢复和原图不变回归。

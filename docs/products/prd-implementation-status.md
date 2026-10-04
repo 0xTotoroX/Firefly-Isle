@@ -1,5 +1,5 @@
 <!--
- * [INPUT]: 依赖 docs/products/archive/prd.md、openspec/specs/、src/、supabase/、functions/、public/、ios/、android/、v1.4.0 发布基线，以及 openspec/changes/archive/2026-05-16-* 的 P0/Demo/PWA/Capacitor 归档证据。
+ * [INPUT]: 依赖 docs/products/archive/prd.md、openspec/specs/、src/、supabase/、functions/、public/、mobile/、v1.4.0 发布基线，以及 openspec/changes/archive/2026-05-16-* 的 P0/Demo/PWA/Capacitor 归档证据。
  * [OUTPUT]: 对外提供 PRD 功能的已实现、部分实现、未实现与额外能力盘点。
  * [POS]: docs/products 的当前产品状态真相源，连接历史 PRD 快照、baseline specs 与运行时代码现实。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
@@ -17,7 +17,7 @@ Dashboard、症状日志和随访已形成患者内导航；本轮修复 owner �
 - 历史发布基线（2026-05）：`v1.4.0` / `2a1bd34`；本轮未核验线上版本
 - 当前规格真相源：`openspec/specs/`
 - 当前 P0 / Demo / PWA / Capacitor 归档状态：`add-lab-analytics-page`、`add-clinical-ai-analysis`、`add-secure-record-sharing`、`restore-minimal-timeline-table-view`、`make-demo-mode-cover-full-product`、`add-cross-platform-pwa-foundation`、`add-capacitor-mobile-shell` 已归档到 `openspec/changes/archive/2026-05-16-*`，行为并入 `openspec/specs/`
-- 实现核对范围：`src/`、`supabase/`、`functions/`、`public/`、`capacitor.config.ts`、`ios/`、`android/`
+- 实现核对范围：`src/`、`supabase/`、`functions/`、`public/`、`capacitor.config.ts`、`mobile/`
 - 最近验证：以本轮最终验证命令为准；P0 聚焦验证已覆盖 AI 分析、分享、record page 视图切换与 route 合同
 - 最近核对结论：核心病历闭环、/app OCR 文件输入、实验室指标结构、网页端统计页面、公开全产品 Demo、对话式修改、甘特图视图、用户 LLM provider 设置、AI 辅助分析、授权码只读分享、极简 TimelineTable 视图、PWA foundation 与 Capacitor iOS/Android 本地壳基线已进入当前实现；Electron / Tauri / React Native / Flutter / 小程序 / 鸿蒙原生壳仍未实现。
 

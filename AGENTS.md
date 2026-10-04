@@ -23,7 +23,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | public/ | 静态资源、PWA worker/图标、部署 headers/redirects、授权音频；[地图](public/AGENTS.md) |
 | .github/ | PR 模板、依赖检查、CI 与显式发布；[地图](.github/AGENTS.md) |
 | ops/ | 自托管运行模板、备份恢复与切换准备；[地图](ops/AGENTS.md) |
-| ios/ · android/ | Capacitor 原生工程与平台配置；[iOS](ios/AGENTS.md)、[Android](android/AGENTS.md) |
+| mobile/ | 非当前优先目标的 Capacitor iOS/Android 原生壳与合同测试；[地图](mobile/AGENTS.md) |
 | docs/design/ | 当前 OpenDesign 材料、差异依据与历史视觉归档分离；[入口](DESIGN.md)、[地图](docs/design/AGENTS.md) |
 | docs/products/ | 范围、17 项验收、路线、命名与国内上线；[地图](docs/products/AGENTS.md) |
 | docs/architecture/ | 数据模型、架构图和详细基线说明；[地图](docs/architecture/AGENTS.md) |
@@ -42,7 +42,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | tsconfig.cloudflare-functions.json · tsconfig.supabase-functions.json | 两种边缘函数运行时的独立类型边界 |
 | eslint.config.js · components.json | ESLint 规则及 archive/ 排除边界，与 shadcn/ui 配置 |
 | index.html | SPA 挂载页、主题初始化、PWA metadata；内联脚本与 CSP hash 配套 |
-| capacitor.config.ts | 保留稳定 app id、显示名知见，dist 为原生 Web 构建来源；签名资料不入 Git |
+| capacitor.config.ts | 根级 CLI 入口，指向 mobile/ 平台工程；保留稳定 app id、显示名知见与 dist Web 构建来源；签名资料不入 Git |
 | wrangler.jsonc | Cloudflare 构建与公开环境接口，微信 KV/回调预研；不在本轮切换生产配置 |
 | .env.local.example · .dev.vars.example · .gitignore | 非敏感配置模板与本机凭据/产物忽略边界 |
 | README.md · README.en.md | 中英文项目说明与前后端目录入口 |
@@ -51,8 +51,8 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 
 ## 核心架构与行为边界
 
-- 前端在 src/ 与 public/；src/lib/ 中的 Supabase、LLM、OCR 模块是浏览器客户端，不是服务端。后端代码分为 supabase/functions/ 的 Deno API、supabase/migrations/ 的数据库权限/事务及 functions/ 的 Cloudflare 微信协议适配；当前没有另一个独立 Node API 服务目录。ops/ 与 .github/ 管部署，ios/ 与 android/ 是 Web 原生壳。
-- 运行时 UI 来源以 components.json 和当前源码为准：shadcn 配置为 radix-nova、无自定义 registry；本地 Button 使用 Radix Slot/CVA，其他壳层与业务组件主要自研，图标同时使用 Lucide 与本地 Material Symbols。主题实现保留 src/index.css、src/lib/accent.ts、src/lib/theme/ 与 src/components/system/。这些代码不属于归档的设计资料；新方案尚无经用户确认的完整组件映射。
+- 前端在 src/ 与 public/；src/lib/ 中的 Supabase、LLM、OCR 模块是浏览器客户端，不是服务端。后端代码分为 supabase/functions/ 的 Deno API、supabase/migrations/ 的数据库权限/事务及 functions/ 的 Cloudflare 微信协议适配；当前没有另一个独立 Node API 服务目录。ops/ 与 .github/ 管部署，mobile/ios/ 与 mobile/android/ 是 Web 原生壳，当前优先完善 Web，不扩展原生产品能力。
+- 运行时 UI 来源以 components.json 和当前源码为准：shadcn 配置为 radix-nova、无自定义 registry；Radix AlertDialog 承担删除确认，壳层与业务组件主要自研；未使用的旧 Button 和独立偏好开关已移除，图标同时使用 Lucide 与本地 Material Symbols。主题实现保留 src/index.css、src/lib/accent.ts、src/lib/theme/ 与 src/components/system/。这些代码不属于归档的设计资料；新方案尚无经用户确认的完整组件映射。
 - PatientRecord 包含 basicInfo、可选 initialOnset、按 lineNumber 排序的 treatmentLines 和独立 labResults。三类患者形态分别决定初发/治疗线渲染；基本信息始终最先显示，缺失 tumorType/stage/regimen 要提示。
 - 免疫组化和基因检测绑定各初发/治疗阶段，不移到全局摘要。lab_results 是指标读数真相，lab_report_batches 保留上传/OCR/审核来源事实。
 - 病历/化验写入使用数据库事务。persist_patient_record 验证 expected_owner_id = auth.uid()、保留子记录身份，并支持幂等创建；无逐表旧写入降级。所有 owner 表及 RPC 权限以 [数据模型](docs/architecture/data-model.md)和实际迁移为准。

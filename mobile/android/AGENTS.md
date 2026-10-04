@@ -1,4 +1,4 @@
-# android/
+# mobile/android/
 > L2 | 父级: [AGENTS.md](../AGENTS.md)
 
 成员清单

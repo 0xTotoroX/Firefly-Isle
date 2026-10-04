@@ -119,3 +119,12 @@ Node.js 22.23.3 / npm 10.9.9 的干净 npm ci、lint、所有 TypeScript 边界�
 - `billing-checkout/handler.ts` 的 Checkout 商品名称已改为 `MyOncode donation`；金额、币种、用户关联、metadata、成功/取消 URL、鉴权与开关行为未改。没有读取或修改 Stripe 商户名称、账单描述及已有远端支付对象。
 - 3 个相关测试文件的 11 项测试、完整 app/node/Cloudflare/Supabase 类型检查、受影响文件 lint、iOS plist 与 Android XML/标题资源引用检查通过。支付验证使用注入 fetch，不创建真实 Checkout。
 - 本次未运行原生 sync/build、真机、签名或函数部署。两份 Git 忽略的原生 `capacitor.config.json` 是此前同步产物，下次 build/sync 再生成；源码显示名完成不代表已安装应用、商店页或线上支付页已经更新。
+
+
+### Web 主干整理与移动壳归拢（2026-10-04）
+
+- iOS/Android 及原生配置合同测试集中到 `mobile/`。根 `capacitor.config.ts` 使用官方平台路径字段，Android 的 node_modules 相对引用已修正；原生目录含忽略产物完整保留。当前目标为 Web，不扩展原生产品能力。
+- 按静态与动态引用关系删除未被页面使用的旧 ThemeToggle、LocaleToggle 和 Button，以及四个无调用的导出；登录页/设置页的主题、语言操作保留，Radix 删除确认和动态加载保留。
+- 移除 CVA、Fraunces、Geist、tw-animate-css 四项无用直接依赖，取消未使用的 Fraunces 字体加载。npm 锁文件补齐已有 Tailwind WASM 的 bundled optional 元数据，其余既有依赖版本与内容未变。
+- 102 个测试文件 / 723 项测试、完整类型检查、lint、生产构建通过；实际 Capacitor CLI 解析新路径通过。浏览器实际 Demo 设置页的英文/浅色切换正常，标题使用 Inter，检查时没有控制台错误。
+- 原生 sync/build/签名/真机未执行；既有大分包提示仍在。微信服务端预研、支付开关、PWA、安全完整性与全部患者业务保留。设计资料归档是已有并行改动，不作为本轮代码清理提交。

@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖共享 transitions.dev CSS、Button 基元与正式路由源码。
+ * [INPUT]: 依赖共享 transitions.dev CSS 与正式路由源码。
  * [OUTPUT]: 对外提供共享产品动效合同的静态回归测试，约束 V3 保持、进入/按压/tab/icon 动效预算、reduced-motion 与路由组合边界。
  * [POS]: styles 的共享动效测试文件，避免把跨模块 motion contract 挤进单个页面测试文件。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
@@ -56,14 +56,6 @@ describe('shared product motion contract', () => {
     expect(source).not.toMatch(/\.t-stagger \{[^}]*will-change:/)
     expect(source).not.toContain('transition-all')
     expect(source).toMatch(/\.t-route-reveal,[\s\S]*\.t-popover,[\s\S]*animation: none !important/)
-  })
-
-  it('keeps the shared Button transition explicit and its press feedback small', () => {
-    const source = readSource('../components/ui/button.tsx')
-
-    expect(source).toContain('transition-[transform,background-color,border-color,color,box-shadow,opacity]')
-    expect(source).toContain('active:not-aria-[haspopup]:scale-[0.97]')
-    expect(source).not.toContain('transition-all')
   })
 
   it('keeps route reveal and child stagger on separate production nodes', () => {

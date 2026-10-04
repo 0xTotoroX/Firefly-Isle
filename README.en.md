@@ -40,10 +40,12 @@ Apply the new database migration before releasing the updated frontend. Local co
 | Main backend | `supabase/functions/`: Deno APIs for LLM, OCR and payments; `supabase/migrations/`: PostgreSQL tables, RLS and transactional RPCs; `supabase/tests/`: database checks. Supabase provides Auth and the database. |
 | WeChat adapter | Root `functions/`: Cloudflare Pages Functions OAuth preparation. WeChat login is not yet released. |
 | Operations | `ops/`: self-hosting, backup and restore; `.github/`: CI/CD; `scripts/`: local validation. |
-| Mobile shells | `ios/` and `android/`: Capacitor projects loading the same Web `dist/`, without a separate native product UI. |
+| Mobile shells (deferred priority) | `mobile/ios/` and `mobile/android/` wrap the same Web `dist/`; `mobile/capacitor.test.ts` checks their configuration and paths. There is no separate native business UI. |
 | Contracts and documentation | `openspec/`: behavior, active tasks and historical technical decisions; `docs/`: design materials, data model, acceptance, operations and historical documentation. |
 
-Start at [AGENTS.md](AGENTS.md) for module maps. The existing UI combines local shadcn/Radix primitives with custom application and feature components. The `radix-nova` configuration in `components.json` is not a complete component catalog for the proposed design. Runtime theme code stays in `src/index.css`, `src/lib/accent.ts` and `src/lib/theme/`.
+Read the Web app from `src/main.tsx` → `src/App.tsx` → `src/routes/`. Routes compose pages, `src/components/` renders them, and `src/lib/records/`, `labs/` and `workspace/` own domain logic. Native projects are isolated in `mobile/` and are not needed for everyday Web development. Root `capacitor.config.ts` remains the CLI entrypoint; Vite, TypeScript and Cloudflare configuration stays at the locations expected by their tools.
+
+Start at [AGENTS.md](AGENTS.md) for module maps. The existing UI combines Radix interaction primitives with custom application and feature components. The `radix-nova` configuration in `components.json` is not a complete component catalog for the proposed design. Runtime theme code stays in `src/index.css`, `src/lib/accent.ts` and `src/lib/theme/`.
 
 ## Development
 

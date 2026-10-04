@@ -39,5 +39,5 @@ ops/self-hosted/source-db.env
 *.p12
 *.provisionprofile
 *.xcarchive
-android/local.properties
-ios/DerivedData/
+mobile/android/local.properties
+mobile/ios/DerivedData/

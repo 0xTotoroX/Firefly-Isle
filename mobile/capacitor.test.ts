@@ -1,15 +1,16 @@
 /**
- * [INPUT]: 依赖 node:fs、node:path、vitest、./brand、package.json、capacitor.config.ts、ios/ 与 android/ 平台工程文件。
+ * [INPUT]: 依赖 node:fs、node:path、vitest、src/lib/brand、package.json、capacitor.config.ts、mobile/ 平台工程文件。
  * [OUTPUT]: 对外提供 Capacitor 移动壳配置、脚本、原生 app id/name 与 signing ignore 边界合同测试。
- * [POS]: src/lib 的移动壳架构测试，确保 iOS/Android 只包装 dist Web build，不漂移到 dev server 或第二套产品壳。
+ * [POS]: mobile/ 的移动壳架构测试，确保 iOS/Android 只包装 dist Web build，不漂移到 dev server 或第二套产品壳。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 import { describe, expect, it } from 'vitest'
 
-import { brand } from './brand'
+import config from '../capacitor.config'
+import { brand } from '../src/lib/brand'
 
 const APP_ID = 'com.ghibli1024.fireflyisle'
 const APP_NAME = brand.name.zh
@@ -31,7 +32,7 @@ describe('Capacitor mobile shell contract', () => {
     expect(pkg.dependencies?.['@capacitor/ios']).toBe(CAPACITOR_VERSION)
     expect(pkg.dependencies?.['@capacitor/android']).toBe(CAPACITOR_VERSION)
     expect(pkg.devDependencies?.['@capacitor/cli']).toBe(CAPACITOR_VERSION)
-    expect(readProjectFile('ios/App/CapApp-SPM/Package.swift')).toContain(`exact: "${CAPACITOR_VERSION}"`)
+    expect(readProjectFile('mobile/ios/App/CapApp-SPM/Package.swift')).toContain(`exact: "${CAPACITOR_VERSION}"`)
     expect(pkg.scripts?.['mobile:sync']).toBe('npm run build && cap sync')
     expect(pkg.scripts?.['mobile:open:ios']).toBe('cap open ios')
     expect(pkg.scripts?.['mobile:open:android']).toBe('cap open android')
@@ -49,22 +50,37 @@ describe('Capacitor mobile shell contract', () => {
     expect(config).not.toContain('127.0.0.1')
   })
 
+  it('resolves both native projects and Android dependencies from the shared mobile directory', () => {
+    expect(config.ios?.path).toBe('mobile/ios')
+    expect(config.android?.path).toBe('mobile/android')
+    expect(existsSync(resolve(process.cwd(), config.ios!.path!, 'App/App.xcodeproj'))).toBe(true)
+    expect(existsSync(resolve(process.cwd(), config.android!.path!, 'settings.gradle'))).toBe(true)
+
+    const settings = readProjectFile('mobile/android/capacitor.settings.gradle')
+    const capacitorPath = settings.match(/new File\('([^']+)'\)/)?.[1]
+    expect(capacitorPath).toBeDefined()
+    expect(resolve(process.cwd(), config.android!.path!, capacitorPath!)).toBe(
+      resolve(process.cwd(), 'node_modules/@capacitor/android/capacitor'),
+    )
+    expect(existsSync(resolve(process.cwd(), config.android!.path!, capacitorPath!))).toBe(true)
+  })
+
   it('keeps native project identifiers aligned with the shared app id and name', () => {
-    expect(readProjectFile('ios/App/App.xcodeproj/project.pbxproj')).toContain(`PRODUCT_BUNDLE_IDENTIFIER = ${APP_ID};`)
-    expect(readProjectFile('ios/App/App/Info.plist')).toMatch(new RegExp(`<key>CFBundleDisplayName</key>\\s*<string>${APP_NAME}</string>`))
-    expect(readProjectFile('android/app/build.gradle')).toContain(`applicationId "${APP_ID}"`)
-    const androidStrings = readProjectFile('android/app/src/main/res/values/strings.xml')
+    expect(readProjectFile('mobile/ios/App/App.xcodeproj/project.pbxproj')).toContain(`PRODUCT_BUNDLE_IDENTIFIER = ${APP_ID};`)
+    expect(readProjectFile('mobile/ios/App/App/Info.plist')).toMatch(new RegExp(`<key>CFBundleDisplayName</key>\\s*<string>${APP_NAME}</string>`))
+    expect(readProjectFile('mobile/android/app/build.gradle')).toContain(`applicationId "${APP_ID}"`)
+    const androidStrings = readProjectFile('mobile/android/app/src/main/res/values/strings.xml')
     expect(androidStrings).toContain(`<string name="app_name">${APP_NAME}</string>`)
     expect(androidStrings).toContain(`<string name="title_activity_main">${APP_NAME}</string>`)
     expect(androidStrings).toContain(`<string name="package_name">${APP_ID}</string>`)
     expect(androidStrings).toContain(`<string name="custom_url_scheme">${APP_ID}</string>`)
-    expect(readProjectFile('android/app/src/androidTest/java/com/ghibli1024/fireflyisle/ExampleInstrumentedTest.java')).toContain(APP_ID)
+    expect(readProjectFile('mobile/android/app/src/androidTest/java/com/ghibli1024/fireflyisle/ExampleInstrumentedTest.java')).toContain(APP_ID)
   })
 
   it('keeps platform signing secrets out of Git', () => {
     const rootIgnore = readProjectFile('.gitignore')
-    const iosIgnore = readProjectFile('ios/.gitignore')
-    const androidIgnore = readProjectFile('android/.gitignore')
+    const iosIgnore = readProjectFile('mobile/ios/.gitignore')
+    const androidIgnore = readProjectFile('mobile/android/.gitignore')
 
     expect(rootIgnore).toContain('*.p12')
     expect(rootIgnore).toContain('*.mobileprovision')

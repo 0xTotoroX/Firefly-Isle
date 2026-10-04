@@ -12,7 +12,7 @@
 | --- | --- |
 | 保留并优先验收 | 病历输入、提取、最多三轮追问、逐字段编辑、治疗线、化验报告、只读趋势、症状与随访、授权码分享、PDF/PNG 导出。每个操作必须有可观察结果和失败反馈。 |
 | 必要支撑 | 认证、账号与数据隔离、隐私/删除/导出、模型设置、配额、错误报告、公开演示。它们保护核心闭环。 |
-| 维持已有边界 | PWA、Capacitor 壳、背景音乐、环境开关控制的捐赠/计费基础。已有独立职责与合同，本轮没有证据支持整块删除，不扩展它们。 |
+| 维持已有边界 | PWA、背景音乐、环境开关控制的捐赠/计费基础；原生壳及其检查统一放在 `mobile/`。iOS/Android 不是当前适配重点，保留可恢复的已有工程，不扩展原生能力。 |
 | 后续规划 | 基因检测报告中的具体变异与信号通路关联解读，带来源、证据与不确定性说明；尚未实现，需另立 OpenSpec 合同与验收。 |
 | 延后 | 微信正式登录、小程序、商业套餐、团队协作、跨设备协同编辑、新视觉上线。明确需求和验收再实施。 |
 | 已移除 | `/design-preview`、`/brand-lockup-preview` 及只供它们使用的组件、CSS、测试；统计页无法落库的临时编辑；逐表删除重建式保存；重复的深浅主题工作台入口；进程内额度计数及先查询后记账路径。 |
@@ -21,7 +21,7 @@
 
 ## 复用与结构
 
-继续用现有 React、Radix/shadcn、Tailwind 和 Supabase。当前只固定了部分基础组件来源：components.json 使用 radix-nova、无自定义 registry，本地 Button 使用 Radix Slot/CVA；壳层和业务组件主要自研。A/B 新方案尚无确认的完整组件清单和映射，不将已有依赖视为已经覆盖全部新交互，也不为换肤直接引入另一套完整 UI 框架。Carbon 曾用于研究语义颜色、状态与层级，并非已接入的运行组件库。数据事务使用 PostgreSQL RPC，前端队列只处理当前页面按顺序提交，不宣称支持跨设备冲突合并。
+继续用现有 React、Radix/shadcn、Tailwind 和 Supabase。当前只固定了部分基础组件来源：components.json 使用 radix-nova、无自定义 registry，Radix AlertDialog 用于删除确认；壳层和业务组件主要自研，未使用的旧 Button 与独立偏好开关已清除。A/B 新方案尚无确认的完整组件清单和映射，不将已有依赖视为已经覆盖全部新交互，也不为换肤直接引入另一套完整 UI 框架。Carbon 曾用于研究语义颜色、状态与层级，并非已接入的运行组件库。数据事务使用 PostgreSQL RPC，前端队列只处理当前页面按顺序提交，不宣称支持跨设备冲突合并。
 
 2026-10-02 复核了两个仍维护的医疗时间线实现。[Medplum PatientTimeline](https://github.com/medplum/medplum/blob/main/packages/react/src/PatientTimeline/PatientTimeline.tsx) 可参考事件分组和临床日期处理，但直接接入依赖 FHIR、MedplumClient 与 Mantine，需要转换现有 PatientRecord/Supabase 边界。[cBioPortal 独立时间线包](https://github.com/cBioPortal/cbioportal-frontend/blob/master/packages/cbioportal-clinical-timeline/package.json) 支持 React 18，但当前包标识为 AGPL-3.0-or-later，另引入 MobX 等依赖。现有三视图已覆盖本产品需求，暂保留它们，不为了复用之名增加模型迁移和许可证决策。
 

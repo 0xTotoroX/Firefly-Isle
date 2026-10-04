@@ -70,8 +70,7 @@ describe('V3 theme token contract', () => {
   })
 
   it('uses locale-driven typography tokens across the app shell', () => {
-    expect(mainSource).toContain("import '@fontsource/fraunces/latin-600.css'")
-    expect(mainSource).toContain("import '@fontsource/fraunces/latin-700.css'")
+    expect(mainSource).not.toContain('@fontsource/fraunces')
     expect(mainSource).toContain("import '@fontsource/inter/latin-400.css'")
     expect(mainSource).toContain("import '@fontsource/inter/latin-500.css'")
     expect(mainSource).toContain("import '@fontsource/inter/latin-600.css'")

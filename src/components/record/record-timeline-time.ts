@@ -7,7 +7,6 @@
 import type { Locale } from '@/lib/locale'
 import {
   cleanTimelineDate,
-  formatCompleteTimelinePfsLabel,
   formatTimelineDateRange,
   formatTreatmentTimelinePfsLabel,
 } from '@/lib/records/timeline-duration'
@@ -23,10 +22,6 @@ export function getTimelineRailRange(
   separator = '-',
 ) {
   return formatTimelineDateRange(startRaw, endRaw, separator, locale === 'zh' ? '至今' : locale === 'en' ? 'Present' : undefined)
-}
-
-export function formatTimelinePfsLabel(startRaw: string | undefined, endRaw: string | undefined, locale: Locale) {
-  return formatCompleteTimelinePfsLabel(startRaw, endRaw, locale)
 }
 
 export function formatTreatmentLinePfsLabel(startRaw: string | undefined, endRaw: string | undefined, locale: Locale) {

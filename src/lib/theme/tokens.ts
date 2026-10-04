@@ -4,7 +4,7 @@
  * [POS]: src/lib/theme 的 token 定义文件，统一 dark/light 的颜色、surface、文字、边框、状态、紧凑响应式侧栏、边缘钉住顶栏与宽幅内容几何合同。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import { clinicalColors, defaultAccentHex, deriveAccentStops } from '@/lib/accent'
+import { defaultAccentHex, deriveAccentStops } from '@/lib/accent'
 
 export const themeNames = ['dark', 'light'] as const
 
@@ -25,8 +25,6 @@ export const themeTransitionClass = 'transition-[background-color,color,border-c
 
 // 强调色与临床语义色由 accent.ts 统一派生；预设不改变状态含义。
 export const accentBase = defaultAccentHex
-export const accentCritical = clinicalColors.light.critical
-export const accentLow = clinicalColors.light.low
 
 export const themeTokens = {
   dark: {
