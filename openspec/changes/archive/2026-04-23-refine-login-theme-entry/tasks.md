@@ -13,7 +13,7 @@
 
 ## 3. Documentation and verification
 
-- [x] 3.1 同步受影响的 GEB 文档与 L3 头部契约
+- [x] 3.1 同步受影响的模块说明与文件契约
 - [x] 3.2 运行 `npm run test`
 - [x] 3.3 运行 `npm run lint`
 - [x] 3.4 运行 `npm run build`

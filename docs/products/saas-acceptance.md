@@ -91,7 +91,7 @@ Web 与小程序共用领域模型和受鉴权服务端操作。将来只读 API
 
 ## 2026-10-04 main / SaaS 整合验证
 
-本轮将 main 的依赖与 CI 升级（759f4f9 / PR #13）通过 merge 整合到 SaaS 分支，保留 SaaS 的患者工作流、独立 Demo、html2canvas-pro、Material Symbols、Workbox 和 GEB 单入口。锁文件中已有 main 包的版本全部保留；恢复页按链接/账号隔离表单，化验队列按患者隔离，总览首次请求与事件触发分页分开处理，保留迟到请求守卫。
+本轮将 main 的依赖与 CI 升级（759f4f9 / PR #13）通过 merge 整合到 SaaS 分支，保留 SaaS 的患者工作流、独立 Demo、html2canvas-pro、Material Symbols、Workbox 和 AGENTS.md 单入口。锁文件中已有 main 包的版本全部保留；恢复页按链接/账号隔离表单，化验队列按患者隔离，总览首次请求与事件触发分页分开处理，保留迟到请求守卫。
 
 Node.js 22.23.3 / npm 10.9.9 的干净 npm ci、lint、所有 TypeScript 边界、94 文件 / 691 项 coverage 测试、build 与 39 项 OpenSpec 严格验证通过。构建仍有既有大 chunk 提示。真实 Chrome 在 1440px/390px 下验证 Demo 总览、设置与病历，PDF 导出成功（609726 字节），无页面异常、外部请求或手机横向溢出。本机 Docker 未运行，隔离数据库和 Pages Functions 编译由整合提交的 GitHub CI 验证；旧 CI 不替代该提交的检查。
 

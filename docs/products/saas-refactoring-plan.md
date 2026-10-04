@@ -21,7 +21,7 @@
 2. **产品完整性**：账户体系、数据导出/删除、配额、计费基座、i18n 收尾。
 3. **设计专业性**：在 V3 生产真源范围内打磨设计语言与登录界面（不擅自迁移 V4）。
 
-执行纪律：每个阶段一次或多次 commit；每次 commit 前必须 `npm run test && npm run lint && npm run type-check && npm run build` 全绿；行为变更同步 `openspec/specs/`；结构性变更同步 `CLAUDE.md`。
+执行纪律：每个阶段一次或多次 commit；每次 commit 前必须 `npm run test && npm run lint && npm run type-check && npm run build` 全绿；行为变更同步 `openspec/specs/`；结构性变更同步受影响的 `AGENTS.md`。
 
 ## 现状审计结论（2026-09-02）
 

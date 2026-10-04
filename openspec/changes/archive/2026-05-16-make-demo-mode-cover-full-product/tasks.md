@@ -22,7 +22,7 @@
 ## 4. Tests And Docs
 
 - [x] 4.1 Add/update app route, workspace shell, record Demo, analytics Demo, and share/AI preview tests.
-- [x] 4.2 Update GEB L1/L2/L3 docs for changed route, shell, record, analytics, and OpenSpec ownership.
+- [x] 4.2 Update project maps, module maps, and file contracts for changed route, shell, record, analytics, and OpenSpec ownership.
 - [x] 4.3 Update product status/roadmap docs to record Demo as a full-product showcase/debug/tutorial mode.
 - [x] 4.4 Run focused validation, then `openspec validate --all`, type-checks, lint, full tests, and build.
 - [x] 4.5 Update tests/docs for login CTA, Demo banner, optional Supabase Demo source, and rerun focused/full validation.

@@ -30,4 +30,4 @@ archive/2026-09-12-improve-clinical-workflows/: 已归档的临床工作流优�
 
 [PROTOCOL]: 结构或契约事实变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md，已加载且未变化的内容不重读。
 
-upgrade-dependencies-and-ci-tools/: main 已合入的依赖/CI 升级合同与验收记录；整合保留升级成果，同时维护 SaaS 的新增依赖和 GEB 单入口。
+upgrade-dependencies-and-ci-tools/: main 已合入的依赖/CI 升级合同与验收记录；整合保留升级成果，同时维护 SaaS 的新增依赖和 AGENTS.md 单入口。

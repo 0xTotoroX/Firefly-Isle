@@ -1,7 +1,7 @@
 ## 1. Spec and product decisions
 
 - [x] 1.1 Choose the second-version scope: delete `记住我`, add password reset, hide WeChat, add Google, fix sign-up mode, fix `signUp()` session branching, and add tests
-- [x] 1.2 Create proposal, design, auth delta spec, tasks, and GEB directory maps
+- [x] 1.2 Create proposal, design, auth delta spec, tasks, and module maps
 - [x] 1.3 Confirm Supabase dashboard settings needed for Google provider, password reset redirect URLs, and local/preview origins before live OAuth verification
 
 ## 2. Test first

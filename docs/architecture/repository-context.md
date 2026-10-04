@@ -1,6 +1,6 @@
 # 仓库详细基线与既有约定
 
-本文保留 GEB 迁移前根文档的详细内容，避免迁移丢失背景与约定。项目入口为 [根 AGENTS.md](../../AGENTS.md)，局部结构以各模块地图及代码为准。本文中的日期和验收记录沿用原文，不代表本次重新验证。
+本文保留根说明整理前的详细基线，供查阅历史背景与约定。项目入口为 [根 AGENTS.md](../../AGENTS.md)，局部结构以各模块地图及代码为准。本文中的日期和验收记录沿用原文，不代表本次重新验证。
 
 视觉设计资料先外置备份，随后收回根 archive/；下文的 DESIGN.md、docs/design/、旧设计系统与 Stitch 映射路径记录当时位置，不是当前仓库入口或必读指令。
 
@@ -52,7 +52,7 @@
 - `SECURITY.md`
   - private vulnerability reporting policy for auth, RLS, Edge Functions, Cloudflare Functions, provider-key storage, and privacy-sensitive flows
 - `CONTRIBUTING.md`
-  - contributor workflow, verification commands, OpenSpec/GEB documentation rules, PR expectations, and Conventional Commits format
+  - contributor workflow, verification commands, OpenSpec and architecture documentation rules, PR expectations, and Conventional Commits format
 - `CODE_OF_CONDUCT.md`
   - project collaboration standards and conduct-reporting boundary for a privacy-sensitive medical workflow
 - `package.json`

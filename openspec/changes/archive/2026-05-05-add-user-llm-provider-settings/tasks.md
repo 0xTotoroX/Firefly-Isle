@@ -19,5 +19,5 @@
 
 ## 4. Documentation And Gates
 
-- [x] 4.1 Update GEB CLAUDE maps and L3 headers for new or changed modules.
+- [x] 4.1 Update module maps and source-file headers for new or changed modules.
 - [x] 4.2 Run focused tests, `npm run test`, `npm run lint`, `npm run build`, `openspec archive`, `openspec validate --all`, goal completion attempt, and commit.

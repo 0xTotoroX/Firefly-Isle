@@ -24,4 +24,4 @@ The current demo is split across `/record/demo` and `/analytics/demo`, while the
 - Affected frontend routes: `src/App.tsx`, `src/routes/login-page.tsx`, `src/routes/record-page.tsx`, `src/routes/record-page.view.tsx`, `src/routes/lab-analytics-page.tsx`, and the new Demo entry route if needed.
 - Affected shared UI/data: login entry CTA, app shell navigation, demo mode banner, optional demo share-code data loader, demo fixture data, record dossier AI/share panels, analytics dashboard.
 - Affected tests: login Demo CTA, route protection, demo route rendering, real blank-state navigation, record demo coverage, analytics demo coverage.
-- Affected docs: OpenSpec change map, product roadmap/status, and GEB L1/L2/L3 docs for route and demo fixture ownership changes.
+- Affected docs: OpenSpec change map, product roadmap/status, and project maps, module maps, and file contracts for route and demo fixture ownership changes.

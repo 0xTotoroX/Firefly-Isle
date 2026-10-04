@@ -20,6 +20,6 @@ The workspace already supports first-time extraction, follow-up completion, and 
 
 ## Impact
 
-- Affects `src/lib/extraction*`, workspace orchestration, workspace/composer copy, tests, and GEB maps.
+- Affects `src/lib/extraction*`, workspace orchestration, workspace/composer copy, tests, and module maps.
 - Reuses the existing LLM adapter and patient persistence boundary; no new database tables are required.
 - Adds OpenSpec baseline specs for conversational editing and updates the editing spec.

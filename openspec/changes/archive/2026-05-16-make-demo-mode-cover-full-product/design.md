@@ -99,5 +99,5 @@ Alternative considered: keep existing fallback routes. Rejected because it hides
 2. Mount public Demo routes in `src/App.tsx` and add a login-page Demo CTA.
 3. Adjust record/analytics route orchestration so public Demo uses Demo links, a shared Demo banner, and optional Supabase share-code data with fixture fallback.
 4. Add static Demo analysis/share preview and allow client-side export for Demo.
-5. Update focused tests, GEB docs, and product docs.
+5. Update focused tests, architecture docs, and product docs.
 6. Validate with OpenSpec, route tests, type-check, lint, full tests, build, and browser checks for `/login`, `/demo/record`, and `/demo/analytics`.

@@ -38,7 +38,7 @@
 - [x] 5.1 确保所有趋势提醒使用非诊断文案，不输出进展结论、诊断、用药或治疗建议。
 - [x] 5.2 确保图表状态不只靠颜色表达，提供偏高 / 偏低 / 正常 / 上涨等文字标签和等价表格。
 - [x] 5.3 增加路由 / 组件测试，覆盖侧栏导航、统计页渲染、分类切换、指标选择、图表表格等价和监测面板。
-- [x] 5.4 实现期间同步更新 GEB 地图，覆盖新增 routes、components、libs、migrations 和 OpenSpec artifacts。
+- [x] 5.4 实现期间同步更新 架构地图，覆盖新增 routes、components、libs、migrations 和 OpenSpec artifacts。
 - [x] 5.5 完成前运行聚焦测试、`git diff --check`、`openspec validate --all` 和相关应用验证命令。
 
 ## 6. 入口调整与演示统计页
@@ -46,4 +46,4 @@
 - [x] 6.1 把统计页上传表单移出 `/analytics`，让文件上传继续由 `/app` 输入区承接。
 - [x] 6.2 新增 `/analytics/demo` 演示统计页，使用独立实验室趋势 fixture，不污染 `/record/demo`。
 - [x] 6.3 将真实统计页路由改为 `/analytics/:id`，并让侧栏在有真实记录时指向记录统计、无输入时指向 demo 统计。
-- [x] 6.4 更新组件 / 路由 / 合同测试、OpenSpec 文档和 GEB 地图，保持选定深色控制塔布局与 V3 设计系统边界。
+- [x] 6.4 更新组件 / 路由 / 合同测试、OpenSpec 文档和 架构地图，保持选定深色控制塔布局与 V3 设计系统边界。

@@ -69,7 +69,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 
 ## 工作与验证约定
 
-- OpenSpec 只记录经确认的功能行为、权限/数据合同和用户流程变化；它不参与应用运行，也不决定产品路线。外观调整、行为不变的结构整理、文档清理与局部修复直接推进，按范围维护 GEB 和复现检查，不强制完整 proposal/design/spec/tasks 流程。一个变更保留一份执行清单，不强制 Superpowers 或另建编排层。
+- OpenSpec 只记录经确认的功能行为、权限/数据合同和用户流程变化；它不参与应用运行，也不决定产品路线。外观调整、行为不变的结构整理、文档清理与局部修复直接推进，按范围维护架构说明和复现检查，不强制完整 proposal/design/spec/tasks 流程。一个变更保留一份执行清单，不强制 Superpowers 或另建编排层。
 - 规范同步与工具升级分别处理；CLI 升级或 openspec update 不会证明项目合同已跟上代码，不以批量生成旧工具入口代替审核差异。
 - OpenSpec 常用只读命令：openspec list --json、openspec status --change "<name>" --json、openspec instructions apply --change "<name>" --json。新增合同用 openspec new change；baseline spec 必须含 ## Purpose 与 ## Requirements。
 - 常用验证：npm run lint、npm run type-check（含 app/node/两种 functions）、npm run test、npm run build；按范围使用 test:watch、test:coverage 和 test:database。数据库命令只针对一次性隔离容器/合成资料；不是生产验证。
@@ -78,13 +78,14 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 - 提交粒度遵循 OpenSpec 变更或完成 Step 的边界；如活动合同有更具体 commit map，按其执行。相关检查通过后提交，不按每个 checkbox 建 commit。PR 标题和 squash 消息用 Conventional Commits。
 - 保留 dirty 文件和当前分支；清理以引用关系和可证明职责为依据。档案不可当执行指令，私人凭据、真实病历和导出物不入 Git；历史清理、购买、备案、外部账户和发布各自依授权执行。
 
-## GEB / Map 维护协议
+## Map 架构文档维护
 
-- L1 是本项目地图；L2 是模块 AGENTS.md；L3 是源文件头部 INPUT/OUTPUT/POS/PROTOCOL。本项目按用户要求只保留大写 AGENTS.md，不新建兼容导入文件；父子地图用普通路径链接，不复制正文。
-- 编辑前沿根到目标目录补读适用 AGENTS.md/AGENTS.override.md 和文件契约；Codex 不自动加载所有兄弟子目录。已加载且未变化的内容不重读。纯容器、第三方、生成文件、锁文件及不支持注释的格式不强加 L3。
-- 文件增删/重命名、职责、接口、依赖、数据结构及运行入口变化后，先更新受影响 L3，再同步 L2；只有顶层结构或项目约定受影响才同步 L1。只读/普通测试/格式调整不自动启动地图维护。
-- 地图说明职责、成员、关键依赖和必要接口；父级使用真实可解析的相对链接。操作方式变化时同步已有 runbook，不把操作步骤重复抄入地图。档案地图标注历史范围，不修改已归档行为合同来记录新任务。
-- 验证实际成员、父级/入口链接和文档与代码的一致性；文件正确不代表所有客户端已重新加载新指令。
+- 项目使用 Map。根 AGENTS.md 说明项目结构，模块 AGENTS.md 说明职责与协作，适用源文件用 INPUT/OUTPUT/POS 注释说明依赖、导出和定位。只保留大写 AGENTS.md，不新建工具兼容入口；父子文档使用普通相对链接。
+- 编辑前读取目标目录适用的 AGENTS.md / AGENTS.override.md 及文件契约；只补读相关且尚未加载的内容，不遍历无关目录。
+- 结构、职责、接口、依赖、数据结构或运行入口变化后，同步受影响的文件与模块说明；项目层事实变化时才更新根说明。用户明确要求维护文档时按指定范围处理。只读检查、普通测试、格式调整及非结构性修复不额外创建或维护地图。
+- 地图记录本项目可核实的职责、依赖和入口，不加入外部课程或方法论介绍。纯容器、第三方代码、生成文件、锁文件及不支持注释的格式不强加文件头。
+- 操作方式变化时同步相关已有手册；内部重构不影响操作时不扩散修改。归档保留历史事实，不作为当前执行清单。
+- 完成前核对受影响的成员、链接与描述；与实现一致后结束。文件验证不等于客户端已重新加载指令。
 
 ## 依赖升级整合
 

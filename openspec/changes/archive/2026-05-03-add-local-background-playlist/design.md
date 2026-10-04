@@ -65,7 +65,7 @@ Alternative considered: full player popover. It is heavier than requested and wo
 1. Add playlist tests that fail against the current single-source controller.
 2. Add the track manifest and extend the controller state/actions.
 3. Extend the shared music control with compact previous/current/next controls.
-4. Update GEB docs and asset boundary docs.
+4. Update architecture docs and asset boundary docs.
 5. Run test, type-check, lint, build, and OpenSpec validation.
 
 Rollback removes the playlist manifest and compact controls, then restores the provider to a single configured `BACKGROUND_AUDIO_SRC` without touching business routes.

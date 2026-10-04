@@ -17,5 +17,5 @@
 
 ## 4. 验证与文档
 
-- [x] 4.1 更新 GEB `CLAUDE.md` 与 `docs/products` 状态。
+- [x] 4.1 更新 架构说明 与 `docs/products` 状态。
 - [x] 4.2 运行相关测试、`npm run type-check`、`openspec validate --all`。

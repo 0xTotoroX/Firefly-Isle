@@ -11,7 +11,7 @@
 - 收敛 shared shell：`/app` 与 `/record/:id` 使用默认展开、边线胶囊折叠/隐藏、可拖拽调整宽度、低于阈值自动 icon-only 的同一左侧栏，配合共享 top status bar 和同一内容节奏；dark / light 只通过材料语言分化。
 - 重构 workspace composition：删除 `/app` 中重复的主提取动作，移除 V3 已判定为噪声的参数/语音/多余控制块，让病史输入后直接进入治疗时间线。
 - 重构 record / login / privacy 的视觉一致性：保留戏剧性和档案感，但不新增第三套视觉语法，不改变路由、认证、提取、数据结构或导出行为。
-- 更新相关 L3 头部和 CLAUDE 地图，使代码结构与设计文档同构。
+- 更新受影响的文件职责注释和模块说明，使其与实现一致。
 
 ## Capabilities
 

@@ -13,5 +13,5 @@
 ## 3. 验证与文档
 
 - [x] 3.1 更新 record page / timeline table 测试。
-- [x] 3.2 更新 GEB `CLAUDE.md` 与 `docs/products` 状态。
+- [x] 3.2 更新 架构说明 与 `docs/products` 状态。
 - [x] 3.3 运行相关测试、`npm run type-check`、`openspec validate --all`。
