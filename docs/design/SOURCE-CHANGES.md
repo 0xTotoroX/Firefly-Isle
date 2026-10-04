@@ -57,3 +57,9 @@ theme-system规范仍含旧V3布局、橙色和登录视觉的历史合同。本
 启动核验补充：/Applications安装入口标记0.21.1，实际普通GUI启动加载本机已有0.24.1更新载荷。旧入口--headless报“SidecarFactory.create() requires a supervised sidecar context”，普通应用入口成功；证据支持两种启动路径的协议衔接差异，未修改程序或监督参数。文件夹原地导入返回403 desktop import token rejected，未绕过；改用新建应用自管项目后逐文件写入选定材料，未授予读取整个外部目录的能力。macOS辅助访问自动控制亦未获准，本轮未请求或修改该权限。
 
 OpenDesign实际工作目录由应用管理，记录在本机交接目录的opendesign-project.json。源仓库current是需求正文维护源，本机input及应用内input是同一版快照，后续统一重导出；不构成三套独立维护的设计规范。压缩包只含五文件，零历史素材、代码、密钥或真实患者数据；5份输入与ZIP内容校验一致，项目内加上START共6份文本逐字一致。
+
+## 首轮实际生成与复核
+
+用户明确选定本机Codex后，已通过OpenDesign启动首轮及同会话修订，关键浏览器检查与限制见[PROTOTYPE-REVIEW.md](PROTOTYPE-REVIEW.md)。两次运行均成功，没有切换Cloud/BYOK或安装MCP。HTML只保留在OpenDesign项目及本机导出目录，正式源码与生产配置未由本轮修改。
+
+生成期间正式仓库继续产生050920f与1302fa3，主要是配置集中、命名与文档导航整理；再次比较README/AGENTS/命名记录，未发现改变本轮品牌与业务范围的差异。生成时的五文件快照保持原文；本轮仅更新仓库交接说明的授权/状态措辞，不能把更新后的说明哈希冒充模型当时收到的版本。

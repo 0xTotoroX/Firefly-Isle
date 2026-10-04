@@ -8,7 +8,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 - 面向肿瘤患者与家属的全程治疗信息管理，核心闭环为文字/报告输入 → AI/OCR 提取 → 人工复核 → 病历持久化 → 时间线、指标、症状、随访 → 受控分享与导出。基因变异和信号通路解读仍是未来能力。
 - 17 项功能及实现/验收缺口以 [SaaS 验收表](docs/products/saas-acceptance.md)为准；不通过删功能或降低标准精简代码。本地测试、开发环境、生产服务分别验收。
 - 最新用户指令优先于文档快照。产品名及域名见 [命名记录](docs/products/product-naming.md)，部署与微信入口见 [国内上线评估](docs/products/domestic-launch.md)；不得把候选品牌或未来能力视为已上线。
-- 设计入口为根 [DESIGN.md](DESIGN.md)：[current](docs/design/current/README.md) 是本轮 OpenDesign 输入，[archive](docs/design/archive/README.md) 集中保留全部旧视觉稿及 A/B 交付。用户已要求从 AI Native 与极简首页重新提案，不再以选择 A/B 为前提；当前仅准备材料，未生成或实施新布局。已完成的知见 / MyOncode 品牌、共通排版和 Web 行为继续保留；原生、小程序与发布分别验收。
+- 设计入口为根 [DESIGN.md](DESIGN.md)：[current](docs/design/current/README.md) 是本轮 OpenDesign 输入，[archive](docs/design/archive/README.md) 集中保留全部旧视觉稿及 A/B 交付。用户已要求从 AI Native 与极简首页重新提案，不再以选择 A/B 为前提；首轮已通过OpenDesign本机Codex生成并完成关键原型检查，见[评审记录](docs/design/PROTOTYPE-REVIEW.md)；仍待用户视觉审核，未接入正式页面。已完成的知见 / MyOncode 品牌、共通排版和 Web 行为继续保留；原生、小程序与发布分别验收。
 - 已记录的行为合同在 [openspec/specs/AGENTS.md](openspec/specs/AGENTS.md)，活动变更在 [openspec/changes/AGENTS.md](openspec/changes/AGENTS.md)。规范需与当前实现、验收表交叉核对；旧规范不得覆盖最新用户指令，发现差异先明确待同步项，不按旧文档回退有效功能。archive 只作历史依据，不充当执行清单。根文档迁移前的详细基线与既有约定完整保存在 [repository-context.md](docs/architecture/repository-context.md)。
 - 保留有效业务逻辑、数据与后端，在当前项目逐页迁移前端；成熟版本的独立迁仓与生产切换需要各自验收。不创建第二套长期开发真相，不盲目 checkout/reset 或全局替换。
 

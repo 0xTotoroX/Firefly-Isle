@@ -8,7 +8,7 @@
 | --- | --- |
 | 项目结构与前后端位置 | [项目说明](../README.md#项目结构) · [模块地图](../AGENTS.md) |
 | 本轮范围与验收缺口 | [核心范围](products/core-scope.md) · [17 项功能验收](products/saas-acceptance.md) |
-| 当前设计方向与 OpenDesign 材料 | [设计入口](../DESIGN.md) → [当前交接材料](design/current/README.md)；材料准备不等于新布局已落地 |
+| 当前设计方向与 OpenDesign 材料 | [设计入口](../DESIGN.md) → [当前交接材料](design/current/README.md) · [首轮原型评审](design/PROTOTYPE-REVIEW.md)；原型不等于正式界面已落地 |
 | 品牌和名称 | [命名与定位](products/product-naming.md) |
 | 当前行为合同与未归档清单 | [OpenSpec 入口](../openspec/README.md) |
 | 数据关系与权限 | [数据模型](architecture/data-model.md) |
