@@ -43,3 +43,17 @@ theme-system规范仍含旧V3布局、橙色和登录视觉的历史合同。本
 135项归档文件与4份外部原件哈希一致；25张QA图片继续忽略；108个当前文档本地链接及A评审HTML的7个本地资源/页面链接可解析。五文件包完整，JSON可解析，17项功能映射、纠错值与缺失参考范围一致。未启动OpenDesign、未生成原型、未运行产品全量测试。
 
 完整暂存差异检查发现B原稿6处既有行尾空白（含Markdown换行空格），已与外部原件比对一致，按原文归档；新撰写材料及其余本轮变更通过差异格式检查，不为格式检查改写历史交付。
+
+## 独立交接准备的后续核对
+
+材料准备提交104d6f6之后，9fb3122已提交此前并发的mobile目录归组、未使用组件和主题代码清理。2026-10-04再次比较README、AGENTS和命名记录，品牌、产品目标、17项范围及AI Native提案边界不变；五文件包不引用被移动的原生目录或已删除的Button，故只更新输入核对基线。
+
+独立交接与导出目录为 `/Users/Totoro/Documents/Projects/MyOncode-Design/`：input/仅保存五份材料快照，output/留给后续从OpenDesign导出的原型，根README与START说明用途，input-manifest.json记录来源提交和校验值。opendesign-input.zip只包含这五份材料，原仓库current/继续是输入正文的维护源；快照不是第二套产品仓库。
+
+接入检查：本机OpenDesign安装包0.21.1、Codex CLI0.160.0满足官方插件版本下限；当前未安装open-design插件，也没有同名MCP注册。读取了安装包CLI帮助及官方文档，没有安装插件或修改Codex配置。PATH中的/usr/bin/od是系统命令，不能当作OpenDesign CLI。生成方式仍需按用户选择执行，不把材料准备或项目导入称为模型生成完成。
+
+本次进一步创建了OpenDesign本地项目“知见 MyOncode · AI Native 原型”（project ID `60d9c04c-bb35-4854-bdf2-732a9c852e36`，conversation ID `d336d49d-33a9-4c99-8bf2-30e624be4ed4`）。仅使用官方project create和项目文件接口，五份材料及START.md均与输入读回一致，skillId/designSystemId为空，没有继承旧设计稿。run list实测为空，未启动模型。
+
+启动核验补充：/Applications安装入口标记0.21.1，实际普通GUI启动加载本机已有0.24.1更新载荷。旧入口--headless报“SidecarFactory.create() requires a supervised sidecar context”，普通应用入口成功；证据支持两种启动路径的协议衔接差异，未修改程序或监督参数。文件夹原地导入返回403 desktop import token rejected，未绕过；改用新建应用自管项目后逐文件写入选定材料，未授予读取整个外部目录的能力。macOS辅助访问自动控制亦未获准，本轮未请求或修改该权限。
+
+OpenDesign实际工作目录由应用管理，记录在本机交接目录的opendesign-project.json。源仓库current是需求正文维护源，本机input及应用内input是同一版快照，后续统一重导出；不构成三套独立维护的设计规范。压缩包只含五文件，零历史素材、代码、密钥或真实患者数据；5份输入与ZIP内容校验一致，项目内加上START共6份文本逐字一致。
