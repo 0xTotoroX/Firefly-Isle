@@ -23,7 +23,7 @@ dashboard-data.ts: 计数与最新指标/随访聚合，保留各分区错误。
 
 提取与记录输出
 extraction.ts: 结构化提取、确定性补全、追问合并、模型身份清洗与失败恢复。
-extractionPrompt.ts: 紧凑的 PatientRecord 输出字段合同。
+extraction-prompt.ts: 紧凑的 PatientRecord 输出字段合同。
 medical-document-ocr.ts: 图片/PDF 校验、OCR 请求和本地化错误映射。
 clinical-analysis.ts: 非诊断辅助分析 prompt、响应校验与调用入口。
 export-record.ts: 隔离浅色正文副本，按内容块/文字行分页生成 PDF/PNG。
@@ -51,7 +51,6 @@ utils.ts: 类名合并等无业务状态工具。
 
 测试
 同名 *.test.ts / *.test.tsx: 对应模块的协议、边界和行为回归。
-app.spec.ts: 路由、认证、公开 Demo 与共享 Provider 装配。
 auth-session-migration.test.tsx / supabase-session-client.test.ts: 真实认证/客户端入口的迁移与存储失败行为。
 auxiliary-record-storage.test.ts: 症状/随访写入归属及失败传播。
 error-reporting.dom.test.tsx: 上报隐私、监听清理和失败不递归。

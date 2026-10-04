@@ -19,7 +19,7 @@ import { LocaleProvider } from '@/lib/locale'
 import { ThemeProvider } from '@/lib/theme'
 
 const source = readFileSync(new URL('./background-music-toggle.tsx', import.meta.url), 'utf8')
-const transitionsSource = readFileSync(new URL('../styles/transitions-dev.css', import.meta.url), 'utf8')
+const transitionsSource = readFileSync(new URL('../styles/motion.css', import.meta.url), 'utf8')
 const hoverPlayerClass = source.match(/className="([^"]+)"\n\s+data-testid="background-music-hover-player"/)?.[1]
 
 function withProviders(children: ReactNode) {

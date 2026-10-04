@@ -41,9 +41,10 @@
 | 微信适配 | 根目录 `functions/`：Cloudflare Pages Functions OAuth 桥接预研，微信登录尚未正式开放。 |
 | 运行与发布 | `ops/`：自托管、备份与恢复；`.github/`：CI/CD；`scripts/`：验证脚本。 |
 | 移动端壳（非当前重点） | `mobile/ios/`、`mobile/android/`：包装同一个 Web `dist/`；`mobile/capacitor.test.ts` 检查配置与路径。没有独立原生业务 UI。 |
+| 构建与检查配置 | `config/`：TypeScript、Vite/Vitest、ESLint 与 Capacitor 配置正文。 |
 | 开发合同与说明 | `openspec/`：行为规范、活动任务与历史技术决策；`docs/`：设计资料、数据模型、验收、运维及历史说明。 |
 
-阅读 Web 主干可从 `src/main.tsx` → `src/App.tsx` → `src/routes/` 开始：路由组合页面，`src/components/` 渲染界面，`src/lib/records/`、`labs/`、`workspace/` 处理对应业务。原生工程单独收在 `mobile/`，日常 Web 开发无需进入。根级 `capacitor.config.ts` 保留为 CLI 入口；Vite、TypeScript、Cloudflare 等根配置按各自工具约定保留，避免为压缩目录而增加转接层。
+阅读 Web 主干可从 `src/main.tsx` → `src/App.tsx` → `src/routes/` 开始：路由组合页面，`src/components/` 渲染界面，`src/lib/records/`、`labs/`、`workspace/` 处理对应业务。原生工程单独收在 `mobile/`，日常 Web 开发无需进入。开发与构建配置集中在 [config/](config/AGENTS.md)。根 `tsconfig.json`、`eslint.config.js`、`capacitor.config.ts` 仅保留项目引用或自动发现入口；Cloudflare 的 `wrangler.jsonc` 与 shadcn 的 `components.json` 保留默认发现位置。日常继续使用下方 npm 命令。
 
 目录职责和维护规则从 [AGENTS.md](AGENTS.md) 进入。当前 UI 使用 Radix 交互基元与自研壳层/业务组件；`components.json` 的 `radix-nova` 配置不是完整的新设计系统组件清单。运行时主题在 `src/index.css`、`src/lib/accent.ts` 和 `src/lib/theme/`。
 

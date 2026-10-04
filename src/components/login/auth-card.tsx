@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的 ReactNode、react-router-dom 的 Link、登录 skin/token、auth-copy、隐私页路径、本地化文案与 transitions-dev.css 的 control/tab/accordion/popover 动效合同。
+ * [INPUT]: 依赖 react 的 ReactNode、react-router-dom 的 Link、登录 skin/token、auth-copy、隐私页路径、本地化文案与 motion.css 的 control/tab/accordion/popover 动效合同。
  * [OUTPUT]: 对外提供 AuthCard 与 AuthCardProps，渲染带反馈动效的邮箱登录、Google、匿名会话与隐私入口。
  * [POS]: components/login 的认证卡主体，被 AuthOverlay 消费，不触碰 Supabase 认证状态机。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。

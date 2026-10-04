@@ -39,7 +39,7 @@ describe('Capacitor mobile shell contract', () => {
   })
 
   it('loads the production web build without a dev-server URL', () => {
-    const config = readProjectFile('capacitor.config.ts')
+    const config = readProjectFile('config/capacitor.config.ts')
 
     expect(config).toContain(`appId: '${APP_ID}'`)
     expect(config).toContain(`appName: '${APP_NAME}'`)

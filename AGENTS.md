@@ -19,6 +19,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | src/ | SPA 路由装配、公共组件、领域与服务模块、状态和样式；[地图](src/AGENTS.md) |
 | supabase/ | SQL 迁移、RLS、事务 RPC、服务端函数和合成数据检查；[地图](supabase/AGENTS.md) |
 | functions/ | Cloudflare Pages Functions 微信 OAuth2 协议桥接；[地图](functions/AGENTS.md) |
+| config/ | TypeScript、Vite/Vitest、ESLint 与移动壳配置正文；[地图](config/AGENTS.md) |
 | scripts/ | 网络隔离的真实数据库验证入口；[地图](scripts/AGENTS.md) |
 | public/ | 静态资源、PWA worker/图标、部署 headers/redirects、授权音频；[地图](public/AGENTS.md) |
 | .github/ | PR 模板、依赖检查、CI 与显式发布；[地图](.github/AGENTS.md) |
@@ -37,12 +38,11 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | 文件 | 契约 |
 | --- | --- |
 | package.json · package-lock.json | 脚本、依赖和锁文件；Node.js 22，以锁文件安装 |
-| vite.config.ts | React/Tailwind 构建、Vitest 与 Workbox 预缓存清单；测试排除 archive/，缓存版本包含 SHA-256 摘要 |
-| tsconfig.json · tsconfig.app.json · tsconfig.node.json | SPA/构建的 TypeScript 边界 |
-| tsconfig.cloudflare-functions.json · tsconfig.supabase-functions.json | 两种边缘函数运行时的独立类型边界 |
-| eslint.config.js · components.json | ESLint 规则及 archive/ 排除边界，与 shadcn/ui 配置 |
+| tsconfig.json | 编辑器与 tsc -b 的项目入口，引用 config/ 下应用/工具配置并保留 @/ 别名 |
+| eslint.config.js | 编辑器与 CLI 发现入口，仅转出 config/eslint.js |
+| components.json | shadcn 生成器默认发现配置，不代表运行时完整组件库 |
 | index.html | SPA 挂载页、主题初始化、PWA metadata；内联脚本与 CSP hash 配套 |
-| capacitor.config.ts | 根级 CLI 入口，指向 mobile/ 平台工程；保留稳定 app id、显示名知见与 dist Web 构建来源；签名资料不入 Git |
+| capacitor.config.ts | 根级 CLI 发现入口，仅转出 config/capacitor.config.ts；平台工程位于 mobile/ |
 | wrangler.jsonc | Cloudflare 构建与公开环境接口，微信 KV/回调预研；不在本轮切换生产配置 |
 | .env.local.example · .dev.vars.example · .gitignore | 非敏感配置模板与本机凭据/产物忽略边界 |
 | README.md · README.en.md | 中英文项目说明与前后端目录入口 |
@@ -81,4 +81,4 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 ## 依赖升级整合
 
 - 保留 main 的兼容依赖和 GitHub Actions 升级：React Router 7、Vitest/coverage 5、ESLint 10、Capacitor 四包 8.5.2。安装/CI 使用 Node.js 22 与锁文件；正式原生签名、真机和产品发布另验。
-- SaaS 的 html2canvas-pro、Material Symbols 与 Workbox 继续保留；Vite 别名使用 import.meta.dirname，预缓存摘要和 archive/ 排除同时生效。
+- SaaS 的 html2canvas-pro、Material Symbols 与 Workbox 继续保留；config/vite.config.ts 通过 import.meta.dirname 定位项目根，预缓存摘要和 archive/ 排除同时生效。

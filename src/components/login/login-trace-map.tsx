@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 LiquidEffectAnimation、@/lib/theme 的 Theme 类型、父级传入的动效许可、public/login 双主题背景资产与 transitions-dev.css 的 .t-login-backdrop 慢呼吸动效合同。
+ * [INPUT]: 依赖 LiquidEffectAnimation、@/lib/theme 的 Theme 类型、父级传入的动效许可、public/login 双主题背景资产与 motion.css 的 .t-login-backdrop 慢呼吸动效合同。
  * [OUTPUT]: 对外提供 LoginTraceMap 组件，渲染登录页双主题海岸背景；允许动效时维持单一液体实例，并由底层可见性观察暂停离屏渲染。
  * [POS]: components/login 的登录页全屏视觉模块，作为 login-entry-view 的明暗主题背景，只承载视觉反馈，不接管前景认证操作。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。

@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的本地表单状态、@/lib/locale 的语言状态、@/lib/llm/provider-settings 的设置 API 与 DeepSeek 连通性测试、system ActionSurface 与 transitions-dev.css 的 accordion/control/tab 动效合同。
+ * [INPUT]: 依赖 react 的本地表单状态、@/lib/locale 的语言状态、@/lib/llm/provider-settings 的设置 API 与 DeepSeek 连通性测试、system ActionSurface 与 motion.css 的 accordion/control/tab 动效合同。
  * [OUTPUT]: 对外提供 LlmProviderSettingsPanel 组件与字段显隐纯函数，渲染整块可点击收起的系统内置 deepseek-v4-flash、API 自提供、自定义设置与 DeepSeek 服务测试入口。
  * [POS]: components/workspace 的 provider 设置区块，被 ExtractionComposer 嵌入，负责紧凑头部展开、按模式展开字段、测试系统模型连通性与保存动作但不参与正式 chat 请求。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。

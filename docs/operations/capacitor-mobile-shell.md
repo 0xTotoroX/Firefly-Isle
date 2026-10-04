@@ -9,7 +9,7 @@
 
 ## Source Of Truth
 
-- `capacitor.config.ts`
+- `config/capacitor.config.ts`（正文）；根 `capacitor.config.ts` 是自动发现入口
 - `package.json`
 - `mobile/ios/`
 - `mobile/android/`

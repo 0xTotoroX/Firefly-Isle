@@ -4,20 +4,20 @@
   "version": "1.5.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite --config config/vite.config.ts",
+    "build": "tsc -b && vite build --config config/vite.config.ts",
     "lint": "eslint .",
     "type-check": "npm run type-check:app && npm run type-check:functions",
-    "type-check:app": "tsc --noEmit -p tsconfig.app.json && tsc --noEmit -p tsconfig.node.json",
-    "type-check:functions": "tsc --noEmit -p tsconfig.cloudflare-functions.json && tsc --noEmit -p tsconfig.supabase-functions.json",
+    "type-check:app": "tsc --noEmit -p config/tsconfig.app.json && tsc --noEmit -p config/tsconfig.tooling.json",
+    "type-check:functions": "tsc --noEmit -p config/tsconfig.cloudflare-functions.json && tsc --noEmit -p config/tsconfig.supabase-functions.json",
     "mobile:sync": "npm run build && cap sync",
     "mobile:open:ios": "cap open ios",
     "mobile:open:android": "cap open android",
-    "test": "vitest run",
+    "test": "vitest run --config config/vite.config.ts",
     "test:database": "bash scripts/check-clinical-workflows.sh",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
-    "preview": "vite preview"
+    "test:watch": "vitest --config config/vite.config.ts",
+    "test:coverage": "vitest run --config config/vite.config.ts --coverage",
+    "preview": "vite preview --config config/vite.config.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.2",

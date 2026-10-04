@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 node:fs 的源码合同检查，依赖隐私文案真相源与 PatientRecord 类型工具。
  * [OUTPUT]: 对外提供隐私内容、患者类型判定、认证路由、公开 Demo 路由、统计路由、分享路由、隐私页动效与背景音 Provider 挂载位置的回归测试。
- * [POS]: lib 的应用级合同测试，约束 App 装配层不丢失隐私、路由守卫、公开 Demo、公开只读分享入口、OAuth 错误、隐私页全站动效与全局背景音生命周期边界。
+ * [POS]: src 的应用级合同测试，与 App.tsx 并列，约束 App 装配层不丢失隐私、路由守卫、公开 Demo、公开只读分享入口、OAuth 错误、隐私页全站动效与全局背景音生命周期边界。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { readFileSync } from 'node:fs'
@@ -16,11 +16,11 @@ import {
 import { getPatientArchetype, type PatientRecord } from '@/types/patient'
 
 function readAppSource() {
-  return readFileSync(new URL('../App.tsx', import.meta.url), 'utf8')
+  return readFileSync(new URL('./App.tsx', import.meta.url), 'utf8')
 }
 
 function readPrivacyPageSource() {
-  return readFileSync(new URL('../routes/privacy-page.tsx', import.meta.url), 'utf8')
+  return readFileSync(new URL('./routes/privacy-page.tsx', import.meta.url), 'utf8')
 }
 
 describe('privacy content', () => {

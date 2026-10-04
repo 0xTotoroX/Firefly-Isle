@@ -128,3 +128,12 @@ Node.js 22.23.3 / npm 10.9.9 的干净 npm ci、lint、所有 TypeScript 边界�
 - 移除 CVA、Fraunces、Geist、tw-animate-css 四项无用直接依赖，取消未使用的 Fraunces 字体加载。npm 锁文件补齐已有 Tailwind WASM 的 bundled optional 元数据，其余既有依赖版本与内容未变。
 - 102 个测试文件 / 723 项测试、完整类型检查、lint、生产构建通过；实际 Capacitor CLI 解析新路径通过。浏览器实际 Demo 设置页的英文/浅色切换正常，标题使用 Inter，检查时没有控制台错误。
 - 原生 sync/build/签名/真机未执行；既有大分包提示仍在。微信服务端预研、支付开关、PWA、安全完整性与全部患者业务保留。设计资料归档是已有并行改动，不作为本轮代码清理提交。
+
+
+### 配置集中与命名整理（2026-10-04）
+
+- TypeScript 各运行时配置、Vite/Vitest、ESLint 规则及 Capacitor 配置正文集中到 `config/`。根保留 TypeScript、ESLint、Capacitor 的发现入口，Cloudflare/shadcn 默认配置及项目说明；非隐藏根文件从 21 个减为 16 个。npm 命令名称保持不变。
+- `tsconfig.node.json` 改为 `config/tsconfig.tooling.json`，明确其构建工具职责；`extractionPrompt.ts` 改为 `extraction-prompt.ts`，正式共享动效改名 `motion.css`，应用装配测试移到 `src/App.test.ts`。同步引用与模块地图，未更改业务行为或动效正文。
+- 对比 TypeScript 实际检查文件集合与 ESLint 生效规则，既有检查范围/规则保留，另将 Capacitor 配置纳入工具类型检查；真实 Capacitor CLI 仍解析到 `mobile/ios`、`mobile/android` 与根 `dist`。
+- Node.js 22 下完整类型检查、lint、生产构建及 coverage 全量回归通过：102 个文件 / 723 项测试；语句覆盖率 76.61%、分支 69.21%。构建产物与预缓存 worker 仍输出到根 `dist/`，保留 SHA-256 版本摘要。
+- 新 npm dev/preview 命令均启动成功；浏览器实际加载开发工作台与生产 Demo 总览，正文、输入区与样式正常，检查时无控制台错误。仅使用虚构 Demo，不验证真实后端服务；既有大分包提示仍在，未执行原生构建或产品发布。

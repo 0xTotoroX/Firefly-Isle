@@ -26,7 +26,7 @@ Cloudflare 独立预览已实际发布，正式主站未切换。`212f9097` 预�
 
 最终 `7c26b26f` 构建另经两版本验收：A 控制旧标签，带不同资源名和页面标题的 B 测试构建 `6ee41bb4` 安装等待；新标签继续使用 A，关闭 HTTP 缓存并断网后仍可打开此前未访问的病历，图标字体可用。关闭所有 A 标签后，新标签使用 B 脚本且只剩 B 缓存。B 仅为受控更新测试产物，交付预览恢复正式构建。
 
-`vite.config.ts` 使用 [Workbox getManifest](https://developer.chrome.com/docs/workbox/modules/workbox-build) 从实际构建生成 HTML、JS/CSS/woff、manifest 与图标清单，内容及 worker 源码共同决定版本；固定 URL 的安装请求强制刷新 HTTP 缓存。初次安装完成后接管；更新不强制 `skipWaiting`，待旧版本标签关闭后激活、清理旧缓存。旧 worker 始终返回同版本的规范 HTML 壳，避免新版 HTML 与旧懒加载资源混用。后台业务数据、含查询参数的静态请求和路由导航元信息均不预缓存。图标沿用 Material Symbols，以 Fontsource 本地字体随构建发布，避免断网时显示图标英文名称。
+`config/vite.config.ts` 使用 [Workbox getManifest](https://developer.chrome.com/docs/workbox/modules/workbox-build) 从实际构建生成 HTML、JS/CSS/woff、manifest 与图标清单，内容及 worker 源码共同决定版本；固定 URL 的安装请求强制刷新 HTTP 缓存。初次安装完成后接管；更新不强制 `skipWaiting`，待旧版本标签关闭后激活、清理旧缓存。旧 worker 始终返回同版本的规范 HTML 壳，避免新版 HTML 与旧懒加载资源混用。后台业务数据、含查询参数的静态请求和路由导航元信息均不预缓存。图标沿用 Material Symbols，以 Fontsource 本地字体随构建发布，避免断网时显示图标英文名称。
 
 固定导出布局规则已移至应用 CSS。在实际返回严格 CSP 的 `b09037f2` 预览中触发 PDF 导出，按钮完成且浏览器未记录 CSP 拒绝；Chrome 下载事件未返回文件路径，因此本轮远端 PDF 文件落盘/逐页检查仍未确认。此前本地 2 页与 3 页 PDF 的证据只代表对应本地构建。
 

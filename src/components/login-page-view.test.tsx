@@ -75,7 +75,7 @@ function readStoryMotionSource() {
 }
 
 function readTransitionSource() {
-  return readFileSync(new URL('../styles/transitions-dev.css', import.meta.url), 'utf8')
+  return readFileSync(new URL('../styles/motion.css', import.meta.url), 'utf8')
 }
 
 function readThreeTypesSource() {

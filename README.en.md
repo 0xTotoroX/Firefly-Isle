@@ -41,9 +41,10 @@ Apply the new database migration before releasing the updated frontend. Local co
 | WeChat adapter | Root `functions/`: Cloudflare Pages Functions OAuth preparation. WeChat login is not yet released. |
 | Operations | `ops/`: self-hosting, backup and restore; `.github/`: CI/CD; `scripts/`: local validation. |
 | Mobile shells (deferred priority) | `mobile/ios/` and `mobile/android/` wrap the same Web `dist/`; `mobile/capacitor.test.ts` checks their configuration and paths. There is no separate native business UI. |
+| Build and validation configuration | `config/`: TypeScript, Vite/Vitest, ESLint and Capacitor configuration bodies. |
 | Contracts and documentation | `openspec/`: behavior, active tasks and historical technical decisions; `docs/`: design materials, data model, acceptance, operations and historical documentation. |
 
-Read the Web app from `src/main.tsx` → `src/App.tsx` → `src/routes/`. Routes compose pages, `src/components/` renders them, and `src/lib/records/`, `labs/` and `workspace/` own domain logic. Native projects are isolated in `mobile/` and are not needed for everyday Web development. Root `capacitor.config.ts` remains the CLI entrypoint; Vite, TypeScript and Cloudflare configuration stays at the locations expected by their tools.
+Read the Web app from `src/main.tsx` → `src/App.tsx` → `src/routes/`. Routes compose pages, `src/components/` renders them, and `src/lib/records/`, `labs/` and `workspace/` own domain logic. Native projects are isolated in `mobile/` and are not needed for everyday Web development. Development and build configuration lives in [config/](config/AGENTS.md). Root `tsconfig.json`, `eslint.config.js` and `capacitor.config.ts` retain project references or automatic discovery entrypoints; `wrangler.jsonc` and `components.json` stay at their tools’ default locations. Continue using the npm commands below.
 
 Start at [AGENTS.md](AGENTS.md) for module maps. The existing UI combines Radix interaction primitives with custom application and feature components. The `radix-nova` configuration in `components.json` is not a complete component catalog for the proposed design. Runtime theme code stays in `src/index.css`, `src/lib/accent.ts` and `src/lib/theme/`.
 

@@ -1,11 +1,11 @@
 /**
- * [INPUT]: 依赖 Tailwind CSS、transitions-dev.css、LocaleProvider 写入的 data-locale 与 dark class。
+ * [INPUT]: 依赖 Tailwind CSS、motion.css、LocaleProvider 写入的 data-locale 与 dark class。
  * [OUTPUT]: 对外提供全局 theme token、localized typography token、共享字体工具类与基础布局样式。
  * [POS]: src 的全局样式入口，先定义设计系统变量，再让页面与组件通过 var(--ff-*) 消费同一真相源。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 @import "tailwindcss";
-@import "./styles/transitions-dev.css";
+@import "./styles/motion.css";
 
 * {
   box-sizing: border-box;

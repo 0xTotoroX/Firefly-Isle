@@ -1,10 +1,10 @@
 /**
- * [INPUT]: 依赖 @/lib/llm 的 chat 边界、@/lib/extractionPrompt、@/types/patient。
+ * [INPUT]: 依赖 @/lib/llm 的 chat 边界、@/lib/extraction-prompt、@/types/patient。
  * [OUTPUT]: 对外提供 MAX_FOLLOW_UP_ROUNDS、ExtractionParseError、normalizePatientRecord、getMissingCriticalFields、mergePatientRecord、buildFollowUpQuestion、parsePatientRecordResponse、getExtractionFailureMessage、extractPatientRecord 与 runExtractionWithFollowUps，保留姓名/性别/年龄/身高/体重确定性补全、临床备注、模型 id 清洗、labResults 独立结构、中文/点号日期归一化、错误文案分流、单消息 JSON mode 降级重试与 502 Gemini 系统兜底。
  * [POS]: src/lib 的信息提取主链路，把解析、归一化、缺失字段检测与追问 merge 收敛在一处。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
-import { buildExtractionPrompt } from '@/lib/extractionPrompt'
+import { buildExtractionPrompt } from '@/lib/extraction-prompt'
 import { ChatError, chat } from '@/lib/llm'
 import type { Locale } from '@/lib/locale'
 import { type Message } from '@/lib/llm/types'

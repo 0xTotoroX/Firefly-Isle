@@ -13,7 +13,7 @@ function readSource(relativePath: string) {
 
 describe('shared product motion contract', () => {
   it('keeps the V3 motion budget quiet, composable, and reduced-motion safe', () => {
-    const source = readSource('./transitions-dev.css')
+    const source = readSource('./motion.css')
 
     for (const motionClass of [
       '.t-route-reveal',

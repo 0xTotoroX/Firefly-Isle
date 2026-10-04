@@ -9,7 +9,7 @@ android/: Android Gradle 工程、原生启动代码、显示名与资源；[地
 capacitor.test.ts: 原生目录、依赖路径、稳定应用标识、显示名、脚本与签名隔离合同。
 
 入口与边界
-- 根 `capacitor.config.ts` 是 CLI 入口，通过 `ios.path` / `android.path` 指向本目录；Web 构建仍在根 `dist/`。
+- 根 `capacitor.config.ts` 是 CLI 入口，转出 `config/capacitor.config.ts`；其中 `ios.path` / `android.path` 指向本目录；Web 构建仍在根 `dist/`。
 - 在项目根执行 `npm run mobile:sync`、`npm run mobile:open:ios` 或 `npm run mobile:open:android`，详见 [运行手册](../docs/operations/capacitor-mobile-shell.md)。
 - 原生缓存和同步资源由各平台 `.gitignore` 保持忽略；整理目录不等于签名、真机验证或发布。
 

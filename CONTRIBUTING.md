@@ -28,6 +28,20 @@ npm run build
 Documentation-only changes do not need a browser smoke test, but they should
 still keep the repository maps accurate.
 
+## Files and Configuration
+
+- Keep development and build configuration in `config/`; root discovery files
+  should stay thin. Run the documented npm scripts, which select the Vite/Vitest
+  configuration explicitly.
+- Name new business modules by their responsibility using kebab-case, for example
+  `extraction-prompt.ts`. React component exports use PascalCase. Existing clear
+  PascalCase component filenames do not need cosmetic renames.
+- Put `*.test.ts` / `*.test.tsx` beside their module; use `.dom.test.tsx` when the
+  distinction helps identify browser interaction tests. Application assembly
+  checks live beside `App.tsx`, and native-shell checks live in `mobile/`.
+- Name production styles by their role, such as `motion.css`; avoid names that
+  imply they are development-only. Preserve tool-defined entrypoint names.
+
 ## Spec and Documentation Rules
 
 - Use OpenSpec for confirmed feature behavior, permission/data contracts and

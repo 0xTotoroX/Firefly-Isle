@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的 CSSProperties/RefObject/useId 和 record-dossier-sections 的字段/分区组件、react-router-dom 的 Link、PatientRecord、ClinicalAnalysisPanel、LabTrendsTable、record-copy、record-derived、record 展示类型与 transitions-dev.css 的 stagger/control/timeline rail 动效合同。
+ * [INPUT]: 依赖 react 的 CSSProperties/RefObject/useId 和 record-dossier-sections 的字段/分区组件、react-router-dom 的 Link、PatientRecord、ClinicalAnalysisPanel、LabTrendsTable、record-copy、record-derived、record 展示类型与 motion.css 的 stagger/control/timeline rail 动效合同。
  * [OUTPUT]: 对外提供 RecordDossier 与 RecordUnavailableDossier 两个病例详情展示组件，以平面文档层级渲染概要证据、实验室趋势、AI 辅助分析、治疗时间线、临床备注、导出和编辑能力，返回录入时保留当前患者。
  * [POS]: components/record 的主阅读层，组合平面病历正文、吸顶章节导航、治疗阶段定位与导出边界；不再用装饰性卡片、系统认证或固定更新时间制造层级。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。

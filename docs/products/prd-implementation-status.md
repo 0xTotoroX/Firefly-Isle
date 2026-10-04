@@ -78,7 +78,7 @@ Dashboard、症状日志和随访已形成患者内导航；本轮修复 owner �
 ## 关键实现入口
 
 - `src/lib/extraction.ts`
-- `src/lib/extractionPrompt.ts`
+- `src/lib/extraction-prompt.ts`
 - `src/lib/medical-document-ocr.ts`
 - `src/lib/lab-dictionary.ts`
 - `src/lib/lab-report-ingestion.ts`
