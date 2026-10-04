@@ -40,10 +40,10 @@ jobs:
       contents: read
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -80,7 +80,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage/
@@ -88,3 +88,18 @@ jobs:
 
       - name: Build app
         run: npm run build
+
+      - name: Setup Supabase CLI without deployment
+        uses: supabase/setup-cli@v3
+        with:
+          version: latest
+
+      - name: Verify Supabase CLI
+        run: supabase --version
+
+      - name: Verify Wrangler and compile Pages Functions without deployment
+        uses: cloudflare/wrangler-action@v4
+        with:
+          command: |
+            --version
+            pages functions build functions --outfile /tmp/firefly-pages-worker.js

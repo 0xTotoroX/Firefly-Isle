@@ -1,10 +1,10 @@
 /**
  * [INPUT]: 依赖 react 的状态，依赖 react-router-dom 的 useLocation，依赖 @/components/app-shell 的 V3 壳层、@/components/system 的 surfaces，依赖 useAuth 的 session 真相源、useLocale/useTheme 的本地偏好 setter、async-resource 的档案加载基元、profile-settings 的档案读写、copy 字典与 theme tokens。
  * [OUTPUT]: 对外提供 SettingsPage 组件，对应 /settings。
- * [POS]: routes 的账户设置 orchestration 层，负责账户身份展示、显示名称/界面语言/外观主题的读写，档案服务缺失时降级为本地偏好并明示。
- * [PROTOCOL]: 变更时更新此头部，然后检查 CLAUDE.md
+ * [POS]: 账户设置；按账号加载，档案输入变化时条件同步表单，不通过 effect 复制状态。
+ * [PROTOCOL]: 契约变化时同步 AGENTS.md。
  */
-import { useEffect, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
 import { ArchiveSideNav, ClinicalTopBar } from '@/components/app-shell'
@@ -44,8 +44,9 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
   const { locale, setLocale } = useLocale()
   const { accent, setAccent, theme, setTheme } = useTheme()
   const dark = theme === 'dark'
-  const resource = useAsyncResource(() => getUserProfile(), [])
+  const resource = useAsyncResource(() => getUserProfile(), [user?.id])
   const [displayName, setDisplayName] = useState('')
+  const [loadedProfile, setLoadedProfile] = useState(resource.data)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [saved, setSaved] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -55,11 +56,10 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (resource.data) {
-      setDisplayName(resource.data.displayName ?? '')
-    }
-  }, [resource.data])
+  if (loadedProfile !== resource.data) {
+    setLoadedProfile(resource.data)
+    setDisplayName(resource.data?.displayName ?? '')
+  }
 
   const accountLabel = userIsAnonymous || user?.is_anonymous ? getCopy(copy.settings.anonymousLabel, locale) : user?.email ?? getCopy(copy.settings.anonymousLabel, locale)
   const profileUnavailable = !resource.isLoading && !resource.error && resource.data === null

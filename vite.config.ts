@@ -1,3 +1,9 @@
+/**
+ * [INPUT]: Vite/React/Tailwind、Vitest 与 Node.js ESM 模块目录。
+ * [OUTPUT]: 构建、测试与源码别名配置。
+ * [POS]: 根构建入口；别名使用 import.meta.dirname 兼容 Vite 原生配置加载。
+ * [PROTOCOL]: 契约变化时同步 AGENTS.md。
+ */
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
@@ -7,7 +13,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './src'),
+      '@': path.resolve(import.meta.dirname, './src'),
     },
   },
   test: {

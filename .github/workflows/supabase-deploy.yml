@@ -21,7 +21,7 @@ jobs:
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check required secrets
         id: secrets
@@ -35,7 +35,7 @@ jobs:
 
       - name: Setup Supabase CLI
         if: steps.secrets.outputs.enabled == 'true'
-        uses: supabase/setup-cli@v1
+        uses: supabase/setup-cli@v3
         with:
           version: latest
 
