@@ -72,6 +72,9 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 - OpenSpec 只记录经确认的功能行为、权限/数据合同和用户流程变化；它不参与应用运行，也不决定产品路线。外观调整、行为不变的结构整理、文档清理与局部修复直接推进，按范围维护架构说明和复现检查，不强制完整 proposal/design/spec/tasks 流程。一个变更保留一份执行清单，不强制 Superpowers 或另建编排层。
 - 规范同步与工具升级分别处理；CLI 升级或 openspec update 不会证明项目合同已跟上代码，不以批量生成旧工具入口代替审核差异。
 - OpenSpec 常用只读命令：openspec list --json、openspec status --change "<name>" --json、openspec instructions apply --change "<name>" --json。新增合同用 openspec new change；baseline spec 必须含 ## Purpose 与 ## Requirements。
+- 默认增量验证：局部修改只运行受影响的测试（显式文件或 test:related/test:changed）、相关文件 lint 和受影响运行时的类型检查；纯文档检查内容/链接，不跑产品全量。提交不要求重复全量；已通过且未受后续改动影响的检查不重跑。具体矩阵和命令见 CONTRIBUTING.md。
+- 全量回归用于依赖/构建/测试配置变化、跨模块核心重构、影响范围不明及 CI 集成；coverage 用于 CI 或覆盖缺口分析，不作为每次本地修改的门槛。数据库检查限于数据/权限合同改动或 CI。
+- 增量选择不是完整性证明：readFile 源码合同、CSS、SQL、静态资源及间接配置依赖需要显式补选；零测试命中不得报告为测试通过。不为低风险样式/文案新建镜像实现的断言；优先可观察行为和已复现缺陷，重复/过细静态断言在有替代证据时逐项精简。
 - 常用验证：npm run lint、npm run type-check（含 app/node/两种 functions）、npm run test、npm run build；按范围使用 test:watch、test:coverage 和 test:database。数据库命令只针对一次性隔离容器/合成资料；不是生产验证。
 - Vitest 默认 node，DOM 测试通过 @vitest-environment happy-dom 选择环境；globals 开启 testing-library cleanup，coverage/ 忽略。已有构建 >500 kB 提示不是失败，也不是测得的运行性能。
 - 状态与权限用真实 React 生命周期/数据库行为验证；UI 检查长内容、窄屏和必要失败态。测试/类型/构建成功不替代真实 provider、目标环境、发布和真机验收。

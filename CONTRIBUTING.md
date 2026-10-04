@@ -14,19 +14,69 @@ npm run dev
 Fill the Supabase and Edge Function variables described in `README.md` before
 testing authentication, persistence, or LLM-backed extraction.
 
-## Before Opening a Pull Request
+## Verification: Incremental by Default
 
-Run the checks that match your change:
+Choose checks by impact, not by the number of edited files. A local edit or
+commit does not automatically require the full suite. Reuse passing evidence
+until a later change affects it.
+
+| Change | Local verification |
+| --- | --- |
+| Documentation only | Review facts, links and affected maps; no product tests/build. |
+| Local logic or bug fix | The module's tests and affected callers; lint edited code and type-check its runtime. Add a regression for the reproduced bug. |
+| Page, copy or styles | Relevant existing interaction/contract tests and a focused browser check; check long content or narrow screens when affected. Do not add tests solely to freeze wording or CSS values. |
+| Database, permissions or transactions | Relevant behavior tests plus isolated database checks; mocks do not prove RLS or transaction behavior. |
+| Dependencies, build/test configuration, broad core refactor or uncertain impact | Full tests, relevant type/lint checks and build. |
+
+Examples, run from the repository root:
 
 ```bash
-npm run lint
-npm run type-check
-npm run test
-npm run build
+# Explicit selection is the most predictable option; accepts several files.
+npm test -- src/lib/calendar-date.test.ts
+
+# Follow module imports from changed source files to related tests.
+npm run test:related -- src/lib/calendar-date.ts
+
+# Select affected tests from uncommitted changes.
+npm run test:changed
+# To compare against a known commit instead:
+npm test -- --changed=HEAD~1
+
+# Keep feedback scoped while editing.
+npm run test:watch -- src/lib/calendar-date.test.ts
+
+# Lint edited code; type-check the affected runtime using config/tsconfig.*.json.
+npm exec -- eslint src/lib/calendar-date.ts src/lib/calendar-date.test.ts
+npm run type-check:app
 ```
 
-Documentation-only changes do not need a browser smoke test, but they should
-still keep the repository maps accurate.
+`changed` and `related` use the module dependency graph. Tests that read source
+with `readFile`, plus CSS, SQL, static assets and indirect configuration inputs,
+may not appear in that graph: explicitly include their contract/behavior tests.
+Inspect the selected files and count. Zero selected tests is not a passing
+validation result. The installed Vitest defaults force a full selection when `package.json` or
+Vite/Vitest configuration changes. For a scripts-only edit with a known narrow
+scope, use explicit `npm test -- path/to/file.test.ts` selection instead of
+`test:changed`; dependencies or global test behavior changes still need full checks.
+`--changed` compares uncommitted changes by default; it is not a record of the last
+successful test run, and a clean committed tree needs an explicit comparison base.
+
+CI remains the integration safety net: it runs the full suite with coverage,
+lint, runtime type checks, database checks and a build on its existing triggers.
+Local full runs use `npm test`; coverage is for CI or investigating gaps, not a
+mandatory local step. Do not run both full test and full coverage consecutively
+without a reason. The same applies to repeating full local checks solely because
+CI will run them again.
+
+Preserve tests for observable workflows, account isolation, persistence,
+concurrency and known regressions. Static checks are useful for otherwise hard
+to exercise security/asset contracts, but exact implementation-text assertions
+should not substitute for behavior tests. Consolidate redundant checks as their
+modules change; do not delete tests merely to reduce the count or chase coverage.
+
+Before a PR, record the selected checks and their results, including why an
+expensive or inapplicable check was omitted. UI behavior changes need a focused
+browser check. A local pass is not evidence of production deployment.
 
 ## Files and Configuration
 

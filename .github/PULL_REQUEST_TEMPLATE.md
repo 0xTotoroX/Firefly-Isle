@@ -4,11 +4,11 @@
 
 ## Verification
 
-- [ ] `npm run lint`
-- [ ] `npm run type-check`
-- [ ] `npm run test`
-- [ ] `npm run build`
-- [ ] Browser smoke test, if UI behavior changed
+- [ ] Verification scope matches the change (incremental by default; see CONTRIBUTING.md)
+- Commands / selected test files and results:
+- Type/lint, build, database or browser checks performed where relevant:
+- Checks omitted and why (documentation-only may mark product checks not applicable):
+- Full regression evidence when dependencies/configuration, broad core changes or uncertain impact require it; CI remains the full integration check
 
 ## Documentation
 
