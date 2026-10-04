@@ -2,7 +2,7 @@
 
 本文保留根说明整理前的详细基线，供查阅历史背景与约定。项目入口为 [根 AGENTS.md](../../AGENTS.md)，局部结构以各模块地图及代码为准。本文中的日期和验收记录沿用原文，不代表本次重新验证。
 
-视觉设计资料先外置备份，随后收回根 archive/；下文的 DESIGN.md、docs/design/、旧设计系统与 Stitch 映射路径记录当时位置，不是当前仓库入口或必读指令。
+视觉资料经历外置、恢复与本轮分类，当前输入在 [current](../design/current/README.md)，旧稿集中于 [design/archive](../design/archive/README.md)。下文品牌、日期及旧设计路径保持历史原文；不得覆盖最新README、AGENTS和本轮任务书，也不作为原型Agent的默认输入。
 
 ## Repository state
 

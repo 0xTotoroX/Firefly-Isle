@@ -2,16 +2,16 @@
 
 2026-10-04 按用户要求，将 121 份迁出的设计和参考资料恢复到原目录，并恢复 10 份 AGENTS.md 地图。当前项目保留既有目录架构、功能与依赖；恢复不代表 A/B 选型或前端视觉上线。
 
-## 已恢复的设计资料
+## 设计资料的当前位置
 
 - [设计入口](../DESIGN.md)
-- [A 方案设计规范](../docs/design/saas-review/DESIGN-SYSTEM.md)
-- [A 方案交互评审板](../docs/design/saas-review/index.html)
-- [图像模型候选页面](../docs/design/saas-review/concepts/index.html)
-- [历史设计系统](../docs/products/archive/design-system.md)
-- [历史 Stitch 页面映射](../docs/products/archive/stitch-screen-mapping.md)
+- [A 方案设计规范](../docs/design/archive/saas-review/DESIGN-SYSTEM.md)
+- [A 方案交互评审板](../docs/design/archive/saas-review/index.html)
+- [图像模型候选页面](../docs/design/archive/saas-review/concepts/index.html)
+- [历史设计系统](../docs/design/archive/product-reference/design-system.md)
+- [历史 Stitch 页面映射](../docs/design/archive/product-reference/stitch-screen-mapping.md)
 
-正文与截图恢复 docs/design/，历史产品参考恢复 docs/products/archive/。25 份原本未跟踪的 .qa 图片也已恢复本地并保持 Git 忽略。所有 121 份资料内容均按归档清单核对 SHA-256；旧 CLAUDE.md 不恢复为活动指令，继续使用 AGENTS.md。另一 session 的 B 方案和 A/B 对比 Demo 保持原位置，Open Design 仍为本地独立工具。
+这些是先前恢复后的资料；本轮已统一分类到 [docs/design/archive](../docs/design/archive/README.md)，当前交接材料单独位于 [current](../docs/design/current/README.md)。恢复时的旧路径/哈希保留在本目录清单，本轮移动映射见 [relocation-manifest.json](../docs/design/archive/relocation-manifest.json)。25 份原本未跟踪的 .qa 图片也已恢复本地并保持 Git 忽略。所有 121 份资料内容均按归档清单核对 SHA-256；旧 CLAUDE.md 不恢复为活动指令，继续使用 AGENTS.md。另一 session 的 B 方案和 A/B 对比 Demo 原件保持原位置，四份交付已复制到设计历史区供集中查阅；Open Design 仍为本地独立工具。
 
 ## 保留的本地恢复备份
 

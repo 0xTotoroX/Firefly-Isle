@@ -11,7 +11,7 @@ output/
 /archive/backups/
 /archive/legacy-projects/
 # Restored local QA captures were not tracked before archival.
-/docs/design/Image-2/V4/.qa*.png
+/docs/design/archive/Image-2/V4/.qa*.png
 /*.png
 /*-snapshot.md
 .env.local

@@ -1,27 +1,23 @@
-# 设计系统入口
+# 知见 / MyOncode 设计入口
 
-知见 / MyOncode 的 Web 基础采用黑白双主题、八种强调色、系统无衬线文字与明确状态。品牌、排版、控件和长病历章节阅读已获本轮实施授权；A/B 的完整页面布局仍是独立评审项，不能把候选稿当作已确认设计。
+当前设计任务是 AI Native 前端提案：极简首页，用户输入资料或目的后按任务展开。A/B及更早视觉稿均作为历史参考；本轮不要求继续选A/B，也没有选定新的完整页面方案。
 
-- [交互文档板：DS-00 至 DS-05](docs/design/saas-review/index.html)
-- [设计规则与组件合同](docs/design/saas-review/DESIGN-SYSTEM.md)
-- [设计变量](docs/design/saas-review/tokens.json)
-- [图像模型页面方案](docs/design/saas-review/concepts/index.html)
-- [命名与域名候选](docs/products/product-naming.md)
+## 当前材料
 
-文档板以浏览器原生组件展示状态、表单验证、失败重试和弹窗焦点；这是可交接的本地评审稿，尚未写入 Figma，也尚未替换生产组件。
+从 [OpenDesign交接说明](docs/design/current/README.md) 开始；只提供其中列出的五个文件。任务书保留确认的品牌、全程管理定位与17项功能，流程与虚构数据用于检查干净首页、处理/核对和保存后的结构化记录。
 
-旧 V3 只解释当前正式页面的实现；旧 V4 和品牌候选已停止评估，相关预览路由及专用代码已删除。历史图片/文档保留用于追溯，不再约束新设计。旧 Figma 快照同样不是新方案的定稿。
+当前仅完成材料准备与目录分离，尚未调用OpenDesign生成、未安装插件、未向模型发送材料，也未实施新布局。具体首页路由、视觉规范、组件映射和自然语言任务调度待审核。
 
-正式页面继续复用现有组件和业务接口。颜色由 src/index.css 与 src/lib/accent.ts 管理；品牌字标读取 src/lib/brand.ts，登录样式消费同一语义变量。病历正文连续展开、按章节定位，不套大外框或增加内部纵向滚动。总览和指标可使用独立信息块。暂时沿用灯塔素材，候选 M 图标未定稿。
+## 历史材料
 
-建议以现有长病历连续阅读为主线，借用 B 的信息分组用于总览和指标；这不是选定完整 A/B。下一轮用虚构数据比较桌面、窄屏、空态、加载和失败态，经审核后逐页迁移。Open Design 只作为原型工具；本轮未安装、启动模型或对外发送仓库/患者资料。
+[历史设计索引](docs/design/archive/README.md)集中保存原docs/design下的Image-2 V1—V4、Stitch、A评审板、Figma说明、旧产品设计资料和A/B交付副本。旧根入口也有原文快照。历史稿不作为默认必读输入，其中旧品牌、固定配色与“当前真源”措辞不约束新提案。
 
-## Active Login Entry Contract
+[本轮来源与差异](docs/design/SOURCE-CHANGES.md)记录README、AGENTS和命名记录的更新依据；[目录地图](docs/design/AGENTS.md)区分current与archive。
 
-- `/login` 是八章纵向滚动叙事：`hero → problem → intake → timeline → views → labs → boundary → cta`；章节内容只描述 `openspec/specs` 已实现能力。
-- 首尾“登录” CTA 共享一个认证状态和一个 `AuthOverlay`；登录页不提供 Demo CTA，但 `/demo/*` 路由与能力继续保留。
-- 首屏继续使用 `t-route-reveal` / `t-stagger`，后续章节由客户端 `useEffect` 内动态加载的 GSAP + ScrollTrigger 驱动；布局使用 CSS sticky + sibling spacer，不使用 GSAP `pin` 或平滑滚动劫持。
-- 登录页只运行一个长生命周期液体折射 WebGL 背景；后续章节不得创建新的 Three.js 上下文，首屏离开可视区后由底层可见性观察暂停渲染，不销毁并重建 renderer。
-- `prefers-reduced-motion: reduce` 保留全部八章内容，只取消滚动动画并收缩 spacer。
+## 正式实现边界
 
-登录共通视觉按上述 token 适配；参数、生命周期与行为验收合同见 `openspec/changes/add-scroll-story-landing/`。
+资料归档不回退已实现的品牌、共通排版、控件或长病历阅读。现有深浅主题、八种强调色、语言和用户偏好保留；运行时主题/品牌仍由src/index.css、src/lib/accent.ts、src/lib/theme/、src/lib/brand.ts和现有组件维护，public运行资源不移动。
+
+新提案不改变已确认业务行为、身份隔离、事务保存、分享、导出或SHA完整性机制；17项功能与缺口见[验收表](docs/products/saas-acceptance.md)。登录入口与工作台首页分开评审，当前/login实现和认证流程不因本文自动改变。旧OpenSpec视觉描述需在后续相关实施中与当前代码和新决定核对，不用于恢复旧稿。
+
+OpenDesign原型经用户审核后，再在当前项目逐页接入；后端保留，原生、小程序、生产切换与成熟版迁仓分别验收。

@@ -1,0 +1,115 @@
+{
+  "schema": "myoncode.design-fixtures.v1",
+  "synthetic": true,
+  "notice": "所有患者、报告、治疗、日期、数值与参考范围均为虚构，只用于设计与交互检查，不可用于临床判断或导入真实账户。",
+  "persistence": "memory-only; reset restores initial state",
+  "patients": [
+    {
+      "id": "patient-a",
+      "displayName": "虚构患者甲",
+      "description": "初发与多阶段资料齐全的长内容样例",
+      "basicInfo": { "tumorType": "虚构肿瘤类型A", "stage": "报告未提供" },
+      "initialOnset": {
+        "date": "2026-02-04",
+        "summary": "首次资料整理样例。原报告没有提供分期，核对界面应保留缺失提示。",
+        "pathologyNote": "虚构病理原文，仅验证长句、换行与来源呈现。",
+        "geneticReportText": "虚构的阶段内检测资料，仅保留原文，不展示尚未实现的变异或通路解读。"
+      },
+      "treatmentLines": [
+        {
+          "id": "line-a-1",
+          "lineNumber": 1,
+          "startDate": "2026-03-01",
+          "endDate": "2026-06-20",
+          "regimen": "虚构药物A联合虚构药物B的阶段记录（长方案名用于检查完整显示，不代表用药建议）",
+          "note": "患者家属补充的长备注样例：这一阶段的资料来自不同日期的纸质报告与手工记录。部分时间尚未核对，界面需要保留原始描述和待核对状态，不能为了排版省略关键日期、单位或把未知情况变成确定结论。",
+          "immunohistochemistryText": "本阶段虚构免疫组化原文；仅用于检查资料归属。"
+        },
+        {
+          "id": "line-a-2",
+          "lineNumber": 2,
+          "startDate": "2026-07-05",
+          "endDate": null,
+          "regimen": "虚构方案C",
+          "note": "结束日期未记录，不由原型推断疗效。"
+        }
+      ]
+    },
+    {
+      "id": "patient-b",
+      "displayName": "虚构患者乙",
+      "description": "仅初发资料、无治疗线的空分支样例",
+      "basicInfo": { "tumorType": "虚构肿瘤类型B", "stage": null },
+      "initialOnset": { "date": "2026-09-20", "summary": "待补充治疗资料。" },
+      "treatmentLines": []
+    },
+    {
+      "id": "patient-c",
+      "displayName": "虚构患者丙",
+      "description": "只有治疗阶段、初发资料缺失的样例",
+      "basicInfo": { "tumorType": null, "stage": null },
+      "initialOnset": null,
+      "treatmentLines": [
+        { "id": "line-c-1", "lineNumber": 1, "startDate": "2026-09-01", "endDate": null, "regimen": null }
+      ]
+    }
+  ],
+  "reports": [
+    {
+      "id": "report-a",
+      "patientId": "patient-a",
+      "title": "虚构化验报告A",
+      "sampleDate": "2026-09-28",
+      "sourceText": "【虚构报告，仅用于原型】\n患者：虚构患者甲\n采样日期：2026-09-28\n白细胞：3.8 ×10^9/L；本报告参考范围：3.5–9.5\n指标X：18.2 U/mL；本报告未提供参考范围。",
+      "draftStatus": "needs_review",
+      "readings": [
+        {
+          "id": "draft-a-wbc",
+          "name": "白细胞",
+          "code": "WBC",
+          "extractedValue": 38,
+          "sourceValue": 3.8,
+          "unit": "×10^9/L",
+          "reportReferenceRange": { "low": 3.5, "high": 9.5, "synthetic": true },
+          "sourceQuote": "白细胞：3.8 ×10^9/L",
+          "reviewReason": "模拟提取漏掉小数点，需人工更正"
+        },
+        {
+          "id": "draft-a-x",
+          "name": "指标X",
+          "code": "SYNTHETIC-X",
+          "extractedValue": 18.2,
+          "sourceValue": 18.2,
+          "unit": "U/mL",
+          "reportReferenceRange": null,
+          "sourceQuote": "指标X：18.2 U/mL；本报告未提供参考范围。",
+          "reviewReason": "缺少报告参考范围，不自动判断正常或异常"
+        }
+      ]
+    }
+  ],
+  "savedReadings": [
+    { "id": "lab-a-1", "patientId": "patient-a", "date": "2026-09-01", "name": "白细胞", "code": "WBC", "value": 4.6, "unit": "×10^9/L", "sourceLabel": "虚构既往报告1", "reportReferenceRange": { "low": 3.5, "high": 9.5, "synthetic": true } },
+    { "id": "lab-a-2", "patientId": "patient-a", "date": "2026-09-14", "name": "白细胞", "code": "WBC", "value": 4.1, "unit": "×10^9/L", "sourceLabel": "虚构既往报告2", "reportReferenceRange": { "low": 3.5, "high": 9.5, "synthetic": true } }
+  ],
+  "symptoms": [
+    { "id": "symptom-a-1", "patientId": "patient-a", "treatmentLineId": "line-a-2", "date": "2026-09-25", "text": "虚构症状记录：家属记录了当天的疲劳感，程度待补充。", "severity": null }
+  ],
+  "followups": [
+    { "id": "followup-a-1", "patientId": "patient-a", "date": "2026-10-12", "text": "虚构复诊安排：核对报告并整理待问问题。", "status": "planned" }
+  ],
+  "failureScenarios": [
+    { "id": "unsupported-file", "message": "这个文件暂时无法处理，请换一个文件或粘贴报告文字。" },
+    { "id": "processing-failed", "message": "本次处理失败，已保留文件，可以重试。" },
+    { "id": "save-failed", "message": "保存失败，修改内容仍在，请重试。" }
+  ],
+  "acceptanceExpectations": {
+    "correctedValue": 3.8,
+    "missingReferenceRangeRemainsNull": true,
+    "saveRetryRetainsEdits": true,
+    "repeatedSaveCreatesOneReport": true,
+    "patientOwnershipMustBeConfirmed": true,
+    "resetRemovesPrototypeEdits": true,
+    "callsRealServices": false
+  }
+}

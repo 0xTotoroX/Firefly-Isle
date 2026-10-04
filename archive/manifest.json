@@ -644,5 +644,10 @@
     "docs/design/stitch/runtime-screenshots/2026-04-25/AGENTS.md",
     "docs/design/stitch/runtime-screenshots/2026-04-29-login-refinement/AGENTS.md",
     "docs/design/stitch/runtime-screenshots/AGENTS.md"
-  ]
+  ],
+  "design_relocation": {
+    "manifest": "docs/design/archive/relocation-manifest.json",
+    "current_input": "docs/design/current/README.md",
+    "note": "restored_design_files and restored_instruction_maps preserve the original restoration event; use the relocation manifest for subsequent paths and byte-preserved historical copies. Root entry documents may have changed since restoration."
+  }
 }

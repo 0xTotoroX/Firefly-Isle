@@ -36,7 +36,7 @@
 ## 5. 文档与架构同步
 
 - [x] 5.1 更新 `src/components/login/AGENTS.md` 与新增模块的文件职责注释
-- [x] 5.2 更新 `DESIGN.md` / `docs/design/Image-2/V3/DESIGN.md` 的登录页视觉契约
+- [x] 5.2 更新 `DESIGN.md` 与 V3 登录页视觉契约（原稿现归档于 `docs/design/archive/Image-2/V3/DESIGN.md`，仅记录当时设计来源）
 - [x] 5.3 更新 `openspec/changes/AGENTS.md` 变更地图
 - [x] 5.4 更新 `src/styles/transitions-dev.css` reduced-motion 收敛清单覆盖新增叙事类
 

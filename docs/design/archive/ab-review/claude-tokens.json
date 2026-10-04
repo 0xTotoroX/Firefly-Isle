@@ -1,0 +1,164 @@
+{
+  "colors": {
+    "light": {
+      "surface": {
+        "00": "#FAFBFC",
+        "01": "#F2F4F6",
+        "02": "#E8EBEF",
+        "03": "#DFE3E8",
+        "04": "#D5DAE1"
+      },
+      "text": {
+        "primary": "#0D1821",
+        "secondary": "#3D5266",
+        "muted": "#6B7D8C",
+        "disabled": "#A1ADB8"
+      },
+      "border": {
+        "subtle": "#E8EBEF",
+        "default": "#D5DAE1",
+        "strong": "#A1ADB8"
+      },
+      "semantic": {
+        "success": "#059669",
+        "successBg": "#D1FAE5",
+        "warning": "#D97706",
+        "warningBg": "#FEF3C7",
+        "danger": "#DC2626",
+        "dangerBg": "#FEE2E2",
+        "info": "#2563EB",
+        "infoBg": "#DBEAFE"
+      },
+      "special": {
+        "reviewBorder": "#D97706",
+        "aiGeneratedBg": "#DBEAFE",
+        "missingIndicator": "#6B7D8C",
+        "confirmedBadge": "#059669"
+      }
+    },
+    "dark": {
+      "surface": {
+        "00": "#040A0F",
+        "01": "#0A1218",
+        "02": "#101A24",
+        "03": "#16232F",
+        "04": "#1D2D3C"
+      },
+      "text": {
+        "primary": "#E8F0F5",
+        "secondary": "#A8BBC9",
+        "muted": "#6B7D8C",
+        "disabled": "#3F4F5C"
+      },
+      "border": {
+        "subtle": "#1D2D3C",
+        "default": "#2D3F52",
+        "strong": "#3D5266"
+      },
+      "semantic": {
+        "success": "#10B981",
+        "successBg": "#064E3B",
+        "warning": "#F59E0B",
+        "warningBg": "#78350F",
+        "danger": "#EF4444",
+        "dangerBg": "#7F1D1D",
+        "info": "#3B82F6",
+        "infoBg": "#1E3A8A"
+      },
+      "special": {
+        "reviewBorder": "#F59E0B",
+        "aiGeneratedBg": "#1E3A8A",
+        "missingIndicator": "#6B7D8C",
+        "confirmedBadge": "#10B981"
+      }
+    },
+    "accents": {
+      "clinicalCyan": {
+        "50": "#E0F7FF",
+        "500": "#06B6D4",
+        "600": "#0891B2",
+        "700": "#0E7490",
+        "onAccent": "#FFFFFF"
+      },
+      "researchTeal": {
+        "50": "#D4F5F0",
+        "500": "#14B8A6",
+        "600": "#0D9488",
+        "700": "#0F766E",
+        "onAccent": "#FFFFFF"
+      },
+      "archiveSlate": {
+        "50": "#E8EDF2",
+        "500": "#64748B",
+        "600": "#475569",
+        "700": "#334155",
+        "onAccent": "#FFFFFF"
+      },
+      "precisionIndigo": {
+        "50": "#E0E7FF",
+        "500": "#6366F1",
+        "600": "#4F46E5",
+        "700": "#4338CA",
+        "onAccent": "#FFFFFF"
+      }
+    }
+  },
+  "spacing": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "5": "1.25rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "10": "2.5rem",
+    "12": "3rem",
+    "16": "4rem"
+  },
+  "radius": {
+    "sm": "0.375rem",
+    "md": "0.5rem",
+    "lg": "0.75rem",
+    "xl": "1rem",
+    "full": "999px",
+    "circle": "50%"
+  },
+  "typography": {
+    "fontFamily": {
+      "sans": "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', sans-serif",
+      "mono": "ui-monospace, 'SF Mono', 'Cascadia Code', 'Source Code Pro', monospace",
+      "numeric": "'SF Pro Text', 'Helvetica Neue', sans-serif"
+    },
+    "fontSize": {
+      "xs": "clamp(0.75rem, 0.7rem + 0.25vw, 0.8125rem)",
+      "sm": "clamp(0.875rem, 0.825rem + 0.25vw, 0.9375rem)",
+      "base": "clamp(1rem, 0.95rem + 0.25vw, 1.0625rem)",
+      "lg": "clamp(1.125rem, 1.05rem + 0.375vw, 1.25rem)",
+      "xl": "clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem)",
+      "2xl": "clamp(1.5rem, 1.35rem + 0.75vw, 1.875rem)",
+      "3xl": "clamp(1.875rem, 1.65rem + 1.125vw, 2.25rem)"
+    },
+    "lineHeight": {
+      "tight": "1.25",
+      "normal": "1.5",
+      "relaxed": "1.75"
+    },
+    "letterSpacing": {
+      "tight": "-0.02em",
+      "normal": "0",
+      "wide": "0.025em"
+    },
+    "fontWeight": {
+      "normal": "400",
+      "medium": "500",
+      "semibold": "600",
+      "bold": "700"
+    }
+  },
+  "shadows": {
+    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.3)",
+    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.4)",
+    "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.5)",
+    "xl": "0 20px 25px -5px rgba(0, 0, 0, 0.6)"
+  }
+}

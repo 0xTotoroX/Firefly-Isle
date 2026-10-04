@@ -26,7 +26,7 @@
 
 当前实现包含 Dashboard、病历/指标/症状/随访、可恢复表单、复诊摘要、模型设置、账户管理与配额。代码已统一到本仓库，旧自托管实验中的有效准备工作已整合；生产配置仍连接 Supabase Cloud。
 
-设计资料入口是 [DESIGN.md](DESIGN.md)，规范与历史评审保留在 [docs/design/](docs/design/AGENTS.md)。当前 Web 界面、页面标题、PWA 显示名与下载名称已适配“知见 / MyOncode”，共用黑白中性色、八种强调色和可读的文字层级；A/B 完整布局仍待选择。灯塔图标暂时沿用，候选 M 图标未定稿；本地原生壳显示名已同步为知见，Checkout 商品名已同步为 MyOncode donation；真机、支付服务部署与发布另行验收。仓库、存储键、账号导出协议和部署标识保持兼容。域名未购买，购买前须重新核验可注册性、商标与微信名称；见 [命名与定位](docs/products/product-naming.md)。Open Design 是项目外工具，本轮没有向其模型发送仓库或患者资料。
+设计入口为 [DESIGN.md](DESIGN.md)；[current](docs/design/current/README.md) 是给 OpenDesign 的本轮材料，[archive](docs/design/archive/README.md) 保存 A/B 及更早的全部视觉资料。当前 Web 界面、页面标题、PWA 显示名与下载名称已适配“知见 / MyOncode”，共用黑白中性色、八种强调色和可读的文字层级；用户已要求从 AI Native 和极简首页重新提案，当前只准备设计输入，新布局尚未生成或实施。灯塔图标暂时沿用，候选 M 图标未定稿；本地原生壳显示名已同步为知见，Checkout 商品名已同步为 MyOncode donation；真机、支付服务部署与发布另行验收。仓库、存储键、账号导出协议和部署标识保持兼容。域名未购买，购买前须重新核验可注册性、商标与微信名称；见 [命名与定位](docs/products/product-naming.md)。Open Design 是项目外工具，本轮没有向其模型发送仓库或患者资料。
 
 当前交付范围和真实缺口见 [17 项功能验收表](docs/products/saas-acceptance.md)，数据关系与逐表权限见 [数据模型](docs/architecture/data-model.md)。本地检查、云端开发和生产可用分别验收。
 

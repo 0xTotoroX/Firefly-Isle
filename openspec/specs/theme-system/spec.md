@@ -2,27 +2,27 @@
 
 定义 Firefly-Isle 的 Dark / Light 主题来源、token 合同、surface 语义、主题切换行为与登录页主题噪声边界。
 
-资料位置说明：V3 设计与截图现归档于根 archive/design-kit/，下文原路径为历史来源标识，不是仓库内运行依赖或必读文件。当前实现对应 src/index.css、src/lib/accent.ts、src/lib/theme/ 与 src/components/system/；资料归档不改变已有主题合同，A/B 新布局仍待用户确认。
+资料与适用范围：V3及其他旧视觉现归档于 docs/design/archive/，本轮AI Native原型输入在 docs/design/current/，由根 DESIGN.md 导航。当前实现对应 src/index.css、src/lib/accent.ts、src/lib/theme/ 与 src/components/system/。本轮只同步设计来源优先级，不改变运行行为；下文其余V3配色、形状与登录视觉条款仍是待与当前实现逐项核对的历史合同，不能作为新提案的默认输入，也不能据其回退已确认的品牌和共通样式。正式实施新视觉时再同步受影响条款。
 ## Requirements
 ### Requirement: 主题实现必须来源于设计系统
-系统 SHALL 将 `docs/design/Image-2/V3/DESIGN.md` 与同目录 V3 截图作为当前视觉系统真源，并将运行时主题实现收敛为统一的设计系统 token、surface contract 与系统组件；旧 `docs/design/dark/*`、`docs/design/light/*` 与 Stitch 设计来源仅作为历史证据，不得覆盖 V3。
+系统 SHALL 根据经用户批准的当前设计决定维护统一的设计系统 token、surface contract 与系统组件。根 `DESIGN.md` 区分当前设计输入、已批准实现与历史资料；`docs/design/archive/` 中的V3、A/B、Stitch及其他旧稿仅作历史证据，不得自动覆盖最新用户要求或已确认实现。
 
 #### Scenario: Dark / Light 主题通过统一 token 实现
 - **WHEN** 系统渲染 Dark 或 Light 主题
 - **THEN** 颜色、文字层级、边框、surface 层级、圆角、状态色与强调色 SHALL 来自统一命名的设计系统 token，而不是在业务组件中直接散写十六进制值
 
-#### Scenario: V3 是当前视觉真源
+#### Scenario: 当前决定与历史参考分开
 - **WHEN** 实现需要判断视觉取舍
-- **THEN** 系统 SHALL 优先参考 `docs/design/Image-2/V3/DESIGN.md`
-- **AND** `/app` dark SHALL 优先参考 `docs/design/Image-2/V3/03-app-dark-new.png`
-- **AND** 旧 `03-app-dark.png` SHALL 仅作为生成历史，不作为实现优先参考
+- **THEN** 系统 SHALL 核对根 `DESIGN.md` 指向的当前材料与用户批准范围
+- **AND** 新原型尚未批准时 SHALL 保留既有有效实现，不把提案写成已上线规范
+- **AND** 归档截图或旧规范 SHALL 不作为默认必读来源或回退依据
 
 #### Scenario: 页面只能消费设计系统组件与 token
 - **WHEN** 工作区、登录页、档案页、隐私页或时间线表格实现主题相关结构
 - **THEN** 页面 SHALL 通过设计系统组件与 token 组合视觉结果，而不是在页面中重复拼装新的主题结构与表面语义
 
 #### Scenario: 设计素材被提炼为 contract 而非直接运行时依赖
-- **WHEN** 系统需要依据 V3 截图对齐主题语言
+- **WHEN** 系统需要依据已确认原型对齐主题语言
 - **THEN** 实现 SHALL 先将这些证据提炼为 token、surface contract 与 component contract，再由页面消费这些 contract
 
 ### Requirement: 默认主题为 Dark

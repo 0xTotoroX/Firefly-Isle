@@ -28,7 +28,7 @@ patient-record/spec.md: PatientRecord 数据结构、可选 labResults 缺失不
 record-sharing/spec.md: 授权码只读分享、hash 存储、过期撤销、公开 /share/:code 与权限边界的 baseline spec
 record-treatment-gantt/spec.md: /record/:id 治疗方案甘特图视图、baseline+治疗线投影、左右固定/中间可拖动、PFS、补充资料展示、开放当前线与空态的 baseline spec
 supabase-schema/spec.md: Supabase 表结构、llm_provider_settings provider/model 约束、RLS、区域选择与 updated_at 触发器的 baseline spec
-theme-system/spec.md: Dark/Light 主题 token、surface、登录视觉合同与主题切换的 baseline spec
+theme-system/spec.md: Dark/Light主题token与切换合同、当前/历史设计来源边界；旧V3登录视觉条款待与当前实现核对，不约束新提案
 timeline-table/spec.md: 时间线表格渲染、检测信息归属、空字段与基本信息顺序的 baseline spec
 
 clinical-workflow/spec.md: 症状/随访归属、最新状态、日历日期、可恢复表单、上下文导航和 V3 可读性的 baseline spec。
