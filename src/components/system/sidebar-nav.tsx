@@ -1,15 +1,15 @@
 /**
- * [INPUT]: 依赖 react 的状态、ref 与 pointer/keyboard 事件，依赖 react-router-dom 的 Link/useLocation，依赖 FireflyMark、FireflyBrandWordmark 与 SidebarShell，依赖 @/lib/theme、locale、可选真实病历/统计 href 与紧凑可拖拽侧栏 token。
+ * [INPUT]: 依赖 react 的状态、ref 与 pointer/keyboard 事件，依赖 react-router-dom 的 Link/useLocation，依赖 BrandMark、BrandWordmark 与 SidebarShell，依赖 @/lib/theme、locale、可选真实病历/统计 href 与紧凑可拖拽侧栏 token。
  * [OUTPUT]: 对外提供 ArchiveSideNav 组件与 ArchiveSideNavProps 类型；宽度持久化失败时保留内存交互，短视口允许导航独立滚动。
- * [POS]: src/components/system 的共享侧栏导航组件，统一 dark/light 的紧凑桌面默认展开、移动端默认收起、真实病历/统计入口、显式公开 Demo 入口、固定账户设置入口、无当前患者时转到总览病历列表，工作区明确为空时保留“先提取”提示、独立品牌 mark/中英文 display token 侧栏字标、中文“萤”与英文 Firefly 主题光晕、边线胶囊折叠、44px 恢复热区、左缘渐进拉出、拖拽缩放到隐藏、阈值 icon-only、active 细左标与低强度行面、Google Translate 与临床笔记图标、匿名/非匿名身份图标、无下拉误导的偏好控制与会话出口。
+ * [POS]: src/components/system 的共享侧栏导航组件，统一 dark/light 的紧凑桌面默认展开、移动端默认收起、真实病历/统计入口、显式公开 Demo 入口、固定账户设置入口、无当前患者时转到总览病历列表，工作区明确为空时保留“先提取”提示、独立品牌 mark/中英文 display token 侧栏字标、边线胶囊折叠、44px 恢复热区、左缘渐进拉出、拖拽缩放到隐藏、阈值 icon-only、active 细左标与低强度行面、Google Translate 与临床笔记图标、匿名/非匿名身份图标、无下拉误导的偏好控制与会话出口。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession, useProductPath } from '@/lib/demo-session'
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent as ReactMouseEvent, type PointerEvent } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
-import { FireflyBrandWordmark } from '@/components/system/firefly-brand-wordmark'
-import { FireflyMark } from '@/components/system/firefly-mark'
+import { BrandWordmark } from '@/components/system/brand-wordmark'
+import { BrandMark } from '@/components/system/brand-mark'
 import { SidebarShell } from '@/components/system/surfaces'
 import { getCopy, copy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
@@ -390,7 +390,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
 
   const renderLabel = (label: string, className?: string) =>
     compact ? null : <span className={`${cn('truncate tracking-normal', className)} font-[var(--ff-font-display)]`}>{label}</span>
-  const renderBrandTitle = () => (compact ? null : <FireflyBrandWordmark locale={locale} />)
+  const renderBrandTitle = () => (compact ? null : <BrandWordmark locale={locale} />)
 
   const iconOnlyTooltip = (label: string) =>
     compact ? (
@@ -441,7 +441,7 @@ export function ArchiveSideNav({ analyticsHref, dark, isSigningOut = false, onSi
                 )}
                 to={productPath('/app')}
               >
-                <FireflyMark className={compact ? undefined : 'h-[52px] w-[52px]'} size={compact ? 'rail' : 'large'} />
+                <BrandMark className={compact ? undefined : 'h-[52px] w-[52px]'} size={compact ? 'rail' : 'large'} />
                 {renderBrandTitle()}
               </Link>
             </div>

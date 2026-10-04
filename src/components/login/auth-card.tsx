@@ -54,8 +54,8 @@ function AuthBeaconPreview({ subtitle, theme, title }: { subtitle: string; theme
         src={theme === 'dark' ? nightIslandAuthScene : lightAuthScene}
       />
       <div className={`absolute inset-0 ${skin.heroGradient}`} />
-      <div className="absolute bottom-7 left-0 right-0 px-6 text-left md:bottom-8">
-        <h2 className={`text-[1.95rem] font-black leading-none tracking-normal md:text-[2.25rem] ${skin.heroTitle}`} data-testid="login-auth-card-title">
+      <div className="absolute bottom-7 left-0 right-0 z-10 px-6 text-left md:bottom-8">
+        <h2 className={`text-[1.95rem] font-semibold leading-tight tracking-normal md:text-[2.25rem] ${skin.heroTitle}`} data-testid="login-auth-card-title">
           {title}
         </h2>
         <p className={`mt-2.5 text-sm font-semibold ${skin.heroSubtitle}`}>
@@ -253,7 +253,7 @@ export function AuthCard({
               theme={theme}
               trailing={<span className={`material-symbols-outlined text-[20px] ${skin.trailingIcon}`}>visibility</span>}
             >
-              <span className="sr-only">{locale === 'zh' ? '密码 / 加密密钥' : 'Password / Encryption Key'}</span>
+              <span className="sr-only">{locale === 'zh' ? '密码' : 'Password'}</span>
               <input
                 autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 className={`min-w-0 flex-1 bg-transparent text-sm font-semibold outline-none ${skin.fieldInput}`}
@@ -316,7 +316,7 @@ export function AuthCard({
           ) : null}
         </form>
 
-        <p className={`t-accordion mt-3 rounded-[var(--ff-radius-full)] px-4 py-1.5 text-center text-[11px] leading-5 ${skin.privacy}`}>
+        <p className={`t-accordion mt-3 rounded-[var(--ff-radius-full)] px-4 py-1.5 text-center text-[13px] leading-6 ${skin.privacy}`}>
           <span className="material-symbols-outlined mr-2 inline text-base align-[-3px]">verified_user</span>
           {privacySummary}
           {' '}

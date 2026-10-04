@@ -1,7 +1,7 @@
 <div align="center">
   <img src="public/logo-island-lighthouse.png" alt="知见" width="140" />
-  <h1>知见</h1>
-  <p><strong>A treatment information management tool for people with cancer and their families.</strong></p>
+  <h1>知见 / MyOncode</h1>
+  <p><strong>Cancer care management for patients and families.</strong></p>
   <p>
     <a href="README.md">中文</a> |
     English
@@ -18,7 +18,7 @@ Open `/demo` to try the existing product screens with three fictional patient re
 
 ## Product Background
 
-The product helps people with cancer and their families organize medical records, test results and treatment history, track changes in readings and symptoms, and understand medical information for discussions with clinicians. Record preparation is one part of a broader treatment and follow-up workflow.
+MyOncode (知见) brings medical records, treatment tracking, lab trends and disease information together for patients and families throughout cancer care. It serves as a central place for tests, diagnoses, medicines, treatment history, side effects and follow-ups, helping people revisit their history and prepare for appointments.
 
 Future work includes interpreting genetic test reports and showing relationships between specific variants and signaling pathways, with sources, evidence and uncertainty. This capability is not implemented. The product focuses on information management and understanding; emotional companionship is not a core feature. It does not replace clinical care or promise treatment outcomes.
 
@@ -26,7 +26,7 @@ Future work includes interpreting genetic test reports and showing relationships
 
 The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; production still targets Supabase Cloud.
 
-Design materials have been restored to their original locations. Start at [DESIGN.md](DESIGN.md); specifications, review boards, prototypes and historical screenshots live under [docs/design/](docs/design/AGENTS.md). Open Design is a separate local tool. A/B layout selection and production migration await the user's decision; runtime components and theme tokens remain. The Chinese name 知见 is confirmed. Medclear was withdrawn because medclear.com is already registered; a new English name is pending selection. See the [naming decision](docs/products/product-naming.md). The running UI, installed-app names and logo still use the previous brand. Brand migration has not been implemented, and repository and technical identifiers remain unchanged for compatibility. New candidates have preliminary domain checks; trademark and WeChat name availability remain unverified.
+Start at [DESIGN.md](DESIGN.md) for design materials. The Web UI, browser metadata, PWA display name and download names now use 知见 / MyOncode, with shared neutral surfaces, eight accents and readable typography. The complete A/B layout remains undecided. The lighthouse icon is retained temporarily; the candidate M icon is not final. Native-shell display names and releases require separate acceptance. Repository identity, storage keys, account-export format and deployment identifiers remain compatible. No domain has been purchased; availability, trademark and WeChat names require verification before registration. See the [naming decision](docs/products/product-naming.md). Open Design remains an external local tool; this work did not send repository or patient data to a model.
 
 See the [17-capability acceptance ledger](docs/products/saas-acceptance.md) for verified behavior and remaining gaps, and the [data model](docs/architecture/data-model.md) for table relationships and RLS. Local checks, cloud development readiness and production readiness are verified separately.
 

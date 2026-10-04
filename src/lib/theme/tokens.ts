@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 无运行时外部依赖，承载 Firefly-Isle 主题 token 真相源。
+ * [INPUT]: 依赖 accent.ts 派生色与临床语义；承载共享主题和布局 token。
  * [OUTPUT]: 对外提供 themeNames、ThemeName、themeTokens、紧凑默认侧栏几何常量、边缘钉住顶栏、shell 内容宽度合同与过渡类常量。
  * [POS]: src/lib/theme 的 token 定义文件，统一 dark/light 的颜色、surface、文字、边框、状态、紧凑响应式侧栏、边缘钉住顶栏与宽幅内容几何合同。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
@@ -32,8 +32,8 @@ export const themeTokens = {
   dark: {
     accent: deriveAccentStops(accentBase, 'dark'),
     border: {
-      default: '#30363A',
-      muted: 'rgba(244,240,232,0.14)',
+      default: '#333333',
+      muted: 'rgba(245,245,245,0.14)',
       strong: '#C48A4A',
     },
     surface: {
@@ -42,44 +42,44 @@ export const themeTokens = {
       inset: '#0D0D0D',
       panel: '#111111',
       paper: '#FFFFFF',
-      paperMuted: '#F1F0EC',
+      paperMuted: '#F5F5F5',
       shell: '#000000',
       sidebar: '#000000',
-      soft: '#181D20',
-      subtle: '#181D20',
+      soft: '#1A1A1A',
+      subtle: '#1A1A1A',
       warning: '#2B2111',
     },
     text: {
       ink: '#0A0A0A',
-      muted: '#A9A39A',
-      primary: '#F4F0E8',
-      secondary: 'rgba(244,240,232,0.72)',
-      subtle: 'rgba(244,240,232,0.88)',
+      muted: '#A3A3A3',
+      primary: '#F5F5F5',
+      secondary: 'rgba(245,245,245,0.72)',
+      subtle: 'rgba(245,245,245,0.88)',
     },
   },
   light: {
     accent: deriveAccentStops(accentBase, 'light'),
     border: {
-      default: '#D8D5CE',
+      default: '#D4D4D4',
       muted: 'rgba(22,22,22,0.12)',
       strong: '#C48A4A',
     },
     surface: {
       accent: deriveAccentStops(accentBase, 'light').soft,
       base: '#FFFFFF',
-      inset: '#F4F4F2',
+      inset: '#F5F5F5',
       panel: '#FFFFFF',
       paper: '#FFFFFF',
-      paperMuted: '#F1F0EC',
+      paperMuted: '#F5F5F5',
       shell: '#FFFFFF',
       sidebar: '#FFFFFF',
-      soft: '#F1F0EC',
-      subtle: '#F4F4F2',
+      soft: '#F5F5F5',
+      subtle: '#F5F5F5',
       warning: '#FFF1D6',
     },
     text: {
       ink: '#0A0A0A',
-      muted: '#6F6B65',
+      muted: '#666666',
       primary: '#161616',
       secondary: 'rgba(22,22,22,0.7)',
       subtle: 'rgba(22,22,22,0.82)',

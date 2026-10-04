@@ -33,7 +33,7 @@ const timelineTableSource = ['TimelineTable.tsx', 'timeline-sections.tsx'].map((
 const topbarSource = readFileSync(new URL('../../components/system/topbar.tsx', import.meta.url), 'utf8')
 const followUpPanelSource = readFileSync(new URL('../../components/workspace/follow-up-panel.tsx', import.meta.url), 'utf8')
 const loginEntryViewSource = readFileSync(new URL('../../components/login/login-entry-view.tsx', import.meta.url), 'utf8')
-const fireflyBrandWordmarkSource = readFileSync(new URL('../../components/system/firefly-brand-wordmark.tsx', import.meta.url), 'utf8')
+const brandWordmarkSource = readFileSync(new URL('../../components/system/brand-wordmark.tsx', import.meta.url), 'utf8')
 const originStoryPaperSource = readFileSync(new URL('../../components/system/origin-story/origin-story-paper.tsx', import.meta.url), 'utf8')
 const privacyGateSource = readFileSync(new URL('../../components/privacy-gate.tsx', import.meta.url), 'utf8')
 const privacyPageSource = readFileSync(new URL('../../routes/privacy-page.tsx', import.meta.url), 'utf8')
@@ -81,9 +81,9 @@ describe('V3 theme token contract', () => {
     expect(mainSource).toContain("import '@fontsource/ibm-plex-mono/latin-600.css'")
     expect(mainSource).not.toContain('fonts.googleapis.com')
 
-    expect(indexCss).toContain('--ff-font-display-zh: "Songti SC", "STSong", "New York", "Times New Roman", serif')
+    expect(indexCss).toContain('--ff-font-display-zh: var(--ff-font-ui-zh)')
     expect(indexCss).toContain('--ff-font-ui-zh: "PingFang SC", "Hiragino Sans GB", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif')
-    expect(indexCss).toContain('--ff-font-display-en: "Fraunces", "New York", "Times New Roman", serif')
+    expect(indexCss).toContain('--ff-font-display-en: var(--ff-font-ui-en)')
     expect(indexCss).toContain('--ff-font-ui-en: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif')
     expect(indexCss).toContain('--ff-font-display: var(--ff-font-display-zh)')
     expect(indexCss).toContain('--ff-font-ui: var(--ff-font-ui-zh)')
@@ -113,8 +113,8 @@ describe('V3 theme token contract', () => {
     expect(reportPreviewFrameSource).toContain("const previewSectionTitleClass = 'font-[var(--ff-font-display)] text-base font-semibold")
     expect(reportPreviewFrameSource).toContain('className={`mb-2 ${previewSectionTitleClass}`}')
     expect(privacyGateSource).toContain('className="mt-3 font-[var(--ff-font-display)] text-lg font-bold tracking-normal"')
-    expect(loginEntryViewSource).toContain('FireflyBrandWordmark')
-    expect(fireflyBrandWordmarkSource).toContain('font-[var(--ff-font-display)]')
+    expect(loginEntryViewSource).toContain('BrandWordmark')
+    expect(brandWordmarkSource).toContain('font-[var(--ff-font-ui)]')
 
     for (const source of [
       followUpPanelSource,

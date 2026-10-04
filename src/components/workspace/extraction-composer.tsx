@@ -42,10 +42,6 @@ type OcrState = {
 
 const MAX_EXTRACTION_INPUT_LENGTH = 8000
 
-function getUnavailableTitle(feature: string, locale: 'zh' | 'en') {
-  return locale === 'zh' ? `${feature}暂未开放` : `${feature} is not available yet`
-}
-
 function getUploadTitle(locale: 'zh' | 'en') {
   return locale === 'zh' ? '上传病历图片或 PDF' : 'Upload a medical record image or PDF'
 }
@@ -87,9 +83,7 @@ export function ExtractionComposer({
     : getCopy(isEditMode ? copy.workspace.composer.applyEdit : copy.workspace.composer.extract, locale)
   const [visibleExtractLabel, setVisibleExtractLabel] = useState(extractLabel)
   const [textSwapState, setTextSwapState] = useState('')
-  const [toolMessage, setToolMessage] = useState<string | null>(null)
   const inputTooLong = extractionInput.length > MAX_EXTRACTION_INPUT_LENGTH
-  const voiceUnavailableTitle = getUnavailableTitle(getCopy(copy.workspace.composer.voiceInput, locale), locale)
   const uploadTitle = getUploadTitle(locale)
 
   useEffect(() => {
@@ -123,7 +117,7 @@ export function ExtractionComposer({
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-[28px] text-[var(--ff-text-primary)]">clinical_notes</span>
-          <label className="font-[var(--ff-font-display)] text-2xl font-black leading-tight tracking-normal text-[var(--ff-text-primary)]" htmlFor="patient-history-input">
+          <label className="font-[var(--ff-font-display)] text-2xl font-semibold leading-tight tracking-normal text-[var(--ff-text-primary)]" htmlFor="patient-history-input">
             {getCopy(copy.workspace.composer.inputLabel, locale)}
           </label>
         </div>
@@ -132,18 +126,18 @@ export function ExtractionComposer({
 
       <div className="relative">
         <textarea
-          className="h-44 w-full resize-none rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] p-4 pb-16 text-base leading-7 text-[var(--ff-text-primary)] outline-none placeholder:text-[var(--ff-text-muted)] transition-[border-color,box-shadow] focus:border-[var(--ff-accent-primary)] focus:ring-2 focus:ring-[color:color-mix(in_srgb,var(--ff-accent-primary)_18%,transparent)] sm:h-48"
+          className="min-h-44 w-full resize-y rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)] p-4 text-base leading-7 text-[var(--ff-text-primary)] outline-none placeholder:text-[var(--ff-text-muted)] transition-[border-color,box-shadow] focus:border-[var(--ff-accent-primary)] focus:ring-2 focus:ring-[color:color-mix(in_srgb,var(--ff-accent-primary)_18%,transparent)] sm:h-48"
           id="patient-history-input"
           maxLength={MAX_EXTRACTION_INPUT_LENGTH}
           onChange={(event) => onInputChange(event.target.value)}
           placeholder={getCopy(copy.workspace.composer.inputPlaceholder, locale)}
           value={extractionInput}
         />
-        <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between gap-3">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
           {demo ? <button className="pointer-events-auto inline-flex min-h-[44px] items-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-3 text-sm font-semibold" disabled={disabled || awaitingSave} onClick={() => onImportFile?.(new File([''], '虚构病历示例.txt', { type: 'text/plain' }))} type="button">{locale === 'zh' ? '体验固定识别示例' : 'Preview fixed OCR example'}</button> : (
           <label
             aria-label={getCopy(copy.workspace.composer.importRecordFile, locale)}
-            className="t-control-press pointer-events-auto inline-flex h-10 items-center justify-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-3 font-[var(--ff-font-ui)] text-xs font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="t-control-press pointer-events-auto inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] px-3 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--ff-accent-text)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-50"
             data-input-tool="import-record-file"
             title={uploadTitle}
           >
@@ -168,29 +162,13 @@ export function ExtractionComposer({
           </label>
           )}
           <div className="pointer-events-auto flex items-center gap-3">
-            <button
-              aria-label={getCopy(copy.workspace.composer.voiceInput, locale)}
-              className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-50"
-              data-input-tool="voice-input"
-              disabled={disabled}
-              onClick={() => setToolMessage(voiceUnavailableTitle)}
-              title={voiceUnavailableTitle}
-              type="button"
-            >
-              <span className="material-symbols-outlined text-xl">mic</span>
-            </button>
-            <span className={`font-[var(--ff-font-mono)] text-[11px] ${inputTooLong ? 'text-[var(--ff-accent-warning)]' : 'text-[var(--ff-text-muted)]'}`}>
+            <span className={`font-[var(--ff-font-mono)] text-[13px] ${inputTooLong ? 'text-[var(--ff-accent-warning)]' : 'text-[var(--ff-text-muted)]'}`}>
               {extractionInput.length} / {MAX_EXTRACTION_INPUT_LENGTH}
             </span>
           </div>
         </div>
       </div>
 
-      {toolMessage ? (
-        <div className="t-popover mt-3 text-sm font-semibold text-[var(--ff-text-secondary)]" role="status">
-          {toolMessage}
-        </div>
-      ) : null}
 
       {feedback ? (
         <div className="t-popover mt-3 text-sm font-semibold text-[var(--ff-accent-success)]" role="status">
@@ -199,7 +177,7 @@ export function ExtractionComposer({
       ) : null}
 
       <Link
-        className="t-control-press mt-3 inline-flex min-h-[38px] items-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
+        className="t-control-press mt-3 inline-flex min-h-11 items-center gap-2 rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-3 text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)]"
         data-testid="composer-model-settings-link"
         to={productPath('/models')}
       >
@@ -263,7 +241,7 @@ export function ExtractionComposer({
           ) : null}
           {isEditMode && onExtractAsNew ? (
             <button
-              className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="t-control-press inline-flex h-12 items-center justify-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-5 font-[var(--ff-font-ui)] text-sm font-semibold text-[var(--ff-text-secondary)] transition-colors focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--ff-accent-text)] hover:border-[var(--ff-accent-primary)] hover:text-[var(--ff-accent-text)] disabled:cursor-not-allowed disabled:opacity-60"
               disabled={disabled || awaitingSave || inputTooLong}
               onClick={onExtractAsNew}
               type="button"

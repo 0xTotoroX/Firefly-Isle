@@ -113,7 +113,7 @@ async function appShellNavigation(request) {
   try {
     return await fetch(request)
   } catch {
-    return new Response('Firefly Isle is offline. Reconnect and try again.', {
+    return new Response('MyOncode is offline. Reconnect and try again.', {
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
       status: 503,
     })

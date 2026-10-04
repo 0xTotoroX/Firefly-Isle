@@ -74,7 +74,7 @@ export function LabAnalyticsDashboard({ isLoading = false, labResults, loadError
 
       {!hasData ? (
         <PanelSurface className="p-8 text-center" theme={theme} tone="panel">
-          <div className="font-[var(--ff-font-display)] text-2xl font-black tracking-normal">暂无已保存指标</div>
+          <div className="font-[var(--ff-font-display)] text-2xl font-semibold tracking-normal">暂无已保存指标</div>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-[var(--ff-text-secondary)]">请在工作台上传血常规、血生化或肿瘤标志物报告，复核并保存后，可在这里查看指标变化。</p>
           <Link className="mt-4 inline-flex min-h-[44px] items-center rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] px-4 text-sm font-semibold" to={uploadHref}>上传化验报告</Link>
         </PanelSurface>

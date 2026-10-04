@@ -33,8 +33,10 @@ model-catalog.ts: 声明式模型目录与文字/图像默认模型。
 demo-fixtures.ts: 完全虚构的患者、化验、症状、随访和固定提取示例。
 demo-session.tsx: Demo 跨页内存 CRUD、派生统计与重置，不访问真实服务或本机持久化。
 theme.tsx: 主题、强调色和 DOM 同步；persist=false 时仅保留会话偏好。
-locale.tsx: 语言与文档语义同步；persist=false 时不读写本机偏好。
+locale.tsx: 语言、页面标题与文档语义同步；persist=false 时不读写本机偏好。
 accent.ts: 八色预设、可读强调文字和独立临床语义色。
+brand.ts: 知见 / MyOncode 名称、简介、页面标题和下载前缀；不修改持久化技术标识。
+brand.test.ts: 跨格式展示、PWA identity、存储/导出兼容及 CSP 引导脚本 hash 回归。
 copy.ts: 页面、壳层与操作反馈的中英文文案。
 privacy.ts: 隐私门控和隐私页面的共享文案。
 background-audio.tsx: 单一音频实例、播放意图、曲目切换与浏览器拦截状态。

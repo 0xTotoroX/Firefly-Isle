@@ -98,7 +98,7 @@ function readSidebarSource() {
 }
 
 function readBrandWordmarkSource() {
-  return readFileSync(new URL('../components/system/firefly-brand-wordmark.tsx', import.meta.url), 'utf8')
+  return readFileSync(new URL('../components/system/brand-wordmark.tsx', import.meta.url), 'utf8')
 }
 
 function readTopbarSource() {
@@ -152,17 +152,17 @@ describe('WorkspacePage report shell', () => {
     expect(markup).toContain('上传病历 / 检验报告')
     expect(markup).toContain('type="file"')
     expect(markup).toContain('accept="image/*,application/pdf"')
-    expect(markup).toContain('>mic</span>')
+    expect(markup).not.toContain('data-input-tool="voice-input"')
     expect(markup).toContain('0 / 8000')
   })
 
-  it('keeps voice as coming-soon while making file import a real OCR input', () => {
+  it('only exposes available file import tools', () => {
     const markup = renderWorkspace('light')
 
     expect(markup).toContain('data-input-tool="import-record-file"')
-    expect(markup).toContain('data-input-tool="voice-input"')
+    expect(markup).not.toContain('data-input-tool="voice-input"')
     expect(markup).not.toContain('title="上传病历 / 检验报告暂未开放"')
-    expect(markup).toContain('title="语音输入暂未开放"')
+    expect(markup).not.toContain('title="语音输入暂未开放"')
   })
 
   it('links the composer to the standalone model settings page carrying the provider panel', () => {
@@ -490,7 +490,7 @@ describe('WorkspacePage report shell', () => {
     expect(topbarSource).not.toContain('设置，敬请期待')
     expect(markup).not.toContain('data-testid="topbar-contact-card"')
     expect(topbarSource).toContain('topbar-contact-card')
-    expect(topbarSource).toContain('小生才疏学浅，有任何问题都可以通过')
+    expect(topbarSource).toContain('问题或建议，请通过以下邮箱联系：')
     expect(topbarSource).toContain("const CONTACT_EMAIL = 'ghibli1024@gmail.com'")
     expect(topbarSource).toContain('writeClipboardText(CONTACT_EMAIL)')
     // 剪贴板实现抽到了 @/lib/clipboard，顶栏只保留调用点
@@ -502,59 +502,22 @@ describe('WorkspacePage report shell', () => {
     expect(topbarSource).toContain('copy.shell.topbar.contact.copied')
   })
 
-  it('renders the sidebar brand title as an artistic wordmark', () => {
+  it('renders the current localized brand in the sidebar with readable shared typography', () => {
     localeStorage.set('firefly-sidebar-expanded-width-v8', '220')
     const markup = renderWorkspace('dark')
-    const brandWordmarkSource = readBrandWordmarkSource()
-    const sidebarSource = readSidebarSource()
-
-    expect(markup).toContain('data-brand-art-wordmark="true"')
     expect(markup).toContain('data-brand-wordmark="true"')
-    expect(markup).toContain('data-brand-firefly-glow="true"')
-    expect(markup).toContain('aria-hidden="true"')
-    expect(markup).toContain('一页<span')
-    expect(markup).toContain('萤</span>屿')
-    expect(markup).not.toContain('Firefly Isle')
-    expect(brandWordmarkSource).toContain("fontFamily: 'var(--ff-font-display)'")
-    expect(brandWordmarkSource).toContain("textShadow: '.35px 0 var(--ff-accent-primary), 0 0 12px rgba(232,93,42,0.28)'")
-    expect(brandWordmarkSource).toContain('fireflyGlyphAuraStyle')
-    expect(brandWordmarkSource).toContain('radial-gradient(circle at 58% 50%, color-mix(in srgb, var(--ff-accent-primary) 44%, transparent)')
-    expect(brandWordmarkSource).toContain("filter: 'blur(4px)'")
-    expect(brandWordmarkSource).toContain("inset: '-0.12em -0.08em -0.08em -0.1em'")
-    expect(brandWordmarkSource).not.toContain("filter: 'blur(7px)'")
-    expect(brandWordmarkSource).toContain("scale === 'login' ? 'w-[min(22rem,82%)]' : 'w-[92px]'")
-    expect(brandWordmarkSource).not.toContain('w-14 max-w-full')
-    expect(brandWordmarkSource).not.toContain('STXingkai_SC')
-    expect(brandWordmarkSource).not.toContain('STXingkai SC')
-    expect(brandWordmarkSource).not.toContain('STKaiti')
-    expect(brandWordmarkSource).not.toContain('Kaiti SC')
-    expect(sidebarSource).toContain("compact ? 'items-center justify-center' : 'items-end justify-start gap-1.5'")
+    expect(markup).toContain('知见')
+    expect(markup).not.toContain('data-brand-firefly-glow')
+    expect(readBrandWordmarkSource()).toContain('font-[var(--ff-font-ui)]')
   })
 
-  it('renders only the English brand wordmark when locale is English', () => {
+  it('renders the English brand when locale is English', () => {
     localeStorage.set('firefly-sidebar-expanded-width-v8', '220')
     setLocale('en')
     const markup = renderWorkspace('dark')
-    const brandWordmarkSource = readBrandWordmarkSource()
-
-    expect(markup).toContain('data-brand-art-wordmark="true"')
     expect(markup).toContain('data-brand-wordmark="true"')
-    expect(markup).toContain('data-brand-firefly-glow="true"')
-    expect(markup).toContain('aria-hidden="true"')
-    expect(markup).toContain('Firefly</span> Isle')
-    expect(brandWordmarkSource).toContain('const englishSidebarBrandWordmarkStyle')
-    expect(brandWordmarkSource).toContain("fontFamily: 'var(--ff-font-display)'")
-    expect(brandWordmarkSource).toContain('const englishLoginBrandWordmarkStyle')
-    expect(brandWordmarkSource).toContain('fontFamily: \'"Snell Roundhand", "Savoye LET", "Apple Chancery", cursive\'')
-    expect(brandWordmarkSource).toContain("scale === 'login' ? englishLoginBrandWordmarkStyle : englishSidebarBrandWordmarkStyle")
-    expect(brandWordmarkSource).toContain("'overflow-visible whitespace-nowrap text-[25px] font-black leading-none tracking-normal'")
-    expect(brandWordmarkSource).not.toContain("'truncate whitespace-nowrap text-[23px] font-black tracking-normal'")
-    expect(brandWordmarkSource).not.toContain("'overflow-visible whitespace-nowrap text-[29px] font-bold tracking-normal'")
-    expect(brandWordmarkSource).not.toContain("'overflow-visible whitespace-nowrap text-[27px] font-black tracking-normal'")
-    expect(brandWordmarkSource).not.toContain("transform: 'translateY(3px)'")
-    expect(brandWordmarkSource).not.toContain('"Avenir Next", "Trebuchet MS", system-ui, sans-serif')
-    expect(markup).not.toContain('一页')
-    expect(markup).not.toContain('萤</span>屿')
+    expect(markup).toContain('MyOncode')
+    expect(markup).not.toContain('Firefly Isle')
   })
 
   it('uses a low-intensity active sidebar row with a left marker instead of a heavy card', () => {
@@ -661,8 +624,8 @@ describe('WorkspacePage report shell', () => {
     expect(topbarSource).toContain('originStoryOpen')
     expect(topbarSource).toContain('originStoryButtonRef')
     expect(topbarSource).toContain('          eco')
-    expect(topbarSource).toContain("title={locale === 'zh' ? '为什么做一页萤屿' : 'Why Firefly Isle'}")
-    expect(topbarSource).toContain("aria-label={locale === 'zh' ? '为什么做一页萤屿' : 'Why Firefly Isle'}")
+    expect(topbarSource).toContain("title={locale === 'zh' ? `关于${brand.name.zh}` : `About ${brand.name.en}`}")
+    expect(topbarSource).toContain("aria-label={locale === 'zh' ? `关于${brand.name.zh}` : `About ${brand.name.en}`}")
     expect(topbarSource).not.toContain('helpButtonRef')
     expect(topbarSource).not.toContain('          help')
   })

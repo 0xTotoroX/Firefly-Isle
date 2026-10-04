@@ -2,8 +2,8 @@
 > L2 | 父级: [AGENTS.md](../AGENTS.md)
 
 成员清单
-firefly-mark.tsx: 渲染一页萤屿“岛屿微光灯塔”透明品牌资产，被登录页、展开侧栏与 compact icon-only 侧栏复用，确保生产 mark 与 favicon 同源且不与标题绑定
-firefly-brand-wordmark.tsx: 统一一页萤屿品牌字标，输出紧凑中英文侧栏 display token、英文登录页 Snell 艺术字、萤字橙色微光、渐隐横线与登录页可选副标题，被侧栏与登录页复用
+brand-mark.tsx: 沿用灯塔图标与 favicon 素材，供登录和侧栏复用；新品牌候选图标未确认。
+brand-wordmark.tsx: 从 brand.ts 读取中英文名称，渲染登录和侧栏字标，共用可读 UI 字体。
 demo-mode-banner.tsx: 所有演示页共用的虚构资料说明、会话重置和明确退出入口。
 network-status-banner.tsx: PWA 网络状态提示条，消费全局在线状态与 locale，只在离线时固定于安全区内提示需要重新连接
 surfaces.tsx: 统一 Sidebar、TopBar、Main、Panel、Section 与 Action surface 的 V3 主题化结构基元，固定 1px 边界、8px 主圆角语义与 style passthrough

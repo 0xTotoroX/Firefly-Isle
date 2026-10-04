@@ -124,7 +124,7 @@ describe('export-record helpers', () => {
     expect(addPage).toHaveBeenCalledTimes(2)
     expect(toDataURL).toHaveBeenCalledWith('image/jpeg', 0.94)
     expect(addImage.mock.calls.every((call) => call[1] === 'JPEG' && call[2] === 10 && call[3] === 10 && call[4] === 190 && call[7] === 'FAST')).toBe(true)
-    expect(save).toHaveBeenCalledWith(expect.stringMatching(/^firefly-\d{4}-\d{2}-\d{2}\.pdf$/))
+    expect(save).toHaveBeenCalledWith(expect.stringMatching(/^myoncode-\d{4}-\d{2}-\d{2}\.pdf$/))
   })
 
   it('splits an oversized paragraph between measured lines and always advances', async () => {

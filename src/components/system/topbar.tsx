@@ -4,6 +4,7 @@
  * [POS]: src/components/system 的共享顶部工具条，统一 dark/light 页面名、背景音乐直接开关、创作初衷入口、邮件 hover 联系弹窗与邮箱复制反馈，并通过单一 overlay 状态避免弹层互相叠加。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
+import { brand } from '@/lib/brand'
 import { useEffect, useRef, useState } from 'react'
 
 import { writeClipboardText } from '@/lib/clipboard'
@@ -112,12 +113,12 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
         <button
           aria-controls="origin-story-paper"
           aria-expanded={originStoryOpen}
-          aria-label={locale === 'zh' ? '为什么做一页萤屿' : 'Why Firefly Isle'}
+          aria-label={locale === 'zh' ? `关于${brand.name.zh}` : `About ${brand.name.en}`}
           className="t-control-press flex h-10 w-10 items-center justify-center rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] transition-colors hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-text)] sm:h-11 sm:w-11"
           data-topbar-action="origin-story"
           onClick={() => setOpenOverlay((current) => (current === 'origin-story' ? null : 'origin-story'))}
           ref={originStoryButtonRef}
-          title={locale === 'zh' ? '为什么做一页萤屿' : 'Why Firefly Isle'}
+          title={locale === 'zh' ? `关于${brand.name.zh}` : `About ${brand.name.en}`}
           type="button"
         >
           <span aria-hidden="true" className="material-symbols-outlined text-[22px]">
@@ -160,7 +161,7 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
                 onPointerLeave={scheduleContactClose}
                 role="dialog"
               >
-                小生才疏学浅，有任何问题都可以通过{' '}
+                {locale === 'zh' ? '问题或建议，请通过以下邮箱联系：' : 'Questions or feedback? Contact:'}{' '}
                 <button
                   aria-describedby={contactCopyVisible ? contactStatusId : undefined}
                   aria-label={contactCopyLabel}
@@ -172,7 +173,7 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
                 >
                   {CONTACT_EMAIL}
                 </button>
-                {' '}联系我
+
                 {contactCopyVisible ? (
                   <span
                     aria-live="polite"

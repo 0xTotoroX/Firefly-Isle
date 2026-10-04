@@ -26,7 +26,7 @@ describe('PWA install metadata', () => {
       start_url?: string
     }
 
-    expect(manifest.name).toContain('Firefly Isle')
+    expect(manifest.name).toContain('MyOncode')
     expect(manifest.start_url).toBe('/')
     expect(manifest.scope).toBe('/')
     expect(manifest.display).toBe('standalone')

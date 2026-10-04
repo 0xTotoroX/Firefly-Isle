@@ -1,14 +1,15 @@
 /**
- * [INPUT]: 依赖 react 的 CSSProperties/ref/state、BackgroundMusicToggle、FireflyMark/Wordmark、LoginTraceMap、LoginStorySections、useScrollStoryMotion、AuthOverlay、locale/copy 与隐私摘要文案。
+ * [INPUT]: 依赖 react 的 CSSProperties/ref/state、BackgroundMusicToggle、BrandMark/Wordmark、LoginTraceMap、LoginStorySections、useScrollStoryMotion、AuthOverlay、locale/copy 与隐私摘要文案。
  * [OUTPUT]: 对外提供 V3LoginView，编排八章纵向滚动叙事、首尾同源登录 CTA、单一认证弹层、首屏工具区与仅在 reduced-motion 下禁用的长生命周期液体背景。
  * [POS]: components/login 的登录入口编排层，被 login-page-view facade 消费；只持有一次认证状态，不侵入认证业务语义。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
+import { brand } from '@/lib/brand'
 import { useRef, useState, type CSSProperties } from 'react'
 
 import { BackgroundMusicToggle } from '@/components/background-music-toggle'
-import { FireflyBrandWordmark } from '@/components/system/firefly-brand-wordmark'
-import { FireflyMark } from '@/components/system/firefly-mark'
+import { BrandWordmark } from '@/components/system/brand-wordmark'
+import { BrandMark } from '@/components/system/brand-mark'
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
 import { PRIVACY_POLICY_SUMMARY } from '@/lib/privacy'
@@ -92,12 +93,12 @@ function LoginPageUtilityControls({
       data-testid="login-page-utility-controls"
       style={style}
     >
-      <button className={`t-control-press inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-2 ${skin.utilityButton}`} onClick={() => preserveScrollPosition(onToggleTheme)} type="button">
+      <button className={`t-control-press inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-2 ${skin.utilityButton}`} onClick={() => preserveScrollPosition(onToggleTheme)} type="button">
         <span className="material-symbols-outlined shrink-0 text-[24px]">{isDark ? 'light_mode' : 'dark_mode'}</span>
         {getCopy(copy.shell.nav.themeToggle, locale)}
       </button>
       <span className={`h-5 w-px ${skin.utilityDivider}`} />
-      <button className={`t-control-press inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-2 ${skin.utilityButton}`} onClick={() => preserveScrollPosition(toggleLocale)} type="button">
+      <button className={`t-control-press inline-flex min-h-11 shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-2 ${skin.utilityButton}`} onClick={() => preserveScrollPosition(toggleLocale)} type="button">
         <span className="material-symbols-outlined shrink-0 text-[24px]">g_translate</span>
         {getCopy(copy.shell.nav.languageToggle, locale)}
       </button>
@@ -107,17 +108,11 @@ function LoginPageUtilityControls({
   )
 }
 
-function LoginSecurityStatus({ locale, theme }: { locale: 'zh' | 'en'; theme: Theme }) {
-  const skin = loginThemeSkins[theme]
-
+function LoginPrivacyNote({ locale }: { locale: 'zh' | 'en' }) {
   return (
-    <div
-      className={`inline-flex min-h-[46px] items-center gap-3 rounded-[14px] border px-4 text-sm font-bold backdrop-blur-md ${theme === 'dark' ? 'border-white/10 bg-white/[0.045]' : 'border-[#a9c3c5]/42 bg-white/62'} ${skin.security}`}
-      data-testid="login-security-status"
-    >
-      <span className="h-2 w-2 rounded-[var(--ff-radius-full)] bg-[var(--ff-accent-success)] shadow-[0_0_12px_rgba(90,169,116,0.44)]" />
-      <span>{locale === 'zh' ? '安全访问路径已加密' : 'Secure access path encrypted'}</span>
-    </div>
+    <a className="inline-flex min-h-11 items-center text-sm leading-6 text-[var(--ff-text-secondary)] underline decoration-[var(--ff-border-default)] underline-offset-4 hover:text-[var(--ff-text-primary)]" data-testid="login-privacy-note" href="/privacy">
+      {locale === 'zh' ? '录入前，了解资料如何处理' : 'Learn how your information is handled'}
+    </a>
   )
 }
 
@@ -196,41 +191,34 @@ export function V3LoginView({
           <div className="relative z-10 flex min-h-[calc(100dvh-8rem)] flex-col md:min-h-[calc(100dvh-6rem)]">
             <div className="t-stagger flex flex-col gap-6 md:flex-row md:items-start" style={{ '--t-order': 0 } as CSSProperties}>
               <div className="flex min-w-0 items-center gap-4 md:gap-6">
-                <FireflyMark className="h-16 w-16 md:h-[72px] md:w-[72px]" />
+                <BrandMark className="h-16 w-16 md:h-[72px] md:w-[72px]" />
                 <div className="min-w-0">
-                  <FireflyBrandWordmark className="max-w-[min(17rem,calc(100vw-7rem))] md:max-w-[22rem]" locale={locale} scale="login" />
+                  <BrandWordmark className="max-w-[min(17rem,calc(100vw-7rem))] md:max-w-[22rem]" locale={locale} scale="login" />
                 </div>
               </div>
             </div>
 
             <div className="t-stagger mt-[12vh] w-full max-w-[calc(100vw-3.5rem)] md:mt-[16vh] md:max-w-[48rem]" style={{ '--t-order': 1 } as CSSProperties}>
               <div
-                className={`mb-5 inline-flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.18em] md:text-sm ${theme === 'dark' ? 'text-white/44' : 'text-[#455c58]/62'}`}
+                className={`mb-5 inline-flex items-center gap-3 text-sm font-medium leading-6 text-[var(--ff-text-secondary)]`}
                 data-testid="login-intro-eyebrow"
               >
                 <span className="h-0.5 w-10 bg-[var(--ff-accent-primary)]" />
-                <span>Clinical timeline workspace</span>
+                <span>{brand.tagline[locale]}</span>
               </div>
-              <h1 className={`max-w-[calc(100vw-3.5rem)] break-words text-[clamp(2.5rem,4vw,3.5rem)] font-black leading-[1.08] tracking-normal md:max-w-[48rem] ${skin.heading}`} id="story-hero-title">
-                {locale === 'zh' ? (
-                  <>
-                    <span className="md:hidden">临床治疗<br />时间线工作台</span>
-                    <span className="hidden md:inline">临床治疗时间线工作台</span>
-                  </>
-                ) : (
-                  'Clinical Treatment Timeline Workspace'
-                )}
+              <h1 className={`max-w-[calc(100vw-3.5rem)] break-words text-[clamp(2rem,4vw,3.5rem)] font-semibold leading-[1.25] tracking-normal md:max-w-[48rem] ${skin.heading}`} id="story-hero-title">
+                {locale === 'zh' ? '治疗的每一步，都有迹可循。' : 'Keep track of every step of care.'}
               </h1>
-              <p className={`t-stagger mt-7 max-w-[40rem] text-xl font-semibold leading-8 md:text-[1.35rem] ${skin.bodyCopy}`} style={{ '--t-order': 2 } as CSSProperties}>
+              <p className={`t-stagger mt-7 max-w-[40rem] text-base leading-8 md:text-lg ${skin.bodyCopy}`} style={{ '--t-order': 2 } as CSSProperties}>
                 {locale === 'zh'
-                  ? '把复杂治疗史整理为可追溯的结构化病历。'
-                  : 'Transform complex treatment history into an auditable structured clinical record.'}
+                  ? '集中整理检查、诊断、用药与治疗记录，持续追踪指标、副作用和随访。让患者和家属回看治疗经过，就诊沟通时有据可查。'
+                  : 'Keep tests, diagnoses, medicines and treatment records together. Track labs, side effects and follow-ups, and bring a clear history to each appointment.'}
               </p>
             </div>
 
             <div className="t-stagger mt-10 flex flex-col gap-4 sm:flex-row sm:items-center" style={{ '--t-order': 3 } as CSSProperties}>
               <IntroAccessCta isOpen={isAuthOpen} locale={locale} onOpen={openAuth} />
-              <LoginSecurityStatus locale={locale} theme={theme} />
+              <LoginPrivacyNote locale={locale} />
             </div>
           </div>
         </section>

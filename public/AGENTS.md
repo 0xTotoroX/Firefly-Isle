@@ -4,10 +4,10 @@
 成员清单
 icon.ico: 旧版时间线脉冲品牌 icon 多尺寸容器，保留作历史兼容但不再由 index.html 作为当前 favicon 引用
 logo-island-lighthouse.svg: 岛屿微光灯塔方案的 standalone SVG 容器，内嵌当前 PNG 以保证像素级一致而不做失真的矢量描摹
-logo-island-lighthouse.png: 从生成板第 1 案“岛屿微光灯塔”直接裁取并重建透明背景的 1024x1024 PNG 品牌 mark，是当前选定方案的位图真相源
+logo-island-lighthouse.png: 从生成板第 1 案“岛屿微光灯塔”直接裁取并重建透明背景的 1024x1024 PNG 品牌 mark，为沿用的过渡图标；新品牌候选未确认
 logo-island-lighthouse.webp: 由当前 PNG 以 lossless WebP 转出的透明品牌 mark，用于现代 Web 轻量加载场景
 logo-island-lighthouse.ico: 由当前 PNG 多尺寸封装的 ICO 品牌 mark，包含 16/24/32/48/64/128/256 图标尺寸用于 favicon/系统入口
-manifest.webmanifest: PWA 安装 manifest，定义一页萤屿应用名、启动 URL、display、主题色与公开图标集合
+manifest.webmanifest: PWA 安装 manifest，定义知见 / MyOncode 展示名称（安装 identity 保留）、启动 URL、display、主题色与公开图标集合
 material-symbols-license.txt: 随应用分发的 Material Symbols 图标字体版权与 SIL OFL 1.1 许可。
 sw.js: 隐私优先 service worker，仅缓存规范公共壳与构建资产，构建时注入清单和版本；导航中的授权码、认证参数及患者 ID 不写入缓存元信息。
 icons/: PWA 安装图标目录，保存由当前品牌 mark 生成的普通、maskable 与 Apple touch icon 静态资产

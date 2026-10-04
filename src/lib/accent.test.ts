@@ -46,7 +46,7 @@ it.each(['dark', 'light'] as const)('keeps all eight presets readable in %s, inc
     const stops = deriveAccentStops(preset.hex, theme)
     expect(ratio(stops.primary, stops.foreground)).toBeGreaterThanOrEqual(4.5)
     expect(ratio(stops.strong, stops.foreground)).toBeGreaterThanOrEqual(4.5)
-    const surfaces = theme === 'dark' ? ['#000000', '#111111', '#181D20', stops.soft] : ['#FFFFFF', '#F1F0EC', '#F4F4F2', stops.soft]
+    const surfaces = theme === 'dark' ? ['#000000', '#111111', '#1A1A1A', stops.soft] : ['#FFFFFF', '#F5F5F5', '#F5F5F5', stops.soft]
     for (const surface of surfaces) {
       for (const foreground of [stops.text, stops.critical, stops.low, stops.success, stops.warning]) {
         expect(ratio(surface, foreground), `${preset.id}: ${foreground} on ${surface}`).toBeGreaterThanOrEqual(4.5)

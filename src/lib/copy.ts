@@ -1,9 +1,10 @@
 /**
- * [INPUT]: 依赖 @/lib/locale 的 Locale 类型，承载 app shell、background audio、login、workspace、record 的本地化文案字典。
+ * [INPUT]: 依赖 brand 名称与简介、@/lib/locale 的 Locale 类型，承载 app shell、background audio、login、workspace、record 的本地化文案字典。
  * [OUTPUT]: 对外提供 copy 字典、getCopy 与按 locale 取值的辅助类型。
  * [POS]: lib 的文案真相源，集中管理页面可见文本、顶栏邮件复制反馈、背景音乐播放/暂停/拦截语义、OCR/编辑/新病历动作、BMI 标签、病程资料空态与重试按钮文案，禁止组件继续内联双语字符串。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
+import { brand } from '@/lib/brand'
 import type { Locale } from '@/lib/locale'
 
 type LocaleText = Record<Locale, string>
@@ -115,8 +116,8 @@ export const copy = {
     viewAnalytics: text('查看指标', 'View analytics'),
     emptyHeading: text('从第一份病历开始', 'Start with your first record'),
     emptyDescription: text(
-      '还没有病历。把治疗经过或检验报告粘贴到工作台，一次结构化提取即可生成可追溯的一页档案。',
-      'No records yet. Paste a treatment history or lab report into the workspace; one structured extraction builds a traceable one-page record.',
+      '还没有病历。把治疗经过或检验报告粘贴到工作台，提取后核对资料，逐步建立可持续补充的治疗记录。',
+      'No records yet. Paste a treatment history or lab report into the workspace; review the extracted details and build a record you can continue updating.',
     ),
     emptyAction: text('前往工作台', 'Go to workspace'),
     loadFailed: text('总览数据读取失败，请检查网络后重试。', 'Could not load dashboard data. Check your network and retry.'),
@@ -321,11 +322,11 @@ export const copy = {
     ],
   },
   donate: {
-    title: text('支持萤屿', 'Support Firefly Isle'),
+    title: text(`支持${brand.name.zh}`, `Support ${brand.name.en}`),
     eyebrow: text('公益项目', 'Public project'),
     description: text(
-      '一页萤屿是公益项目，全部功能免费。捐赠完全自愿，不解锁任何能力，只用来维持服务器与模型调用。',
-      'Firefly Isle is a public project. Every feature stays free. Donations are voluntary and never unlock extra capabilities; they only keep hosting and model calls running.',
+      `${brand.name.zh}是公益项目，全部功能免费。捐赠完全自愿，不解锁任何能力，只用来维持服务器与模型调用。`,
+      `${brand.name.en} is a public project. Every feature stays free. Donations are voluntary and never unlock extra capabilities; they only keep hosting and model calls running.`,
     ),
     amountLabel: text('选择金额', 'Choose an amount'),
     customLabel: text('自定义（美元）', 'Custom (USD)'),
@@ -347,7 +348,7 @@ export const copy = {
     localeLabel: text('界面语言', 'Interface language'),
     themeLabel: text('外观主题', 'Appearance'),
     accentLabel: text('强调色', 'Accent'),
-    donateSection: text('支持萤屿', 'Support'),
+    donateSection: text(`支持${brand.name.zh}`, 'Support'),
     donateLink: text('打开捐赠页', 'Open donation page'),
     saveButton: text('保存资料', 'Save Profile'),
     savingButton: text('保存中…', 'Saving…'),
@@ -399,14 +400,14 @@ export const copy = {
   shell: {
     brand: {
       darkHeader: text('档案系统 V1', 'Archive System V1'),
-      darkTitle: text('一页萤屿', 'Firefly Isle'),
-      darkSubtitle: text('临床 AI 控制台', 'Clinical AI Console'),
-      lightTitle: text('一页萤屿', 'Firefly Isle'),
-      lightSubtitle: text('临床 AI 工作台', 'Clinical AI Workspace'),
+      darkTitle: brand.name,
+      darkSubtitle: text('治疗信息工作台', 'Treatment workspace'),
+      lightTitle: brand.name,
+      lightSubtitle: text('治疗信息工作台', 'Treatment workspace'),
     },
     topbar: {
       volume: text('第 01 卷 · 第 52 期', 'VOL. 01 — NO. 52'),
-      workspace: text('临床 AI 工作台', 'Clinical AI Workspace'),
+      workspace: text('治疗信息工作台', 'Treatment workspace'),
       established: text('创立于 2024', 'EST. 2024'),
       contact: {
         label: text('联系我', 'Contact'),
@@ -437,9 +438,9 @@ export const copy = {
   },
   login: {
     footer: {
-      copyrightDark: text('© 2024 一页萤屿档案', '© 2024 Firefly Isle Archive'),
-      secureLink: text('安全链路已激活', 'Secure Link Active'),
-      copyrightLight: text('© 2024 一页萤屿档案系统', '© 2024 Firefly Isle Archive System'),
+      copyrightDark: text(`© 2024 ${brand.name.zh}档案`, `© 2024 ${brand.name.en} Archive`),
+      secureLink: text('查看隐私说明', 'Read privacy information'),
+      copyrightLight: text(`© 2024 ${brand.name.zh}档案系统`, `© 2024 ${brand.name.en} Archive System`),
       privacyPolicy: text('隐私政策', 'Privacy Policy'),
       systemStatus: text('系统状态', 'System Status'),
       supportCluster: text('支持集群', 'Support Cluster'),
@@ -468,11 +469,11 @@ export const copy = {
       google: text('Google', 'Google'),
       emailLabel: text('注册邮箱', 'Registered Email'),
       emailLabelLight: text('电子邮箱', 'Electronic Mail'),
-      emailPlaceholder: text('输入临床邮箱', 'Enter clinical email'),
+      emailPlaceholder: text('输入邮箱地址', 'Enter email address'),
       emailPlaceholderLight: text('输入邮箱地址', 'Enter email address'),
-      passwordLabel: text('加密密钥', 'Encryption Key'),
+      passwordLabel: text('密码', 'Password'),
       passwordLabelLight: text('密码', 'Password'),
-      passwordPlaceholder: text('输入 256 位加密密钥', 'Enter 256-bit encryption key'),
+      passwordPlaceholder: text('输入密码', 'Enter password'),
       passwordPlaceholderLight: text('••••••••', '••••••••'),
       anonymous: text('无需登录，直接使用匿名会话', 'Use anonymous session without signing in'),
       footerPrivacyPrefix: text('继续即表示你同意', 'By continuing, you agree to the'),
@@ -483,14 +484,14 @@ export const copy = {
     lightHero: {
       titleLine1: text('把复杂治疗史', 'Turn complex treatment history'),
       titleLine2: text('整理成一页纸', 'into one page'),
-      body: text('在数字化医疗的洪流中，信息的碎片化成为了精准诊疗的阻碍。一页萤屿利用先进的语义提取引擎，将跨度数年的电子病历、检验报告及主观叙述，浓缩为具备高度逻辑性的临床全景。我们不只是在整理数据，更是在重构生命叙事。', 'In digital medicine, fragmented information blocks precise care. Firefly Isle uses semantic extraction to condense years of records, lab reports, and narratives into a coherent clinical panorama. We do not just organize data; we reconstruct the patient story.'),
+      body: brand.description,
       precisionTag: text('精度 // 01', 'Precision // 01'),
       precisionTitle: text('结构化重塑', 'Structured Remodeling'),
-      precisionBody: text('自动识别 140 余种临床实体，将非结构化文本转化为标准医学图谱。', 'Automatically identifies more than 140 clinical entities and converts unstructured text into a standardized medical graph.'),
+      precisionBody: text('辅助提取病历字段，保留人工核对和补充。', 'Extract record fields for your review and completion.'),
       intelligenceTag: text('智能 // 02', 'Intelligence // 02'),
       intelligenceTitle: text('时间轴推理', 'Timeline Reasoning'),
       intelligenceBody: text('跨时空对比关键指标变化，自动勾勒病情进展与治疗反应曲线。', 'Compares key indicators across time and automatically maps disease progression and treatment response.'),
-      certification: text('临床数据加密标准 ISO-27001 认证', 'Clinical Data Encryption Standard ISO-27001 Certified'),
+      certification: text('AI 提取后请核对原始报告', 'Review AI output against original reports'),
     },
     stats: {
       uptime: text('运行时间', 'Uptime'),
@@ -542,7 +543,7 @@ export const copy = {
     },
     report: {
       title: text('临床结构化报告', 'Structured Clinical Report'),
-      generatedBy: text('由一页萤屿 AI 档案系统生成', 'Generated by Firefly Isle AI Archive'),
+      generatedBy: text(`由${brand.name.zh} AI 档案系统生成`, `Generated by ${brand.name.en} AI Archive`),
       reportId: text('报告编号：实时草稿', 'Report ID: Live Draft'),
       missingPrefix: text('缺失字段：', 'Missing Fields: '),
       disclaimer: text('声明：本报告由人工智能辅助系统自动提取，仅供医疗专业人士参考。最终诊断需结合原始影像及病理报告。', 'Disclaimer: This report is automatically extracted by an AI-assisted system for medical professionals only. Final diagnosis must be confirmed against original imaging and pathology reports.'),
@@ -622,7 +623,7 @@ export const copy = {
       stabilityValue: text('稳定预期', 'Stable Predicted'),
       prognosisValue: text('预后偏乐观', 'Prognosis Optimistic'),
       verificationStamp: text('核验标记', 'Verification Stamp'),
-      verificationBody: text('此档案由萤屿临床 AI 自动提取并结构化。所有数据点均经过病理报告与影像诊断交叉验证。', 'This archive is automatically extracted and structured by Firefly Isle Clinical AI. Every data point is cross-checked against pathology and imaging evidence.'),
+      verificationBody: text('AI 提取内容可能有误，请对照原始资料核对。记录与趋势仅用于信息整理，不替代医生诊断或治疗建议。', 'AI extraction may contain errors. Review against original documents. Records and trends organize information and do not replace medical advice.'),
       authorizedSystem: text('授权系统', 'Authorized System'),
       scrollAudit: text('滚动审阅', 'Scroll to Audit'),
     },
@@ -648,7 +649,7 @@ export const copy = {
       newPlanBody: text('联合抗血管生成治疗以应对骨转移风险。', 'Anti-angiogenic combination therapy was selected to address bone metastasis risk.'),
       riskWarning: text('风险提示', 'Risk Warning'),
       verification: text('核验说明', 'Verification'),
-      verificationBody: text('此报告由一页萤屿临床 AI 系统根据原始病历扫描件及病理报告自动生成。结构化数据已通过三级审核。所有临床决策须由主治医师最终确认。', 'This report is automatically generated by Firefly Isle Clinical AI from original scans and pathology reports. Structured data has passed three review stages. All clinical decisions must be confirmed by the attending physician.'),
+      verificationBody: text('AI 提取内容可能有误，请对照原始资料核对。记录与趋势仅用于信息整理，不替代医生诊断或治疗建议。', 'AI extraction may contain errors. Review against original documents. Records and trends organize information and do not replace medical advice.'),
       exportPdf: text('导出 PDF', 'Export PDF'),
       editData: text('修正数据', 'Edit Data'),
       copyright: text('© 2024 临床智能档案。保留所有权利。', '© 2024 Clinical Intelligence Archive. All rights reserved.'),
@@ -667,7 +668,7 @@ export const copy = {
       confidenceLog: text('AI 置信记录', 'AI Confidence Log'),
       stabilityIndex: text('稳定性指标', 'Stability Index'),
       verificationStamp: text('核验标记：', 'Verification Stamp:'),
-      verificationBody: text('此档案由萤屿临床 AI 自动提取并结构化。所有数据点均经过病理报告与影像诊断交叉验证。', 'This archive is automatically extracted and structured by Firefly Isle Clinical AI. Every data point is cross-checked against pathology and imaging evidence.'),
+      verificationBody: text('AI 提取内容可能有误，请对照原始资料核对。记录与趋势仅用于信息整理，不替代医生诊断或治疗建议。', 'AI extraction may contain errors. Review against original documents. Records and trends organize information and do not replace medical advice.'),
       authorizedSystem: text('授权系统', 'Authorized System'),
       scrollAudit: text('滚动审阅', 'Scroll to Audit'),
       subjectId: text('受试者编号', 'Subject ID'),
@@ -704,7 +705,7 @@ export const copy = {
       newPlan: text('新方案拟定', 'New Plan'),
       riskWarning: text('风险提示', 'Risk Warning'),
       verification: text('核验说明', 'Verification'),
-      verificationBody: text('此报告由一页萤屿临床 AI 系统根据原始病历扫描件及病理报告自动生成。结构化数据已通过三级审核。所有临床决策须由主治医师最终确认。', 'This report is automatically generated by Firefly Isle Clinical AI from original scans and pathology reports. Structured data has passed three review stages. All clinical decisions must be confirmed by the attending physician.'),
+      verificationBody: text('AI 提取内容可能有误，请对照原始资料核对。记录与趋势仅用于信息整理，不替代医生诊断或治疗建议。', 'AI extraction may contain errors. Review against original documents. Records and trends organize information and do not replace medical advice.'),
       exportPdf: text('导出 PDF', 'Export PDF'),
       editData: text('修正数据', 'Edit Data'),
       copyright: text('© 2024 临床智能档案。保留所有权利。', '© 2024 Clinical Intelligence Archive. All rights reserved.'),

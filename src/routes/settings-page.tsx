@@ -4,6 +4,7 @@
  * [POS]: 账户设置；按账号加载，档案输入变化时条件同步表单，不通过 effect 复制状态。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
+import { brand } from '@/lib/brand'
 import { useDemoSession } from '@/lib/demo-session'
 import { DemoModeBanner } from '@/components/system/demo-mode-banner'
 import { useState, type ReactNode } from 'react'
@@ -112,7 +113,7 @@ export function SettingsPage({ isSigningOut, onSignOut, userIsAnonymous, userLab
         const url = URL.createObjectURL(new Blob([JSON.stringify({ demo: true, disclosure: '完全虚构的演示资料', ...demo.session.getState() }, null, 2)], { type: 'application/json' }))
         const anchor = document.createElement('a')
         anchor.href = url
-        anchor.download = 'firefly-demo-data.json'
+        anchor.download = `${brand.slug}-demo-data.json`
         anchor.click()
         URL.revokeObjectURL(url)
       } else await downloadAccountDataExport()

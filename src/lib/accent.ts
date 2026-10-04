@@ -99,7 +99,7 @@ export function deriveAccentStops(accent: string, theme: 'dark' | 'light') {
     foreground,
     strong: mix(normalized, foreground === '#FFFFFF' ? '#000000' : '#FFFFFF', 0.12),
     soft,
-    text: readableText(normalized, [soft, ...(dark ? ['#000000', '#111111', '#181D20'] : ['#FFFFFF', '#F1F0EC', '#F4F4F2'])], dark ? '#FFFFFF' : '#000000'),
+    text: readableText(normalized, [soft, ...(dark ? ['#000000', '#111111', '#1A1A1A'] : ['#FFFFFF', '#F5F5F5', '#F5F5F5'])], dark ? '#FFFFFF' : '#000000'),
     ...clinicalColors[theme],
   }
 }

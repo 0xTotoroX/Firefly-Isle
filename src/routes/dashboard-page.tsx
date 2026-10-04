@@ -49,7 +49,7 @@ function DashboardSummary({ data, onRetry }: { data: DashboardData; onRetry: () 
             <span className="text-sm font-bold text-[var(--ff-text-primary)]">{getCopy(copy.followUp.nextVisitPrefix, locale)}</span>
             <span className="font-[var(--ff-font-mono)] text-sm text-[var(--ff-text-secondary)]">{data.nextVisit.nextVisitOn}</span>
           </div>
-          <span className="font-[var(--ff-font-display)] text-2xl font-black text-[var(--ff-accent-text)]">
+          <span className="font-[var(--ff-font-display)] text-2xl font-semibold text-[var(--ff-accent-text)]">
             {data.nextVisit.daysUntil < 0 ? `${getCopy(copy.dashboard.visitDue, locale)} · ${Math.abs(data.nextVisit.daysUntil)} ${locale === 'zh' ? '天' : 'days'}` : data.nextVisit.daysUntil === 0 ? getCopy(copy.dashboard.visitToday, locale) : `${data.nextVisit.daysUntil} ${getCopy(copy.followUp.daysUntil, locale)}`}
           </span>
         </Link>
@@ -73,7 +73,7 @@ function DashboardClinicalSections({ data, onRetry }: { data: DashboardData; onR
   return (
     <div className="grid gap-4 lg:grid-cols-2">
         <section className="rounded-[var(--ff-radius-md)] border border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)] p-5">
-          <h2 className="font-[var(--ff-font-display)] text-xl font-black tracking-normal">{getCopy(copy.dashboard.abnormalTitle, locale)}</h2>
+          <h2 className="font-[var(--ff-font-display)] text-xl font-semibold tracking-normal">{getCopy(copy.dashboard.abnormalTitle, locale)}</h2>
           {data.unavailableSections.includes('labs') ? <RecordLoadFeedback isLoading={false} message={getCopy(copy.dashboard.sectionUnavailable, locale)} onRetry={onRetry} /> : data.abnormalReadings.length === 0 ? (
             <p className="mt-4 text-sm text-[var(--ff-text-muted)]">{getCopy(copy.dashboard.abnormalEmpty, locale)}</p>
           ) : (
@@ -113,7 +113,7 @@ function DashboardClinicalSections({ data, onRetry }: { data: DashboardData; onR
 
         <section className="rounded-[var(--ff-radius-md)] bg-[var(--ff-surface-panel)] p-5">
           <div className="flex items-center justify-between gap-2">
-            <h2 className="font-[var(--ff-font-display)] text-xl font-black tracking-normal">{getCopy(copy.dashboard.recentSideEffectsTitle, locale)}</h2>
+            <h2 className="font-[var(--ff-font-display)] text-xl font-semibold tracking-normal">{getCopy(copy.dashboard.recentSideEffectsTitle, locale)}</h2>
             {data.recentSideEffects.length > 0 ? (
               <Link
                 className="t-control-press text-sm font-semibold text-[var(--ff-accent-text)] hover:underline"
@@ -277,7 +277,7 @@ export function DashboardPage({ isSigningOut, onSignOut, userIsAnonymous, userLa
       />
       <MainShell className={`${topBarOffsetClass} ${sidebarOffsetClass} min-h-screen px-4 pb-8 md:px-6 md:pb-10`} theme={theme}>
         <div className={`${shellWideContentClass} t-route-reveal mt-5 md:mt-6`}>
-          <h1 className="mt-1 font-[var(--ff-font-display)] text-3xl font-black tracking-tight">{getCopy(copy.dashboard.title, locale)}</h1>
+          <h1 className="mt-1 font-[var(--ff-font-display)] text-3xl font-semibold tracking-tight">{getCopy(copy.dashboard.title, locale)}</h1>
           {demo ? <DemoDashboardContent /> : <DashboardPageContent key={user?.id} userId={user?.id ?? ''} />}
         </div>
       </MainShell>

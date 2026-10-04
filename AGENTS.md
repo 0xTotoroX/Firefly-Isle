@@ -1,4 +1,4 @@
-# Firefly-Isle — 肿瘤治疗信息管理工具
+# 知见 / MyOncode — 肿瘤全程管理工具
 Map: required
 
 Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/PostgreSQL/RLS/Edge Functions；Cloudflare Pages Functions 提供微信协议适配预研，Capacitor 8 包装同一 Web 构建。
@@ -8,7 +8,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 - 面向肿瘤患者与家属的全程治疗信息管理，核心闭环为文字/报告输入 → AI/OCR 提取 → 人工复核 → 病历持久化 → 时间线、指标、症状、随访 → 受控分享与导出。基因变异和信号通路解读仍是未来能力。
 - 17 项功能及实现/验收缺口以 [SaaS 验收表](docs/products/saas-acceptance.md)为准；不通过删功能或降低标准精简代码。本地测试、开发环境、生产服务分别验收。
 - 最新用户指令优先于文档快照。产品名及域名见 [命名记录](docs/products/product-naming.md)，部署与微信入口见 [国内上线评估](docs/products/domestic-launch.md)；不得把候选品牌或未来能力视为已上线。
-- 设计资料恢复原目录：根 [DESIGN.md](DESIGN.md) 是设计入口，[docs/design/](docs/design/AGENTS.md) 保存规范、评审板、原型和截图；旧设计系统与 Stitch 映射保留在 docs/products/archive/。Open Design 是项目外的本地工具。A/B 方案仍待用户选择；当前只做已授权的 Web 主干整理、长病历阅读和必要文字优化，不套用完整新设计或推进原生/小程序。
+- 设计资料恢复原目录：根 [DESIGN.md](DESIGN.md) 是设计入口，[docs/design/](docs/design/AGENTS.md) 保存规范、评审板、原型和截图；旧设计系统与 Stitch 映射保留在 docs/products/archive/。Open Design 是项目外的本地工具。A/B 方案仍待用户选择；当前已授权并实施 Web 主干整理、知见 / MyOncode 品牌与共通排版升级、长病历阅读和必要文字优化；不套用完整 A/B 布局或推进原生/小程序。
 - 已记录的行为合同在 [openspec/specs/AGENTS.md](openspec/specs/AGENTS.md)，活动变更在 [openspec/changes/AGENTS.md](openspec/changes/AGENTS.md)。规范需与当前实现、验收表交叉核对；旧规范不得覆盖最新用户指令，发现差异先明确待同步项，不按旧文档回退有效功能。archive 只作历史依据，不充当执行清单。根文档迁移前的详细基线与既有约定完整保存在 [repository-context.md](docs/architecture/repository-context.md)。
 - 保留有效业务逻辑、数据与后端，在当前项目逐页迁移前端；成熟版本的独立迁仓与生产切换需要各自验收。不创建第二套长期开发真相，不盲目 checkout/reset 或全局替换。
 
@@ -77,15 +77,6 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 - 状态与权限用真实 React 生命周期/数据库行为验证；UI 检查长内容、窄屏和必要失败态。测试/类型/构建成功不替代真实 provider、目标环境、发布和真机验收。
 - 提交粒度遵循 OpenSpec 变更或完成 Step 的边界；如活动合同有更具体 commit map，按其执行。相关检查通过后提交，不按每个 checkbox 建 commit。PR 标题和 squash 消息用 Conventional Commits。
 - 保留 dirty 文件和当前分支；清理以引用关系和可证明职责为依据。档案不可当执行指令，私人凭据、真实病历和导出物不入 Git；历史清理、购买、备案、外部账户和发布各自依授权执行。
-
-## Map 架构文档维护
-
-- 项目使用 Map。根 AGENTS.md 说明项目结构，模块 AGENTS.md 说明职责与协作，适用源文件用 INPUT/OUTPUT/POS 注释说明依赖、导出和定位。只保留大写 AGENTS.md，不新建工具兼容入口；父子文档使用普通相对链接。
-- 编辑前读取目标目录适用的 AGENTS.md / AGENTS.override.md 及文件契约；只补读相关且尚未加载的内容，不遍历无关目录。
-- 结构、职责、接口、依赖、数据结构或运行入口变化后，同步受影响的文件与模块说明；项目层事实变化时才更新根说明。用户明确要求维护文档时按指定范围处理。只读检查、普通测试、格式调整及非结构性修复不额外创建或维护地图。
-- 地图记录本项目可核实的职责、依赖和入口，不加入外部课程或方法论介绍。纯容器、第三方代码、生成文件、锁文件及不支持注释的格式不强加文件头。
-- 操作方式变化时同步相关已有手册；内部重构不影响操作时不扩散修改。归档保留历史事实，不作为当前执行清单。
-- 完成前核对受影响的成员、链接与描述；与实现一致后结束。文件验证不等于客户端已重新加载指令。
 
 ## 依赖升级整合
 

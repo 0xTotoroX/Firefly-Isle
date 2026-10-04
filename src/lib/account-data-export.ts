@@ -1,9 +1,10 @@
 /**
- * [INPUT]: 依赖 @/lib/supabase 的客户端与 hasSupabaseEnv，依赖 network-status 的离线判定与 OnlineRequiredError，依赖 @/lib/profile-settings 的档案读取与 ProfileSettingsError。
+ * [INPUT]: 依赖 brand 下载前缀、@/lib/supabase 的客户端与 hasSupabaseEnv，依赖 network-status 的离线判定与 OnlineRequiredError，依赖 @/lib/profile-settings 的档案读取与 ProfileSettingsError。
  * [OUTPUT]: 对外提供 buildAccountDataExport、downloadAccountDataExport API 与 AccountDataExport / AccountExportRow 类型。
  * [POS]: 按稳定 id 分页导出全部用户表；采集到下载持续绑定发起账号，排除密钥密文和分享码 hash。多次读取不代表数据库快照。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
+import { brand } from '@/lib/brand'
 import { ensureBrowserOnline } from '@/lib/network-status'
 import { getUserProfile, ProfileSettingsError } from '@/lib/profile-settings'
 import { getSupabaseClient, hasSupabaseEnv } from '@/lib/supabase'
@@ -158,7 +159,7 @@ export function buildAccountDataExport(): Promise<AccountDataExport> {
 export function buildAccountExportFileName(exportedAt = new Date()) {
   const stamp = exportedAt.toISOString().slice(0, 10)
 
-  return `firefly-isle-export-${stamp}.json`
+  return `${brand.slug}-export-${stamp}.json`
 }
 
 export function downloadAccountDataExport(): Promise<string> {

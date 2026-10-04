@@ -4,7 +4,7 @@
 成员清单
 domestic-launch.md: 国内托管、小程序技术路线、备案/类目证据与待确定的主体及发布范围。
 saas-acceptance.md: 十部分用户任务书、17项功能去向、分支整合证据与真实验收缺口的当前交付清单。
-product-naming.md: 已确认的中文知见、英文重选、专业治疗信息管理定位、新候选域名实查与待核验/待迁移边界。
+product-naming.md: 已确认的知见 / MyOncode、全程管理定位、历史域名实查与待核验/待迁移边界。
 core-scope.md: 核心用户需求、保留/移除/延后范围、组件复用与轻量验收工作流。
 prd-implementation-status.md: 历史 PRD 对应的已实现/部分/未实现盘点及入口；当前完整产品验收与服务缺口先读 saas-acceptance.md，Demo 只用本地虚构资料。
 product-priority-roadmap.md: 产品里程碑与后续排序，区分 Web/PWA、Capacitor 壳和独立小程序；历史阶段不替代当前验收清单。

@@ -30,38 +30,38 @@ const storyThemeSkins: Record<
   }
 > = {
   dark: {
-    accentLine: 'bg-[linear-gradient(90deg,#e78b4b,rgba(231,139,75,0))]',
-    body: 'text-white/58',
-    card: 'border-white/10 bg-white/[0.045] shadow-[0_24px_80px_rgba(0,0,0,0.22)]',
-    cardMuted: 'border-white/8 bg-black/18',
-    eyebrow: 'text-[#e7a16d]',
-    frame: 'border-white/10 bg-[#071013]/92 shadow-[0_36px_120px_rgba(0,0,0,0.34)]',
-    heading: 'text-[#f4f0e8]',
-    labsSection: 'bg-[#061012]',
-    layerGlow: 'bg-[radial-gradient(circle,rgba(95,150,146,0.16),rgba(95,150,146,0)_68%)]',
-    line: 'bg-white/10',
-    problemSection: 'bg-[#03090b]',
-    section: 'bg-[#071013]',
-    tableLine: 'border-white/10',
-    timelineSection: 'bg-[#050d10]',
-    viewsSection: 'bg-[#020709]',
+    accentLine: 'bg-[var(--ff-accent-primary)]',
+    body: 'text-[var(--ff-text-secondary)]',
+    card: 'border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)]',
+    cardMuted: 'border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)]',
+    eyebrow: 'text-[var(--ff-accent-text)]',
+    frame: 'border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)]',
+    heading: 'text-[var(--ff-text-primary)]',
+    labsSection: 'bg-[var(--ff-surface-inset)]',
+    layerGlow: 'bg-transparent',
+    line: 'bg-[var(--ff-border-default)]',
+    problemSection: 'bg-[var(--ff-surface-base)]',
+    section: 'bg-[var(--ff-surface-base)]',
+    tableLine: 'border-[var(--ff-border-default)]',
+    timelineSection: 'bg-[var(--ff-surface-inset)]',
+    viewsSection: 'bg-[var(--ff-surface-base)]',
   },
   light: {
-    accentLine: 'bg-[linear-gradient(90deg,#d9773f,rgba(217,119,63,0))]',
-    body: 'text-[#536b67]',
-    card: 'border-[#b9cfd0]/62 bg-white/72 shadow-[0_24px_70px_rgba(98,124,129,0.13)]',
-    cardMuted: 'border-[#c7d9da]/76 bg-[#f6fbfa]/86',
-    eyebrow: 'text-[#bd6232]',
-    frame: 'border-[#b7cdcf]/64 bg-white/86 shadow-[0_34px_90px_rgba(98,124,129,0.18)]',
-    heading: 'text-[#172522]',
-    labsSection: 'bg-[#eef6f5]',
-    layerGlow: 'bg-[radial-gradient(circle,rgba(119,176,169,0.20),rgba(119,176,169,0)_68%)]',
-    line: 'bg-[#8eaeb2]/30',
-    problemSection: 'bg-[#f7fbfb]',
-    section: 'bg-[#eff7f6]',
-    tableLine: 'border-[#bed1d2]/68',
-    timelineSection: 'bg-[#f7fbfa]',
-    viewsSection: 'bg-[#eaf4f3]',
+    accentLine: 'bg-[var(--ff-accent-primary)]',
+    body: 'text-[var(--ff-text-secondary)]',
+    card: 'border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)]',
+    cardMuted: 'border-[var(--ff-border-default)] bg-[var(--ff-surface-inset)]',
+    eyebrow: 'text-[var(--ff-accent-text)]',
+    frame: 'border-[var(--ff-border-default)] bg-[var(--ff-surface-panel)]',
+    heading: 'text-[var(--ff-text-primary)]',
+    labsSection: 'bg-[var(--ff-surface-inset)]',
+    layerGlow: 'bg-transparent',
+    line: 'bg-[var(--ff-border-default)]',
+    problemSection: 'bg-[var(--ff-surface-base)]',
+    section: 'bg-[var(--ff-surface-base)]',
+    tableLine: 'border-[var(--ff-border-default)]',
+    timelineSection: 'bg-[var(--ff-surface-inset)]',
+    viewsSection: 'bg-[var(--ff-surface-base)]',
   },
 }
 
@@ -73,7 +73,7 @@ function StoryEyebrow({ index, label, theme }: { index: string; label: string; t
   const skin = storyThemeSkins[theme]
 
   return (
-    <div className={`inline-flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.2em] md:text-sm ${skin.eyebrow}`}>
+    <div className={`inline-flex items-center gap-3 text-sm font-medium leading-6 ${skin.eyebrow}`}>
       <span className={`h-px w-10 ${skin.accentLine}`} />
       <span>{index}</span>
       <span aria-hidden="true">/</span>
@@ -94,7 +94,7 @@ function SectionHeading({
   theme: Theme
 }) {
   return (
-    <h2 className={`text-balance whitespace-pre-line text-[clamp(2.35rem,5.5vw,5.6rem)] font-black leading-[0.98] tracking-[-0.045em] ${storyThemeSkins[theme].heading} ${className}`} id={id}>
+    <h2 className={`text-balance whitespace-pre-line text-[clamp(1.75rem,3vw,3rem)] font-semibold leading-[1.2] tracking-normal ${storyThemeSkins[theme].heading} ${className}`} id={id}>
       {children}
     </h2>
   )
@@ -182,19 +182,19 @@ function IntakeSection({ locale, theme }: { locale: Locale; theme: Theme }) {
       icon: 'edit_note',
       title: text(locale, '自然语言录入', 'Natural-language intake'),
       copy: text(locale, '按真实叙述记录诊断、治疗、检查与变化，不必先适配表格。', 'Describe diagnosis, treatment, tests, and changes in the order you know them—without adapting to a form first.'),
-      meta: text(locale, 'INPUT / CLINICAL NARRATIVE', 'INPUT / CLINICAL NARRATIVE'),
+      meta: text(locale, '从治疗经过开始', 'Start with your history'),
     },
     {
       icon: 'account_tree',
       title: text(locale, '结构化抽取', 'Structured extraction'),
-      copy: text(locale, '把叙述转换为统一 PatientRecord，明确基本信息、初始治疗与各治疗线。', 'Convert the narrative into one PatientRecord with explicit basic information, initial onset, and treatment lines.'),
-      meta: 'OUTPUT / PATIENT_RECORD',
+      copy: text(locale, '提取基本信息、初始治疗与后续方案，保留人工核对和补充。', 'Extract basic information, initial treatment and later regimens for review and completion.'),
+      meta: text(locale, '核对后保存', 'Review before saving'),
     },
     {
       icon: 'forum',
       title: text(locale, '按需澄清', 'Clarify only when needed'),
       copy: text(locale, '关键字段仍不足时，最多进行 3 轮澄清，并把待补项留给人工确认。', 'When critical fields remain incomplete, ask up to three clarification rounds and leave unresolved items for manual confirmation.'),
-      meta: text(locale, 'BOUNDARY / 最多 3 轮', 'BOUNDARY / UP TO 3 ROUNDS'),
+      meta: text(locale, '最多追问 3 轮', 'Up to 3 clarification rounds'),
     },
   ]
 
@@ -230,9 +230,9 @@ function IntakeSection({ locale, theme }: { locale: Locale; theme: Theme }) {
                 </span>
                 <span className={`font-[var(--ff-font-mono)] text-sm ${skin.body}`}>0{index + 1}</span>
               </div>
-              <h3 className={`mt-12 text-2xl font-black ${skin.heading}`}>{step.title}</h3>
+              <h3 className={`mt-12 text-2xl font-semibold ${skin.heading}`}>{step.title}</h3>
               <p className={`mt-4 text-base font-semibold leading-7 ${skin.body}`}>{step.copy}</p>
-              <div className={`mt-8 border-t pt-4 font-[var(--ff-font-mono)] text-[11px] font-semibold tracking-[0.12em] ${skin.tableLine} ${skin.body}`}>
+              <div className={`mt-8 border-t pt-4 font-[var(--ff-font-mono)] text-[13px] font-semibold tracking-[0.12em] ${skin.tableLine} ${skin.body}`}>
                 {step.meta}
               </div>
             </li>
@@ -265,7 +265,7 @@ function TimelineSection({ locale, theme }: { locale: Locale; theme: Theme }) {
       title: text(locale, '复发晚期', 'Relapsed advanced'),
       onset: true,
       lines: true,
-      description: text(locale, '保留初发与早期治疗，再按 lineNumber 接续晚期治疗线。', 'Preserve initial onset and early treatment, then continue advanced lines ordered by lineNumber.'),
+      description: text(locale, '保留初诊与早期治疗，再按顺序记录复发后的各次治疗。', 'Keep the original diagnosis and early treatment, then record each later course in order.'),
     },
   ]
 
@@ -283,7 +283,7 @@ function TimelineSection({ locale, theme }: { locale: Locale; theme: Theme }) {
             {text(locale, '不是所有患者，\n都该被塞进同一模板。', 'Not every patient belongs\nin the same template.')}
           </SectionHeading>
           <p className={`mt-8 max-w-2xl text-lg font-semibold leading-8 ${skin.body}`}>
-            {text(locale, '基本信息永远在前；初发区块与治疗线只在真实存在时出现。数据模型消除例外，而不是用空卡片掩盖例外。', 'Basic information always comes first. Initial onset and treatment lines appear only when present. The model removes special cases instead of hiding them behind empty cards.')}
+            {text(locale, '按实际经历组织初诊、早期治疗和后续方案，未经历的阶段不需要填写。', 'Organize the original diagnosis, early treatment and later regimens around what actually happened. Leave out stages that do not apply.')}
           </p>
         </div>
 
@@ -295,18 +295,18 @@ function TimelineSection({ locale, theme }: { locale: Locale; theme: Theme }) {
               key={archetype.code}
             >
               <div className="flex items-center justify-between gap-4">
-                <span className={`font-[var(--ff-font-mono)] text-[11px] font-bold tracking-[0.12em] ${skin.body}`}>{archetype.code}</span>
+                <span className={`font-[var(--ff-font-mono)] text-[13px] font-bold tracking-[0.12em] ${skin.body}`}>{archetype.code}</span>
                 <span className="font-[var(--ff-font-mono)] text-sm font-bold text-[var(--ff-accent-text)]">0{index + 1}</span>
               </div>
-              <h3 className={`mt-8 text-2xl font-black ${skin.heading}`}>{archetype.title}</h3>
+              <h3 className={`mt-8 text-2xl font-semibold ${skin.heading}`}>{archetype.title}</h3>
               <p className={`mt-3 min-h-[5.25rem] text-sm font-semibold leading-7 ${skin.body}`}>{archetype.description}</p>
               <div className={`mt-7 space-y-3 border-t pt-5 ${skin.tableLine}`}>
                 <div className="flex items-center justify-between gap-4 text-sm font-bold">
-                  <span className={skin.body}>initialOnset</span>
+                  <span className={skin.body}>{text(locale, '初诊与早期治疗', 'Initial treatment')}</span>
                   <span className={archetype.onset ? 'text-[var(--ff-accent-success)]' : skin.body}>{archetype.onset ? 'YES' : '—'}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4 text-sm font-bold">
-                  <span className={skin.body}>treatmentLines[]</span>
+                  <span className={skin.body}>{text(locale, '后续治疗', 'Later treatment')}</span>
                   <span className={archetype.lines ? 'text-[var(--ff-accent-success)]' : skin.body}>{archetype.lines ? 'YES' : '—'}</span>
                 </div>
               </div>
@@ -325,8 +325,8 @@ function DossierPreview({ locale, theme }: { locale: Locale; theme: Theme }) {
     <article className={`h-full rounded-[22px] border p-5 md:p-7 ${skin.cardMuted}`} data-story-view-panel="dossier">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <div className={`font-[var(--ff-font-mono)] text-[11px] font-bold tracking-[0.12em] ${skin.body}`}>DOSSIER VIEW</div>
-          <h3 className={`mt-2 text-2xl font-black ${skin.heading}`}>{text(locale, '档案视图', 'Dossier view')}</h3>
+          <div className={`font-[var(--ff-font-mono)] text-[13px] font-bold tracking-[0.12em] ${skin.body}`}>DOSSIER VIEW</div>
+          <h3 className={`mt-2 text-2xl font-semibold ${skin.heading}`}>{text(locale, '档案视图', 'Dossier view')}</h3>
         </div>
         <span className="rounded-full border border-[var(--ff-accent-success)]/24 bg-[var(--ff-accent-success)]/10 px-3 py-1 text-xs font-bold text-[var(--ff-accent-success)]">
           {text(locale, '结构完整', 'Structured')}
@@ -335,7 +335,7 @@ function DossierPreview({ locale, theme }: { locale: Locale; theme: Theme }) {
       <div className="mt-7 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
         <div className={`rounded-[18px] border p-4 ${skin.card}`}>
           <div className={`text-xs font-bold ${skin.body}`}>{text(locale, '基本信息', 'Basic information')}</div>
-          <div className={`mt-4 text-lg font-black ${skin.heading}`}>{text(locale, '诊断与分期摘要', 'Diagnosis and staging')}</div>
+          <div className={`mt-4 text-lg font-semibold ${skin.heading}`}>{text(locale, '诊断与分期摘要', 'Diagnosis and staging')}</div>
           <div className={`mt-5 h-px ${skin.line}`} />
           <div className={`mt-4 space-y-2 text-sm font-semibold ${skin.body}`}>
             <p>{text(locale, '病理与分子信息按阶段归属', 'Pathology and molecular data stay with each phase')}</p>
@@ -345,7 +345,7 @@ function DossierPreview({ locale, theme }: { locale: Locale; theme: Theme }) {
         <div className="space-y-3">
           {['01', '02', '03'].map((number, index) => (
             <div className={`flex items-center gap-4 rounded-[18px] border p-4 ${skin.card}`} key={number}>
-              <span className="font-[var(--ff-font-mono)] text-lg font-black text-[var(--ff-accent-text)]">{number}</span>
+              <span className="font-[var(--ff-font-mono)] text-lg font-semibold text-[var(--ff-accent-text)]">{number}</span>
               <div className="min-w-0 flex-1">
                 <div className={`text-sm font-extrabold ${skin.heading}`}>{text(locale, `第 ${index + 1} 线治疗`, `Treatment line ${index + 1}`)}</div>
                 <div className={`mt-1 truncate text-xs font-semibold ${skin.body}`}>{text(locale, '方案 · 疗效 · 进展依据', 'Regimen · response · progression evidence')}</div>
@@ -368,10 +368,10 @@ function TablePreview({ locale, theme }: { locale: Locale; theme: Theme }) {
 
   return (
     <article className={`h-full rounded-[22px] border p-5 md:p-7 ${skin.cardMuted}`} data-story-view-panel="table">
-      <div className={`font-[var(--ff-font-mono)] text-[11px] font-bold tracking-[0.12em] ${skin.body}`}>TIMELINE TABLE</div>
-      <h3 className={`mt-2 text-2xl font-black ${skin.heading}`}>{text(locale, '极简时间线表', 'Minimal timeline table')}</h3>
+      <div className={`font-[var(--ff-font-mono)] text-[13px] font-bold tracking-[0.12em] ${skin.body}`}>TIMELINE TABLE</div>
+      <h3 className={`mt-2 text-2xl font-semibold ${skin.heading}`}>{text(locale, '极简时间线表', 'Minimal timeline table')}</h3>
       <div className={`mt-7 overflow-hidden rounded-[18px] border ${skin.tableLine}`}>
-        <div className={`grid grid-cols-[0.72fr_1fr_1.2fr] border-b px-4 py-3 text-[11px] font-extrabold uppercase tracking-[0.12em] ${skin.tableLine} ${skin.body}`}>
+        <div className={`grid grid-cols-[0.72fr_1fr_1.2fr] border-b px-4 py-3 text-[13px] font-extrabold tracking-normal ${skin.tableLine} ${skin.body}`}>
           <span>{text(locale, '日期', 'Date')}</span>
           <span>{text(locale, '事件', 'Event')}</span>
           <span>{text(locale, '摘要', 'Summary')}</span>
@@ -398,10 +398,10 @@ function GanttPreview({ locale, theme }: { locale: Locale; theme: Theme }) {
 
   return (
     <article className={`h-full rounded-[22px] border p-5 md:p-7 ${skin.cardMuted}`} data-story-view-panel="gantt">
-      <div className={`font-[var(--ff-font-mono)] text-[11px] font-bold tracking-[0.12em] ${skin.body}`}>TREATMENT GANTT</div>
-      <h3 className={`mt-2 text-2xl font-black ${skin.heading}`}>{text(locale, '治疗线 Gantt', 'Treatment-line Gantt')}</h3>
+      <div className={`font-[var(--ff-font-mono)] text-[13px] font-bold tracking-[0.12em] ${skin.body}`}>TREATMENT GANTT</div>
+      <h3 className={`mt-2 text-2xl font-semibold ${skin.heading}`}>{text(locale, '治疗线 Gantt', 'Treatment-line Gantt')}</h3>
       <div className={`mt-7 rounded-[18px] border p-4 md:p-6 ${skin.tableLine}`}>
-        <div className={`grid grid-cols-4 text-center font-[var(--ff-font-mono)] text-[10px] font-bold ${skin.body}`}>
+        <div className={`grid grid-cols-4 text-center font-[var(--ff-font-mono)] text-[13px] font-bold ${skin.body}`}>
           <span>2024 H1</span><span>2024 H2</span><span>2025 H1</span><span>2025 H2</span>
         </div>
         <div className="mt-6 space-y-5">
@@ -441,11 +441,11 @@ function ViewsSection({ locale, theme }: { locale: Locale; theme: Theme }) {
                 {text(locale, '同一份病历，\n三种阅读距离。', 'One record.\nThree reading distances.')}
               </SectionHeading>
               <p className={`mt-7 max-w-xl text-lg font-semibold leading-8 ${skin.body}`}>
-                {text(locale, '档案看全貌，极简表看顺序，Gantt 看治疗线的时间占用。视图变化，PatientRecord 真相源不变。', 'Dossier shows context, the minimal table shows sequence, and Gantt shows treatment-line duration. The view changes; the PatientRecord truth does not.')}
+                {text(locale, '档案用于完整阅读，时间线表便于核对日期，甘特图展示各阶段的治疗时长。三种视图共用同一份记录。', 'Read the full record, check dates in a timeline table, or compare treatment durations in a Gantt chart. All views share the same record.')}
               </p>
               <div className="mt-8 flex flex-wrap gap-2" aria-hidden="true">
                 {['DOSSIER', 'TABLE', 'GANTT'].map((label) => (
-                  <span className={`rounded-full border px-3 py-1.5 font-[var(--ff-font-mono)] text-[10px] font-bold tracking-[0.1em] ${skin.tableLine} ${skin.body}`} key={label}>
+                  <span className={`rounded-full border px-3 py-1.5 font-[var(--ff-font-mono)] text-[13px] font-bold tracking-[0.1em] ${skin.tableLine} ${skin.body}`} key={label}>
                     {label}
                   </span>
                 ))}
@@ -489,7 +489,7 @@ function LabsSection({ locale, theme }: { locale: Locale; theme: Theme }) {
             </SectionHeading>
           </div>
           <p className={`max-w-2xl text-lg font-semibold leading-8 lg:justify-self-end ${skin.body}`}>
-            {text(locale, '血常规、血生化、肿瘤标志物按指标分组；趋势图必须有等价数据表，提醒只描述规则命中的变化。', 'Blood routine, biochemistry, and tumor markers are grouped by indicator. Every chart has an equivalent table, and reminders describe only rule-matched change.')}
+            {text(locale, '按时间查看化验指标，用症状日志记录副作用，保存随访计划与结果。趋势和提醒用于复核变化，不代替医生判断。', 'Track lab results over time, record side effects and keep follow-up plans and results together. Trends help review changes; they do not replace clinical judgement.')}
           </p>
         </div>
 
@@ -497,8 +497,8 @@ function LabsSection({ locale, theme }: { locale: Locale; theme: Theme }) {
           <div className={`rounded-[28px] border p-5 md:p-8 ${skin.card}`}>
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <div className={`font-[var(--ff-font-mono)] text-[11px] font-bold tracking-[0.12em] ${skin.body}`}>CA15-3 / TREND</div>
-                <div className={`mt-2 text-2xl font-black ${skin.heading}`}>{text(locale, '连续区间变化', 'Adjacent interval change')}</div>
+                <div className={`font-[var(--ff-font-mono)] text-[13px] font-bold tracking-[0.12em] ${skin.body}`}>CA15-3 / TREND</div>
+                <div className={`mt-2 text-2xl font-semibold ${skin.heading}`}>{text(locale, '连续区间变化', 'Adjacent interval change')}</div>
               </div>
               <span className="rounded-full border border-[var(--ff-accent-warning)]/28 bg-[var(--ff-accent-warning)]/10 px-3 py-1.5 text-xs font-extrabold text-[var(--ff-accent-warning)]">
                 +27.8% / +26.1%
@@ -514,7 +514,7 @@ function LabsSection({ locale, theme }: { locale: Locale; theme: Theme }) {
                   <circle cx={cx} cy={cy} fill="var(--ff-accent-primary)" key={`${cx}-${cy}`} r="7" />
                 ))}
               </svg>
-              <div className={`absolute inset-x-6 bottom-4 flex justify-between font-[var(--ff-font-mono)] text-[10px] font-bold ${skin.body}`}>
+              <div className={`absolute inset-x-6 bottom-4 flex justify-between font-[var(--ff-font-mono)] text-[13px] font-bold ${skin.body}`}>
                 <span>T1 · 18</span><span>T2 · 23</span><span>T3 · 29</span>
               </div>
             </div>
@@ -525,7 +525,7 @@ function LabsSection({ locale, theme }: { locale: Locale; theme: Theme }) {
               <div className="flex items-start gap-4">
                 <span className="material-symbols-outlined text-[30px] text-[var(--ff-accent-warning)]" aria-hidden="true">trending_up</span>
                 <div>
-                  <h3 className={`text-xl font-black ${skin.heading}`}>{text(locale, '提醒规则', 'Reminder rule')}</h3>
+                  <h3 className={`text-xl font-semibold ${skin.heading}`}>{text(locale, '提醒规则', 'Reminder rule')}</h3>
                   <p className={`mt-3 text-sm font-semibold leading-7 ${skin.body}`}>
                     {text(locale, '仅当最近两个相邻区间都上涨超过 20% 时，形成肿瘤标志物上升提醒。', 'A tumor-marker rise reminder appears only when both of the latest adjacent intervals increase by more than 20%.')}
                   </p>
@@ -533,7 +533,7 @@ function LabsSection({ locale, theme }: { locale: Locale; theme: Theme }) {
               </div>
             </div>
             <div className={`rounded-[28px] border p-5 md:p-6 ${skin.card}`}>
-              <div className={`font-[var(--ff-font-mono)] text-[11px] font-bold tracking-[0.12em] ${skin.body}`}>{text(locale, '等价数据表', 'EQUIVALENT DATA TABLE')}</div>
+              <div className={`font-[var(--ff-font-mono)] text-[13px] font-bold tracking-[0.12em] ${skin.body}`}>{text(locale, '等价数据表', 'EQUIVALENT DATA TABLE')}</div>
               <div className="mt-4 space-y-3">
                 {tableRows.map((row) => (
                   <div className={`grid grid-cols-[1fr_0.55fr_1.25fr] gap-3 border-t pt-3 text-xs ${skin.tableLine}`} key={row[1]}>
@@ -565,8 +565,8 @@ function BoundarySection({ locale, theme }: { locale: Locale; theme: Theme }) {
     },
     {
       icon: 'fingerprint',
-      title: text(locale, '只保存授权码 hash', 'Store only the code hash'),
-      copy: text(locale, '数据库不保存原始授权码；错误授权码也不泄露病历是否存在。', 'The database never stores the raw authorization code, and an invalid code does not reveal whether a record exists.'),
+      title: text(locale, '凭授权码查看', 'Access with an authorization code'),
+      copy: text(locale, '把分享链接与授权码交给需要查看的人；接收者只能阅读，不能修改记录。', 'Give the link and authorization code to the intended reader. They can view that record without changing it.'),
     },
     {
       icon: 'event_busy',
@@ -598,7 +598,7 @@ function BoundarySection({ locale, theme }: { locale: Locale; theme: Theme }) {
           {boundaries.map((boundary) => (
             <article className={`rounded-[28px] border p-6 md:p-7 ${skin.card}`} key={boundary.title}>
               <span className="material-symbols-outlined text-[34px] text-[var(--ff-accent-text)]" aria-hidden="true">{boundary.icon}</span>
-              <h3 className={`mt-10 text-xl font-black ${skin.heading}`}>{boundary.title}</h3>
+              <h3 className={`mt-10 text-xl font-semibold ${skin.heading}`}>{boundary.title}</h3>
               <p className={`mt-4 text-sm font-semibold leading-7 ${skin.body}`}>{boundary.copy}</p>
             </article>
           ))}
@@ -625,10 +625,10 @@ function ClosingSection({ closingCta, locale, theme }: { closingCta: ReactNode; 
           {text(locale, '把散落的治疗史，\n收回一条可追溯的线。', 'Bring scattered treatment history\nback into one traceable line.')}
         </SectionHeading>
         <p className={`mx-auto mt-8 max-w-2xl text-lg font-semibold leading-8 ${skin.body}`}>
-          {text(locale, '从自然语言录入开始，在同一个工作区里完成结构化、复核、三视图阅读与趋势回看。', 'Start with natural-language intake, then structure, review, inspect three views, and revisit trends in one workspace.')}
+          {text(locale, '从第一份病历开始，逐步补充治疗、指标、症状与随访，让每次就诊都能回看完整经过。', 'Start with one record and keep adding treatment, lab results, symptoms and follow-ups, so each appointment has a clear history.')}
         </p>
         <div className="mt-10 flex justify-center">{closingCta}</div>
-        <div className={`mx-auto mt-8 flex max-w-xl flex-wrap items-center justify-center gap-x-5 gap-y-2 font-[var(--ff-font-mono)] text-[11px] font-bold uppercase tracking-[0.1em] ${skin.body}`}>
+        <div className={`mx-auto mt-8 flex max-w-xl flex-wrap items-center justify-center gap-x-5 gap-y-2 font-[var(--ff-font-mono)] text-[13px] font-bold tracking-normal ${skin.body}`}>
           <span>{text(locale, '非诊断', 'Non-diagnostic')}</span>
           <span aria-hidden="true">·</span>
           <span>{text(locale, '隐私优先', 'Privacy first')}</span>
