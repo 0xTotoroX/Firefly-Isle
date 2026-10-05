@@ -3,6 +3,7 @@
 
 成员清单
 domestic-launch.md: 国内托管、小程序技术路线、备案/类目证据与待确定的主体及发布范围。
+tencent-cloud-phase-one.md: 腾讯云迁移第一阶段的现场基线、兼容性、浙江个人主体、后端/域名/微信与费用取舍；操作步骤链接至 operations/。
 saas-acceptance.md: 十部分用户任务书、17项功能去向、分支整合证据与真实验收缺口的当前交付清单。
 product-naming.md: 已确认的知见 / MyOncode、全程管理定位、历史域名实查与待核验/待迁移边界。
 core-scope.md: 核心用户需求、保留/移除/延后范围、组件复用与轻量验收工作流。

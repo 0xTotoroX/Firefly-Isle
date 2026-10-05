@@ -10,6 +10,7 @@
 | 本轮范围与验收缺口 | [核心范围](products/core-scope.md) · [17 项功能验收](products/saas-acceptance.md) |
 | 当前设计方向与 OpenDesign 材料 | [设计入口](../DESIGN.md) → [当前交接材料](design/current/README.md) · [首轮原型评审](design/PROTOTYPE-REVIEW.md)；原型不等于正式界面已落地 |
 | 品牌和名称 | [命名与定位](products/product-naming.md) |
+| 腾讯云迁移与国内上线准备 | [第一阶段盘点](products/tencent-cloud-phase-one.md) · [发布与回退操作单](operations/tencent-cloud-cutover.md) |
 | 当前行为合同与未归档清单 | [OpenSpec 入口](../openspec/README.md) |
 | 数据关系与权限 | [数据模型](architecture/data-model.md) |
 | 开发验证与增量测试 | [贡献与测试规范](../CONTRIBUTING.md#verification-incremental-by-default) |
