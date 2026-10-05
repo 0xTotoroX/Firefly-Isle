@@ -16,11 +16,11 @@ npm run build
 
 检查 `dist/index.html`、`dist/sw.js`、`dist/source/index.html`、`dist/source/source-manifest.json` 存在，manifest 的 `revision` 与要发布的 SHA 相同且 `dirty` 为 `false`。构建时需注入已审核的 `VITE_SUPABASE_URL`、`VITE_SUPABASE_ANON_KEY` 和 `VITE_SUPABASE_EDGE_FUNCTION_URL`；其他私密密钥只放服务端。只跑构建不证明目标环境或后端可用。
 
-## 1. 目标静态站预览
+## 1. 新站端到端预览
 
-优先按 EdgeOne Pages 静态项目建立独立预览：Node 22、安装 `npm ci`、构建 `npm run build`、输出 `dist/`。把 `public/_redirects` 与 `public/_headers` 逐项翻译为平台的 `edgeone.json` rewrites/headers；检查 SPA 路由回退不能吞掉 `/api/`、`/source/`、静态资源和不存在的文件。当前 Cloudflare 微信 Functions/KV 不随静态文件自动迁移。若选择 Lighthouse，则配置可信 HTTPS、静态文件服务及 `try_files $uri $uri/ /index.html`，并逐项移植响应头与缓存策略。
+按实际后端位置选择前端承载方式，再建立独立预览。选择 EdgeOne Pages 时使用 Node 22、安装 `npm ci`、构建 `npm run build`、输出 `dist/`；把 `public/_redirects` 与 `public/_headers` 逐项翻译为平台的 `edgeone.json` rewrites/headers。选择 Lighthouse 时配置可信 HTTPS、静态文件服务及 `try_files $uri $uri/ /index.html`，并逐项移植响应头与缓存策略。两条路线都要检查 SPA 路由回退不能吞掉 `/api/`、`/source/`、静态资源和不存在的文件；当前 Cloudflare 微信 Functions/KV 不随前端文件自动迁移。
 
-预览仅使用合成病历和隔离后端。验收记录至少包括：首页、登录、`/auth/callback`、密码重置、`/app`、病历读写、导出、分享过期/撤销、`/source/` 下载；手机窄屏、长病历、空/失败态；HTML 与资源 Cache-Control、CSP、HSTS；PWA 更新及私有响应不缓存。明确记录所用设备、网络、后端版本、成功/失败和截图。预览失败时恢复该测试项目的上一个 deployment，不动旧站。
+预览仅使用合成病历和隔离后端。验收记录至少包括：首页、登录、`/auth/callback`、密码重置、`/app`、病历读写、导出、分享过期/撤销、OCR/模型请求、`/source/` 下载；手机窄屏、长病历、空/失败态；HTML 与资源 Cache-Control、CSP、HSTS；PWA 更新及私有响应不缓存。分别记录页面文件下载、Auth/API/RPC、OCR 上游的耗时及失败，连同所用设备、网络、后端版本和截图保存；不能用首页加载速度代表整个应用。预览失败时恢复该测试项目的上一个 deployment，不动旧站。
 
 ## 2. 备案和正式域名门槛
 

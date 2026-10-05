@@ -19,7 +19,7 @@
 
 | 当前依赖 | 源码/配置入口 | 目标处理与验收 |
 | --- | --- | --- |
-| Vite 静态 SPA | `package.json`、`config/vite.config.ts`，输出 `dist/` | EdgeOne Pages 可作为静态站候选；配置 Node 22、`npm ci`、`npm run build`、输出 `dist`，实际预览后验收全部直接访问路由。Lighthouse 则需服务器和静态站配置。 |
+| Vite SPA 的前端文件 | `package.json`、`config/vite.config.ts`，输出 `dist/` | EdgeOne Pages 可承载 HTML、JS、CSS 等前端文件；配置 Node 22、`npm ci`、`npm run build`、输出 `dist`。这不承载病历、Auth 或 OCR 后端。Lighthouse 则需服务器和静态文件服务配置。 |
 | 路由回退 | `public/_redirects` | EdgeOne 需转换为 `edgeone.json` 的 rewrite；Lighthouse 需等效的 `try_files`。必须检查 `/auth/callback`、`/auth/reset-password`、`/record/:id`、`/share/:code`、`/source/`，不能让 API 路由落到 `index.html`。 |
 | 安全与缓存响应头 | `public/_headers`，含 CSP 哈希、HSTS、静态资源缓存 | EdgeOne 需转换为 `edgeone.json` headers；Lighthouse 需等效响应头。对 HTML、带 hash 的资源、`sw.js` 和私有接口分别验收；修改内联脚本时重新计算 CSP 哈希。 |
 | PWA | `public/sw.js`、Vite 预缓存插件、manifest | 目标站检查安装、更新和私有响应不入 Cache Storage；不能只凭构建通过。 |
@@ -29,11 +29,24 @@
 
 仓库未发现 R2、D1 或 Cloudflare Cron 的配置调用；此结论限于当前仓库，不代替 Cloudflare 账户资源审查。[EdgeOne 的 Cloudflare Pages 迁移指南](https://edgeone.cloud.tencent.com/pages/document/165485994849755136)、[构建指南](https://edgeone.cloud.tencent.com/pages/document/162936788693114880)、[Functions](https://edgeone.cloud.tencent.com/pages/document/162936866445025280)、[KV 一致性](https://edgeone.cloud.tencent.com/pages/document/162936897742577664)。
 
-## 3. 前端承载选择
+## 3. 实际运行链路与部署选择
 
-当前 Web 无 SSR。**目标静态托管选 EdgeOne Pages**，因为它直接接收 Vite 的 `dist/`，不必为静态文件长期维护 Web 服务器。它仍须在预览中证明 rewrite、响应头、PWA 和源码包行为与现网等价；本轮未创建 EdgeOne 项目，也未验证该平台的真实构建。个人浙江备案所需云资源不能假定由 EdgeOne Pages 单独提供。[Pages 地域与备案说明](https://edgeone.cloud.tencent.com/pages/document/175191784523485184)、[腾讯云备案资源](https://cloud.tencent.com/document/product/243/18908)。
+当前 Web 由 Vite 构建为 SPA 文件，没有 SSR；**产品本身是动态应用**。浏览器运行这些文件后，会直接向 Supabase 发起下列请求：
 
-若后端选**腾讯云境内自托管**，数据库应使用独立、完成容量和恢复验收的大陆实例，EdgeOne Pages 承载静态前端。现有 4 核 4GB 轻量服务器的地域和剩余时长满足公开文档中备案资源的相应条件，但仍要在腾讯云后台确认该实例可用于本人的备案订单，并先查现有负载；它不能被当作已验收的数据库主机。若后端继续留在**官方 Supabase**，可评估让现有实例实际承载静态站或必要接口，省去重复购置备案资源。前端最终是否使用 EdgeOne，仍以平台预览、个人备案资格和现有服务器角色为准。
+| 用户动作 | 实际请求链路 | 把前端文件搬到大陆后的变化 |
+| --- | --- | --- |
+| 打开页面、下载脚本与字体 | 浏览器 → Cloudflare Pages；目标可改为腾讯云 EdgeOne Pages 或 Lighthouse | 主要影响首次加载、刷新和静态资源更新。 |
+| 登录、恢复会话、读写病历/指标、打开分享 | 浏览器 → Supabase Auth / Data API / RPC → PostgreSQL | 若仍使用当前新加坡 Supabase，这条业务请求仍需跨境；前端搬家不会移动数据库。 |
+| 病历提取与报告 OCR | 浏览器 → Supabase Edge Function → 模型/OCR 供应商；OCR 会上传图片或 PDF 内容 | 除函数位置外，还取决于模型供应商、文件大小与上游处理时间。 |
+| `/demo` | 浏览器内存中的虚构资料 | 不调用真实 Supabase 和模型，可用于单独检查前端展示，但不能证明正式业务速度。 |
+
+由此，EdgeOne Pages 只是**前端文件的承载候选**，不是整个应用或数据库的迁移方案。它可直接接收 `dist/`，减少静态文件服务器维护；现有上海 Lighthouse 也足以承载这部分文件。最终选 EdgeOne 还是 Lighthouse，需连同后端位置一起，用大陆真实网络分别测页面加载、登录、病历读写和 OCR，而不能只看首页快慢。EdgeOne 预览还需证明 rewrite、响应头、PWA 和源码包行为等价；本轮尚未创建项目。选择大陆加速时，自定义域名需要 ICP 备案，个人浙江备案所需云资源不能假定由 EdgeOne Pages 单独提供。[Pages 地域与备案说明](https://edgeone.cloud.tencent.com/pages/document/175191784523485184)、[腾讯云备案资源](https://cloud.tencent.com/document/product/243/18908)。
+
+备案看的是实际对外提供服务的域名、主体和接入服务。用户自己的 Mac 是开发环境，不是本次腾讯云备案所需的大陆接入资源；Cloudflare Pages 是当前旧站的托管平台，也不能因为在腾讯云购买了一台无关服务器就把旧站视为已迁入腾讯云。若新网站或 API 使用腾讯云大陆资源对外提供服务，应按实际域名和腾讯云接入路径办理备案，取得备案号后再开放；旧 Cloudflare 站可以保留为迁移期旧环境。Cloudflare 官方说明普通 Pages 不直接在中国大陆提供 Pages 服务，不能把 Cloudflare DNS、Pages 托管和腾讯云大陆接入混为一件事。[腾讯云备案流程](https://cloud.tencent.com/document/product/243/39038)、[腾讯云接入备案说明](https://cloud.tencent.com/document/product/243/97669)、[Cloudflare 中国网络 FAQ](https://developers.cloudflare.com/china-network/faq/)。
+
+若后端选**腾讯云境内自托管**，Supabase 的数据库、Auth、API、Storage 与 Edge Functions 应在独立、完成容量和恢复验收的大陆实例上运行；它们不是 Supabase 官方在大陆提供的托管项目。现有 4 核 4GB/40GB 轻量服务器达到[官方全组件最低规格](https://supabase.com/docs/guides/self-hosting/docker)，却没有达到 8GB+/80GB+ 的建议规格，还要留出操作系统、既有服务、日志、增长与恢复空间，因此不把“能启动”写成正式一体机的容量结论。现有实例的地域和剩余时长满足公开文档中备案资源的相应条件，但仍要在腾讯云后台确认实际可选状态，并先查现有负载。若后端继续留在**官方 Supabase**，则数据库和认证仍在新加坡；可评估让现有实例承载新站前端或必要接口。两条路径都不要求用个人 Mac 作为网站服务器。
+
+腾讯云控制台的本轮只读快照显示现有 Lighthouse 为 4 核 4GB、40GB 系统盘、3Mbps 峰值带宽和每月 300GB 流量包；查看时内存约用 1.65GB。这只是一时读数，不是高峰测量；在此机器上叠加完整 Supabase 与网站，会同时碰到内存、磁盘、带宽和单机故障边界。可用它做合成数据测试，正式容量判断还要检查现有进程、连续监控及恢复演练。
 
 ## 4. Supabase 盘点与路径判断
 
@@ -43,8 +56,11 @@
 | --- | --- | --- |
 | 保留官方新加坡 Supabase | 在独立测试环境或纯虚构 Demo 中验证新静态站；继续由平台维护数据库服务。 | 核查跨境处理依据、提供商和 OCR/LLM 流向，实测移动/联通/电信链路；补齐真实版本的数据库 RPC、函数、备份与回调。用户报告当前为 Free，官方价格表未给 Free 包含自动备份；实际用量/账单待后台核验。 |
 | 腾讯云境内自托管 | 复用 `ops/self-hosted/` 的固定版本模板和既有预演经验，隔离演练新版本。用户愿意长期负责运维。 | 验证数据库与对象备份、异机完整恢复、SMTP、Google 连通性、AI/OCR 上游、匿名会话迁移、RLS 与当前 SaaS 函数。已有 VPS 预演不等于腾讯云大陆可用或符合备案。 |
+| 腾讯云 CloudBase for Supabase 版 | 官方产品页支持上海地域，由腾讯云托管 PostgreSQL、认证、API 等能力；可纳入隔离兼容性评估。 | 不是 Supabase 官方转售，也不承诺全部 API 兼容。官方迁移指南的 SDK、Auth 和用户 ID 类型与当前项目不同；本项目的 UUID 外键、事务 RPC、匿名会话、账号绑定和 Deno 函数必须逐项验证，不能只换 URL。 |
 
-**当前建议：**现有云项目继续维持旧站运行；新站预览只用隔离环境或完全虚构资料。用户愿意负责运维，正式健康资料服务优先准备境内自托管，但以恢复演练、当前版本和功能验收通过为前提。服务器地域并不能替代法律与数据流核查。现有自托管细节见[手册](../operations/supabase-self-hosted.md)，[Supabase 自托管责任](https://supabase.com/docs/guides/self-hosting)。
+**当前建议：**现有云项目继续维持旧站运行；新站预览只用隔离环境或完全虚构资料。用户愿意负责运维，正式健康资料服务优先准备境内自托管，但以恢复演练、当前版本和功能验收通过为前提。当前官方项目的 `ap-southeast-1` 是新加坡，Supabase [托管地域列表](https://supabase.com/docs/guides/platform/regions)没有中国大陆；所谓“腾讯云大陆 Supabase”是自行把 Supabase 软件部署到腾讯云服务器。服务器地域也不能替代法律与数据流核查。现有自托管细节见[手册](../operations/supabase-self-hosted.md)，[Supabase 自托管责任](https://supabase.com/docs/guides/self-hosting)。
+
+新增核查：腾讯云已有[CloudBase for Supabase 版](https://cloud.tencent.com/product/tcbs)，属于另一条腾讯云托管路线，不能与自行安装原版 Supabase 混称。采购新的数据库服务器前，应先比较其兼容性与完整成本。当前项目用 UUID 关联 `auth.users`，而[CloudBase 迁移指南](https://docs.cloudbase.net/quick-start/migration/supabase)给出文本类型的 `auth.uid()`、不同认证接口，并要求账号单独导入或重新激活；这些是实际迁移风险。现阶段保留原版 Supabase 路线，不修改认证合同，也不假定托管兼容服务可以无损承接现有账号。
 
 ## 5. 新旧域名和回调对照
 
@@ -129,7 +145,7 @@ DNS 建议使用 DNSPod 免费版，按其最低 TTL 600 秒制作切换单；`w
 
 ## 第一阶段完成与阻塞
 
-本阶段已形成基线、兼容性矩阵、前端目标选型、后端两条路径、域名/回调对照、浙江个人主体材料、首发准入表、微信身份合同和[切换操作单](../operations/tencent-cloud-cutover.md)。以下条件决定何时能进入购买/申请及正式开发：
+本阶段已形成基线、兼容性矩阵、前端候选、后端路径、域名/回调对照、浙江个人主体材料、首发准入表、微信身份合同和[切换操作单](../operations/tencent-cloud-cutover.md)。以下条件决定何时能进入购买/申请及正式开发：
 
 1. 本人确认个人浙江主体的证件/居住条件、域名持有人，以及个人网站与微信类目是否接受实际肿瘤资料管理功能。
 2. 用户愿意负责长期运维；仍需以异机恢复演练和告警响应证明自托管可以承载正式服务。
