@@ -79,6 +79,7 @@ describe('PrivacyGate', () => {
 
     expect(screen.getByTestId('app-content')).toBeVisible()
     expect(screen.getByRole('button', { name: getCopy(copy.privacyGate.darkAccept, 'zh') })).toBeVisible()
+    expect(screen.getByRole('link', { name: '源码与许可' })).toHaveAttribute('href', '/source/index.html')
   })
 
   it('persists consent to localStorage and removes the overlay on accept', async () => {

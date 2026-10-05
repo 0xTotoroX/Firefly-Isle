@@ -179,3 +179,10 @@ Cloudflare Pages 的 Git 分支自动生产 / 自动预览部署应关闭，避�
 [Codex Cloud 手册](docs/operations/codex-cloud.md)记录环境安装、启动、独立任务验收与成果回到 GitHub 的方式。本机个人 Skills 和凭据不随仓库自动同步；云端检查不代替本地浏览器和导出验收。
 
 [国内上线评估](docs/products/domestic-launch.md)区分 Supabase Cloud、自托管和前端托管选择，以及备案、微信主体/类目与小程序技术路线。Web 是第一里程碑；小程序单独交付。域名、运营主体、正式托管和支付方案尚未选定，不因开发环境发布自动切换产品生产服务。
+
+## 许可证
+
+Copyright (c) 2026 Ghibli1024。此许可修订中有权授权的自有代码采用
+[AGPL-3.0-only](LICENSE)，允许依许可商用。对受覆盖程序的分发和修改版本的
+网络源码提供要求见 [LICENSING.md](LICENSING.md)。此前 MIT 授予不追溯撤回；
+第三方代码、字体、图标和音频保留各自许可。登录、隐私提示及共享顶栏提供“源码与许可”入口；构建附带对应版本的源码包、内容摘要和许可材料，不依赖旧远端代码。音乐等素材不改授 AGPL，保留原声明；本次不调查音乐权限，见 [第三方说明](THIRD_PARTY_NOTICES.md)。本地构建不自动发布或部署。

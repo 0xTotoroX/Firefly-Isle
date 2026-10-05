@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的 CSSProperties/ref/state、BackgroundMusicToggle、BrandMark/Wordmark、LoginTraceMap、LoginStorySections、useScrollStoryMotion、AuthOverlay、locale/copy 与隐私摘要文案。
+ * [INPUT]: 依赖 SourceLicenseLink 的公开源码入口； 依赖 react 的 CSSProperties/ref/state、BackgroundMusicToggle、BrandMark/Wordmark、LoginTraceMap、LoginStorySections、useScrollStoryMotion、AuthOverlay、locale/copy 与隐私摘要文案。
  * [OUTPUT]: 对外提供 V3LoginView，编排八章纵向滚动叙事、首尾同源登录 CTA、单一认证弹层、首屏工具区与仅在 reduced-motion 下禁用的长生命周期液体背景。
  * [POS]: components/login 的登录入口编排层，被 login-page-view facade 消费；只持有一次认证状态，不侵入认证业务语义。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
@@ -13,6 +13,7 @@ import { BrandMark } from '@/components/system/brand-mark'
 import { copy, getCopy } from '@/lib/copy'
 import { useLocale } from '@/lib/locale'
 import { PRIVACY_POLICY_SUMMARY } from '@/lib/privacy'
+import { SourceLicenseLink } from '@/components/system/source-license-link'
 import type { Theme } from '@/lib/theme'
 
 import { AuthOverlay } from './auth-overlay'
@@ -216,9 +217,10 @@ export function V3LoginView({
               </p>
             </div>
 
-            <div className="t-stagger mt-10 flex flex-col gap-4 sm:flex-row sm:items-center" style={{ '--t-order': 3 } as CSSProperties}>
+            <div className="t-stagger mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center" style={{ '--t-order': 3 } as CSSProperties}>
               <IntroAccessCta isOpen={isAuthOpen} locale={locale} onOpen={openAuth} />
               <LoginPrivacyNote locale={locale} />
+              <SourceLicenseLink locale={locale} />
             </div>
           </div>
         </section>

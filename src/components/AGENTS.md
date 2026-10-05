@@ -9,7 +9,7 @@ background-music-toggle.test.tsx: 背景音乐控制入口回归测试，约束�
 login/: 登录页展示层内部模块，收敛类型、skin、认证卡、统一弹层、八章叙事内容、客户端原生滚动动效编排与唯一液体折射背景；登录页不再提供 Demo CTA，公开 Demo 路由仍由路由层维护
 login-page-view.tsx: 登录页稳定 facade，继续导出 LoginPageView 与 AuthMode/AuthMethod/AuthFeedback/LoginPageViewProps，内部转交 components/login 实现
 login-page-view.test.tsx: 登录页八章顺序、无 Demo CTA、首尾同源 AuthOverlay、双主题、认证模式、SSR 安全原生滚动动效、CSS sticky + spacer、reduced-motion 与单一 WebGL 背景合同测试；Demo 路由可达性由路由/Demo 测试继续负责
-privacy-gate.tsx: 首次使用隐私门控层，负责 localStorage 确认状态、独立隐私页放行与可滚动全屏阻塞弹层
+privacy-gate.tsx: 首次使用隐私门控层，负责 localStorage 确认状态、独立隐私页放行与可滚动全屏阻塞弹层；确认之前也可获取源码许可
 record/: 病例详情展示层内部模块，收敛 dossier 展示、文案、demo 数据、真实病历派生数据与展示类型
 system/: 设计系统壳层、品牌 mark、Demo 模式提醒、PWA 网络状态提示与 surface 基元目录，统一 sidebar、top bar、panel、邮件 hover 联系弹窗与 section 结构语义
 timeline/: 时间线表格与甘特图组件目录，收敛 TimelineTable、基本信息区块、初发区块、治疗线区块渲染与 treatmentLines 甘特投影

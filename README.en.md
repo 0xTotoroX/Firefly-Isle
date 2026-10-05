@@ -174,3 +174,16 @@ Deployment configuration, backup scripts and session migration preparation are d
 The [Codex Cloud runbook](docs/operations/codex-cloud.md) covers installation, startup, fresh-task validation and returning changes through GitHub. Personal local skills and credentials do not automatically follow the repository. Cloud checks do not replace browser, export or device acceptance.
 
 The [domestic launch assessment](docs/products/domestic-launch.md) compares database/frontend hosting, filing requirements, WeChat categories and mini-program options. Web is the first milestone; the mini-program is a separate deliverable. Naming, operating entity, production hosting and payment choices remain open. Publishing a development environment does not deploy the product.
+
+## License
+
+Copyright (c) 2026 Ghibli1024. Project-owned code this revision has authority to
+license uses [AGPL-3.0-only](LICENSE), which permits commercial use under its
+terms. See [LICENSING.md](LICENSING.md) for covered distribution and modified
+network-version source delivery. Earlier MIT grants remain effective. Third-party
+code, fonts, icons and audio retain their own licenses. Login, privacy and shared topbar surfaces offer a public source/license link.
+The build includes its matching source archive, content digest and license materials,
+without relying on an older remote revision. Music and other assets retain their
+separate statements; this change does not investigate music permissions or relicense
+assets. See [third-party notices](THIRD_PARTY_NOTICES.md). Building does not publish
+or deploy the files.

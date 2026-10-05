@@ -351,6 +351,7 @@ describe('LoginPageView theme shell', () => {
     expect(markup).toContain('data-scroll-story-motion-count="0"')
     expect(markup).not.toContain('gsap')
     expect(markup).not.toContain('ScrollTrigger')
+    expect(markup).toContain('href="/source/index.html"')
   })
 
   it('uses CSS sticky plus a sibling spacer and preserves all content in reduced motion', () => {

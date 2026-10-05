@@ -48,7 +48,8 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | wrangler.jsonc | Cloudflare 构建与公开环境接口，微信 KV/回调预研；不在本轮切换生产配置 |
 | .env.local.example · .dev.vars.example · .gitignore | 非敏感配置模板与本机凭据/产物忽略边界 |
 | README.md · README.en.md | 中英文项目说明与前后端目录入口 |
-| LICENSE · SECURITY.md · CONTRIBUTING.md · CODE_OF_CONDUCT.md | 许可、安全报告、贡献和协作规则 |
+| LICENSE · LICENSING.md · THIRD_PARTY_NOTICES.md · LICENSES/ | AGPL-3.0-only 原文、有权授权范围、源码交付要求、第三方边界与原 MIT 历史证据 |
+| SECURITY.md · CONTRIBUTING.md · CODE_OF_CONDUCT.md | 安全报告、贡献和协作规则 |
 | AGENTS.md | 项目与模块指令的唯一文件名；不维护其他工具兼容导入文件 |
 
 ## 核心架构与行为边界
@@ -87,3 +88,8 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 
 - 保留 main 的兼容依赖和 GitHub Actions 升级：React Router 7、Vitest/coverage 5、ESLint 10、Capacitor 四包 8.5.2。安装/CI 使用 Node.js 22 与锁文件；正式原生签名、真机和产品发布另验。
 - SaaS 的 html2canvas-pro、Material Symbols 与 Workbox 继续保留；config/vite.config.ts 通过 import.meta.dirname 定位项目根，预缓存摘要和 archive/ 排除同时生效。
+
+## 许可与对应源码
+
+- 有权授权的自有代码采用 AGPL-3.0-only；历史MIT授予及第三方代码/音乐/字体/图像保留原权利，不改授素材。本次不调查音乐权限。
+- npm run build 在 dist/source/ 生成实际构建对应的源码包、修订/内容摘要和公开许可页，在 dist/licenses/ 收录全文及原始运行依赖通知；页面入口无需认证。未提交源码按快照标识，构建期间源码变化即失败。不要以旧远端main代替当前源码，不读取或打包凭据、运行病历、私人配置及历史私密资料；构建不执行发布/部署。

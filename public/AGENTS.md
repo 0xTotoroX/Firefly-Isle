@@ -9,7 +9,7 @@ logo-island-lighthouse.webp: 由当前 PNG 以 lossless WebP 转出的透明品�
 logo-island-lighthouse.ico: 由当前 PNG 多尺寸封装的 ICO 品牌 mark，包含 16/24/32/48/64/128/256 图标尺寸用于 favicon/系统入口
 manifest.webmanifest: PWA 安装 manifest，定义知见 / MyOncode 展示名称（安装 identity 保留）、启动 URL、display、主题色与公开图标集合
 material-symbols-license.txt: 随应用分发的 Material Symbols 图标字体版权与 SIL OFL 1.1 许可。
-sw.js: 隐私优先 service worker，仅缓存规范公共壳与构建资产，构建时注入清单和版本；导航中的授权码、认证参数及患者 ID 不写入缓存元信息。
+sw.js: 隐私优先 service worker，仅缓存规范公共壳与构建资产；源码/许可文档直接获取，不替换成SPA缓存壳；授权码、认证参数及患者 ID 不写入缓存元信息。
 icons/: PWA 安装图标目录，保存由当前品牌 mark 生成的普通、maskable 与 Apple touch icon 静态资产
 audio/: 背景音乐公开静态资源目录，保存全局背景音控制器消费的本地授权音频资产、tracks 占位目录与授权边界说明
 login/: 登录页专用静态视觉资产目录，保存从 V3 设计图提取并重建的人体背景、夜航/花路灯塔卡片素材与双主题扁平海岸全屏背景

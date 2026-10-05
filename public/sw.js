@@ -136,6 +136,12 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  // Source/license downloads are documents, not SPA navigations. Never replace them with the cached shell.
+  const url = new URL(request.url)
+  if (url.origin === self.location.origin && (url.pathname.startsWith('/source/') || url.pathname.startsWith('/licenses/'))) {
+    return
+  }
+
   if (request.mode === 'navigate') {
     event.respondWith(appShellNavigation(request))
     return

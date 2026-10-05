@@ -155,6 +155,17 @@ function workerHarness(buildAssets: Array<{ url: string }> = []) {
   return { origin, entries, cache, caches, listeners, fetch, request, response }
 }
 
+describe('PWA source downloads', () => {
+  it('does not replace source or license documents with the cached application shell', () => {
+    const worker = workerHarness()
+    worker.entries.set('/index.html', worker.response(worker.origin + '/index.html'))
+    expect(worker.request('/source/index.html')).toBeUndefined()
+    expect(worker.request('/source/myoncode-source-example.tar.gz')).toBeUndefined()
+    expect(worker.request('/licenses/LICENSE')).toBeUndefined()
+    expect(worker.cache.match).not.toHaveBeenCalled()
+  })
+})
+
 describe('shipped service worker navigation behavior', () => {
   it('precaches generated scripts and styles during the first installation', async () => {
     const worker = workerHarness([{ url: 'assets/app-abcd.js' }, { url: 'assets/app-abcd.css' }])

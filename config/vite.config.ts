@@ -1,6 +1,6 @@
 /**
- * [INPUT]: React/Tailwind Vite 插件、Vitest、Workbox 清单及 Node 文件/加密 API。
- * [OUTPUT]: Vite/Vitest 配置、历史归档测试排除、静态预缓存清单与 SHA-256 版本化 worker 构建插件。
+ * [INPUT]: React/Tailwind Vite 插件、Vitest、Workbox、source-distribution与Node文件/摘要API。
+ * [OUTPUT]: Vite/Vitest 配置、历史归档测试排除、对应源码/许可分发材料、静态预缓存清单与 SHA-256 版本化 worker 构建插件。
  * [POS]: config/ 的构建和测试装配；以项目根解析源码、环境文件和 PWA 构建资产。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
@@ -12,6 +12,7 @@ import { createHash } from 'node:crypto'
 import { readFile, writeFile } from 'node:fs/promises'
 import { getManifest } from 'workbox-build'
 import type { Plugin } from 'vite'
+import { sourceDistribution } from './source-distribution.ts'
 
 const projectRoot = path.resolve(import.meta.dirname, '..')
 
@@ -39,7 +40,7 @@ function precacheBuildAssets(): Plugin {
 
 export default defineConfig({
   root: projectRoot,
-  plugins: [react(), tailwindcss(), precacheBuildAssets()],
+  plugins: [react(), tailwindcss(), ...sourceDistribution(projectRoot), precacheBuildAssets()],
   resolve: {
     alias: {
       '@': path.join(projectRoot, 'src'),

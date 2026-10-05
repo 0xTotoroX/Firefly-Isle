@@ -1,5 +1,5 @@
 /**
- * [INPUT]: 依赖 react 的单一顶栏弹层状态、hover 延迟关闭与复制反馈计时器，依赖 @/components/background-music-toggle 的共享背景音乐开关，依赖 @/components/system/origin-story/origin-story-paper 的创作初衷纸页，依赖 @/components/system/surfaces 的 TopBarShell，依赖 @/lib/theme/tokens 的可变侧栏边缘钉住、标题截断与高度合同。
+ * [INPUT]: 依赖 react 的单一顶栏弹层状态、hover 延迟关闭与复制反馈计时器，依赖 @/components/background-music-toggle 的共享背景音乐开关，依赖 @/components/system/origin-story/origin-story-paper 的创作初衷纸页，依赖 SourceLicenseLink 的公开源码入口与 @/components/system/surfaces 的 TopBarShell，依赖 @/lib/theme/tokens 的可变侧栏边缘钉住、标题截断与高度合同。
  * [OUTPUT]: 对外提供 ClinicalTopBar 组件，并在邮件联系弹窗内提供公开联系邮箱点击复制。
  * [POS]: src/components/system 的共享顶部工具条，统一 dark/light 页面名、背景音乐直接开关、创作初衷入口、邮件 hover 联系弹窗与邮箱复制反馈，并通过单一 overlay 状态避免弹层互相叠加。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
@@ -14,6 +14,7 @@ import { useLocale } from '@/lib/locale'
 import { BackgroundMusicToggle } from '@/components/background-music-toggle'
 import { OriginStoryPaper } from '@/components/system/origin-story/origin-story-paper'
 import { TopBarShell } from '@/components/system/surfaces'
+import { SourceLicenseLink } from '@/components/system/source-license-link'
 import { shellViewportOffsetClass, topBarHeightClass } from '@/lib/theme/tokens'
 import { cn } from '@/lib/utils'
 
@@ -106,6 +107,7 @@ export function ClinicalTopBar({ theme, title, withRail = false }: ClinicalTopBa
       </div>
 
       <div className="relative flex shrink-0 items-center gap-1 sm:gap-3">
+        <SourceLicenseLink className="px-1 text-xs sm:px-2" locale={locale} />
         <BackgroundMusicToggle
           className="t-control-press h-10 w-10 rounded-[var(--ff-radius-sm)] border border-transparent bg-transparent text-[var(--ff-text-primary)] hover:bg-[var(--ff-surface-panel)] hover:text-[var(--ff-accent-text)] sm:h-11 sm:w-11"
           layout="compact"

@@ -1,7 +1,7 @@
 /**
- * [INPUT]: 依赖 react 的 PropsWithChildren、useEffect、useState，依赖 react-router-dom 的 Link、useLocation，依赖 @/lib/privacy 的隐私文案、独立隐私页路由与 localStorage key，依赖 @/lib/theme 的 useTheme 与 @/lib/locale 的 useLocale、copy 字典的门控文案。
+ * [INPUT]: 依赖 SourceLicenseLink 的公开源码入口； 依赖 react 的 PropsWithChildren、useEffect、useState，依赖 react-router-dom 的 Link、useLocation，依赖 @/lib/privacy 的隐私文案、独立隐私页路由与 localStorage key，依赖 @/lib/theme 的 useTheme 与 @/lib/locale 的 useLocale、copy 字典的门控文案。
  * [OUTPUT]: 对外提供 PrivacyGate 组件。
- * [POS]: components 的全局隐私门控层，在用户本地确认前阻塞整个应用入口，保证窄视口可滚动确认，并为独立隐私页放行访问。
+ * [POS]: components 的全局隐私门控层，在用户本地确认前阻塞整个应用入口，保证窄视口可滚动确认，并为独立隐私页放行访问；源码入口不要求确认或登录。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { type PropsWithChildren, useEffect, useState } from 'react'
@@ -16,6 +16,7 @@ import {
 } from '@/lib/privacy'
 import { useLocale } from '@/lib/locale'
 import { useTheme } from '@/lib/theme'
+import { SourceLicenseLink } from '@/components/system/source-license-link'
 
 function readPrivacyAccepted() {
   if (typeof window === 'undefined') {
@@ -51,6 +52,7 @@ function DarkPrivacyOverlay({ locale, onAccept, onStayBlocked }: { locale: 'zh' 
           ))}
         </div>
 
+        <SourceLicenseLink className="mt-4" locale={locale} />
         <div className="mt-10 flex flex-col gap-4 border-t border-[var(--ff-border-default)] pt-6 md:flex-row">
           <button
             className="flex-1 bg-[var(--ff-accent-primary)] px-6 py-4 font-[var(--ff-font-display)] text-sm font-black uppercase tracking-[0.2em] text-[var(--ff-surface-base)] transition-colors hover:bg-[var(--ff-text-primary)] hover:text-[var(--ff-text-ink)]"
@@ -104,6 +106,7 @@ function LightPrivacyOverlay({ locale, onAccept, onStayBlocked }: { locale: 'zh'
           ))}
         </div>
 
+        <SourceLicenseLink className="mt-4" locale={locale} />
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <button
             className="border-2 border-[var(--ff-border-default)] bg-[var(--ff-text-primary)] px-6 py-4 font-[var(--ff-font-ui)] text-sm font-bold uppercase tracking-[0.2em] text-[var(--ff-surface-base)] transition-colors hover:bg-[var(--ff-surface-base)] hover:text-[var(--ff-text-primary)]"

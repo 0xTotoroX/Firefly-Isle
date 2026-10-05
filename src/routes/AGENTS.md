@@ -2,7 +2,7 @@
 > L2 | 父级: [AGENTS.md](../AGENTS.md)
 
 成员清单
-demo-flow.dom.test.tsx: 真实 App 装配的演示逐页零 Supabase/网络调用、偏好隔离、模式内导航与会话重置回归。
+demo-flow.dom.test.tsx: 真实 App 装配的演示逐页零 Supabase/网络调用、偏好隔离、模式内导航、公共许可入口与会话重置回归。
 lab-analytics-page.dom.test.tsx: 验证指标加载/失败/真实空态互斥、重试读取同患者，以及携带 patient 参数进入化验上传。
 record-saving.test.tsx: 真实 RecordPage 验证连续字段保存、失败后恢复、语言切换和迟到请求隔离。
 workspace-state.test.tsx: 真实 React 生命周期下验证账号/患者隔离、主题语言保持、串行保存、幂等重试、OCR/追问互斥及迟到恢复隔离。
