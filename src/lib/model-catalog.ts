@@ -32,18 +32,18 @@ export const modelCatalog: ModelCatalogEntry[] = [
     visibility: 'list',
   },
   {
-    description: 'DeepSeek v4 图像模型 · 病历/检验报告图片 OCR 的默认模型',
-    displayName: 'DeepSeek v4 图像模型',
+    description: 'DeepSeek Flash · 病历/检验报告图片与 PDF OCR 的默认模型',
+    displayName: 'DeepSeek Flash',
     modality: 'image',
     inputModalities: ['image', 'text'],
     priority: 1007,
-    slug: 'deepseek-v4-image',
+    slug: 'deepseek-flash',
     visibility: 'list',
   },
 ]
 
 export const defaultTextModel = modelCatalog.find((entry) => entry.slug === 'deepseek-v4-flash')!
-export const defaultImageModel = modelCatalog.find((entry) => entry.slug === 'deepseek-v4-image')!
+export const defaultImageModel = modelCatalog.find((entry) => entry.slug === 'deepseek-flash')!
 
 export function listVisibleModels(modality?: ModelModality): ModelCatalogEntry[] {
   return modelCatalog

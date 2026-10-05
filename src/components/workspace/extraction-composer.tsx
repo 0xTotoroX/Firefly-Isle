@@ -142,7 +142,7 @@ export function ExtractionComposer({
             title={uploadTitle}
           >
             <input
-              accept="image/*,application/pdf"
+              accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"
               className="sr-only"
               disabled={disabled || awaitingSave}
               onChange={(event) => {

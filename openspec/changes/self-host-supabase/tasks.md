@@ -10,9 +10,9 @@ Completed remote checks below are historical results recorded on 2026-09-14, not
 - [x] Build and preview the production baseline; verify UI extraction, save and reload
 - [ ] Configure SMTP and verify registration/recovery email delivery (credentials needed)
 - [ ] Supply original or rotated Google OAuth secret and verify login (credential needed)
-- [ ] Validate configured image OCR; validate Gemini credentials and provider selection if PDF support is required
+- [x] Validate DeepSeek image OCR and locally rendered multi-page PDF OCR with the current frontend (2026-10-06 Shanghai preview; synthetic data)
 - [x] Integrate migration preparation into the current development branch, retaining production cloud URLs
 - [x] Protect migration completion, refresh failure, later legacy events and explicit sign-out with local behavior tests
-- [ ] Reconcile target database schema and deploy current SaaS Edge Functions before releasing the integrated frontend
+- [x] Reconcile Shanghai preview schema and deploy current LLM/OCR/shared functions (2026-10-06; six additive migrations, no production cutover)
 - [ ] Freeze source writes, synchronize final data, switch production and verify
 - [ ] After verified production cutover, update production URLs and retire the cloud deploy target

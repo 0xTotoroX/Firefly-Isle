@@ -8,6 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
   getSession: vi.fn(),
+  renderPdfReportImages: vi.fn(),
 }))
 
 vi.mock('@/lib/supabase', () => ({
@@ -21,7 +22,9 @@ vi.mock('@/lib/supabase', () => ({
   supabaseEdgeFunctionUrl: 'https://edge.example.test/functions/v1',
 }))
 
-import { MedicalDocumentOcrError, recognizeMedicalDocument } from './medical-document-ocr'
+vi.mock('./pdf-report-images', () => ({ renderPdfReportImages: mocks.renderPdfReportImages }))
+
+import { getMedicalDocumentOcrMessage, MedicalDocumentOcrError, recognizeMedicalDocument } from './medical-document-ocr'
 
 function file(name: string, type: string, content = 'demo') {
   return new File([content], name, { type })
@@ -29,10 +32,12 @@ function file(name: string, type: string, content = 'demo') {
 
 describe('recognizeMedicalDocument', () => {
   beforeEach(() => {
+    mocks.renderPdfReportImages.mockResolvedValue([{ mimeType: 'image/jpeg', dataBase64: 'cGFnZTE=' }, { mimeType: 'image/jpeg', dataBase64: 'cGFnZTI=' }])
     mocks.getSession.mockResolvedValue({
       data: {
         session: {
           access_token: 'session-token',
+          user: { id: 'account-a' },
         },
       },
       error: null,
@@ -62,7 +67,27 @@ describe('recognizeMedicalDocument', () => {
       fileName: name,
       mimeType: type,
     })
-    expect(typeof requestBody.dataBase64).toBe('string')
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    if (type === 'application/pdf') {
+      expect(requestBody.pages).toHaveLength(2)
+      expect(requestBody.dataBase64).toBeUndefined()
+    } else expect(typeof requestBody.dataBase64).toBe('string')
+  })
+
+  it('does not upload a PDF if the account changes during rendering', async () => {
+    mocks.renderPdfReportImages.mockImplementationOnce(async () => {
+      mocks.getSession.mockResolvedValue({ data: { session: { access_token: 'b', user: { id: 'account-b' } } }, error: null })
+      return [{ mimeType: 'image/jpeg', dataBase64: 'cGFnZTE=' }]
+    })
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    await expect(recognizeMedicalDocument(file('report.pdf', 'application/pdf'))).rejects.toMatchObject({ name: 'AuthError' })
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('shows quota and unknown error messages without crashing', () => {
+    expect(getMedicalDocumentOcrMessage(new MedicalDocumentOcrError('OCRRateLimitError', 'quota'), 'zh')).toContain('额度')
+    expect(getMedicalDocumentOcrMessage({ name: 'future-error' }, 'zh')).toContain('失败')
   })
 
   it('rejects unsupported file types before calling OCR', async () => {

@@ -3,8 +3,8 @@
 
 成员清单
 index.ts: Edge Function Deno 启动壳，读取运行时 env 并挂载统一 handler
-handler.ts: 可测试核心，负责 JWT 校验、图片/PDF 输入校验、DeepSeek/Gemini OCR 转发、原子额度消费、超时与具名错误响应
-handler.test.ts: 图片/PDF Gemini 请求、header 密钥、额度拒绝与故障停止、错误映射、缺 key 与 secret 不泄露回归测试
+handler.ts: 可测试核心，负责 JWT 校验、图片与 PDF 页面输入校验、deepseek-flash 多图 OCR 转发、原子额度消费、超时与具名错误响应
+handler.test.ts: DeepSeek 图片/PDF 多页请求、单次额度、header 密钥、额度拒绝与故障停止、错误映射、缺 key 与 secret 不泄露回归测试
 
 法则: OCR 只提取原始文本；结构化 PatientRecord 仍交给现有提取链路。
 

@@ -70,7 +70,7 @@ describe('ModelsPage', () => {
 
     expect(screen.getByTestId('models-catalog-list')).toBeVisible()
     expect(screen.getByTestId('model-catalog-deepseek-v4-flash')).toBeVisible()
-    expect(screen.getByTestId('model-catalog-deepseek-v4-image')).toBeVisible()
+    expect(screen.getByTestId('model-catalog-deepseek-flash')).toBeVisible()
 
     const defaults = screen.getAllByText('default')
 

@@ -12,6 +12,7 @@ import { createHash } from 'node:crypto'
 import { readFile, writeFile } from 'node:fs/promises'
 import { getManifest } from 'workbox-build'
 import type { Plugin } from 'vite'
+import { pdfjsAssets } from './pdfjs-assets.ts'
 import { sourceDistribution } from './source-distribution.ts'
 
 const projectRoot = path.resolve(import.meta.dirname, '..')
@@ -25,7 +26,7 @@ function precacheBuildAssets(): Plugin {
     async closeBundle() {
       const { manifestEntries, warnings } = await getManifest({
         globDirectory: outDir,
-        globPatterns: ['index.html', 'assets/**/*.{js,css,woff,woff2}', 'manifest.webmanifest', 'icons/*', 'logo-island-lighthouse.ico'],
+        globPatterns: ['index.html', 'assets/**/*.{js,mjs,css,woff,woff2}', 'manifest.webmanifest', 'icons/*', 'logo-island-lighthouse.ico'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       })
       if (warnings.length) throw new Error(warnings.join('\n'))
@@ -40,7 +41,7 @@ function precacheBuildAssets(): Plugin {
 
 export default defineConfig({
   root: projectRoot,
-  plugins: [react(), tailwindcss(), ...sourceDistribution(projectRoot), precacheBuildAssets()],
+  plugins: [react(), tailwindcss(), pdfjsAssets(), ...sourceDistribution(projectRoot), precacheBuildAssets()],
   resolve: {
     alias: {
       '@': path.join(projectRoot, 'src'),

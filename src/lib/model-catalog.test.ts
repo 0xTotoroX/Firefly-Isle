@@ -17,7 +17,7 @@ describe('model catalog protocol', () => {
   it('binds the text pipeline to DeepSeek v4 Flash and the image pipeline to the DeepSeek v4 image model', () => {
     expect(defaultTextModel.slug).toBe('deepseek-v4-flash')
     expect(defaultTextModel.inputModalities).toEqual(['text'])
-    expect(defaultImageModel.slug).toBe('deepseek-v4-image')
+    expect(defaultImageModel.slug).toBe('deepseek-flash')
     expect(defaultImageModel.inputModalities).toContain('image')
   })
 

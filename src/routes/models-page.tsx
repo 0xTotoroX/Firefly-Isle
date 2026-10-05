@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 react-router-dom 的 Link，依赖 @/components/app-shell 的 V3 壳层、@/components/system 的 surfaces，依赖 LlmProviderSettingsPanel 的自带密钥表单、@/lib/model-catalog 的目录真相源、copy 字典、locale/theme 与 theme tokens。
  * [OUTPUT]: 对外提供 ModelsPage 组件，对应 /models。
- * [POS]: routes 的模型配置页，按 Codex++ 目录协议展示默认模型目录（文字 deepseek-v4-flash / 图像 deepseek-v4-image），并承载从工作区输入区迁移过来的自带密钥设置面板。
+ * [POS]: routes 的模型配置页，按 Codex++ 目录协议展示默认模型目录（文字 deepseek-v4-flash / 图像 deepseek-flash），并承载从工作区输入区迁移过来的自带密钥设置面板。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { useDemoSession, useProductPath } from '@/lib/demo-session'
@@ -17,7 +17,7 @@ import { useTheme } from '@/lib/theme'
 import { listVisibleModels } from '@/lib/model-catalog'
 import { shellWideContentClass, sidebarOffsetClass, topBarOffsetClass } from '@/lib/theme/tokens'
 
-const DEFAULT_SLUGS = new Set(['deepseek-v4-flash', 'deepseek-v4-image'])
+const DEFAULT_SLUGS = new Set(['deepseek-v4-flash', 'deepseek-flash'])
 
 function ModalityBadge({ label }: { label: string }) {
   return (

@@ -17,6 +17,22 @@
 
 正式切换仍需验证 SMTP 注册确认/找回密码、Google OAuth、当前模型与 OCR 配置、异机备份，以及当前数据库和函数版本。历史 Google secret 和 Gemini key 曾不可用，应重新核对，不以旧错误推断现在的状态。
 
+## 2026-10-06 上海预览升级与验收
+
+本轮按用户授权更新上海预览，不切换 Cloudflare 正式网站，也不搬迁新加坡的最新病历。先在一次性数据库恢复升级前备份，追加六份 `2026*.sql` 迁移；原病历相关表的数量与内容摘要一致。数据权限、幂等创建、账号隔离、临床事务、病历完整性、额度和支付权限共七组 SQL 合成测试通过，随后在上海预览单事务追加相同迁移。部署前后原目标病历表摘要一致。
+
+目标已部署当前 `llm-proxy`、共享函数及 OCR 的默认模型修正。真实 HTTP 合成验收通过密码/匿名登录、刷新、病历事务保存与幂等重试、跨账号隔离、化验、分享撤销、BYOK 脱敏/隔离、真实 DeepSeek 文本提取及登出；第一轮 29 项中 27 项通过，两项 OCR 初测失败，已按下述新链路复验。三个 HTTP 临时账号及网页测试账号均已清理，连同各自合成病历。
+
+升级前备份与部署前备份分别位于服务器 `/var/backups/firefly/20261005T155501Z-before-7417f10`、`/var/backups/firefly/20261005T160151Z-deploy-7417f10`，数据库、角色和运行文件的 SHA-256 校验通过。恢复与追加迁移已在一次性库验证；完成网页验收并清理合成账号后，升级后的完整备份保存在 `/var/backups/firefly/20261005T165216Z-current-deepseek`，校验通过并恢复到本轮新建的临时数据库。七张关键病历表的数量/内容摘要与当前目标一致，四个关键 RPC 存在；临时数据库已删除。该演练在同一服务器，不代表异机灾备已验收。备份含私有数据与凭据，仅留服务器，不进入 Git。
+
+报告 OCR 代码改为只调用 DeepSeek `deepseek-flash`，移除这条链路的 Gemini 分支。图片支持 JPEG、PNG、GIF、WebP；PDF 使用 PDF.js 在浏览器逐页渲染，然后按页码提交一个多图请求，只消费一次 `ocr_document` 额度。文件原始大小限制 8 MiB，转换后累计图像的 base64 长度上限为 11,184,811 字符（约 8 MiB 原始图像），最多 600 页（对应上游图像数量限制）；加密、损坏或过大的 PDF 返回可恢复错误。Worker、CMap、字体和解码资源随构建同源分发，不加载 CDN。原始 PDF 不写入本地持久存储或静态站目录。
+
+`GEMINI_API_KEY` 的旧配置不再被 OCR 读取；独立文字 BYOK provider 的兼容配置保留。模型/API 命名依据 [DeepSeek Vision](https://api-docs.deepseek.com/guides/vision/)，PDF 渲染依据 [Mozilla PDF.js](https://mozilla.github.io/pdf.js/examples/)。新前端必须与新的 PDF 页面协议函数一起验收；不要让旧前端直接向新函数上传 PDF 原文。
+
+本地 lint、类型检查、105 个测试文件共 745 项测试及构建通过；后续增加上游截断拒绝用例，相关 24 项测试、函数类型和 lint 通过。浏览器已用合成账号登录上海后端；两页合成 PDF 按顺序渲染且无控制台错误。新的 DeepSeek-only OCR 已部署到上海预览，handler SHA-256 为 `02f0a75002688c38d12ce8683629055ca70ce370f72a8fe496637240d1c67938`，运行配置已删除 OCR_PROVIDER/GEMINI_OCR_MODEL 并设为 deepseek-flash。真实 PNG OCR 和公开 HTTPS Auth 均返回 200；网页上传两页合成 PDF，正确返回两页日期、WBC 5.0 和 CEA 6.0 并显示人工确认。网页合成中文病历提取已创建患者，进入详情并刷新后姓名、年龄与当前治疗方案仍可读取。此项证明保存链路；模型在该例仍生成多余初发段，提取准确性需人工复核，不把读写成功当成临床内容验收。
+
+SMTP 按用户决定本轮保留未配置、未验收；不能宣称邮箱注册确认或找回密码可用。Google OAuth、新域名/备案、正式 HTTPS 入口与生产切换仍单独验收。当前 API 域名经 Cloudflare Tunnel，不是已经建成国内直连入口。
+
 ## 部署结构
 
 固定上游为 Supabase `self-hosted/v0.8.1`，commit `8c7a4d9dbbaf8b552893822e89d7bf06f33f9220`；PostgreSQL 为 `supabase/postgres:17.6.1.136`。更新前阅读对应 changelog。
@@ -31,7 +47,7 @@
 
 `ops/self-hosted/.env.example` 是容器配置示例。`API_EXTERNAL_URL` 包含 `/auth/v1`，Google 回调为 `https://supabase.ghibli1024.com/auth/v1/callback`。SMTP 与 OAuth 需要单独配置，数据库恢复不会自动恢复供应商配置。
 
-`functions.env.example` 对应当前函数配置。恢复已有模型密钥密文时，必须保留原 `LLM_PROVIDER_SETTINGS_ENCRYPTION_KEY`。当前图片 OCR 默认走 DeepSeek；PDF 需要切到 Gemini 并验证有效凭据。支付功能仅在所需配置齐备时启用。
+`functions.env.example` 对应当前函数配置。恢复已有模型密钥密文时，必须保留原 `LLM_PROVIDER_SETTINGS_ENCRYPTION_KEY`。当前图片和 PDF 页面 OCR 统一走 DeepSeek；不再配置 OCR_PROVIDER 或 GEMINI_OCR_MODEL。支付功能仅在所需配置齐备时启用。
 
 `frontend.env.example` 仅供显式预览。复制到仓库根部被忽略的 `.env.selfhost.local`，填写自建公开 anon key，再运行 `npm run build -- --mode selfhost`。不要把 service-role 或私有 API key 写进 Vite 变量。预览前先完成目标 schema/functions 对齐，生产构建仍使用已审核的生产配置。
 

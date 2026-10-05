@@ -1,7 +1,7 @@
 /**
  * [INPUT]: 依赖 @/lib/supabase 的 Edge Function env 与当前 Supabase session。
  * [OUTPUT]: 对外提供 MedicalDocumentOcrError、recognizeMedicalDocument 与 getMedicalDocumentOcrMessage。
- * [POS]: src/lib 的医学文档 OCR 前端协议边界，负责文件校验、base64 编码、JWT 透传与错误归一。
+ * [POS]: src/lib 的医学文档 OCR 前端协议边界，负责文件校验、PDF 页面渲染、base64 编码、JWT 透传与错误归一。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { getSupabaseClient, hasSupabaseEnv, hasSupabaseFunctionEnv, supabaseEdgeFunctionUrl } from '@/lib/supabase'
@@ -17,6 +17,7 @@ export type MedicalDocumentOcrErrorName =
   | 'OCRNetworkUnavailableError'
   | 'OCRTimeoutError'
   | 'OCRUpstreamError'
+  | 'OCRRateLimitError'
 
 type OcrErrorPayload = {
   error?: {
@@ -41,7 +42,7 @@ export class MedicalDocumentOcrError extends Error {
   }
 }
 
-const SUPPORTED_MIME_TYPES = new Set(['application/pdf'])
+const SUPPORTED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf'])
 const MAX_FILE_SIZE_BYTES = 8 * 1024 * 1024
 
 function buildUrl() {
@@ -55,7 +56,7 @@ function ensureConfigured() {
 }
 
 function isSupportedFile(file: File) {
-  return file.type.startsWith('image/') || SUPPORTED_MIME_TYPES.has(file.type)
+  return SUPPORTED_MIME_TYPES.has(file.type)
 }
 
 function validateFile(file: File) {
@@ -75,7 +76,7 @@ async function getAccessToken() {
     throw new MedicalDocumentOcrError('AuthError', 'Missing Supabase session for OCR request.')
   }
 
-  return data.session.access_token
+  return { token: data.session.access_token, userId: data.session.user.id }
 }
 
 function encodeBase64(bytes: Uint8Array) {
@@ -129,15 +130,26 @@ export async function recognizeMedicalDocument(file: File) {
     throw new MedicalDocumentOcrError('OCRNetworkUnavailableError', 'Network connection is required for OCR.')
   }
 
-  const [accessToken, dataBase64] = await Promise.all([getAccessToken(), fileToBase64(file)])
+  const session = await getAccessToken()
+  let filePayload: { dataBase64: string } | { pages: Array<{ dataBase64: string; mimeType: string }> }
+  try {
+    filePayload = file.type === 'application/pdf'
+      ? { pages: await (await import('./pdf-report-images')).renderPdfReportImages(file) }
+      : { dataBase64: await fileToBase64(file) }
+  } catch {
+    throw new MedicalDocumentOcrError('OCRInvalidRequestError', 'Medical document could not be read or its rendered pages exceed the upload limit.')
+  }
+  if ((await getAccessToken()).userId !== session.userId) {
+    throw new MedicalDocumentOcrError('AuthError', 'Account changed during OCR preparation.')
+  }
   const response = await fetch(buildUrl(), {
     body: JSON.stringify({
-      dataBase64,
+      ...filePayload,
       fileName: file.name,
       mimeType: file.type,
     }),
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${session.token}`,
       'Content-Type': 'application/json',
     },
     method: 'POST',
@@ -172,12 +184,12 @@ export function getMedicalDocumentOcrMessage(error: unknown, locale: Locale) {
       zh: 'OCR 服务尚未配置，请稍后重试。',
     },
     OCRInvalidFileError: {
-      en: 'Only medical images and PDF files are supported.',
-      zh: '仅支持病历图片或 PDF 文件。',
+      en: 'Use JPEG, PNG, GIF, WebP or PDF files up to 8 MB.',
+      zh: '仅支持 JPEG、PNG、GIF、WebP 图片或 PDF 文件（最大 8 MB）。',
     },
     OCRInvalidRequestError: {
       en: 'The uploaded file could not be read. Please try another image or PDF.',
-      zh: '上传文件无法识别，请换一张图片或 PDF 重试。',
+      zh: '文件无法读取或转换后超过 8 MB，请使用未加密的 PDF、减少页数或换一张图片。',
     },
     OCRInvalidResponseError: {
       en: 'No readable medical text was found. You can retry or type it manually.',
@@ -191,11 +203,15 @@ export function getMedicalDocumentOcrMessage(error: unknown, locale: Locale) {
       en: 'OCR timed out. Please retry with a smaller file.',
       zh: 'OCR 超时，请换更小的文件重试。',
     },
+    OCRRateLimitError: {
+      en: 'OCR request limit reached. Please try again later.',
+      zh: 'OCR 请求过于频繁或额度已用完，请稍后重试。',
+    },
     OCRUpstreamError: {
       en: 'OCR failed. Please retry or type the text manually.',
       zh: 'OCR 识别失败，请重试或手动输入。',
     },
   }
 
-  return messages[name][locale]
+  return (messages[name] ?? messages.OCRUpstreamError)[locale]
 }

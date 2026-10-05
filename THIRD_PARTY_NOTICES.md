@@ -50,3 +50,7 @@ Copies retain their actual original terms; this is not a blanket upstream rights
 or preferred-source certification. Source archives contain public source and
 configuration examples, not private runtime data. Building files does not publish
 them or confirm that an independently deployed backend has the same revision.
+
+## PDF.js
+
+`pdfjs-dist`（Mozilla PDF.js）用于浏览器 PDF 页面渲染，采用 Apache-2.0。CMap、标准字体和图像解码资源随包分发，其各目录原始 LICENSE 文件随构建收录；不将这些第三方资源改授 AGPL。项目及许可：[mozilla/pdf.js](https://github.com/mozilla/pdf.js)。

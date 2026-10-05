@@ -151,7 +151,7 @@ describe('WorkspacePage report shell', () => {
     expect(markup).toContain('maxLength="8000"')
     expect(markup).toContain('上传病历 / 检验报告')
     expect(markup).toContain('type="file"')
-    expect(markup).toContain('accept="image/*,application/pdf"')
+    expect(markup).toContain('accept="image/jpeg,image/png,image/gif,image/webp,application/pdf"')
     expect(markup).not.toContain('data-input-tool="voice-input"')
     expect(markup).toContain('0 / 8000')
   })

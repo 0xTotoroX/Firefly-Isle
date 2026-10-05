@@ -1,7 +1,7 @@
 # medical-document-ocr Specification
 
 ## Purpose
-TBD - created by archiving change add-medical-document-ocr. Update Purpose after archive.
+Extract raw medical-document text through an authenticated server-side DeepSeek boundary for human review.
 ## Requirements
 ### Requirement: Medical document upload accepts images and PDFs
 The system SHALL allow users to upload medical-document images and PDFs from `/app` for OCR.
@@ -13,7 +13,8 @@ The system SHALL allow users to upload medical-document images and PDFs from `/a
 
 #### Scenario: PDF OCR succeeds
 - **WHEN** a user uploads a supported PDF file
-- **THEN** the system SHALL send the PDF to the server-side OCR boundary
+- **THEN** the system SHALL render PDF pages locally and send ordered page images in one request to the server-side OCR boundary
+- **AND** one report SHALL consume one OCR usage allowance
 - **AND** the page SHALL show the recognized raw text for confirmation
 
 #### Scenario: Unsupported file type

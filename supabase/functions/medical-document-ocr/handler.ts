@@ -1,7 +1,7 @@
 /**
- * [INPUT]: 依赖 Fetch API、Supabase JWT、原子配额、DeepSeek 图像及 Gemini document/image API。
+ * [INPUT]: 依赖 Fetch API、Supabase JWT、原子配额、DeepSeek 多图 API。
  * [OUTPUT]: 对外提供 createMedicalDocumentOcrHandler、RuntimeEnv 与 medical-document-ocr HTTP 协议。
- * [POS]: supabase/functions/medical-document-ocr 的可测试核心，把鉴权、文件校验、Gemini OCR 请求与错误映射收敛在一处。
+ * [POS]: supabase/functions/medical-document-ocr 的可测试核心，把鉴权、文件校验、DeepSeek OCR 请求与错误映射收敛在一处。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
 import { createFunctionLogger } from '../_shared/logger.ts'
@@ -16,8 +16,7 @@ const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
 }
 
-const DEFAULT_DEEPSEEK_OCR_MODEL = 'deepseek-v4-image'
-const DEFAULT_GEMINI_MODEL = 'gemini-2.5-flash'
+const DEFAULT_DEEPSEEK_OCR_MODEL = 'deepseek-flash'
 const DEFAULT_REQUEST_TIMEOUT_MS = 45_000
 const MAX_BASE64_LENGTH = Math.ceil((8 * 1024 * 1024 * 4) / 3)
 
@@ -37,6 +36,7 @@ type RequestBody = {
   dataBase64?: string
   fileName?: string
   mimeType?: string
+  pages?: Array<{ dataBase64: string; mimeType: string }>
 }
 
 type ErrorCode =
@@ -48,27 +48,12 @@ type ErrorCode =
   | 'OCRTimeoutError'
   | 'OCRUpstreamError'
 
-type OcrProvider = 'deepseek' | 'gemini'
-
 type RuntimeConfig = {
   deepseekApiKey: string
   deepseekBaseUrl: string
   deepseekOcrModel: string
-  geminiApiKey: string
-  geminiModel: string
-  ocrProvider: OcrProvider
   supabaseAnonKey: string
   supabaseUrl: string
-}
-
-type GeminiResponse = {
-  candidates?: Array<{
-    content?: {
-      parts?: Array<{
-        text?: string | null
-      }>
-    }
-  }>
 }
 
 type SupabaseAuthUser = {
@@ -82,9 +67,6 @@ function readConfig(env: RuntimeEnv): RuntimeConfig {
     deepseekApiKey: get('DEEPSEEK_API_KEY'),
     deepseekBaseUrl: get('DEEPSEEK_BASE_URL') || 'https://api.deepseek.com',
     deepseekOcrModel: get('DEEPSEEK_OCR_MODEL') || DEFAULT_DEEPSEEK_OCR_MODEL,
-    geminiApiKey: get('GEMINI_API_KEY'),
-    geminiModel: get('GEMINI_OCR_MODEL') || get('DEFAULT_GEMINI_MODEL') || DEFAULT_GEMINI_MODEL,
-    ocrProvider: (get('OCR_PROVIDER') || 'deepseek') === 'gemini' ? 'gemini' as const : 'deepseek' as const,
     supabaseAnonKey: get('SUPABASE_ANON_KEY'),
     supabaseUrl: get('SUPABASE_URL'),
   }
@@ -143,57 +125,24 @@ function isSupabaseAuthUser(value: unknown): value is SupabaseAuthUser {
   return typeof id === 'string' && id.trim().length > 0
 }
 
-function isSupportedMimeType(mimeType: string) {
-  return mimeType.startsWith('image/') || mimeType === 'application/pdf'
-}
+const IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
 
 function validateBody(body: RequestBody) {
-  const mimeType = body.mimeType?.trim() ?? ''
-  const dataBase64 = body.dataBase64?.trim() ?? ''
-
-  if (!isSupportedMimeType(mimeType)) {
-    return 'Only image and PDF files are supported.'
+  if (!body || typeof body !== 'object') return 'OCR request must be an object.'
+  const pages = body.mimeType === 'application/pdf' ? body.pages : [body]
+  if (!Array.isArray(pages) || !pages.length || pages.length > 600) {
+    return 'PDF pages must be rendered as images before OCR.'
   }
-
-  if (!dataBase64 || dataBase64.length > MAX_BASE64_LENGTH) {
-    return 'OCR file payload is missing or too large.'
+  let totalLength = 0
+  for (const page of pages) {
+    if (!page || typeof page.mimeType !== 'string' || !IMAGE_MIME_TYPES.has(page.mimeType) || typeof page.dataBase64 !== 'string'
+      || !page.dataBase64.length || !/^[A-Za-z0-9+/]+={0,2}$/.test(page.dataBase64)) {
+      return 'OCR requires JPEG, PNG, GIF or WebP image data.'
+    }
+    totalLength += page.dataBase64.length
+    if (totalLength > MAX_BASE64_LENGTH) return 'OCR image payload is too large.'
   }
-
   return null
-}
-
-function buildGeminiUrl(model: string) {
-  return `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`
-}
-
-function toGeminiRequest(body: RequestBody) {
-  return {
-    contents: [
-      {
-        parts: [
-          {
-            inline_data: {
-              data: body.dataBase64,
-              mime_type: body.mimeType,
-            },
-          },
-          {
-            text: 'extract all readable medical record text from this document. Return plain text only.',
-          },
-        ],
-        role: 'user',
-      },
-    ],
-  }
-}
-
-function extractGeminiText(payload: unknown) {
-  const text = (payload as GeminiResponse)?.candidates?.[0]?.content?.parts
-    ?.map((part) => part?.text ?? '')
-    .join('')
-    .trim()
-
-  return text ? text : null
 }
 
 function isTimeoutError(error: unknown) {
@@ -206,6 +155,7 @@ function isTimeoutError(error: unknown) {
 
 type DeepSeekResponse = {
   choices?: Array<{
+    finish_reason?: string
     message?: {
       content?: string | null
     }
@@ -213,30 +163,27 @@ type DeepSeekResponse = {
 }
 
 function toDeepSeekRequest(body: RequestBody, model: string) {
+  const pages = body.mimeType === 'application/pdf' ? body.pages! : [body]
   return {
-    messages: [
-      {
-        content: [
-          {
-            image_url: {
-              url: `data:${body.mimeType};base64,${body.dataBase64}`,
-            },
-            type: 'image_url',
-          },
-          {
-            text: 'extract all readable medical record text from this document. Return plain text only.',
-            type: 'text',
-          },
-        ],
-        role: 'user',
-      },
-    ],
+    messages: [{
+      content: [
+        ...pages.flatMap((page, index) => [
+          { type: 'text', text: `Document page ${index + 1}` },
+          { type: 'image_url', image_url: { url: `data:${page.mimeType};base64,${page.dataBase64}` } },
+        ]),
+        { type: 'text', text: 'Extract all readable medical record text from every page in order. Return plain text only. Preserve dates, numbers and units. Do not infer missing content or provide medical advice.' },
+      ],
+      role: 'user',
+    }],
     model,
+    thinking: { type: 'disabled' },
   }
 }
 
 function extractDeepSeekText(payload: unknown) {
-  const text = (payload as DeepSeekResponse)?.choices?.[0]?.message?.content?.trim()
+  const choice = (payload as DeepSeekResponse)?.choices?.[0]
+  if (choice?.finish_reason === 'length') return null
+  const text = choice?.message?.content?.trim()
 
   return text ? text : null
 }
@@ -280,50 +227,6 @@ async function callDeepSeek(body: RequestBody, config: RuntimeConfig, runtimeFet
 
     logger.error('ocr_upstream_error', { provider: 'deepseek' })
     return errorResponse(502, 'OCRUpstreamError', 'DeepSeek OCR request failed.')
-  } finally {
-    clearTimeout(timeoutId)
-  }
-}
-
-async function callGemini(body: RequestBody, config: RuntimeConfig, runtimeFetch: RuntimeFetch, timeoutMs: number) {
-  const abortController = new AbortController()
-  const timeoutId = setTimeout(() => abortController.abort('timeout'), timeoutMs)
-
-  try {
-    const response = await runtimeFetch(buildGeminiUrl(config.geminiModel), {
-      body: JSON.stringify(toGeminiRequest(body)),
-      headers: {
-        'Content-Type': 'application/json',
-        'x-goog-api-key': config.geminiApiKey,
-      },
-      method: 'POST',
-      signal: abortController.signal,
-    })
-
-    if (!response.ok) {
-      logger.error('ocr_upstream_rejected', { upstream_status: response.status })
-      return errorResponse(response.status === 400 || response.status === 422 ? 400 : 502, response.status === 400 || response.status === 422 ? 'OCRInvalidRequestError' : 'OCRUpstreamError', 'Gemini OCR request failed.')
-    }
-
-    const text = extractGeminiText(await response.json())
-
-    if (!text) {
-      logger.error('ocr_upstream_invalid_payload', {})
-      return errorResponse(502, 'OCRInvalidResponseError', 'Gemini OCR returned an invalid response payload.')
-    }
-
-    return jsonResponse(200, {
-      model: config.geminiModel,
-      text,
-    })
-  } catch (error) {
-    if (isTimeoutError(error)) {
-      logger.warn('ocr_upstream_timeout', {})
-      return errorResponse(504, 'OCRTimeoutError', 'Gemini OCR request timed out.')
-    }
-
-    logger.error('ocr_upstream_error', {})
-    return errorResponse(502, 'OCRUpstreamError', 'Gemini OCR request failed.')
   } finally {
     clearTimeout(timeoutId)
   }
@@ -375,14 +278,8 @@ export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
       return errorResponse(400, 'OCRInvalidRequestError', validationError)
     }
 
-    if (config.ocrProvider === 'deepseek' && body.mimeType === 'application/pdf') {
-      logger.warn('ocr_provider_unsupported_input', { provider: 'deepseek' })
-      return errorResponse(400, 'OCRInvalidRequestError', 'The DeepSeek image model does not accept PDF input. Convert the page to an image, or set OCR_PROVIDER=gemini.')
-    }
-
-    const apiKey = config.ocrProvider === 'gemini' ? config.geminiApiKey : config.deepseekApiKey
-    if (!apiKey) {
-      return errorResponse(500, 'ConfigurationError', `${config.ocrProvider === 'gemini' ? 'GEMINI' : 'DEEPSEEK'}_API_KEY is not configured.`)
+    if (!config.deepseekApiKey) {
+      return errorResponse(500, 'ConfigurationError', 'DEEPSEEK_API_KEY is not configured.')
     }
 
     const usage = await consumeUsage({ ...config, userToken: token }, 'ocr_document', runtimeFetch)
@@ -395,8 +292,6 @@ export function createMedicalDocumentOcrHandler(options: HandlerOptions) {
       return errorResponse(429, 'OCRRateLimitError', 'OCR request rate limit exceeded.')
     }
 
-    return config.ocrProvider === 'gemini'
-      ? callGemini(body, config, runtimeFetch, timeoutMs)
-      : callDeepSeek(body, config, runtimeFetch, timeoutMs)
+    return callDeepSeek(body, config, runtimeFetch, timeoutMs)
   }
 }

@@ -24,7 +24,8 @@ dashboard-data.ts: 计数与最新指标/随访聚合，保留各分区错误。
 提取与记录输出
 extraction.ts: 结构化提取、确定性补全、追问合并、模型身份清洗与失败恢复。
 extraction-prompt.ts: 紧凑的 PatientRecord 输出字段合同。
-medical-document-ocr.ts: 图片/PDF 校验、OCR 请求和本地化错误映射。
+medical-document-ocr.ts: 图片/PDF 校验、账号绑定的单次 OCR 请求和本地化错误映射。
+pdf-report-images.ts: PDF.js 同源渲染、按页排序转图、整份报告载荷限制和资源释放。
 clinical-analysis.ts: 非诊断辅助分析 prompt、响应校验与调用入口。
 export-record.ts: 隔离浅色正文副本，按内容块/文字行分页生成 PDF/PNG。
 model-catalog.ts: 声明式模型目录与文字/图像默认模型。
