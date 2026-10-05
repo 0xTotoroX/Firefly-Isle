@@ -87,3 +87,5 @@ SMTP 仍按用户决定本轮未配置/未验收。域名买好后核验邮件�
 官方依据：[EdgeOne 配置](https://pages.edgeone.ai/zh/document/edgeone-json)、[免费版价格](https://pages.edgeone.ai/zh/document/pricing-and-plans)、[限制与配额](https://pages.edgeone.ai/zh/document/limits-and-quotas)、[Google OAuth 凭据与错误](https://developers.google.com/identity/protocols/oauth2/web-server)。
 
 平台的纯项目默认回退实测曾把缺失 /api 和静态文件变成 HTML 200，即使已列显式 rewrites。build:edgeone 现生成仅用于路径保护的 middleware.js：公开文件列表中不存在的资源和本项目未实现的前端 /api 返回 404；不读取 JWT、账户或病历正文。真实资产、源码分卷和 /login 仍继续正常处理。
+
+PDF worker 的 .mjs 文件在腾讯云默认返回 application/octet-stream，实测造成模块 worker 无法加载。平台配置已显式将 /assets/*.mjs 返回为 text/javascript，不放宽 CSP、不改成 CDN 解析。
