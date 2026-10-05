@@ -6,6 +6,10 @@
 
 2026-09-14 的历史记录表明：自建环境完成过数据恢复、迁移预览、匿名会话续接、密码登录、病历 CRUD/RLS、分享、DeepSeek 和恢复演练；当时正式主站尚未切换。该记录不是当前部署验收，也不证明当前 SaaS 版本已经部署。
 
+2026-10-05 经腾讯云控制台与远端只读命令确认：现有预览实际运行在用户的上海四区 Lighthouse，4 核 4GB/40GB，机器还承载其他代理类服务。Firefly 的 PostgreSQL、Auth、PostgREST、Edge Runtime、Storage、Envoy 和 imgproxy 容器已存在；先核对这套环境并升级目标版本，不重复安装。单次资源读数和容器 healthy 均不证明生产容量、当前 schema/functions、邮件/OAuth 或恢复通过。当前生产配置仍指向官方新加坡项目。
+
+同日只读 SQL 核验：目标 public 中未查到 `persist_patient_record`、`get_shared_patient_record`、`consume_usage`、`save_lab_report_batch`；关键 owner 表的 RLS 开关为真，这不代替权限行为测试。`firefly-backup.timer` 为 active/waiting，最近触发时间为当日，service 的 Result=success、ExecMainStatus=0，最近备份目录存在；本轮没有恢复备份或修改数据库。正式新域名的国内 HTTPS 入口也需另验，不能把机器位于上海当作请求没有经过 Cloudflare Tunnel 的证据。
+
 - 正式站：`https://firefly.ghibli1024.com`。
 - 自建后端：`https://supabase.ghibli1024.com`。
 - 历史迁移预览：`https://firefly-migration.firefly-isle.pages.dev`。
