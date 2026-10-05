@@ -447,7 +447,7 @@
   will-change: transform;
 }
 
-/* Scroll-story geometry stays in CSS; ScrollTrigger only writes visual progress. */
+/* Scroll-story geometry stays in CSS; The native controller only writes visual progress. */
 .story-section {
   scroll-margin-top: 1rem;
 }

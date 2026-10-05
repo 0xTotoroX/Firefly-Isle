@@ -1,6 +1,6 @@
 /**
  * [INPUT]: 依赖 node:fs 的源码合同检查，依赖 react-dom/server 的静态渲染，依赖 react-router-dom 的 MemoryRouter，依赖 BackgroundAudioProvider 与 ./login-page-view 的 LoginPageView。
- * [OUTPUT]: 对外提供登录页八章叙事、单一认证弹层、SSR 安全 ScrollTrigger、reduced-motion、Transitions.dev 与单一 WebGL 背景合同的回归测试。
+ * [OUTPUT]: 对外提供登录页八章叙事、单一认证弹层、SSR 安全原生滚动动效、reduced-motion、Transitions.dev 与单一 WebGL 背景合同的回归测试。
  * [POS]: components 的登录页主题测试，约束 V3 入口页不混入工作区导航与旧伪技术装饰，锁住首屏节奏、八章顺序、首尾同源登录 CTA、无 Demo 入口、双主题、认证模式、CSS sticky + spacer、动效生命周期与液体折射边界。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
@@ -68,10 +68,6 @@ function readLiquidEffectSource() {
 
 function readStorySectionsSource() {
   return readFileSync(new URL('./login/login-story-sections.tsx', import.meta.url), 'utf8')
-}
-
-function readStoryMotionSource() {
-  return readFileSync(new URL('./login/scroll-story-motion.ts', import.meta.url), 'utf8')
 }
 
 function readTransitionSource() {
@@ -349,57 +345,22 @@ describe('LoginPageView theme shell', () => {
     expect(liquidEffectSource).not.toContain('__refractionStageApp')
   })
 
-  it('keeps GSAP and ScrollTrigger inside the client effect boundary', () => {
+  it('renders static content without starting browser scroll animations', () => {
     const markup = renderLogin('dark')
-    const motionSource = readStoryMotionSource()
-    const effectIndex = motionSource.indexOf('useEffect(() => {')
-    const gsapImportIndex = motionSource.indexOf("import('gsap')")
-    const triggerImportIndex = motionSource.indexOf("import('gsap/ScrollTrigger')")
-    const registerIndex = motionSource.indexOf('gsap.registerPlugin(ScrollTrigger)')
-
+    expect(markup).toContain('data-scroll-story-mode="reduced"')
+    expect(markup).toContain('data-scroll-story-motion-count="0"')
     expect(markup).not.toContain('gsap')
     expect(markup).not.toContain('ScrollTrigger')
-    expect(motionSource).not.toMatch(/from ['"]gsap(?:\/ScrollTrigger)?['"]/)
-    expect(effectIndex).toBeGreaterThan(-1)
-    expect(gsapImportIndex).toBeGreaterThan(effectIndex)
-    expect(triggerImportIndex).toBeGreaterThan(effectIndex)
-    expect(registerIndex).toBeGreaterThan(triggerImportIndex)
-    expect(motionSource).toContain('gsap.context(() => {')
-    expect(motionSource).toContain('context?.revert()')
-  })
-
-  it('locks the OpenSpec ScrollTrigger mapping and linear scrub easing', () => {
-    const motionSource = readStoryMotionSource()
-    const frozenConfigs = [
-      "end: 'top 60%', scrub: 0.3, start: 'top 80%'",
-      "end: 'top 55%', scrub: 0.3, start: 'top 75%'",
-      "end: 'top 50%', scrub: 0.3, start: 'top 70%'",
-      "end: 'top 30%', scrub: 0.5, start: 'top 70%'",
-      "end: 'bottom center'",
-      "scrub: 0.5",
-      "start: '80% center'",
-      "end: 'center top', scrub: 1, start: 'top 30%'",
-    ]
-
-    frozenConfigs.forEach((config) => expect(motionSource).toContain(config))
-    expect(countOccurrences(motionSource, "ease: 'none'")).toBeGreaterThanOrEqual(7)
   })
 
   it('uses CSS sticky plus a sibling spacer and preserves all content in reduced motion', () => {
     const storySource = readStorySectionsSource()
-    const motionSource = readStoryMotionSource()
     const transitionSource = readTransitionSource()
 
     expect(storySource).toContain('className="story-sticky-panel')
     expect(storySource).toContain('className="story-scroll-spacer"')
     expect(storySource).toContain('id="story-views-exit"')
     expect(storySource.indexOf('className="story-scroll-spacer"')).toBeGreaterThan(storySource.indexOf('id="story-views-sticky"'))
-    expect(motionSource).toContain("const viewsExit = one('#story-views-exit')")
-    expect(motionSource).toContain('gsap.to(viewsExit')
-    expect(motionSource).not.toContain('gsap.to(viewsFrame')
-    expect(motionSource).not.toContain('pin:')
-    expect(motionSource).not.toContain('ScrollSmoother')
-    expect(motionSource).not.toContain('Lenis')
     expect(transitionSource).toContain("[data-scroll-story-mode='reduced'] .story-scroll-spacer")
     expect(transitionSource).toContain('display: none;')
     expect(transitionSource).toContain("[data-scroll-story-mode='reduced'] .story-view-stack")

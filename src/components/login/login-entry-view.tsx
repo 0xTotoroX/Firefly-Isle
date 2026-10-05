@@ -175,7 +175,7 @@ export function V3LoginView({
     <div
       className={`min-h-dvh w-full overflow-x-clip font-[var(--ff-font-ui)] ${skin.root}`}
       data-scroll-story-mode={prefersReducedMotion ? 'reduced' : 'animated'}
-      data-scroll-story-trigger-count="0"
+      data-scroll-story-motion-count="0"
       data-story-webgl-active={isHeroVisualActive ? 'true' : 'false'}
       ref={storyRootRef}
     >

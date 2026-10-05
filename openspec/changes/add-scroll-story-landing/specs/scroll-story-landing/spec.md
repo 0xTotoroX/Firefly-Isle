@@ -20,8 +20,8 @@
 - **THEN** 页面 SHALL 打开同一个统一登录弹层
 - **AND** 两处 CTA SHALL NOT 各自持有独立认证状态或独立表单值
 
-### Requirement: 滚动动效使用 ScrollTrigger 进度绑定
-系统 SHALL 使用 GSAP ScrollTrigger 把滚动进度绑定到叙事章节的动画属性，并保持滚动位置与动画进度可逆对应。
+### Requirement: 滚动动效使用自有原生进度绑定
+系统 SHALL 使用自有浏览器原生滚动控制器 把滚动进度绑定到叙事章节的动画属性，并保持滚动位置与动画进度可逆对应。
 
 #### Scenario: 滚动进度驱动章节动画
 - **WHEN** 叙事章节进入配置的滚动区间
@@ -29,11 +29,11 @@
 - **AND** 用户反向滚动时动画 SHALL 反向回到对应进度
 - **AND** scrub 绑定的动画 SHALL 使用线性缓动，避免与滚动位置产生非线性偏移
 
-#### Scenario: 分层推进不使用 GSAP pin
+#### Scenario: 分层推进不改写原生定位
 - **WHEN** 系统实现需要停留推进的章节
 - **THEN** 系统 SHALL 使用 CSS sticky 容器配合兄弟 spacer 撑出滚动距离
-- **AND** 系统 SHALL NOT 使用 GSAP `pin` 注入 pin-spacer 包装元素
-- **AND** 定位职责 SHALL 留在样式层，ScrollTrigger SHALL 只读取进度并写入动画属性
+- **AND** 系统 SHALL NOT 注入 pin-spacer 包装元素或由动画库接管定位
+- **AND** 定位职责 SHALL 留在样式层，原生动效控制器 SHALL 只读取进度并写入动画属性
 
 #### Scenario: 不引入平滑滚动劫持
 - **WHEN** 系统实现滚动叙事
@@ -43,21 +43,21 @@
 ### Requirement: 滚动叙事保持渲染与生命周期安全
 系统 SHALL 保证滚动叙事不破坏静态渲染、路由切换与既有登录页动效契约。
 
-#### Scenario: 静态渲染不执行动画库
+#### Scenario: 静态渲染不执行浏览器动效
 - **WHEN** 系统在 `react-dom/server` 静态渲染环境渲染登录页
 - **THEN** 渲染 SHALL 成功且不访问 `window`
 - **AND** 静态渲染产物 SHALL NOT 包含动画库运行时标识
-- **AND** ScrollTrigger 注册与实例化 SHALL 只发生在客户端副作用中
+- **AND** 浏览器动效监听与观察器初始化 SHALL 只发生在客户端副作用中
 
-#### Scenario: 离开登录页清理 ScrollTrigger
+#### Scenario: 离开登录页清理原生动效
 - **WHEN** 用户从 `/login` 导航到其他路由
-- **THEN** 系统 SHALL 清理该页创建的全部 ScrollTrigger 实例
+- **THEN** 系统 SHALL 取消待执行动画帧、断开布局观察器、移除监听并恢复被接管样式
 - **AND** 反复进出 `/login` SHALL NOT 累积未回收的滚动监听
 
 #### Scenario: 叙事动效与路由进入动效不叠加
 - **WHEN** 系统渲染 `story-hero`
 - **THEN** 首屏 SHALL 继续使用既有路由进入与 stagger CSS 动效
-- **AND** ScrollTrigger SHALL 只接管 `story-hero` 之后的叙事章节
+- **AND** 原生动效控制器 SHALL 只接管 `story-hero` 之后的叙事章节
 - **AND** 同一元素 SHALL NOT 同时被 CSS 进入动效与 scrub 动画驱动
 
 #### Scenario: 叙事章节不新起 WebGL 上下文

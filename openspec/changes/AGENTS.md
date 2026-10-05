@@ -6,7 +6,7 @@
 成员清单
 complete-saas-user-workflows/: 十部分任务书下的化验审核、失败恢复、完整导出、诊断脱敏、捐赠原子状态、Demo 与云端验收合同；正式布局等待用户选择。
 self-host-supabase/: 自建后端准备已整合；SMTP/OAuth、当前 schema/functions 验收与正式切换仍待完成。
-add-scroll-story-landing/: 未归档变更合同，定义 /login 纵向滚动叙事落地页、GSAP ScrollTrigger 进度绑定、非 pin 分层推进、登录页 Demo CTA 移除与 reduced-motion 降级边界
+add-scroll-story-landing/: 未归档变更合同，定义 /login 纵向滚动叙事落地页、自有原生滚动进度绑定（历史 GSAP 取证保留）、非 pin 分层推进、登录页 Demo CTA 移除与 reduced-motion 降级边界
 fix-authenticated-empty-navigation/: 未归档变更合同，定义已登录/匿名空工作区不得把病历或统计入口降级到公开 `/demo/*`、需禁用入口并显示“先提取”说明、公开 Demo 壳层闭环保持不变的边界
 calm-record-reading-surface/: 未归档变更合同，定义 `/record/:id` 与 `/demo/record` 的安静临床档案阅读层级、文字页签、次级分享 disclosure、真实能力保留与装饰性 AI/system 认证清理边界
 refine-product-motion-feedback/: 未归档的正式产品动效合同，保持 V3 视觉不变，收敛 route/stagger、control press、tab switch 与 icon swap 的时长、组合、性能和 reduced-motion 边界

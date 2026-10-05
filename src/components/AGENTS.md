@@ -6,9 +6,9 @@ app-shell.tsx: 共享壳层入口，只导出 ClinicalTopBar 与 ArchiveSideNav�
 analytics/: 实验室趋势统计展示组件目录，承载全产品 Demo 指标/AI 预览数据、分类指标索引、折线图、等价表格与监测面板；上传入口归 /app 输入区
 background-music-toggle.tsx: 全局背景音乐共享控件，消费 BackgroundAudioProvider 状态并以可访问标签表达播放、暂停、拦截、不可用、当前曲目、上一首/下一首、control press、紧凑顶栏直接切换、hover 播放器弹层与按钮到弹层桥接层
 background-music-toggle.test.tsx: 背景音乐控制入口回归测试，约束登录页工具区与 authenticated top bar 共用同一音乐开关、曲目标题、切歌语义、暂停文案、紧凑顶栏直接切换、hover 弹层触发与桥接层合同
-login/: 登录页展示层内部模块，收敛类型、skin、认证卡、统一弹层、八章叙事内容、客户端 ScrollTrigger 编排与唯一液体折射背景；登录页不再提供 Demo CTA，公开 Demo 路由仍由路由层维护
+login/: 登录页展示层内部模块，收敛类型、skin、认证卡、统一弹层、八章叙事内容、客户端原生滚动动效编排与唯一液体折射背景；登录页不再提供 Demo CTA，公开 Demo 路由仍由路由层维护
 login-page-view.tsx: 登录页稳定 facade，继续导出 LoginPageView 与 AuthMode/AuthMethod/AuthFeedback/LoginPageViewProps，内部转交 components/login 实现
-login-page-view.test.tsx: 登录页八章顺序、无 Demo CTA、首尾同源 AuthOverlay、双主题、认证模式、SSR 安全 ScrollTrigger、CSS sticky + spacer、reduced-motion 与单一 WebGL 背景合同测试；Demo 路由可达性由路由/Demo 测试继续负责
+login-page-view.test.tsx: 登录页八章顺序、无 Demo CTA、首尾同源 AuthOverlay、双主题、认证模式、SSR 安全原生滚动动效、CSS sticky + spacer、reduced-motion 与单一 WebGL 背景合同测试；Demo 路由可达性由路由/Demo 测试继续负责
 privacy-gate.tsx: 首次使用隐私门控层，负责 localStorage 确认状态、独立隐私页放行与可滚动全屏阻塞弹层
 record/: 病例详情展示层内部模块，收敛 dossier 展示、文案、demo 数据、真实病历派生数据与展示类型
 system/: 设计系统壳层、品牌 mark、Demo 模式提醒、PWA 网络状态提示与 surface 基元目录，统一 sidebar、top bar、panel、邮件 hover 联系弹窗与 section 结构语义
