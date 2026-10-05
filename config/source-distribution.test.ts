@@ -79,6 +79,31 @@ describe('source distribution boundaries', () => {
     expect(html).not.toContain('github.com')
   })
 
+  it('ships a complete reconstructable archive when the hosting file limit requires parts', async () => {
+    const root = await fixture()
+    const snapshot = await captureProjectSource(root)
+    const output = path.join(root, 'dist')
+    const manifest = await writeSourceDistribution(root, output, snapshot, 512)
+    expect(manifest.archiveParts.length).toBeGreaterThan(1)
+    const parts = await Promise.all(manifest.archiveParts.map(async part => {
+      const bytes = await readFile(path.join(output, 'source', part.name))
+      expect(bytes.length).toBeLessThanOrEqual(512)
+      expect(bytes.length).toBe(part.bytes)
+      expect(createHash('sha256').update(bytes).digest('hex')).toBe(part.sha256)
+      return bytes
+    }))
+    const combined = Buffer.concat(parts)
+    expect(createHash('sha256').update(combined).digest('hex')).toBe(manifest.archiveSha256)
+    const restored = path.join(root, 'assembled.tar.gz')
+    await writeFile(restored, combined)
+    expect(execFileSync('tar', ['-xOzf', restored, './src/main.ts']).toString()).toBe('export const revision = 1\n')
+    expect(execFileSync('tar', ['-xOzf', restored, './vendor/npm/node_modules/fixture-library/LICENSE']).toString()).toBe('Synthetic library notice — unchanged\n')
+    const html = await readFile(path.join(output, 'source/index.html'), 'utf8')
+    for (const part of manifest.archiveParts) expect(html).toContain(`href="${part.name}"`)
+    expect(html).toContain(manifest.archiveSha256)
+    await expect(readFile(path.join(output, 'source', manifest.archive))).rejects.toThrow()
+  })
+
   it('rejects code changed after the build snapshot', async () => {
     const root = await fixture()
     const snapshot = await captureProjectSource(root)

@@ -24,7 +24,7 @@ npm ci
 npm run build
 ```
 
-检查 `dist/index.html`、`dist/sw.js`、`dist/source/index.html`、`dist/source/source-manifest.json` 存在，manifest 的 `revision` 与要发布的 SHA 相同且 `dirty` 为 `false`。构建时需注入已审核的 `VITE_SUPABASE_URL`、`VITE_SUPABASE_ANON_KEY` 和 `VITE_SUPABASE_EDGE_FUNCTION_URL`；其他私密密钥只放服务端。只跑构建不证明目标环境或后端可用。
+检查 `dist/index.html`、`dist/sw.js`、`dist/source/index.html`、`dist/source/source-manifest.json` 存在，manifest 的 `revision` 与要发布的 SHA 相同且 `dirtySnapshot` 为 `false`。构建时需注入已审核的 `VITE_SUPABASE_URL`、`VITE_SUPABASE_ANON_KEY` 和 `VITE_SUPABASE_EDGE_FUNCTION_URL`；其他私密密钥只放服务端。源码包超过 20 MiB 时生成分卷，清单保留整体与每卷 SHA-256，源码页提供全部下载和拼接方法；不得移除对应源码来绕过 Pages 25 MiB 单文件限制。只跑构建不证明目标环境或后端可用。
 
 ## 1. 新站端到端预览
 

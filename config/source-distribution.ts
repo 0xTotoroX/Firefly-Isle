@@ -1,6 +1,6 @@
 /**
  * [INPUT]: Git公开源码清单、项目许可/锁文件、已安装运行依赖、Node文件/摘要API及系统tar。
- * [OUTPUT]: 构建时生成精确源码快照、运行依赖源文件/通知、版本清单及无需登录的源码许可页。
+ * [OUTPUT]: 构建时生成精确源码快照、运行依赖源文件/通知、版本清单、托管限额内的源码分卷及无需登录的源码许可页。
  * [POS]: config的本地分发装配，不读取.env、凭据、运行数据或历史私密资料，不发布文件。
  * [PROTOCOL]: 依赖、导出或职责变化时更新此头部；仅在模块描述受影响时检查所属模块的 AGENTS.md，已加载且未变化的内容不重读。
  */
@@ -130,13 +130,23 @@ async function put(directory: string, name: string, bytes: Buffer | string, mode
   await writeFile(full, bytes, mode === undefined ? {} : { mode })
 }
 
-function sourcePage({ revision, digest, archive, archiveHash, dirty }: { revision: string | null; digest: string; archive?: string; archiveHash?: string; dirty: boolean }) {
-  return `<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>知见 / MyOncode — 源码与许可</title><link rel="stylesheet" href="/source/source.css"></head><body><main><h1>源码与许可 / Source and license</h1><p>知见 / MyOncode 自有代码：<strong>AGPL-3.0-only</strong>。第三方代码和素材保留各自许可；历史 MIT 授予继续有效。</p><p>这是本地构建材料；生成这些文件不代表已经发布或部署。${dirty ? '此构建包含未提交快照，以内容摘要识别。' : ''}</p><dl><dt>修订 / Revision</dt><dd>${escapeHtml(revision ?? '源归档快照')}</dd><dt>源码摘要 / Source SHA-256</dt><dd>${escapeHtml(digest)}</dd></dl>${archive ? `<p><a href="${escapeHtml(archive)}" download referrerpolicy="no-referrer">免费下载此构建对应源码 / Download this build's source</a></p><p>归档 SHA-256：<code>${escapeHtml(archiveHash!)}</code></p>` : '<p>开发服务器尚未生成源码包。生产构建会随附对应源码；此页面不声称远端已有当前源码。</p>'}<p>源码包收录项目的前后端、构建材料及已安装运行依赖发布物中的源文件与通知；必要配置使用示例，不包含账户、病历、凭据或私人运行资料。音乐、字体和图像不改授 AGPL。</p><ul><li><a href="/licenses/LICENSE">AGPL 第三版全文</a></li><li><a href="/licenses/LICENSING.md">许可与源码说明</a></li><li><a href="/licenses/THIRD_PARTY_NOTICES.md">第三方与素材边界</a></li><li><a href="source-manifest.json">此构建源码清单</a></li></ul><p>若运行独立后端，部署者还须确保所提供源码与实际后端版本一致。本页面不证明全部第三方权属或上线审查已经完成。</p></main></body></html>`
+type ArchivePart = { name: string; bytes: number; sha256: string }
+
+function sourceDownload(archive: string, archiveHash: string, parts: ArchivePart[]) {
+  const download = parts.length
+    ? `<p>源码包已分卷。下载全部分卷到同一目录，再按顺序拼接：</p><ol>${parts.map((part) => `<li><a href="${escapeHtml(part.name)}" download referrerpolicy="no-referrer">${escapeHtml(part.name)}</a>（${part.bytes} 字节）</li>`).join('')}</ol><pre><code>cat ${escapeHtml(archive)}.part-* &gt; ${escapeHtml(archive)}</code></pre><p>拼接后按下面的整体 SHA-256 校验，再解压。每卷的校验值也在源码清单中。</p>`
+    : `<p><a href="${escapeHtml(archive)}" download referrerpolicy="no-referrer">免费下载此构建对应源码 / Download this build's source</a></p>`
+  return `${download}<p>归档 SHA-256：<code>${escapeHtml(archiveHash)}</code></p>`
+}
+
+function sourcePage({ revision, digest, archive, archiveHash, parts = [], dirty }: { revision: string | null; digest: string; archive?: string; archiveHash?: string; parts?: ArchivePart[]; dirty: boolean }) {
+  return `<!doctype html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>知见 / MyOncode — 源码与许可</title><link rel="stylesheet" href="/source/source.css"></head><body><main><h1>源码与许可 / Source and license</h1><p>知见 / MyOncode 自有代码：<strong>AGPL-3.0-only</strong>。第三方代码和素材保留各自许可；历史 MIT 授予继续有效。</p><p>这是本地构建材料；生成这些文件不代表已经发布或部署。${dirty ? '此构建包含未提交快照，以内容摘要识别。' : ''}</p><dl><dt>修订 / Revision</dt><dd>${escapeHtml(revision ?? '源归档快照')}</dd><dt>源码摘要 / Source SHA-256</dt><dd>${escapeHtml(digest)}</dd></dl>${archive ? sourceDownload(archive, archiveHash!, parts) : '<p>开发服务器尚未生成源码包。生产构建会随附对应源码；此页面不声称远端已有当前源码。</p>'}<p>源码包收录项目的前后端、构建材料及已安装运行依赖发布物中的源文件与通知；必要配置使用示例，不包含账户、病历、凭据或私人运行资料。音乐、字体和图像不改授 AGPL。</p><ul><li><a href="/licenses/LICENSE">AGPL 第三版全文</a></li><li><a href="/licenses/LICENSING.md">许可与源码说明</a></li><li><a href="/licenses/THIRD_PARTY_NOTICES.md">第三方与素材边界</a></li><li><a href="source-manifest.json">此构建源码清单</a></li></ul><p>若运行独立后端，部署者还须确保所提供源码与实际后端版本一致。本页面不证明全部第三方权属或上线审查已经完成。</p></main></body></html>`
 }
 
 const sourceCss = 'body{margin:0;background:#fafafa;color:#202020;font:16px/1.7 system-ui,sans-serif}main{max-width:52rem;margin:auto;padding:2rem 1.25rem}h1{font-size:1.8rem}a{color:#72512d;text-underline-offset:3px}dd,code{overflow-wrap:anywhere}dd{margin:0 0 1rem}dt{font-weight:600}'
 
-export async function writeSourceDistribution(root: string, outDir: string, snapshot: Snapshot) {
+export async function writeSourceDistribution(root: string, outDir: string, snapshot: Snapshot, maxArchivePartBytes = 20 * 1024 * 1024) {
+  if (!Number.isSafeInteger(maxArchivePartBytes) || maxArchivePartBytes <= 0) throw new Error('Invalid archive part size')
   const current = await captureProjectSource(root)
   if (current.digest !== snapshot.digest || current.revision !== snapshot.revision) throw new Error('Source changed during build; rebuild instead of publishing a mismatched archive')
   const dependencies = await collectRuntimeDependencies(root)
@@ -169,11 +179,23 @@ export async function writeSourceDistribution(root: string, outDir: string, snap
     for (const file of snapshot.files.filter((file) => ['LICENSE', 'LICENSING.md', 'THIRD_PARTY_NOTICES.md'].includes(file.name) || file.name.startsWith('LICENSES/'))) await put(licenseDir, file.name, file.bytes)
     await put(licenseDir, 'runtime-packages.json', JSON.stringify(manifest.runtimePackages, null, 2) + '\n')
     execFileSync('tar', ['-czf', path.join(sourceDir, archiveName), '-C', stage, '.'], { env: { ...process.env, COPYFILE_DISABLE: '1' }, stdio: ['ignore', 'pipe', 'pipe'] })
-    const archiveHash = sha256(await readFile(path.join(sourceDir, archiveName)))
-    await put(sourceDir, 'source-manifest.json', JSON.stringify({ ...manifest, archive: archiveName, archiveSha256: archiveHash }, null, 2) + '\n')
-    await put(sourceDir, 'index.html', sourcePage({ revision: snapshot.revision, digest: snapshot.digest, archive: archiveName, archiveHash, dirty: snapshot.dirty }))
+    const archiveBytes = await readFile(path.join(sourceDir, archiveName))
+    const archiveHash = sha256(archiveBytes)
+    const archiveParts: ArchivePart[] = []
+    if (archiveBytes.length > maxArchivePartBytes) {
+      for (let offset = 0; offset < archiveBytes.length; offset += maxArchivePartBytes) {
+        const bytes = archiveBytes.subarray(offset, offset + maxArchivePartBytes)
+        const name = `${archiveName}.part-${String(archiveParts.length + 1).padStart(6, '0')}`
+        await put(sourceDir, name, bytes)
+        archiveParts.push({ name, bytes: bytes.length, sha256: sha256(bytes) })
+      }
+      await rm(path.join(sourceDir, archiveName))
+    }
+    const result = { ...manifest, archive: archiveName, archiveSha256: archiveHash, archiveParts }
+    await put(sourceDir, 'source-manifest.json', JSON.stringify(result, null, 2) + '\n')
+    await put(sourceDir, 'index.html', sourcePage({ revision: snapshot.revision, digest: snapshot.digest, archive: archiveName, archiveHash, parts: archiveParts, dirty: snapshot.dirty }))
     await put(sourceDir, 'source.css', sourceCss)
-    return { ...manifest, archive: archiveName, archiveSha256: archiveHash }
+    return result
   } finally {
     await rm(stage, { recursive: true, force: true })
   }
