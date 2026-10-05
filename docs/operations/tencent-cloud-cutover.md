@@ -89,3 +89,15 @@ SMTP 仍按用户决定本轮未配置/未验收。域名买好后核验邮件�
 平台的纯项目默认回退实测曾把缺失 /api 和静态文件变成 HTML 200，即使已列显式 rewrites。build:edgeone 现生成仅用于路径保护的 middleware.js：公开文件列表中不存在的资源和本项目未实现的前端 /api 返回 404；不读取 JWT、账户或病历正文。真实资产、源码分卷和 /login 仍继续正常处理。
 
 PDF worker 的 .mjs 文件在腾讯云默认返回 application/octet-stream，实测造成模块 worker 无法加载。平台配置已显式将 /assets/*.mjs 返回为 text/javascript，不放宽 CSP、不改成 CDN 解析。
+
+## 腾讯云项目实际结果
+
+项目为中国站 `makers-zbjwzs1yfrhl`，名称 myoncode，区域全球可用区（不含中国大陆）。第一次上传因 Node 精确版本被拒，第二次静态上传成功；进一步 HTTP/浏览器验收发现的 SPA 缺失资源回退和 PDF worker MIME 已修复。最终部署 ID `dpxf1bqnqhhq`，对应源码 `b0404ff61a613a63bd55721e4c196b08d981d50a`；项目入口为 `https://myoncode-7xyqbwsq.edgeone.dev`，版本入口为 `https://myoncode-dpxf1bqnqhhq.edgeone.dev`。平台 production 标签仍指本轮测试网站，不代表正式患者服务已上线。
+
+实测 `/login`、`/auth/reset-password`、公开源码清单返回 200，缺失 `/assets/missing-file.js` 与 `/api/missing` 返回 404；PDF 模块 worker 返回 text/javascript。公开源码清单与最后部署版本、干净快照一致。腾讯云页面已使用上海匿名 Auth、提取、保存与刷新；合成记录在服务器按唯一 ID 核验并清理。最终 PDF 修复的浏览器复验另在本轮证据目录记录，不拿初次失败当成功。
+
+旧 Cloudflare 地址本轮同步发布了 Google 暂不可用提示，当前部署 `026c4d70-3ed7-48aa-90b7-28aa581fe36c` 对应 b77967e；保留它作为已有入口。域名买好后才配置对应 CNAME/HTTPS/备案与大陆加速节点，不提前修改现有 DNS。
+
+最终版本的两页合成 PDF 已在真实腾讯云页面完成识别，返回两页日期、WBC 5.0 和 CEA 6.0 并进入人工确认。浏览器复验实际调用 DeepSeek，初次失败的版本不纳入通过依据。760 项全量回归、类型检查、相关 lint、本机构建与平台部署均通过。
+
+最终版本另外完成了合成记录的提取、保存、详情读取和刷新验收；服务器按唯一 ID 确认该记录实际位于上海，并在登出后清理本次匿名身份及记录。两轮腾讯云临时验收账户均已清理，未操作其他账户。最终源码五卷已从腾讯云公开入口下载并核验每卷及整体 SHA-256。
