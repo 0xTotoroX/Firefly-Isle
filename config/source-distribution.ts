@@ -22,7 +22,7 @@ const rootFiles = new Set([
   'AGENTS.md', 'LICENSE', 'LICENSING.md', 'THIRD_PARTY_NOTICES.md', 'README.md', 'README.en.md',
   'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'package.json', 'package-lock.json',
   'index.html', 'tsconfig.json', 'eslint.config.js', 'components.json', 'capacitor.config.ts',
-  'wrangler.jsonc', '.gitignore', '.env.local.example', '.dev.vars.example', 'supabase/config.toml',
+  'wrangler.jsonc', 'edgeone.json', '.gitignore', '.env.local.example', '.dev.vars.example', 'supabase/config.toml',
   'ops/self-hosted/.env.example',
 ])
 const sourceRoots = ['src/', 'config/', 'scripts/', 'public/', 'LICENSES/', 'mobile/', 'supabase/functions/', 'supabase/migrations/', 'supabase/tests/', 'functions/']

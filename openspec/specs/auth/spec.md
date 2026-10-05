@@ -81,6 +81,11 @@
 - **THEN** 认证弹层 MAY 展示 Google 登录入口
 - **AND** 该入口 SHALL 表达真实可用的 OAuth 登录，而不是禁用占位
 
+#### Scenario: Google provider 暂不可用
+- **WHEN** 部署环境明确关闭尚未验收通过的 Google provider
+- **THEN** 认证弹层 SHALL 禁用该入口并显示暂不可用
+- **AND** 系统 SHALL NOT 调用 OAuth；邮箱登录和匿名会话按各自状态继续工作
+
 #### Scenario: Google 登录启动
 - **WHEN** 用户触发 Google 登录入口
 - **THEN** 系统 SHALL 调用 Supabase `signInWithOAuth()` 并使用 `google` provider

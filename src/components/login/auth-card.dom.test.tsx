@@ -44,6 +44,16 @@ function renderAuthCard(overrides: Partial<Parameters<typeof AuthCard>[0]> = {})
 }
 
 describe('AuthCard', () => {
+  it('clearly disables an unavailable Google provider without calling OAuth', async () => {
+    const onGoogleLogin = vi.fn()
+    renderAuthCard({ googleAvailable: false, onGoogleLogin })
+    const button = screen.getByRole('button', { name: 'Google 暂不可用' })
+    expect(button).toBeDisabled()
+    await userEvent.click(button)
+    expect(onGoogleLogin).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: /匿名会话/ })).toBeEnabled()
+  })
+
   it('routes controlled input changes through the injected callbacks', async () => {
     const onEmailChange = vi.fn()
     const onPasswordChange = vi.fn()

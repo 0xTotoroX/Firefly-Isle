@@ -41,3 +41,6 @@ ops/self-hosted/source-db.env
 *.xcarchive
 mobile/android/local.properties
 mobile/ios/DerivedData/
+
+# EdgeOne local login/link state; credentials never enter source bundles.
+.edgeone/

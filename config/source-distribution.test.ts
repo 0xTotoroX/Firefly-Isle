@@ -48,8 +48,8 @@ afterEach(async () => { await Promise.all(roots.splice(0).map((root) => rm(root,
 
 describe('source distribution boundaries', () => {
   it('keeps source/build examples while excluding secrets, runtime data, history and traversal', () => {
-    for (const name of ['src/main.ts', 'mobile/android/app/src/main/AndroidManifest.xml', 'supabase/config.toml', 'supabase/tests/example.sql', 'supabase/functions/example/index.ts', 'ops/self-hosted/.env.example', '.env.local.example', 'LICENSES/history.txt']) expect(isProjectSource(name)).toBe(true)
-    for (const name of ['.env.local', '../src/main.ts', '/src/main.ts', 'src/private/data.json', 'ops/self-hosted/volumes/data.sql', 'ops/self-hosted/volumes/secret.example', 'ops/self-hosted/private/secret.example', 'mobile/android/local.properties', 'mobile/ios/Pods/secret.txt', 'mobile/android/app/build/output.apk', 'mobile/android/signing.keystore', 'docs/log/private-note.md', 'public/data.sqlite']) expect(isProjectSource(name)).toBe(false)
+    for (const name of ['edgeone.json', 'src/main.ts', 'mobile/android/app/src/main/AndroidManifest.xml', 'supabase/config.toml', 'supabase/tests/example.sql', 'supabase/functions/example/index.ts', 'ops/self-hosted/.env.example', '.env.local.example', 'LICENSES/history.txt']) expect(isProjectSource(name)).toBe(true)
+    for (const name of ['.edgeone/auth.json', '.env.local', '../src/main.ts', '/src/main.ts', 'src/private/data.json', 'ops/self-hosted/volumes/data.sql', 'ops/self-hosted/volumes/secret.example', 'ops/self-hosted/private/secret.example', 'mobile/android/local.properties', 'mobile/ios/Pods/secret.txt', 'mobile/android/app/build/output.apk', 'mobile/android/signing.keystore', 'docs/log/private-note.md', 'public/data.sqlite']) expect(isProjectSource(name)).toBe(false)
   })
 
   it('ships the matching code, dependency files and original license bytes in an accessible local bundle', async () => {

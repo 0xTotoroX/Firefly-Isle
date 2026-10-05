@@ -176,6 +176,7 @@ export type AuthCardProps = Pick<
   | 'email'
   | 'authMethod'
   | 'isSubmitting'
+  | 'googleAvailable'
   | 'mode'
   | 'onAnonymousLogin'
   | 'onAuthMethodChange'
@@ -197,6 +198,7 @@ export function AuthCard({
   currentFeedback,
   email,
   id,
+  googleAvailable = true,
   isSubmitting,
   locale,
   mode,
@@ -291,9 +293,9 @@ export function AuthCard({
               </div>
 
               <SocialButton
-                disabled={isSubmitting}
+                disabled={isSubmitting || !googleAvailable}
                 icon={<GoogleBrandGlyph />}
-                label={getCopy(copy.login.auth.google, locale)}
+                label={googleAvailable ? getCopy(copy.login.auth.google, locale) : locale === 'zh' ? 'Google 暂不可用' : 'Google unavailable'}
                 onClick={onGoogleLogin}
                 theme={theme}
               />

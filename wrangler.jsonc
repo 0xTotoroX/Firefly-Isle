@@ -11,7 +11,8 @@
     "SUPABASE_AUTH_CALLBACK_URL": "https://supabase.ghibli1024.com/auth/v1/callback",
     "WECHAT_OAUTH_CLIENT_ID": "firefly-isle-wechat",
     "WECHAT_OAUTH_PUBLIC_BASE_URL": "https://firefly.ghibli1024.com",
-    "VITE_SUPABASE_AUTH_STORAGE_KEY": "myoncode-shanghai-auth-v1"
+    "VITE_SUPABASE_AUTH_STORAGE_KEY": "myoncode-shanghai-auth-v1",
+    "VITE_GOOGLE_OAUTH_ENABLED": "false"
   },
   "kv_namespaces": [
     {

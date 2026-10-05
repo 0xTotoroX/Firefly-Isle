@@ -1,0 +1,192 @@
+{
+  "name": "myoncode",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build:edgeone",
+  "outputDirectory": "dist",
+  "nodeVersion": "22.23.3",
+  "rewrites": [
+    {
+      "source": "/login",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/auth/callback",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/auth/reset-password",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/share/:code",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/models",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/app",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/analytics",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/analytics/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/record/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/record/:id/side-effects",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/record/:id/follow-up",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/donate",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/settings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/dashboard",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/app",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/record",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/analytics",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/record/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/analytics/:id",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/record/:id/side-effects",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/record/:id/follow-up",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/settings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/demo/models",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/*",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'sha256-4aKBGPwZdeCN2Q4O4SQF85D/UUO6Zg7+2CTVYzEcq1o='; style-src 'self'; font-src 'self'; img-src 'self' data: blob: https://*.googleusercontent.com; connect-src 'self' https://supabase.ghibli1024.com https://*.supabase.co https://*.functions.supabase.co wss://*.supabase.co; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/icons/*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

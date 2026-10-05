@@ -3,14 +3,11 @@ WECHAT_OPEN_APP_SECRET=your_wechat_open_platform_app_secret
 WECHAT_OAUTH_CLIENT_ID=firefly-isle-wechat
 WECHAT_OAUTH_CLIENT_SECRET=generate_a_long_random_adapter_client_secret
 WECHAT_OAUTH_PUBLIC_BASE_URL=https://firefly.ghibli1024.com
-SUPABASE_AUTH_CALLBACK_URL=https://irkjblpzmclqekxbexll.supabase.co/auth/v1/callback
+SUPABASE_AUTH_CALLBACK_URL=https://supabase.ghibli1024.com/auth/v1/callback
 DEFAULT_LLM_PROVIDER=deepseek
 DEFAULT_GEMINI_MODEL=gemini-2.5-flash
-GEMINI_OCR_MODEL=gemini-2.5-flash
 GEMINI_API_KEY=your_gemini_api_key
 DEFAULT_DEEPSEEK_MODEL=deepseek-v4-flash
 DEEPSEEK_API_KEY=your_deepseek_api_key
 DEEPSEEK_BASE_URL=https://api.deepseek.com
-# OCR provider: deepseek (default, deepseek-v4-image) or gemini (PDF-capable fallback)
-OCR_PROVIDER=deepseek
-DEEPSEEK_OCR_MODEL=deepseek-v4-image
+DEEPSEEK_OCR_MODEL=deepseek-flash

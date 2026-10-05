@@ -69,3 +69,19 @@ npm run build
 | 后端已接受新生产写入 | 暂停新增写入，核对增量并制定反向同步或向前修复 | 不只改 DNS、`VITE_SUPABASE_URL` 或恢复旧库快照 |
 
 每次回退记录触发证据、数据写入边界、执行人、版本和复验结果。Cloudflare 旧环境保留到用户另行确认退出。[Cloudflare Pages 自定义域名](https://developers.cloudflare.com/pages/configuration/custom-domains/)、[EdgeOne 配置文件](https://edgeone.cloud.tencent.com/pages/document/162936771610066944)。
+
+## EdgeOne 前端构建与凭据准备（2026-10-06）
+
+当前腾讯云中国站的 Pages 已更名为 Makers；服务已在同一账号免费开通。`edgeone.json` 迁入原 `_headers` 的安全头与缓存规则，显式列出应用路由，保留真实静态文件/源码下载并让不存在的 `/api/` 和静态文件返回 404。`npm run build:edgeone` 从 wrangler 读取已审核的公开 VITE_ 配置，构建 dist 后附带平台配置；它不复制 Cloudflare 微信 Functions，也不读取服务端 Secret。
+
+备案前的验证项目选全球可用区（不含中国大陆）；大陆节点与新品牌域名待实名/备案后接入。当前 Cloudflare 入口继续保留。部署目录包括源码分卷及原许可通知，每个文件必须小于平台 25 MB 限制。
+
+Google 实测已通过浏览器选账号与上海回调，但令牌交换返回 `invalid_client`；服务器仅输出状态码与错误名的诊断也得到 HTTP 401 / invalid_client。当前不是 redirect_uri_mismatch，不能再把配置项存在等同于可登录。服务端 `GOOGLE_SECRET` 需有效原始 OAuth Client Secret；不能用摘要或不同客户端的 Secret。凭据验证完成前，本地部署变量 `VITE_GOOGLE_OAUTH_ENABLED=false` 让按钮明确暂不可用；匿名和已有邮箱密码登录继续按原合同工作。
+
+原始 Secret 只可保存到服务器 `/opt/firefly-supabase/.env` 的 `GOOGLE_SECRET`，不发聊天、不写入 VITE_ 或 Git。若没有原始 Secret，需要本人在对应 Google Cloud 客户端生成新 Secret 并保存；更换身份凭据由本人完成。保留现有已授权回调 `https://supabase.ghibli1024.com/auth/v1/callback`；新 API 域名以后实际启用时再加该域回调，不能提前填成已上线。
+
+SMTP 仍按用户决定本轮未配置/未验收。域名买好后核验邮件供应商资格和价格，再准备发信域名、发件地址及 SPF/DKIM/DMARC；供应商 SMTP host/port/user/password 只填服务器 .env。不开启邮件自动确认来绕过邮件链路，也不自行发送邮件测试。
+
+微信小程序与网页扫码的独立凭据、申请材料和唯一 Supabase Auth 登录方案见[微信登录接入准备](wechat-login-preparation.md)。域名购买、身份材料、人脸/扫码/验证码和平台审核由本人办理；其他构建、路由、回调与合成验证由 Agent 执行。
+
+官方依据：[EdgeOne 配置](https://pages.edgeone.ai/zh/document/edgeone-json)、[免费版价格](https://pages.edgeone.ai/zh/document/pricing-and-plans)、[限制与配额](https://pages.edgeone.ai/zh/document/limits-and-quotas)、[Google OAuth 凭据与错误](https://developers.google.com/identity/protocols/oauth2/web-server)。

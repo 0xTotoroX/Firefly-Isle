@@ -22,6 +22,7 @@ export type LoginPageViewProps = {
   authError?: string | null
   defaultAuthOpen?: boolean
   email: string
+  googleAvailable?: boolean
   feedback: AuthFeedback | null
   isSubmitting: boolean
   mode: AuthMode

@@ -19,7 +19,8 @@
     "test:database": "bash scripts/check-clinical-workflows.sh",
     "test:watch": "vitest --config config/vite.config.ts",
     "test:coverage": "vitest run --config config/vite.config.ts --coverage",
-    "preview": "vite preview --config config/vite.config.ts"
+    "preview": "vite preview --config config/vite.config.ts",
+    "build:edgeone": "node --experimental-strip-types config/build-frontend.ts"
   },
   "dependencies": {
     "@capacitor/android": "8.5.2",

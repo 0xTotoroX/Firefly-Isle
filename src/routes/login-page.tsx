@@ -44,6 +44,7 @@ function unexpectedFeedback(mode: AuthMode, locale: 'zh' | 'en'): AuthFeedback {
 }
 
 export function LoginPage({ authError = null }: { authError?: string | null }) {
+  const googleAvailable = import.meta.env.VITE_GOOGLE_OAUTH_ENABLED !== 'false'
   const navigate = useNavigate()
   const { theme, toggleTheme } = useTheme()
   const { locale } = useLocale()
@@ -131,6 +132,7 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
   }
 
   const handleGoogleLogin = async () => {
+    if (!googleAvailable) return
     if (!hasSupabaseEnv) {
       setFeedback({ tone: 'error', message: getCopy(copy.authFeedback.missingEnvGoogle, locale) })
       return
@@ -153,6 +155,7 @@ export function LoginPage({ authError = null }: { authError?: string | null }) {
       authMethod={authMethod}
       authError={authError}
       email={email}
+      googleAvailable={googleAvailable}
       feedback={feedback}
       isSubmitting={isSubmitting}
       mode={mode}
