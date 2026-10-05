@@ -72,7 +72,7 @@ npm run build
 
 ## EdgeOne 前端构建与凭据准备（2026-10-06）
 
-当前腾讯云中国站的 Pages 已更名为 Makers；服务已在同一账号免费开通。`edgeone.json` 迁入原 `_headers` 的安全头与缓存规则，显式列出应用路由，保留真实静态文件/源码下载并让不存在的 `/api/` 和静态文件返回 404。`npm run build:edgeone` 从 wrangler 读取已审核的公开 VITE_ 配置，构建 dist 后附带平台配置；它不复制 Cloudflare 微信 Functions，也不读取服务端 Secret。
+当前腾讯云中国站的 Pages 已更名为 Makers；服务已在同一账号免费开通。`edgeone.json` 迁入原 `_headers` 的安全头与缓存规则，显式列出应用路由，保留真实静态文件/源码下载并让不存在的 `/api/` 和静态文件返回 404。`npm run build:edgeone` 在本机 Node.js 22 从 wrangler 读取已审核的公开 VITE_ 配置，构建 dist 后附带仅包含路由与响应头的平台配置；上传包不要求腾讯云重新安装依赖或运行编译。首轮平台拒绝精确 Node 22.23.3 后已移除该无关配置；它不复制 Cloudflare 微信 Functions，也不读取服务端 Secret。
 
 备案前的验证项目选全球可用区（不含中国大陆）；大陆节点与新品牌域名待实名/备案后接入。当前 Cloudflare 入口继续保留。部署目录包括源码分卷及原许可通知，每个文件必须小于平台 25 MB 限制。
 

@@ -1,9 +1,5 @@
 {
   "name": "myoncode",
-  "installCommand": "npm ci",
-  "buildCommand": "npm run build:edgeone",
-  "outputDirectory": "dist",
-  "nodeVersion": "22.23.3",
   "rewrites": [
     {
       "source": "/login",

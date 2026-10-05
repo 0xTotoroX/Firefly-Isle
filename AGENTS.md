@@ -45,7 +45,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | components.json | shadcn 生成器默认发现配置，不代表运行时完整组件库 |
 | index.html | SPA 挂载页、主题初始化、PWA metadata；内联脚本与 CSP hash 配套 |
 | capacitor.config.ts | 根级 CLI 发现入口，仅转出 config/capacitor.config.ts；平台工程位于 mobile/ |
-| edgeone.json | 腾讯云 Makers/Pages 的公开路由、安全头和构建契约；不打包 Cloudflare 微信适配器 |
+| edgeone.json | 腾讯云 Makers/Pages 预构建产物的公开路由与安全头契约；不打包 Cloudflare 微信适配器 |
 | wrangler.jsonc | 现有 Cloudflare 入口的上海自托管 API/函数配置、独立登录会话命名及微信 KV/回调预研；构建不自动发布 |
 | .env.local.example · .dev.vars.example · .gitignore | 非敏感配置模板与本机凭据/产物忽略边界 |
 | README.md · README.en.md | 中英文项目说明与前后端目录入口 |
