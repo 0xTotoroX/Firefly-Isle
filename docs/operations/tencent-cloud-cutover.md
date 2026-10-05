@@ -2,6 +2,16 @@
 
 本操作单配合[第一阶段盘点](../products/tencent-cloud-phase-one.md)使用。以下命令及核对项用于以后具备账号、域名、备案和目标环境时逐项执行；本轮只完成本地构建与只读盘点，没有创建腾讯云站点、改变 DNS、迁移数据或发布生产。
 
+## 本次测试环境直接切换（2026-10-06）
+
+用户确认此前未正式投产、全部为可放弃测试数据，授权直接改用上海自托管后端。此分支不导出/同步旧云病历，不套用真实业务数据的源库冻结与增量同步窗口。保留旧库及旧部署供回退，不主动删除它们。
+
+当前入口先保留 `firefly.ghibli1024.com` / Cloudflare Pages，构建接 `supabase.ghibli1024.com`，函数接同域 `/functions/v1`。`VITE_SUPABASE_AUTH_STORAGE_KEY=myoncode-shanghai-auth-v1` 为独立会话空间，不导入旧云/旧预览登录信息；用户重新登录或创建匿名身份。微信占位 provider 为空。
+
+上海 Auth 的 SITE_URL 和 URI allow list 已覆盖当前网址及 Pages 预览，API_EXTERNAL_URL 正确包含 `/auth/v1`；六个核心容器 healthy，当前版本备份已经恢复核验。SMTP 本轮未配置/未验收，Google enabled 不是实际 OAuth 验收通过。当前仅验证测试数据操作，不把本次切换写成正式患者服务上线。
+
+前端迁入腾讯云 EdgeOne 与新品牌域名/大陆直连入口继续单独完成；当前 API 仍经 Cloudflare Tunnel。发布结果及 ID 在自托管手册记录。
+
 ## 0. 每次操作前记录
 
 记录执行人、时间、目标环境、Git SHA、旧 Cloudflare production deployment ID、目标腾讯云 deployment ID、后端权威写入端、备份位置和恢复联系人。2026-10-05 的旧站快照为 `0b41a7d` / `dc95230e-85e3-4524-a62c-5231338fd48e`；执行窗口须重取，不能沿用历史值。未拿到旧部署 ID 或后端版本时停止生产发布。不要在操作单或工单中粘贴密钥、患者正文和完整 OAuth code。

@@ -11,7 +11,7 @@ llm/: 模型请求适配、provider 设置客户端与协议类型。
 theme/: surface、文字、边框和动效 token。
 
 账号与服务边界
-supabase.ts: 客户端初始化、PKCE 回调和环境变量边界。
+supabase.ts: 客户端初始化、独立 Auth 存储命名、可选旧会话导入、PKCE 回调和环境变量边界。
 auth.tsx: 认证初始化、会话广播与退出；Demo 可通过 useOptionalAuth 读取空身份。
 supabase-session-migration.ts: 自建目标的旧会话导入与迁移标记，保留源凭据。
 password-recovery.ts: 用独立内存 AuthClient 将改密绑定到回调身份。

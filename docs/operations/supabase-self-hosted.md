@@ -92,3 +92,9 @@ SMTP 按用户决定本轮保留未配置、未验收；不能宣称邮箱注册
 本地行为测试覆盖会话迁移、CSP/PWA、退出和恢复错误；运维脚本在隔离环境检查。远端历史验收不代替当前发布验收。
 
 官方参考：[平台项目恢复到自建](https://supabase.com/docs/guides/self-hosting/restore-from-platform)、[API_EXTERNAL_URL 的认证路径](https://supabase.com/changelog/47093-self-hosted-supabase-api-external-url-to-include-auth-v1)。本项目额外保留匿名 session/refresh-token 的迁移验证，不能仅凭账号表恢复就假设登录会延续。
+
+## 2026-10-06 测试数据直接切换
+
+用户确认旧站未正式投产，全部为可放弃测试数据，授权不迁移旧库而直接连接上海。仓库公开配置已改为上海 API 与函数地址，并使用 `myoncode-shanghai-auth-v1` 独立登录命名；旧浏览器会话不导入，须重新登录。不会清空旧库或删除旧 Cloudflare deployment。
+
+准备检查：当前上海 Auth 已允许现有 Web/Pages 回调，核心容器 healthy；34 项认证/客户端相关测试、应用/工具类型与相关 lint 通过。构建发布及当前网址验收待执行；网页文件仍通过 Cloudflare Pages 承载，腾讯云前端与备案域名另行推进。

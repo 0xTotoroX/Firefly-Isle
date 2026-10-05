@@ -25,10 +25,23 @@ beforeEach(() => {
   vi.stubGlobal('window', { get localStorage() { return storage } })
   vi.stubEnv('VITE_SUPABASE_URL', 'https://supabase.ghibli1024.com')
   vi.stubEnv('VITE_SUPABASE_ANON_KEY', 'test-public-key')
+  vi.stubEnv('VITE_SUPABASE_AUTH_STORAGE_KEY', '')
 })
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.unstubAllEnvs() })
 
 describe('Supabase client migration wiring', () => {
+  it('starts independently without importing old identities when a new storage namespace is configured', async () => {
+    window.localStorage.setItem(oldKey, JSON.stringify({ access_token: token('https://irkjblpzmclqekxbexll.supabase.co'), refresh_token: 'old-refresh' }))
+    window.localStorage.setItem(newKey, 'old-preview-session')
+    vi.stubEnv('VITE_SUPABASE_AUTH_STORAGE_KEY', 'myoncode-shanghai-auth-v1')
+    const client = await import('./supabase')
+    client.getSupabaseClient()
+    expect(client.hasPendingSupabaseSessionMigration).toBe(false)
+    expect(mock.createClient).toHaveBeenCalledWith(expect.any(String), expect.any(String), expect.objectContaining({ auth: expect.objectContaining({ storageKey: 'myoncode-shanghai-auth-v1' }) }))
+    expect(window.localStorage.getItem(newKey)).toBe('old-preview-session')
+    expect(window.localStorage.getItem(oldKey)).toContain('old-refresh')
+  })
+
   it('leaves cloud sessions untouched and never requests their migration refresh', async () => {
     const origin = 'https://irkjblpzmclqekxbexll.supabase.co'
     vi.stubEnv('VITE_SUPABASE_URL', origin)

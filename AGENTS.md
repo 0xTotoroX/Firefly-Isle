@@ -45,7 +45,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | components.json | shadcn 生成器默认发现配置，不代表运行时完整组件库 |
 | index.html | SPA 挂载页、主题初始化、PWA metadata；内联脚本与 CSP hash 配套 |
 | capacitor.config.ts | 根级 CLI 发现入口，仅转出 config/capacitor.config.ts；平台工程位于 mobile/ |
-| wrangler.jsonc | Cloudflare 构建与公开环境接口，微信 KV/回调预研；不在本轮切换生产配置 |
+| wrangler.jsonc | 现有 Cloudflare 入口的上海自托管 API/函数配置、独立登录会话命名及微信 KV/回调预研；构建不自动发布 |
 | .env.local.example · .dev.vars.example · .gitignore | 非敏感配置模板与本机凭据/产物忽略边界 |
 | README.md · README.en.md | 中英文项目说明与前后端目录入口 |
 | LICENSE · LICENSING.md · THIRD_PARTY_NOTICES.md · LICENSES/ | AGPL-3.0-only 原文、有权授权范围、源码交付要求、第三方边界与原 MIT 历史证据 |
@@ -68,7 +68,7 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 - PWA 缓存静态壳与本地字体，不缓存患者/API 私有响应及带 auth code/share capability/record id 的导航响应 URL。构建更新等待旧标签关闭；不要未经验证移除 SHA 摘要、CSP hash、能力码 hash 或相关完整性机制。
 - 原生壳复用 dist，不复制患者数据真相；分享地址、认证深链、文件导出须分别实机验收。Web 登录尚无微信入口（仅保留服务端适配预研）；小程序需独立实现，不能直接把网页当小程序。
 - 八强调色的填充、黑白按钮前景、可读文字各自派生；临床状态色独立并适配双主题。Stitch 历史源以 screenInstances.label 为页面名称，不能用 project/list title 替代。
-- 当前后端/自托管/上线证据详见上述验收表和手册。19 份迁移的本地检查不代表生产已执行；Codex Cloud 私有开发环境也不代表产品部署。发布前端前必须协调匹配的迁移/函数版本与回滚。
+- 当前切换按用户确认的全测试数据处理：不导入旧云数据，以独立 Auth 存储命名重新登录；上海后端已验收，当前网址发布记录见自托管手册。当前后端/自托管/上线证据详见上述验收表和手册。19 份迁移的本地检查不代表生产已执行；Codex Cloud 私有开发环境也不代表产品部署。发布前端前必须协调匹配的迁移/函数版本与回滚。
 
 ## 工作与验证约定
 
