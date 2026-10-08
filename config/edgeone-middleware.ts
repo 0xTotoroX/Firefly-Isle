@@ -18,6 +18,8 @@ export function middleware(context) {
   }
   return context.next()
 }
-export const config = { matcher: ['/api/:path*', '/assets/:path*', '/source/:path*', '/licenses/:path*', '/icons/:path*', '/login/:path*'] }
+export const config = {
+  matcher: ['/api/:path*', '/assets/:path*', '/source/:path*', '/licenses/:path*', '/icons/:path*', '/login/:path*']
+}
 `
 }
