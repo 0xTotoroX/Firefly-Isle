@@ -186,3 +186,9 @@ Makers 自动证书已部署，控制台域名为“已生效”。2026-10-09 01
 新域名公开源码清单与本地 dist 字节级一致，精确匹配该部署修订且 dirtySnapshot=false；五卷共 89,864,690 字节，逐卷长度/SHA-256 和整体 SHA-256 全部匹配，整体摘要为 `6e5ffcdf5181b576bb8ff0cd2770207e0bae89253f5856f9de33826982fc3b10`。11 项 HTTP 检查通过：正常页面、源码与许可 200，缺失 API/资源 404，PDF worker 为 text/javascript；478 项源码路径未包含真实 .env、认证目录或运行/私有产物。完整核验记录为 `tencent-cli-source-verified.json`。
 
 前端仍使用原上海 API 域名并经过 Cloudflare Tunnel。独立 IP 代理已有可信证书和内部业务链路验证，公网 TCP443 规则已填写为仅全部 IPv4 → TCP443 → 允许，尚未保存，等待新增公开访问范围的明确确认。下一步是在确认后放行、切换公开 URL 并进行真实浏览器登录/提取/复核/保存/刷新；不能用新前端发布或服务器内部验证代替全部流量脱离 Cloudflare 的验收。自动 CD 的 GitHub Secret、Google 和 SMTP 保持各自未验收状态。
+
+### 待发布的 IP 直连配置
+
+下一版公开构建配置的 API 与 functions URL 已准备为 `https://118.89.86.27` 和同域 `/functions/v1`，保留原公开 anon key、独立会话存储键和 Google 暂不可用设置。此改动用于准备匹配后端的待发布产物；线上仍为 `dprlcou3bvwh` / `eca997c`，继续连接旧 API，不能因仓库配置已改就称实际流量已切换。
+
+保存 TCP443 规则前仍须取得已提出的明确确认；规则实际可达后，再备份并更新上海 Auth/API 的公开 URL，验证可信公网 TLS、允许/拒绝路径及核心业务。只有这些条件通过，才发布本版 dist 并在新域名浏览器验收。不要直接运行自动 CD，GitHub Secret 尚未配置；不要发布到未通的 API 或停止共享 cloudflared。
