@@ -1,0 +1,19 @@
+# 独立代理，不覆盖现有 Supabase Compose 项目、端口或数据卷。
+name: myoncode-proxy
+services:
+  caddy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: '3'
+volumes:
+  caddy-data:
+  caddy-config:

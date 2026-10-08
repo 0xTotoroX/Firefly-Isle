@@ -1,6 +1,6 @@
 # 产品名称与定位：知见 / MyOncode
 
-更新日期：2026 年 10 月 4 日。用户确认中文“知见”、英文“MyOncode”，面向肿瘤患者与家属提供全程管理工具。Medclear 的撤回及早期域名查询保留为历史记录，不代表当前注册状态。
+更新日期：2026 年 10 月 8 日。用户确认中文“知见”、英文“MyOncode”，面向肿瘤患者与家属提供全程管理工具。Medclear 的撤回及早期域名查询保留为历史记录，不代表当前注册状态。
 
 ## 名称与使用
 
@@ -26,9 +26,9 @@
 
 ## 确认与实施边界
 
-本地 Web 已适配品牌字标、介绍、浏览器/PWA 展示和下载名称；运行时名称集中在 `src/lib/brand.ts`。原灯塔图标暂时保留，新候选图标未确认。本地 Checkout 请求的商品名称已改为 MyOncode donation，原生壳源配置显示名已改为知见；真机、签名、函数部署与发布独立验收。Stripe 远端商户名称、账单描述及已有支付对象未读取或修改。账号 JSON 的 `firefly-isle.account-export` 格式、浏览器存储键、PWA identity/缓存前缀、仓库目录、包名、bundle ID、OAuth 与部署标识保留原值；修改显示名不迁移或重置数据。
+本地 Web 已适配品牌字标、介绍、浏览器/PWA 展示和下载名称；运行时名称集中在 `src/lib/brand.ts`。原灯塔图标暂时保留，新候选图标未确认。本地 Checkout 请求的商品名称已改为 MyOncode donation，原生壳源配置显示名已改为知见；真机、签名、函数部署与发布独立验收。Stripe 远端商户名称、账单描述及已有支付对象未读取或修改。账号 JSON 的 `firefly-isle.account-export` 格式、浏览器存储键、PWA identity/缓存前缀、bundle ID、OAuth 与既有数据/缓存标识保留原值；GitHub 仓库已原地更名为 `0xTotoroX/myoncode`，包名改为 `myoncode`，本地实际目录为 `/Users/Totoro/Documents/Projects/myoncode`，旧路径为指向它的兼容符号链接，以保留已有聊天的工作目录；不迁移或重置数据。
 
-尚未完成“知见 / MyOncode”的商标与微信名称核验，也没有注册或购买域名。普通注册状态与网络同名初筛不能证明名称独占或商标可用。
+`myoncode.com` 已在腾讯云注册成功并完成实名认证。2026-10-08 控制台核对：腾讯云初审已通过、工信部短信已核验，当前管局审核中；新域名尚未启用。尚未完成商标与微信名称核验。后续变更与实际启用证据见[腾讯云操作单](../operations/tencent-cloud-cutover.md)。
 
 此前考虑的 Medwise 已有同领域的医学信息检索服务，因此本次未采用。[Medwise 官方产品说明](https://medwise.ai/terms.html)
 

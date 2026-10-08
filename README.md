@@ -10,7 +10,7 @@
     <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white" />
     <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
     <img alt="Supabase" src="https://img.shields.io/badge/Supabase-RLS-3FCF8E?logo=supabase&logoColor=white" />
-    <img alt="Cloudflare Pages" src="https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflarepages&logoColor=white" />
+    <img alt="Tencent Cloud Makers" src="https://img.shields.io/badge/Tencent_Cloud-Makers-0052D9?logo=tencentqq&logoColor=white" />
   </p>
 </div>
 
@@ -24,9 +24,9 @@
 
 ## 当前本地开发基线
 
-当前实现包含 Dashboard、病历/指标/症状/随访、可恢复表单、复诊摘要、模型设置、账户管理与配额。代码已统一到本仓库，旧自托管实验中的有效准备工作已整合；生产配置仍连接 Supabase Cloud。
+当前实现包含 Dashboard、病历/指标/症状/随访、可恢复表单、复诊摘要、模型设置、账户管理与配额。代码已统一到本仓库，旧自托管实验中的有效准备工作已整合；当前公开测试入口已连接腾讯云上海自托管 Supabase。
 
-设计入口为 [DESIGN.md](DESIGN.md)；[current](docs/design/current/README.md) 是给 OpenDesign 的本轮材料，[archive](docs/design/archive/README.md) 保存 A/B 及更早的全部视觉资料。当前 Web 界面、页面标题、PWA 显示名与下载名称已适配“知见 / MyOncode”，共用黑白中性色、八种强调色和可读的文字层级；用户已要求从 AI Native 和极简首页重新提案；[首轮原型](docs/design/PROTOTYPE-REVIEW.md)已通过OpenDesign本机Codex生成并做关键浏览器检查，仍待视觉评审，未接入正式页面。灯塔图标暂时沿用，候选 M 图标未定稿；本地原生壳显示名已同步为知见，Checkout 商品名已同步为 MyOncode donation；真机、支付服务部署与发布另行验收。仓库、存储键、账号导出协议和部署标识保持兼容。域名未购买，购买前须重新核验可注册性、商标与微信名称；见 [命名与定位](docs/products/product-naming.md)。Open Design 是项目外工具，本轮仅提供设计任务材料与虚构数据，未提供正式源码、凭据或真实病历。
+设计入口为 [DESIGN.md](DESIGN.md)；[current](docs/design/current/README.md) 是给 OpenDesign 的本轮材料，[archive](docs/design/archive/README.md) 保存 A/B 及更早的全部视觉资料。当前 Web 界面、页面标题、PWA 显示名与下载名称已适配“知见 / MyOncode”，共用黑白中性色、八种强调色和可读的文字层级；用户已要求从 AI Native 和极简首页重新提案；[首轮原型](docs/design/PROTOTYPE-REVIEW.md)已通过OpenDesign本机Codex生成并做关键浏览器检查，仍待视觉评审，未接入正式页面。灯塔图标暂时沿用，候选 M 图标未定稿；本地原生壳显示名已同步为知见，Checkout 商品名已同步为 MyOncode donation；真机、支付服务部署与发布另行验收。仓库已更名为 `0xTotoroX/myoncode`，包名为 `myoncode`；存储键、账号导出协议与原生标识保持兼容。`myoncode.com` 已购买并实名，2026-10-08 控制台显示管局审核中；新域名尚未启用，商标与微信名称仍待核验；见 [命名与定位](docs/products/product-naming.md)。Open Design 是项目外工具，本轮仅提供设计任务材料与虚构数据，未提供正式源码、凭据或真实病历。
 
 当前交付范围和真实缺口见 [17 项功能验收表](docs/products/saas-acceptance.md)，数据关系与逐表权限见 [数据模型](docs/architecture/data-model.md)。本地检查、云端开发和生产可用分别验收。
 
@@ -136,49 +136,23 @@ npm run test:database
 
 数据库检查从零执行全部应用迁移，再验证事务、配额竞争、逐表权限和注销去向；只使用合成数据，不连接远端。它使用最小 Auth 替身，真实注册、邮件与会话仍需另外验收。
 
-### 6. GitHub Actions CI + CD -> Cloudflare Pages
+### 6. GitHub Actions CI + CD → 腾讯云 Makers
 
-仓库现已按职责拆分为两条 GitHub Actions workflow：
+`ci.yml` 在 main/codex 分支、PR 和手动运行时验证 lint、类型、隔离数据库、测试覆盖率与构建。`cd.yml` 仅由 `v*` tag 或手动触发，校验源码属于 main 后，使用 Node.js 22 执行 `npm run build:edgeone`，通过固定版本 EdgeOne CLI 上传 `dist/` 到现有 `myoncode` 项目。
 
-- `.github/workflows/ci.yml`
-  - 在 `main` / `codex/**` 分支 push、指向 `main` 的 PR 或手动运行时执行
-  - 依次运行：
-    - `npm run lint`
-    - `npm run type-check`
-    - `npm run test:database`
-    - `npm run test:coverage`
-    - `npm run build`
-- `.github/workflows/cd.yml`
-  - 仅在 `v*` tag push 或手动 `workflow_dispatch` 时执行
-  - 重新构建 `dist/`，并通过 `wrangler pages deploy` 发布到 Cloudflare Pages 生产环境
-  - 会额外校验：待部署 commit 必须属于 `main`
+发布需要 repo secret `EDGEONE_PAGES_API_TOKEN`；它只进入发布步骤，不进入公开构建。公开 `VITE_` 值集中于 `config/frontend.json`，腾讯云构建与 CI/CD 共用。备案获批前保持全球可用区（不含中国大陆）；大陆加速、正式域名和后端直连分别验收。旧 Cloudflare 入口暂作回退，不再由本仓库 CD 更新。
 
-GitHub 侧发布前只需要配置：
-
-- repo secret: `CLOUDFLARE_API_TOKEN`
-
-Cloudflare Pages 继续作为托管目标，保留：
-
-- Project: `firefly-isle`
-- Production branch: `main`
-- Build command: `npm run build`
-- Build output directory: `dist`
-- Node.js: `22`
-- SPA fallback: `public/_redirects`
-
-GitHub Actions 的构建期 `VITE_SUPABASE_*` 值统一从已提交的 `wrangler.jsonc > vars` 读取，不再要求在 GitHub 仓库重复配置一份 secrets / variables。公开 Demo 始终使用本地虚构资料，无需配置分享码，也不初始化真实账户。
-
-Cloudflare Pages 的 Git 分支自动生产 / 自动预览部署应关闭，避免与 GitHub Actions 发布链路形成双真相。
+当前部署、登录限制、域名切换与回退步骤见[腾讯云操作单](docs/operations/tencent-cloud-cutover.md)。公开 Demo 始终使用虚构资料，不初始化真实账户。
 
 ## 自建 Supabase
 
-部署配置、备份脚本和会话迁移准备见 [自建后端手册](docs/operations/supabase-self-hosted.md)。当前生产配置仍连接 Supabase Cloud；代码整合不代表已完成数据切换。自建预览与正式切换都需要先核对当前 SaaS 的数据库迁移和函数版本。
+部署配置、备份脚本和会话迁移准备见 [自建后端手册](docs/operations/supabase-self-hosted.md)。现有测试入口已连接上海后端；旧测试资料未导入。新 API 域名直连与正式上线仍须验证，不把本机构建当成发布。
 
 ## 云端开发与国内上线
 
 [Codex Cloud 手册](docs/operations/codex-cloud.md)记录环境安装、启动、独立任务验收与成果回到 GitHub 的方式。本机个人 Skills 和凭据不随仓库自动同步；云端检查不代替本地浏览器和导出验收。
 
-[国内上线评估](docs/products/domestic-launch.md)区分 Supabase Cloud、自托管和前端托管选择，以及备案、微信主体/类目与小程序技术路线。Web 是第一里程碑；小程序单独交付。域名、运营主体、正式托管和支付方案尚未选定，不因开发环境发布自动切换产品生产服务。
+[国内上线评估](docs/products/domestic-launch.md)区分 Supabase Cloud、自托管和前端托管选择，以及备案、微信主体/类目与小程序技术路线。Web 是第一里程碑；小程序单独交付。域名已选定为 myoncode.com，浙江个人备案处于管局审核中；腾讯云 Makers 与上海后端已有测试部署，支付与正式上线另验。
 
 ## 许可证
 

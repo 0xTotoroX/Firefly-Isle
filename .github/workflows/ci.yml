@@ -50,12 +50,12 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Export build env from wrangler.jsonc
+      - name: Export public frontend build env
         run: |
           node <<'NODE'
           const fs = require('node:fs')
-          const config = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'))
-          const vars = config.vars ?? {}
+          const config = JSON.parse(fs.readFileSync('config/frontend.json', 'utf8'))
+          const vars = config
           const lines = Object.entries(vars)
             .filter(([key]) => key.startsWith('VITE_'))
             .map(([key, value]) => `${key}=${String(value)}`)

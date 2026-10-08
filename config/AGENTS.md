@@ -8,7 +8,8 @@ vite.config.ts: Web 开发、生产构建、Vitest 与 PWA 清单；root、别�
 pdfjs-assets.ts: 开发和构建提供 PDF.js 同源 CMap、标准字体和图像解码资源。
 edgeone-middleware.ts: 根据公开构建资产生成腾讯云中间件，避免缺失资源/未实现 API 被 SPA 回退吞掉。
 edgeone-middleware.test.ts: 真实 Request/Response 验证 API/资源 404 与合法文件、登录路由透传。
-build-frontend.ts: 读取公开 VITE_ 变量构建腾讯云前端产物，复制 EdgeOne 配置，不复制私有配置或 Cloudflare 微信运行适配。
+frontend.json: 已审核的公开 VITE_ 构建值；不保存服务端密钥，供腾讯云构建与 CI/CD 共用。
+build-frontend.ts: 读取 frontend.json 公开 VITE_ 变量构建腾讯云前端产物，复制 EdgeOne 配置，不复制私有配置或 Cloudflare 微信运行适配。
 source-distribution.ts: 构建对应源码归档、版本/内容摘要、运行依赖原始文件与许可收录，大包按 20 MiB 分卷并提供整体/分卷校验及公开/source/入口；源码白名单排除凭据、运行数据和历史私密资料，不执行发布。
 source-distribution.test.ts: 合成Git/依赖的真实归档、隐私排除、源版本漂移、元信息冲突及无Git源码再构建回归。
 eslint.js: ESLint 规则与忽略范围；根 eslint.config.js 转出，保留编辑器和 CLI 自动发现。
@@ -21,7 +22,7 @@ tsconfig.supabase-functions.json: Supabase Edge Functions 的本地类型检查�
 根入口
 - tsconfig.json 保留项目引用和 @/ 别名，供编辑器与 shadcn 自动定位。
 - npm scripts 显式选择本目录的 Vite/Vitest 配置；不要用没有 --config 的独立 vite/vitest 命令绕过它。
-- components.json 和 wrangler.jsonc 保留工具默认发现位置；部署环境值、本机 .env.local/.dev.vars 不迁移到这里。
+- components.json 和 wrangler.jsonc 保留工具默认发现位置；服务端密钥、本机 .env.local/.dev.vars 不迁移到这里；公开构建值以 frontend.json 为准。
 - 相对 include/baseUrl/缓存路径以各配置文件所在目录解释；迁移时核对有效源码范围，避免空检查假通过。
 
 [PROTOCOL]: 配置职责或入口变化时更新本文；仅在父级描述受影响时检查父级 AGENTS.md。

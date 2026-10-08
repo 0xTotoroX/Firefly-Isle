@@ -83,7 +83,7 @@ SMTP 按用户决定本轮保留未配置、未验收；不能宣称邮箱注册
 2. 在切换窗口使用源库 `postgres` 连接执行 `ops/self-hosted/freeze-source.sql`。它在事务内添加临时阻写 trigger，冻结 public/auth/storage 写入及 refresh-token 轮换。
 3. 停写后用一致快照重新导出 public/auth/storage，排除 `auth.schema_migrations` 与 `storage.migrations`。账号、identities、sessions、refresh_tokens、应用 trigger/RLS 和 Storage 元数据均需核对；文件对象另行同步。不能复用 9 月的快照。
 4. 停止目标应用写入后，在事务内同步最终数据，保留目标系统迁移表和已核对的 schema。数据导入避免触发器重复生成或加密，重设 sequences，比较全表数量和内容指纹。
-5. 先验证新 JWT、原匿名 uid、RLS、真实登录和业务行为；再审核生产 Vite URL、anon key、Functions URL 与 OAuth callback，并构建部署当前主线。此时才更新 `wrangler.jsonc` 的生产目标。
+5. 先验证新 JWT、原匿名 uid、RLS、真实登录和业务行为；再审核生产 Vite URL、anon key、Functions URL 与 OAuth callback，并构建部署当前主线。此时才更新 `config/frontend.json` 的公开构建目标。
 6. 从正式主站重新验证后台请求、原病历恢复、保存/重载、登录、AI/OCR、分享和既有 VPS 服务。成功后再退休云端部署目标或改成明确的 VPS 发布流程。
 7. 保留旧项目为恢复快照。新库已有生产写入时，回滚须反向同步数据，不能只改 URL。
 

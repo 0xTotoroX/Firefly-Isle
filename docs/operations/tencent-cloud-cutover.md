@@ -1,6 +1,6 @@
 # 腾讯云测试、发布与恢复操作单
 
-本操作单配合[第一阶段盘点](../products/tencent-cloud-phase-one.md)使用。以下命令及核对项用于以后具备账号、域名、备案和目标环境时逐项执行；本轮只完成本地构建与只读盘点，没有创建腾讯云站点、改变 DNS、迁移数据或发布生产。
+本操作单配合[第一阶段盘点](../products/tencent-cloud-phase-one.md)使用。各日期记录保留当时状态，当前迁移进度以本文最新条目及控制台/运行验收为准。
 
 ## 本次测试环境直接切换（2026-10-06）
 
@@ -101,3 +101,29 @@ PDF worker 的 .mjs 文件在腾讯云默认返回 application/octet-stream，�
 最终版本的两页合成 PDF 已在真实腾讯云页面完成识别，返回两页日期、WBC 5.0 和 CEA 6.0 并进入人工确认。浏览器复验实际调用 DeepSeek，初次失败的版本不纳入通过依据。760 项全量回归、类型检查、相关 lint、本机构建与平台部署均通过。
 
 最终版本另外完成了合成记录的提取、保存、详情读取和刷新验收；服务器按唯一 ID 确认该记录实际位于上海，并在登出后清理本次匿名身份及记录。两轮腾讯云临时验收账户均已清理，未操作其他账户。最终源码五卷已从腾讯云公开入口下载并核验每卷及整体 SHA-256。
+
+
+## 2026-10-08 仓库与腾讯云发布切换
+
+用户目标为前后端全部使用腾讯云、仓库更名与 myoncode.com 域名切换。GitHub 仓库已原地更名为 `0xTotoroX/myoncode`，本地 origin 已同步；Issues/Stars/历史继续保留。本地实际目录已改为 `/Users/Totoro/Documents/Projects/myoncode`，旧 Firefly-Isle 路径仅为兼容符号链接，两个路径指向同一份 checkout，现有 license worktree 引用已核对。Codex 保存的项目名称/路径尚未同步，不能通过 Computer Use 修改 Codex；不编辑 CODEX_HOME 或聊天数据库。包名与锁文件同步为 myoncode；账号导出、缓存、会话键和原生 appId 不随仓库改名迁移。
+
+公开构建变量已从 wrangler 移到 `config/frontend.json`；`build:edgeone` 与 CI/CD 共用这一份值。CD 已改为 EdgeOne CLI 1.6.41 上传预构建 dist 到现有 myoncode 项目，要求 `EDGEONE_PAGES_API_TOKEN`；正式运行成功须另记 deployment ID，配置改动不能称为已发布。旧 Supabase Cloud 发布工作流移除，后端使用上海自托管手册。
+
+控制台实时核对：域名已注册/实名，已在现有 Makers 项目添加 myoncode.com，并通过 DNSPod TXT 归属验证；尚未添加网站访问 CNAME/A。腾讯云审核通过、工信部短信已核验，当前为管局审核中，提交管局时间 2026-10-08 16:30:44。页面预计约 7 个工作日，最多 20 个工作日；这是平台估计，不是获批承诺。未获备案号前不启用此次备案网站的新域名。[腾讯云说明](https://cloud.tencent.com/document/product/243/53142)
+
+上海 Auth 的回跳名单已增补 myoncode.com、www.myoncode.com 和现有 EdgeOne 预览源，保留旧网址/本地回跳；只重建 auth，签名密钥、数据库和会话身份未改变。配置备份位于服务器 `/var/backups/firefly/myoncode-domain-cutover/`，不入 Git。
+
+独立反代配置已准备于服务器 `/opt/myoncode-proxy/`，仓库模板为 `ops/self-hosted/Caddyfile.example` 与 `docker-compose.proxy.yml`。Caddy 2.10.2 配置校验通过；临时回环 HTTP 验证中，携带 anon key 的 Auth health 为 200、无 key 的 REST 为 401，根路径、Auth admin、pg/mcp 为 404。临时测试容器已清理；正式 80/443、证书、新域名入口尚未启用，不把这项配置验收当成 HTTPS 生效。
+
+### 域名获批后的实际切换
+
+1. 在 DNSPod 将 `api` A 记录指向现有上海服务器，核对公网安全组 TCP 80/443，启动独立 Caddy 并验证可信证书与允许/拒绝路径；网关 54321、数据库、Studio 和管理端口继续保持私网。
+2. 备份私有配置，将 SITE_URL 改为 `https://myoncode.com`、SUPABASE_PUBLIC_URL 改为 `https://api.myoncode.com`、API_EXTERNAL_URL 改为 `https://api.myoncode.com/auth/v1`；保留已审核回跳名单。只对 auth/api-gw/functions/storage 应用配置，不重建数据卷或换签名材料。
+3. 更新 `config/frontend.json` API/函数 URL，显式同步 CSP、PWA 敏感域名判定和相关测试；使用新 API 完成匿名/密码、刷新、保存、OCR/AI、分享/导出合成验收。新站源下需重新登录，已有账户和数据库保留。
+4. 在 Makers 添加正式域名，按其返回的实际 CNAME/TXT 配置 DNS 与托管 HTTPS，发布当前干净修订，核对对应源码和部署 ID；大陆加速须在备案获批后单独验收。
+5. 验证实际 myoncode.com 页面及所有后台请求均不经 Cloudflare；完成后才将旧 Cloudflare 网站退出主入口。共享 cloudflared 还服务其他项目，不停整个共享进程；旧入口的退出和回退按具体路由处理。
+
+Google 的新 API 回调另需 Google Cloud 授权，SMTP 仍未验收；它们的当前能力不因域名切换自动变为可用。回滚保持同一个上海数据库，恢复原 URL/前端版本即可；不回滚数据、不删除旧环境。
+
+
+本轮本地验证：Node.js 22.23.3，lint、完整类型检查和腾讯云构建通过。全量首轮 758/760 通过，两项 Demo 首次懒加载在并发下超过 1 秒；定向 15 项及限定 4 workers 的完整 760 项复验通过，未改断言或产品代码。反代配置与真实回环路由验证通过，Auth 重建后 healthy。发布 Token 的一年有效期表单已准备，尚未创建/配置；Makers CLI 登录停留在完成登录页面，未当作已认证或已部署。

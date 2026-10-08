@@ -31,12 +31,12 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Export build env from wrangler.jsonc
+      - name: Export public frontend build env
         run: |
           node <<'NODE'
           const fs = require('node:fs')
-          const config = JSON.parse(fs.readFileSync('wrangler.jsonc', 'utf8'))
-          const vars = config.vars ?? {}
+          const config = JSON.parse(fs.readFileSync('config/frontend.json', 'utf8'))
+          const vars = config
           const lines = Object.entries(vars)
             .filter(([key]) => key.startsWith('VITE_'))
             .map(([key, value]) => `${key}=${String(value)}`)
@@ -69,11 +69,16 @@ jobs:
         run: npm run test
 
       - name: Build app
-        run: npm run build
+        run: npm run build:edgeone
 
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v4
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: c38f90a65a89c28653e8b8d19739277f
-          command: pages deploy dist --project-name firefly-isle --branch main
+      - name: Deploy to Tencent Cloud Makers
+        env:
+          EDGEONE_PAGES_API_TOKEN: ${{ secrets.EDGEONE_PAGES_API_TOKEN }}
+        run: |
+          if [[ -z "$EDGEONE_PAGES_API_TOKEN" ]]; then
+            echo "Configure EDGEONE_PAGES_API_TOKEN before deploying"
+            exit 1
+          fi
+          npx --yes --package=edgeone@1.6.41 edgeone makers deploy ./dist \
+            --name myoncode --env production --area overseas \
+            --skip-ai-gateway-sync --json --token "$EDGEONE_PAGES_API_TOKEN"

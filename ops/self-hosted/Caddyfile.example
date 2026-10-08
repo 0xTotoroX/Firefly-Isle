@@ -1,0 +1,24 @@
+# [INPUT]: api.myoncode.com 的 DNS/HTTPS 与现有回环 API 网关。
+# [OUTPUT]: 仅开放客户端 API；其他路径返回 404，不发布 Studio 或网关管理接口。
+# [POS]: 独立 MyOncode HTTPS 入口，保留原 Supabase 数据卷、容器与回环端口。
+# [PROTOCOL]: 路径或部署接口变化时检查 ops/self-hosted/AGENTS.md 与自托管手册。
+{
+	admin off
+	servers {
+		protocols h1 h2
+	}
+}
+
+api.myoncode.com {
+	@private path /auth/v1/admin /auth/v1/admin/* /realtime/v1/api /realtime/v1/api/*
+	handle @private {
+		respond "Not found" 404
+	}
+	@client path /auth/v1/* /rest/v1/* /storage/v1/* /functions/v1/* /graphql/v1
+	handle @client {
+		reverse_proxy 127.0.0.1:54321
+	}
+	handle {
+		respond "Not found" 404
+	}
+}

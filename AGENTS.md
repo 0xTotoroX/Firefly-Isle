@@ -46,7 +46,8 @@ Vite + React 18 + TypeScript + Tailwind CSS v4 + Radix/shadcn + Supabase Auth/Po
 | index.html | SPA 挂载页、主题初始化、PWA metadata；内联脚本与 CSP hash 配套 |
 | capacitor.config.ts | 根级 CLI 发现入口，仅转出 config/capacitor.config.ts；平台工程位于 mobile/ |
 | edgeone.json | 腾讯云 Makers/Pages 预构建产物的公开路由与安全头契约；不打包 Cloudflare 微信适配器 |
-| wrangler.jsonc | 现有 Cloudflare 入口的上海自托管 API/函数配置、独立登录会话命名及微信 KV/回调预研；构建不自动发布 |
+| config/frontend.json | 已审核的公开 VITE_ 构建值，腾讯云构建与 CI/CD 共用；不保存服务端密钥 |
+| wrangler.jsonc | 旧 Cloudflare 回退入口及微信 KV/回调预研；不再提供前端构建变量，当前 CD 发布到腾讯云 |
 | .env.local.example · .dev.vars.example · .gitignore | 非敏感配置模板与本机凭据/产物忽略边界 |
 | README.md · README.en.md | 中英文项目说明与前后端目录入口 |
 | LICENSE · LICENSING.md · THIRD_PARTY_NOTICES.md · LICENSES/ | AGPL-3.0-only 原文、有权授权范围、源码交付要求、第三方边界与原 MIT 历史证据 |

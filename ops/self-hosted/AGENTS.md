@@ -1,6 +1,8 @@
 # ops/self-hosted/
 > L2 | 父级: [AGENTS.md](../AGENTS.md)
 
+- Caddyfile.example: api.myoncode.com HTTPS 客户端 API 白名单与管理路径拒绝模板，不启动服务。
+- docker-compose.proxy.yml: 独立 Caddy 代理、证书持久化与固定镜像，不变更 Supabase 数据卷/回环端口。
 - docker-compose.yml: 基于固定上游版本的容器、网络和挂载配置。
 - .env.example: 容器环境变量占位模板，实际 .env 不提交。
 - functions.env.example: 当前 LLM/OCR 的环境模板，迁移密文时保留原加密密钥。

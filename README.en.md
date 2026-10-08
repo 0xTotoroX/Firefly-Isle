@@ -10,7 +10,7 @@
     <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white" />
     <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" />
     <img alt="Supabase" src="https://img.shields.io/badge/Supabase-RLS-3FCF8E?logo=supabase&logoColor=white" />
-    <img alt="Cloudflare Pages" src="https://img.shields.io/badge/Cloudflare-Pages-F38020?logo=cloudflarepages&logoColor=white" />
+    <img alt="Tencent Cloud Makers" src="https://img.shields.io/badge/Tencent_Cloud-Makers-0052D9?logo=tencentqq&logoColor=white" />
   </p>
 </div>
 
@@ -24,9 +24,9 @@ Future work includes interpreting genetic test reports and showing relationships
 
 ## Current local development baseline
 
-The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; production still targets Supabase Cloud.
+The app includes a Dashboard, patient-scoped record/lab/symptom/follow-up workflows, recoverable forms, visit summaries, model settings, account management and quotas. Useful self-hosting preparation has been consolidated into this repository; the public test entry now uses self-hosted Supabase in Tencent Cloud Shanghai.
 
-Start at [DESIGN.md](DESIGN.md): [current](docs/design/current/README.md) contains the OpenDesign input packet, while [archive](docs/design/archive/README.md) preserves A/B and earlier visual material. The Web UI, browser metadata, PWA display name and download names now use 知见 / MyOncode, with shared neutral surfaces, eight accents and readable typography. The new proposal starts from AI-native interaction and a minimal home screen; the [first prototype](docs/design/PROTOTYPE-REVIEW.md) was generated through OpenDesign with local Codex and checked in a browser. Visual approval and product integration remain pending. The lighthouse icon is retained temporarily; the candidate M icon is not final. Local native-shell display names now use 知见 and the Checkout product label uses MyOncode donation; device validation, payment-service deployment and releases require separate acceptance. Repository identity, storage keys, account-export format and deployment identifiers remain compatible. No domain has been purchased; availability, trademark and WeChat names require verification before registration. See the [naming decision](docs/products/product-naming.md). Open Design remains an external local tool; only the scoped brief and synthetic fixtures were provided, without product source code, credentials or real patient records.
+Start at [DESIGN.md](DESIGN.md): [current](docs/design/current/README.md) contains the OpenDesign input packet, while [archive](docs/design/archive/README.md) preserves A/B and earlier visual material. The Web UI, browser metadata, PWA display name and download names now use 知见 / MyOncode, with shared neutral surfaces, eight accents and readable typography. The new proposal starts from AI-native interaction and a minimal home screen; the [first prototype](docs/design/PROTOTYPE-REVIEW.md) was generated through OpenDesign with local Codex and checked in a browser. Visual approval and product integration remain pending. The lighthouse icon is retained temporarily; the candidate M icon is not final. Local native-shell display names now use 知见 and the Checkout product label uses MyOncode donation; device validation, payment-service deployment and releases require separate acceptance. The repository is now `0xTotoroX/myoncode` and the package is `myoncode`; storage keys, account-export format and native identifiers stay compatible. `myoncode.com` has been purchased and verified. The filing was under authority review on 2026-10-08; the new domain is not yet serving the app. Trademark and WeChat names still require verification. See the [naming decision](docs/products/product-naming.md). Open Design remains an external local tool; only the scoped brief and synthetic fixtures were provided, without product source code, credentials or real patient records.
 
 See the [17-capability acceptance ledger](docs/products/saas-acceptance.md) for verified behavior and remaining gaps, and the [data model](docs/architecture/data-model.md) for table relationships and RLS. Local checks, cloud development readiness and production readiness are verified separately.
 
@@ -136,44 +136,23 @@ npm run test:database
 
 Database checks initialize every application migration and verify transactions, quota concurrency, table permissions and account deletion with synthetic data. They do not connect to a remote database. Real Auth registration, email and session behavior require separate acceptance.
 
-### 6. GitHub Actions CI + CD -> Cloudflare Pages
+### 6. GitHub Actions CI + CD → Tencent Cloud Makers
 
-The repository uses two GitHub Actions workflows:
+`ci.yml` validates lint, types, isolated database behavior, coverage and builds on main/codex pushes, PRs and manual runs. `cd.yml` runs only on `v*` tags or manual dispatch, verifies main ancestry, builds with Node.js 22 and `npm run build:edgeone`, then uploads `dist/` to the existing `myoncode` Makers project using a pinned EdgeOne CLI.
 
-- `.github/workflows/ci.yml`
-  - Runs on `main` / `codex/**` pushes, PRs targeting `main`, and manual dispatch.
-  - Runs `npm run lint`, `npm run type-check`, `npm run test:database`, `npm run test:coverage`, and `npm run build`.
-- `.github/workflows/cd.yml`
-  - Runs only on `v*` tag pushes or manual `workflow_dispatch`.
-  - Builds `dist/` and deploys to Cloudflare Pages through `wrangler pages deploy`.
-  - Verifies that the deploy commit belongs to `main`.
+Configure the repo secret `EDGEONE_PAGES_API_TOKEN` before deploying. This credential only enters the deploy step. Public `VITE_` build values live in `config/frontend.json`, shared by Tencent builds and CI/CD. Keep the existing overseas acceleration area until filing approval; domain activation and direct backend HTTPS require separate acceptance. The old Cloudflare entry remains a fallback and is no longer updated by this CD workflow.
 
-GitHub requires this repo secret before release:
-
-- `CLOUDFLARE_API_TOKEN`
-
-Cloudflare Pages remains the hosting target:
-
-- Project: `firefly-isle`
-- Production branch: `main`
-- Build command: `npm run build`
-- Build output directory: `dist`
-- Node.js: `22`
-- SPA fallback: `public/_redirects`
-
-Build-time `VITE_SUPABASE_*` values are read from committed `wrangler.jsonc > vars`, so the GitHub repository does not need duplicate secrets or variables for those public values.
-
-Disable automatic production / preview deployments from Cloudflare Pages Git integration to avoid two deployment truths.
+See the [Tencent cutover runbook](docs/operations/tencent-cloud-cutover.md) for current deployments, domain activation and recovery. The public Demo only uses synthetic in-memory data.
 
 ## Self-hosted Supabase
 
-Deployment configuration, backup scripts and session migration preparation are documented in the [self-hosting runbook](docs/operations/supabase-self-hosted.md). Production configuration still targets Supabase Cloud. Before preview or cutover, reconcile the target database and Edge Functions with the current SaaS version.
+Deployment configuration, backup scripts and session migration preparation are documented in the [self-hosting runbook](docs/operations/supabase-self-hosted.md). The current test site uses the Shanghai backend without importing old test data. Direct HTTPS on the new API domain and formal launch remain separate acceptance steps.
 
 ## Cloud development and domestic launch
 
 The [Codex Cloud runbook](docs/operations/codex-cloud.md) covers installation, startup, fresh-task validation and returning changes through GitHub. Personal local skills and credentials do not automatically follow the repository. Cloud checks do not replace browser, export or device acceptance.
 
-The [domestic launch assessment](docs/products/domestic-launch.md) compares database/frontend hosting, filing requirements, WeChat categories and mini-program options. Web is the first milestone; the mini-program is a separate deliverable. Naming, operating entity, production hosting and payment choices remain open. Publishing a development environment does not deploy the product.
+The [domestic launch assessment](docs/products/domestic-launch.md) compares database/frontend hosting, filing requirements, WeChat categories and mini-program options. Web is the first milestone; the mini-program is a separate deliverable. The selected domain is myoncode.com; the Zhejiang personal filing is under authority review. Tencent Makers and the Shanghai backend have test deployments; payments and formal launch remain separate.
 
 ## License
 

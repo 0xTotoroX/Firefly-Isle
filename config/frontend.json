@@ -1,0 +1,8 @@
+{
+  "VITE_SUPABASE_URL": "https://supabase.ghibli1024.com",
+  "VITE_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlzcyI6InN1cGFiYXNlIiwiaWF0IjoxNzg5MzczMDgzLCJleHAiOjIxMDQ3MzMwODN9.Ms5xrbR1aSqZo0d4Phz9WEVjy36Of3w0qbKwKfhkbgM",
+  "VITE_SUPABASE_EDGE_FUNCTION_URL": "https://supabase.ghibli1024.com/functions/v1",
+  "VITE_SUPABASE_WECHAT_PROVIDER": "",
+  "VITE_SUPABASE_AUTH_STORAGE_KEY": "myoncode-shanghai-auth-v1",
+  "VITE_GOOGLE_OAUTH_ENABLED": "false"
+}
