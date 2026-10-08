@@ -176,3 +176,13 @@ NODE_OPTIONS=--dns-result-order=ipv4first edgeone makers deploy ./dist \
 该命令上传已构建产物；已有项目按名称复用，`--area` 不会改变既有项目区域。当前项目仍为全球可用区（不含中国大陆）。`--skip-ai-gateway-sync` 避免此次静态发布另行写入 AI Gateway 凭据。人工 CLI 发布与 GitHub 自动 CD 分开验收。
 
 DNS 实测确认 `myoncode.com` 已指向 `myoncode.com.pages.dnsoe4.com`，HTTP 返回 EdgeOne Makers 页面。控制台已提交自动验证方式的免费 HTTPS 证书配置，状态为“证书申请中”；证书实际签发及正常 TLS 访问仍需复验。最新代码 `40212a9d50a93707a19c57eca52b41a506cc1382` 的 GitHub CI run `37812965449` 已通过。公网 API 443 的授权确认仍待用户答复，前端 API URL 尚未切到 IP。
+
+### CLI 实际发布与新域名验收
+
+官方 CLI 已成功上传并发布到现有 `makers-zbjwzs1yfrhl`，deployment ID 为 `dprlcou3bvwh`，实际构建源码为干净的 `eca997c68296313f9aaa6c71e1a93ed857044ae6`。固定平台入口仍保留，当前新主入口为 `https://myoncode.com`；GitHub 仓库 homepage 已同步新域名。CLI 的成功 JSON、构建日志和实际浏览器截图保存在本机忽略的 `output/tencent-cutover-20261008/`，没有把认证信息写入仓库。
+
+Makers 自动证书已部署，控制台域名为“已生效”。2026-10-09 01:53（北京时间）正常 TLS 探针及两个公开解析地址均返回 HTTPS 200；证书由 TrustAsia DV TLS RSA CA 2025 签发，SAN 为 myoncode.com，期限至 2027-01-06 07:59:59（北京时间），平台显示到期前 15 天自动更新。Chrome 在新域名真实渲染首页和固定虚构 Demo；没有绕过安全警告或关闭证书验证。强制 HTTPS 的 302 配置已保存，实际 HTTP 返回 302、Location 指向 https://myoncode.com/。
+
+新域名公开源码清单与本地 dist 字节级一致，精确匹配该部署修订且 dirtySnapshot=false；五卷共 89,864,690 字节，逐卷长度/SHA-256 和整体 SHA-256 全部匹配，整体摘要为 `6e5ffcdf5181b576bb8ff0cd2770207e0bae89253f5856f9de33826982fc3b10`。11 项 HTTP 检查通过：正常页面、源码与许可 200，缺失 API/资源 404，PDF worker 为 text/javascript；478 项源码路径未包含真实 .env、认证目录或运行/私有产物。完整核验记录为 `tencent-cli-source-verified.json`。
+
+前端仍使用原上海 API 域名并经过 Cloudflare Tunnel。独立 IP 代理已有可信证书和内部业务链路验证，公网 TCP443 规则已填写为仅全部 IPv4 → TCP443 → 允许，尚未保存，等待新增公开访问范围的明确确认。下一步是在确认后放行、切换公开 URL 并进行真实浏览器登录/提取/复核/保存/刷新；不能用新前端发布或服务器内部验证代替全部流量脱离 Cloudflare 的验收。自动 CD 的 GitHub Secret、Google 和 SMTP 保持各自未验收状态。
