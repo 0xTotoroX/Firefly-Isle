@@ -44,3 +44,7 @@ mobile/ios/DerivedData/
 
 # EdgeOne local login/link state; credentials never enter source bundles.
 .edgeone/
+
+# EdgeOne-generated local secrets and build output.
+.env
+.tef_dist/

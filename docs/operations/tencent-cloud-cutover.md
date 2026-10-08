@@ -160,3 +160,19 @@ Makers 域名归属验证后，控制台已返回 CNAME `myoncode.com.pages.dnso
 现场定位公网 HTTPS 不通：上海实例防火墙当前只有 TCP22、TCP80 与 ICMP 三条规则，未放通 TCP443。主机 INPUT ACCEPT、Caddy 已监听443，物理网卡单连接测试也在公网 TCP connect 阶段超时。新增仅 TCP443 的确认已向用户提出，尚未保存；没有使用一键放通或改变数据库/管理端口。
 
 myoncode.com 的 CNAME 一键添加已准备，保存时平台要求本人微信 MFA，尚待用户完成。当前公开前端仍连接旧 API；IP 的 CSP、缓存敏感边界和独立会话初始化准备已通过 38 项相关测试、应用/工具类型与相关 lint。只有公网 HTTPS 与正式前端域名可达后，才切实际 URL 并完成浏览器验收；备案不是本阶段配置工作的停止条件。
+
+### EdgeOne CLI 与域名 HTTPS 进展
+
+用户允许安装所需 EdgeOne CLI，已安装官方 `edgeone@1.6.41`，通过中国站正常浏览器登录；CLI 实测返回账号 Totoro，并已 link 到现有 `makers-zbjwzs1yfrhl`。官方登录会自动创建或复用名为 `edgeone-cli-auto-generated` 的访问 Token，本机认证目录限制为 700、文件为 600；不能将其称为仅浏览器 Cookie、临时 Token 或一年有效期 Token。没有将本机 Token 复制到 GitHub，`EDGEONE_PAGES_API_TOKEN` 仍未配置。
+
+本机普通 CLI 请求曾因网络路径超时而误报未认证，使用仅对当前命令生效的 `NODE_OPTIONS=--dns-result-order=ipv4first` 后成功。不要据此重新登录、全局修改 DNS/代理，或重复创建凭据。CLI 生成的 `.env` 与 `.tef_dist/` 已纳入忽略规则，认证和 link 状态继续使用原有 `.edgeone/` 忽略边界。发布到现有项目使用：
+
+```bash
+NODE_OPTIONS=--dns-result-order=ipv4first edgeone makers deploy ./dist \
+  --name myoncode --env production --area overseas \
+  --skip-ai-gateway-sync --json
+```
+
+该命令上传已构建产物；已有项目按名称复用，`--area` 不会改变既有项目区域。当前项目仍为全球可用区（不含中国大陆）。`--skip-ai-gateway-sync` 避免此次静态发布另行写入 AI Gateway 凭据。人工 CLI 发布与 GitHub 自动 CD 分开验收。
+
+DNS 实测确认 `myoncode.com` 已指向 `myoncode.com.pages.dnsoe4.com`，HTTP 返回 EdgeOne Makers 页面。控制台已提交自动验证方式的免费 HTTPS 证书配置，状态为“证书申请中”；证书实际签发及正常 TLS 访问仍需复验。最新代码 `40212a9d50a93707a19c57eca52b41a506cc1382` 的 GitHub CI run `37812965449` 已通过。公网 API 443 的授权确认仍待用户答复，前端 API URL 尚未切到 IP。
