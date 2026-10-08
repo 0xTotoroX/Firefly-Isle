@@ -1,0 +1,32 @@
+# [INPUT]: 腾讯云测试公网 IP、公开可信 ACME IP 证书与既有回环网关。
+# [OUTPUT]: HTTPS 业务 API 与短期证书自动续签；管理接口返回 404。
+# [POS]: 备案前 IP 技术验收入口，复用同一上海 Supabase 数据库。
+# [PROTOCOL]: 测试入口或续签接口变化时检查 ops/self-hosted/AGENTS.md 与自托管手册。
+{
+	admin off
+	default_sni 118.89.86.27
+	servers {
+		protocols h1 h2
+	}
+}
+
+https://118.89.86.27 {
+	tls {
+		issuer acme https://acme-v02.api.letsencrypt.org/directory {
+			profile shortlived
+			disable_tlsalpn_challenge
+		}
+		renewal_window_ratio 0.5
+	}
+	@private path /auth/v1/admin /auth/v1/admin/* /realtime/v1/api /realtime/v1/api/*
+	handle @private {
+		respond "Not found" 404
+	}
+	@client path /auth/v1/* /rest/v1/* /storage/v1/* /functions/v1/* /graphql/v1
+	handle @client {
+		reverse_proxy 127.0.0.1:54321
+	}
+	handle {
+		respond "Not found" 404
+	}
+}

@@ -36,6 +36,7 @@ const SENSITIVE_SAME_ORIGIN_PREFIXES = [
 ]
 
 const SENSITIVE_REMOTE_HOST_SUFFIXES = [
+  '118.89.86.27',
   'api.myoncode.com',
   'supabase.ghibli1024.com',
   '.supabase.co',

@@ -46,6 +46,7 @@ describe.each(['Cloudflare', 'Tencent'])('%s deployment security headers contrac
     const source = readHeadersSource(platform)
     const csp = source.match(/Content-Security-Policy: (.*)/)?.[1] ?? ''
     const allowedOrigins = new Set([
+      'https://118.89.86.27',
       'https://api.myoncode.com',
       'https://supabase.ghibli1024.com',
       'https://*.supabase.co',
@@ -59,6 +60,7 @@ describe.each(['Cloudflare', 'Tencent'])('%s deployment security headers contrac
     expect(declaredOrigins).toContain('https://*.functions.supabase.co')
     expect(declaredOrigins).toContain('https://supabase.ghibli1024.com')
     expect(declaredOrigins).toContain('https://api.myoncode.com')
+    expect(declaredOrigins).toContain('https://118.89.86.27')
     expect(csp).toContain('wss://*.supabase.co')
     expect(declaredOrigins.length).toBeGreaterThan(0)
     for (const origin of declaredOrigins) {

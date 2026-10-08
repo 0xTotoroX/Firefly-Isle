@@ -94,6 +94,7 @@ describe('PWA service worker boundary', () => {
   })
 
   it('treats Supabase, Edge Functions and same-origin API paths as sensitive', () => {
+    expect(isSensitivePwaRequestUrl('https://118.89.86.27/auth/v1/token')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://api.myoncode.com/auth/v1/token')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://api.myoncode.com/functions/v1/llm-proxy')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://supabase.ghibli1024.com/auth/v1/token')).toBe(true)
@@ -217,7 +218,7 @@ describe('shipped service worker navigation behavior', () => {
     const worker = workerHarness()
     expect(worker.request('/assets/app.js?code=synthetic', 'cors')).toBeUndefined()
     expect(worker.request('/api/private')).toBeUndefined()
-    for (const host of ['api.myoncode.com', 'supabase.ghibli1024.com']) {
+    for (const host of ['118.89.86.27', 'api.myoncode.com', 'supabase.ghibli1024.com']) {
       for (const path of ['/auth/v1/token', '/rest/v1/patients', '/functions/v1/llm-proxy']) {
         expect(worker.request(`https://${host}${path}`, 'cors')).toBeUndefined()
       }

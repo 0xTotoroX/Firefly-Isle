@@ -30,7 +30,8 @@ beforeEach(() => {
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.unstubAllEnvs() })
 
 describe('Supabase client migration wiring', () => {
-  it('starts independently without importing old identities when a new storage namespace is configured', async () => {
+  it.each(['https://supabase.ghibli1024.com', 'https://118.89.86.27', 'https://api.myoncode.com'])('starts independently at %s without importing old identities when a new storage namespace is configured', async (origin) => {
+    vi.stubEnv('VITE_SUPABASE_URL', origin)
     window.localStorage.setItem(oldKey, JSON.stringify({ access_token: token('https://irkjblpzmclqekxbexll.supabase.co'), refresh_token: 'old-refresh' }))
     window.localStorage.setItem(newKey, 'old-preview-session')
     vi.stubEnv('VITE_SUPABASE_AUTH_STORAGE_KEY', 'myoncode-shanghai-auth-v1')

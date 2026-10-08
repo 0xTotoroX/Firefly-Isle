@@ -132,7 +132,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-4aKBGPwZdeCN2Q4O4SQF85D/UUO6Zg7+2CTVYzEcq1o='; style-src 'self'; font-src 'self'; img-src 'self' data: blob: https://*.googleusercontent.com; connect-src 'self' https://api.myoncode.com https://supabase.ghibli1024.com https://*.supabase.co https://*.functions.supabase.co wss://*.supabase.co; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'sha256-4aKBGPwZdeCN2Q4O4SQF85D/UUO6Zg7+2CTVYzEcq1o='; style-src 'self'; font-src 'self'; img-src 'self' data: blob: https://*.googleusercontent.com; connect-src 'self' https://118.89.86.27 https://api.myoncode.com https://supabase.ghibli1024.com https://*.supabase.co https://*.functions.supabase.co wss://*.supabase.co; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "Cache-Control",

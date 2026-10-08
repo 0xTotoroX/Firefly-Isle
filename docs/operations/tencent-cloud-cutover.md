@@ -147,3 +147,16 @@ Makers 域名归属验证后，控制台已返回 CNAME `myoncode.com.pages.dnso
 当前页面依旧连接上海后端的旧 API 域名，该域经 Cloudflare Tunnel；正式根域与 api 子域的访问解析尚未设置，备案仍为管局审核中。此发布只完成腾讯云前端当前版本，未完成新域名和后端 HTTPS 直连切换。服务器代理配置、Auth 回跳补充与后续实际切换仍按本操作单执行。
 
 控制台 AX 读取曾持续超时，但同一浏览器的标签列表与受支持 DOM 操作有效；恢复现有标签后使用 DOM 完成发布。读取超时不是部署失败的证据，不据此重启或重复提交同一部署。
+
+
+## 2026-10-09 先跑通技术流程
+
+用户明确要求先完成技术流程、备案内容后补。当前 Makers 仍使用全球可用区（不含中国大陆）；其自定义域名不以 ICP 获批为前提。上海 API 的域名解析可能被未备案监测拦截，因此阶段测试采用腾讯官方允许的公网 IP 访问，保留 api.myoncode.com 作为后续域名入口。[Makers 自定义域名](https://cloud.tencent.com/document/product/1552/127404)、[腾讯云 IP 测试说明](https://cloud.tencent.com/document/product/243/19630/)
+
+独立代理已升级并启动为 Caddy 2.11.7，使用 `Caddyfile.ip.example`、显式公网 ACME shortlived profile、默认 IP SNI、HTTP-01 和持久证书卷。Let’s Encrypt 已为 118.89.86.27 签发公开可信 IP SAN 证书，期限为 2026-10-08 15:30:55 至 2026-10-15 07:30:54 UTC；Caddy 已取得 ARI 续签信息，保持运行自动续签。使用正常 TLS 校验的服务器回环请求返回 404；没有使用自签或关闭证书校验。[IP 证书说明](https://letsencrypt.org/2026/01/15/6day-and-ip-general-availability)
+
+通过同一代理和正常证书验证，服务器内的密码登录、同身份刷新、真实模型提取、人工复核格式后的病历事务保存/读回、四种私有路径拒绝及登出共 10 项通过。该证据覆盖服务器内部链路，不等同于公网浏览器全流程验收。临时合成账号和记录仅用于后续浏览器检查，私有 fixture 位于服务器 `/opt/firefly-supabase/releases/myoncode-ip-flow/`，文件 600，不进入 Git；验收结束后按其中唯一 ID 清理。
+
+现场定位公网 HTTPS 不通：上海实例防火墙当前只有 TCP22、TCP80 与 ICMP 三条规则，未放通 TCP443。主机 INPUT ACCEPT、Caddy 已监听443，物理网卡单连接测试也在公网 TCP connect 阶段超时。新增仅 TCP443 的确认已向用户提出，尚未保存；没有使用一键放通或改变数据库/管理端口。
+
+myoncode.com 的 CNAME 一键添加已准备，保存时平台要求本人微信 MFA，尚待用户完成。当前公开前端仍连接旧 API；IP 的 CSP、缓存敏感边界和独立会话初始化准备已通过 38 项相关测试、应用/工具类型与相关 lint。只有公网 HTTPS 与正式前端域名可达后，才切实际 URL 并完成浏览器验收；备案不是本阶段配置工作的停止条件。
