@@ -57,7 +57,7 @@ auxiliary-record-storage.test.ts: 症状/随访写入归属及失败传播。
 error-reporting.dom.test.tsx: 上报隐私、监听清理和失败不递归。
 extraction-identity.test.ts: 模型身份清洗、可信身份保留与重复读数合并。
 preference-storage.dom.test.tsx: 浏览器偏好存储不可用时，主题和语言仍可在当前会话切换。
-security-headers.test.ts: CSP、主题引导 hash 与安全响应头。
+security-headers.test.ts: 腾讯云/Cloudflare 两平台 CSP、主题引导 hash 与安全响应头。
 file-size-contract.test.ts: src、functions、supabase 中源码文件的 800 行上限。
 
 边界: 页面组合数据和动作，不重复实现存储/权限协议。Demo、账户会话与真实服务保持隔离。

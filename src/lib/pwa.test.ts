@@ -94,6 +94,8 @@ describe('PWA service worker boundary', () => {
   })
 
   it('treats Supabase, Edge Functions and same-origin API paths as sensitive', () => {
+    expect(isSensitivePwaRequestUrl('https://api.myoncode.com/auth/v1/token')).toBe(true)
+    expect(isSensitivePwaRequestUrl('https://api.myoncode.com/functions/v1/llm-proxy')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://supabase.ghibli1024.com/auth/v1/token')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://supabase.ghibli1024.com/functions/v1/llm-proxy')).toBe(true)
     expect(isSensitivePwaRequestUrl('https://irkjblpzmclqekxbexll.supabase.co/auth/v1/token')).toBe(true)
@@ -149,7 +151,7 @@ function workerHarness(buildAssets: Array<{ url: string }> = []) {
   })
   function request(path: string, mode = 'navigate') {
     let result: Promise<Response> | undefined
-    listeners.get('fetch')!({ request: { url: origin + path, method: 'GET', mode }, respondWith: (value: Promise<Response>) => { result = value } })
+    listeners.get('fetch')!({ request: { url: new URL(path, origin).href, method: 'GET', mode }, respondWith: (value: Promise<Response>) => { result = value } })
     return result
   }
   return { origin, entries, cache, caches, listeners, fetch, request, response }
@@ -215,7 +217,13 @@ describe('shipped service worker navigation behavior', () => {
     const worker = workerHarness()
     expect(worker.request('/assets/app.js?code=synthetic', 'cors')).toBeUndefined()
     expect(worker.request('/api/private')).toBeUndefined()
+    for (const host of ['api.myoncode.com', 'supabase.ghibli1024.com']) {
+      for (const path of ['/auth/v1/token', '/rest/v1/patients', '/functions/v1/llm-proxy']) {
+        expect(worker.request(`https://${host}${path}`, 'cors')).toBeUndefined()
+      }
+    }
     expect(worker.fetch).not.toHaveBeenCalled()
+    expect(worker.cache.put).not.toHaveBeenCalled()
   })
 
   it('removes old app caches on activation without deleting unrelated caches', async () => {

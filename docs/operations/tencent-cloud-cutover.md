@@ -127,3 +127,10 @@ Google 的新 API 回调另需 Google Cloud 授权，SMTP 仍未验收；它们�
 
 
 本轮本地验证：Node.js 22.23.3，lint、完整类型检查和腾讯云构建通过。全量首轮 758/760 通过，两项 Demo 首次懒加载在并发下超过 1 秒；定向 15 项及限定 4 workers 的完整 760 项复验通过，未改断言或产品代码。反代配置与真实回环路由验证通过，Auth 重建后 healthy。发布 Token 的一年有效期表单已准备，尚未创建/配置；Makers CLI 登录停留在完成登录页面，未当作已认证或已部署。
+
+
+### 新 API 域名的前端安全准备
+
+在实际启用 api.myoncode.com 前，两平台 CSP 已加入该精确 HTTPS 源，并继续允许旧 API；PWA helper 与实际 worker 均将新域识别为敏感远端。已扩展原有安全头合同，同时覆盖腾讯云 edgeone.json 与 Cloudflare _headers；真实 worker 事件验证新旧 Auth/REST/functions 不被拦截或写入缓存。公开前端配置仍使用原上海 API，尚未切换网络流量。
+
+Makers 域名归属验证后，控制台已返回 CNAME `myoncode.com.pages.dnsoe4.com`，当前状态为“请添加 CNAME”；访问解析与 HTTPS 尚未配置，待备案获批后执行。
