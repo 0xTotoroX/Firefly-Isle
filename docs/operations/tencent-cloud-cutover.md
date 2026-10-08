@@ -134,3 +134,16 @@ Google 的新 API 回调另需 Google Cloud 授权，SMTP 仍未验收；它们�
 在实际启用 api.myoncode.com 前，两平台 CSP 已加入该精确 HTTPS 源，并继续允许旧 API；PWA helper 与实际 worker 均将新域识别为敏感远端。已扩展原有安全头合同，同时覆盖腾讯云 edgeone.json 与 Cloudflare _headers；真实 worker 事件验证新旧 Auth/REST/functions 不被拦截或写入缓存。公开前端配置仍使用原上海 API，尚未切换网络流量。
 
 Makers 域名归属验证后，控制台已返回 CNAME `myoncode.com.pages.dnsoe4.com`，当前状态为“请添加 CNAME”；访问解析与 HTTPS 尚未配置，待备案获批后执行。
+
+
+## 2026-10-09 腾讯云当前版本发布
+
+当前腾讯云部署 `dp2uk8uju94o` 对应干净源码 `2f2a4e54a8110a63278c59d9d48242de368c86c9`，通过现有账号控制台上传预构建 ZIP 完成；固定入口仍为 `https://myoncode-7xyqbwsq.edgeone.dev`，版本入口为 `https://myoncode-dp2uk8uju94o.edgeone.dev`。自动 CD 尚待用户确认创建 Makers Token 并配置 GitHub Secret，手动发布不代表自动 CD 已验收。
+
+现场验收：首页、login、Demo、公开源码清单均 200；`/api`、`/api/missing`、缺失脚本均 404；PDF worker 为 text/javascript。公开清单修订精确匹配已部署源码、dirtySnapshot=false；CSP 包含新旧两个精确 API 源，Demo 浏览器渲染成功且未见控制台 error。新 API 的隐私/CSP 准备通过 28 项相关测试、类型检查和 lint；路由匹配修复通过 11 项行为测试、相关 lint 与构建，两次代码提交的 GitHub CI 均成功。
+
+前一次 `dp4q697k7q2n` 已成功发布 d81930a，但平台日志显示 matcher 配置提取失败并使用默认全路径匹配。原因是其编译器的配置提取正则要求 config 对象闭括号独占新行；生成器改用多行对象后，最终日志正确读取六条 matcher，未再出现该警告，真实 404 路由复验通过。
+
+当前页面依旧连接上海后端的旧 API 域名，该域经 Cloudflare Tunnel；正式根域与 api 子域的访问解析尚未设置，备案仍为管局审核中。此发布只完成腾讯云前端当前版本，未完成新域名和后端 HTTPS 直连切换。服务器代理配置、Auth 回跳补充与后续实际切换仍按本操作单执行。
+
+控制台 AX 读取曾持续超时，但同一浏览器的标签列表与受支持 DOM 操作有效；恢复现有标签后使用 DOM 完成发布。读取超时不是部署失败的证据，不据此重启或重复提交同一部署。
