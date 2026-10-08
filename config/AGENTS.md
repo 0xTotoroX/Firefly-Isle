@@ -6,8 +6,8 @@
 成员清单
 vite.config.ts: Web 开发、生产构建、Vitest 与 PWA 清单；root、别名、环境文件和输出均以项目根定位，保留 SHA-256 缓存版本和 archive 测试排除。
 pdfjs-assets.ts: 开发和构建提供 PDF.js 同源 CMap、标准字体和图像解码资源。
-edgeone-middleware.ts: 根据公开构建资产生成腾讯云中间件，避免缺失资源/未实现 API 被 SPA 回退吞掉。
-edgeone-middleware.test.ts: 真实 Request/Response 验证 API/资源 404 与合法文件、登录路由透传。
+edgeone-middleware.ts: 根据公开构建资产生成腾讯云中间件，保留缺失资源/API 的 404/no-store，通过同步 next 控制响应仅为真实 assets/icons 的 GET/HEAD 设置长期缓存，其余公开请求再验证。
+edgeone-middleware.test.ts: 同步控制 Response 验证 404/no-store、真实静态读取长期缓存、公开文件/登录透传及部署头的缓存归属。
 frontend.json: 已审核的公开 VITE_ 构建值；不保存服务端密钥，供腾讯云构建与 CI/CD 共用。
 build-frontend.ts: 读取 frontend.json 公开 VITE_ 变量构建腾讯云前端产物，复制 EdgeOne 配置，不复制私有配置或 Cloudflare 微信运行适配。
 source-distribution.ts: 构建对应源码归档、版本/内容摘要、运行依赖原始文件与许可收录，大包按 20 MiB 分卷并提供整体/分卷校验及公开/source/入口；源码白名单排除凭据、运行数据和历史私密资料，不执行发布。

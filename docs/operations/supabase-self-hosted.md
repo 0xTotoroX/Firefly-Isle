@@ -1,8 +1,8 @@
-# Firefly 自建 Supabase
+# MyOncode 自建 Supabase
 
 ## 当前代码与部署边界
 
-当前（2026-10-06）：现有公开测试网址已改接上海自托管 Supabase，并使用独立登录会话，用户确认不迁移旧测试数据。Cloudflare production 是平台部署环境名称，不表示真实患者服务已正式投产。最新部署与验收见本文末尾；以下各日期记录按历史状态读取。
+当前（2026-10-09）：测试前端为 `https://myoncode.com`，由腾讯云海外 Makers 承载；后端 API 暂用有公开可信证书的 `https://118.89.86.27`，直接访问同一上海自托管 Supabase。独立登录会话保留，用户确认不迁移旧测试数据。新主入口的实际切换与验收见[腾讯云操作单](tencent-cloud-cutover.md)最新记录；`api.myoncode.com`、备案与正式患者服务仍分开验收。以下各日期记录保留当时状态。
 
 2026-10-02 已将自托管准备整合到当前 SaaS 代码：浏览器会话续接、CSP/PWA 自建域名、运行配置示例、备份与恢复脚本。`wrangler.jsonc` 继续指向 Supabase Cloud；合并代码不会切换生产后端，`supabase-deploy.yml` 仍是云端专用的手动工作流。
 
@@ -12,8 +12,8 @@
 
 同日只读 SQL 核验：目标 public 中未查到 `persist_patient_record`、`get_shared_patient_record`、`consume_usage`、`save_lab_report_batch`；关键 owner 表的 RLS 开关为真，这不代替权限行为测试。`firefly-backup.timer` 为 active/waiting，最近触发时间为当日，service 的 Result=success、ExecMainStatus=0，最近备份目录存在；本轮没有恢复备份或修改数据库。正式新域名的国内 HTTPS 入口也需另验，不能把机器位于上海当作请求没有经过 Cloudflare Tunnel 的证据。
 
-- 正式站：`https://firefly.ghibli1024.com`。
-- 自建后端：`https://supabase.ghibli1024.com`。
+- 当前测试站：`https://myoncode.com`；旧前端 `https://firefly.ghibli1024.com` 保留作回退。
+- 当前 IP 测试后端：`https://118.89.86.27`；旧 API `https://supabase.ghibli1024.com` 保留作回退。
 - 历史迁移预览：`https://firefly-migration.firefly-isle.pages.dev`。
 - VPS 运行目录：`/opt/firefly-supabase`。SSH 目标、真实备份位置与凭据由部署人员私下保存。
 
@@ -43,11 +43,11 @@ SMTP 按用户决定本轮保留未配置、未验收；不能宣称邮箱注册
 
 默认运行 PostgreSQL、Auth、PostgREST、Envoy、Edge Runtime、Storage、imgproxy 和内部出口。Studio/Postgres Meta 属于 `admin` profile，Realtime/Supavisor 属于 `optional` profile。日志平台未启用。
 
-唯一宿主端口为 `127.0.0.1:54321`，经 Cloudflare Tunnel 对外提供 HTTPS。数据库、Studio 和内部出口不映射公网端口。Google 请求需要可用的出口；账号仅放私有 `egress.yml`。先检查 VPS 既有服务、资源和端口，避免覆盖其他服务。
+Supabase 的唯一宿主端口为 `127.0.0.1:54321`。独立 `myoncode-proxy` Caddy 在 80/443 提供可信 IP HTTPS，仅转发业务 API；Auth admin 等管理路径返回 404。数据库、Studio 和内部出口不映射公网端口。原 Cloudflare Tunnel 保留用于回退及其他项目，不能停止共享进程。Google 请求需要可用的出口；账号仅放私有 `egress.yml`。先检查 VPS 既有服务、资源和端口，避免覆盖其他服务。
 
 ## 配置与会话
 
-`ops/self-hosted/.env.example` 是容器配置示例。`API_EXTERNAL_URL` 包含 `/auth/v1`，Google 回调为 `https://supabase.ghibli1024.com/auth/v1/callback`。SMTP 与 OAuth 需要单独配置，数据库恢复不会自动恢复供应商配置。
+`ops/self-hosted/.env.example` 是容器配置示例。`API_EXTERNAL_URL` 包含 `/auth/v1`，当前 IP 测试值为 `https://118.89.86.27/auth/v1`，`SITE_URL=https://myoncode.com`。Google 不支持公网 IP 回调，当前前后端均保持暂不可用；正式 API 域名启用后另验有效 Secret 和授权回调。SMTP 与 OAuth 需要单独配置，数据库恢复不会自动恢复供应商配置。
 
 `functions.env.example` 对应当前函数配置。恢复已有模型密钥密文时，必须保留原 `LLM_PROVIDER_SETTINGS_ENCRYPTION_KEY`。当前图片和 PDF 页面 OCR 统一走 DeepSeek；不再配置 OCR_PROVIDER 或 GEMINI_OCR_MODEL。支付功能仅在所需配置齐备时启用。
 

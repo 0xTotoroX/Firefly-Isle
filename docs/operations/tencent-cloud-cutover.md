@@ -192,3 +192,21 @@ Makers 自动证书已部署，控制台域名为“已生效”。2026-10-09 01
 下一版公开构建配置的 API 与 functions URL 已准备为 `https://118.89.86.27` 和同域 `/functions/v1`，保留原公开 anon key、独立会话存储键和 Google 暂不可用设置。此改动用于准备匹配后端的待发布产物；线上仍为 `dprlcou3bvwh` / `eca997c`，继续连接旧 API，不能因仓库配置已改就称实际流量已切换。
 
 保存 TCP443 规则前仍须取得已提出的明确确认；规则实际可达后，再备份并更新上海 Auth/API 的公开 URL，验证可信公网 TLS、允许/拒绝路径及核心业务。只有这些条件通过，才发布本版 dist 并在新域名浏览器验收。不要直接运行自动 CD，GitHub Secret 尚未配置；不要发布到未通的 API 或停止共享 cloudflared。
+
+## 2026-10-09 公网 IP API 实际切换
+
+用户明确允许 TCP443 后，上海实例已仅新增全部 IPv4 → TCP443 → 允许，备注 MyOncode HTTPS API；原 SSH、HTTP、ICMP 规则保留。Mac 默认网络和物理网卡均通过正常证书校验，IP 根路径按设计返回 404。Auth health 200、无 key 的 REST 401、admin/pg/mcp/root 404；来自 myoncode.com 的 Auth、REST、functions OPTIONS 均通过 CORS。证据为本机忽略目录中的 `backend-public-network.json`。
+
+上海私有配置已备份到 `/var/backups/firefly/myoncode-ip-cutover/20261008T181720Z/`，SITE_URL 改为 myoncode.com、SUPABASE_PUBLIC_URL 改为可信 IP、API_EXTERNAL_URL 为 IP 下的 /auth/v1。只重建 api-gw/auth/functions/storage，签名与加密材料、回跳名单、DB/rest/出口和数据卷保留。Google 前后端均关闭；IP 回调不符合其要求，原有效 Secret 和域名回调须另验。公网密码、同身份刷新、新 issuer、原合成病历读取与登出 5 项检查通过。
+
+CLI production deployment `dpx111nkfpo7` 已成功发布干净源码 `7b8ae0f67ba73afcbac0cd45d5219cdf427a0b33`，主入口仍为 https://myoncode.com。实际入口 JS、源码清单与本地一致，API/Functions 常量均为 IP；五卷共 89,868,768 字节，逐卷和整体摘要匹配。整体 SHA-256 为 `5bbb69f2e8af379330595b64d6053429cccfb16f575f65b7b6d609cfa1f111e0`。当前手动 CLI 发布通过，GitHub 自动 CD 的 Secret 尚未配置。
+
+真实浏览器完成密码登录、病史模型提取、人工改名与事务保存、两页 PDF OCR/人工复核、两类化验保存、病历详情读取和刷新；服务端仅按本任务虚构患者核验 UID、基本字段、完整方案及 WBC5@2026-10-01、CEA6@2026-10-02，2 个 confirmed 批次及 2 条读数，标题/额外行未存。初次日期自动填写未触发真实控件修改，失败记录保留；采用原生日期操作并逐项确认后复验通过，误操作的 1 条合成读数和批次已精确清理。正常输入的 30 项既有回归通过，没有为操作工具问题修改业务源码。网络记录确认事务、OCR、模型、Auth 刷新及分享均直达 118.89.86.27，TLS1.3/YE2；只记录主机/路径/状态，不记录患者正文、请求头或令牌。
+
+新域名创建的合成只读分享可读取，撤销后重载立即显示失效；测试授权已撤销。虚构病历 PDF 实际导出 2 页，系统保存窗口完成后才核对文件，渲染与两项日期通过；下载观察超时不是导出终止的证据。本机 .env.local 的六个公开配置已同步 frontend.json，其他行原样保留，私有恢复副本 600 且不入 Git。
+
+PWA 曾继续运行旧入口 index-D0n6REPN，访问新部署已移除的旧工作台 chunk 时失败；关闭本任务创建的同源旧页后，新入口 index-zmAkBHkR 和新工作台正常。按既有生命周期更新，不清登录存储，不强制 skipWaiting。完整目标中的 api.myoncode.com 和备案/正式服务仍有独立步骤；当前 IP 是合成技术验收入口，不能用海外 Makers 中转推导上海源站的备案豁免，也不采用会缩小 8 MiB OCR 合同的函数代理。
+
+### 缓存修复准备
+
+现场另发现平台 /assets 全局响应头把缺失文件 404 的 no-store 覆盖为一年 immutable。已将缓存策略移到同步 next 控制响应：真实构建名单中的 asset/icon GET/HEAD 长期缓存，普通页面再验证，未知资源/API 及无效路径返回 404/no-store；原六项安全头、26 条 rewrites、SW/manifest 再验证和 PDF .mjs MIME 保留。35 项相关测试、文件 lint、tooling 类型检查通过；实际平台 GET/HEAD/304/404 头效果须在本轮新部署后另验。
