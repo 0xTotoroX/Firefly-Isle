@@ -210,3 +210,13 @@ PWA 曾继续运行旧入口 index-D0n6REPN，访问新部署已移除的旧工�
 ### 缓存修复准备
 
 现场另发现平台 /assets 全局响应头把缺失文件 404 的 no-store 覆盖为一年 immutable。已将缓存策略移到同步 next 控制响应：真实构建名单中的 asset/icon GET/HEAD 长期缓存，普通页面再验证，未知资源/API 及无效路径返回 404/no-store；原六项安全头、26 条 rewrites、SW/manifest 再验证和 PDF .mjs MIME 保留。35 项相关测试、文件 lint、tooling 类型检查通过；实际平台 GET/HEAD/304/404 头效果须在本轮新部署后另验。
+
+### 最终发布和清理
+
+缓存修复已通过 CLI 发布到同一项目，production deployment 为 `dpwtev4r050z`，干净对应源码为 `f67934a02cdee60e267b3d8a89345ebc8bd7c996`。公网 16 项验证全部通过：真实 asset/icon GET/HEAD 200/immutable、条件 GET 304，未知 asset/icon/source/API 与错误编码路径 404/no-store，HEAD 无正文；root/login/app 正文及再验证头匹配当前构建，六项安全头一致，PDF worker MIME 正确。记录为 `tencent-final-cache-verified.json`。
+
+最终源码清单、首页和实际 JS 与本地字节一致，活动 API/Functions 均为腾讯云 IP。五卷共 89,869,807 字节，逐卷/整体摘要匹配，整体 SHA-256 为 `fef7f48e5c37cead151ab37f14e49d75d421e9ce82fa201412d2d7478e12e0fc`；478 项源码路径不含私有运行产物。记录为 `tencent-final-source-verified.json`，GitHub CI run `37839045014` 成功。
+
+虚构病历 PDF 两页和 PNG 文件已实际保存并视觉核对；原生系统保存窗口导致下载事件观察超时，完成保存后才报告导出通过。匿名 API signup 200、匿名身份标识为真、登出 204。所有业务测试退出后，仅删除本任务密码身份与带专用 validation 标记的匿名身份共 2 个；真实外键核对后以有归属/数量守卫的单事务完成级联，测试患者/化验剩余为 0，其他账户数量保留。账号夹具凭据副本已清理，验收 JSON、失败阶段和截图保留；私有环境恢复副本继续以 600 留在忽略目录。证据为 `test-cleanup.json`。
+
+当前技术流程通过，主站 https://myoncode.com 与后台 HTTPS IP 均使用腾讯云。正式 api.myoncode.com、备案页面内容和正式患者服务门槛继续保留；未把未备案的技术合成测试称为正式上线。GitHub 自动 CD 仍缺 Makers Secret，Google/SMTP 仍未完成各自验证。仓库和 package 当前版本保持 1.5.0，以部署 SHA 区分开发构建；基于 v1.5.0 后的品牌、SaaS、后端和许可累计变化，本地准备 v2.0.0 候选说明，尚不可正式发布，未打 tag 或创建 Release。
